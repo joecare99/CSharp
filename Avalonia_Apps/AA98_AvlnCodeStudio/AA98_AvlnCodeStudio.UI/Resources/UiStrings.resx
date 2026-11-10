@@ -96,6 +96,36 @@
   <data name="BuildUnavailableText" xml:space="preserve">
     <value>Build unavailable for this target</value>
   </data>
+  <data name="ProjectWorkflowTabText" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="ProjectWorkflowProjectText" xml:space="preserve">
+    <value>Workspace project</value>
+  </data>
+  <data name="ProjectWorkflowConfigurationText" xml:space="preserve">
+    <value>Configuration</value>
+  </data>
+  <data name="ProjectWorkflowFrameworkText" xml:space="preserve">
+    <value>Target framework</value>
+  </data>
+  <data name="ProjectWorkflowTrustWarningText" xml:space="preserve">
+    <value>Inspect trusted projects only. MSBuild evaluation can execute project imports and property functions.</value>
+  </data>
+  <data name="InspectProjectCommandText" xml:space="preserve">
+    <value>Inspect Project</value>
+  </data>
+  <data name="BuildSelectedProjectCommandText" xml:space="preserve">
+    <value>Build Selected Project</value>
+  </data>
+  <data name="TestSelectedProjectCommandText" xml:space="preserve">
+    <value>Test Selected Project</value>
+  </data>
+  <data name="DebugSelectedProjectCommandText" xml:space="preserve">
+    <value>Build and Debug Selected Project</value>
+  </data>
+  <data name="CancelProjectWorkflowCommandText" xml:space="preserve">
+    <value>Cancel Project Action</value>
+  </data>
   <data name="StartDebuggingCommandText" xml:space="preserve">
     <value>Start Debugging</value>
   </data>

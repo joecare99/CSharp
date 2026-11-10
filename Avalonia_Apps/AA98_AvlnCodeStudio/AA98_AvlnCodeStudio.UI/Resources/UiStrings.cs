@@ -72,6 +72,26 @@ public static class UiStrings
 
     public static string BuildUnavailableText => GetString(nameof(BuildUnavailableText));
 
+    public static string ProjectWorkflowTabText => GetString(nameof(ProjectWorkflowTabText));
+
+    public static string ProjectWorkflowProjectText => GetString(nameof(ProjectWorkflowProjectText));
+
+    public static string ProjectWorkflowConfigurationText => GetString(nameof(ProjectWorkflowConfigurationText));
+
+    public static string ProjectWorkflowFrameworkText => GetString(nameof(ProjectWorkflowFrameworkText));
+
+    public static string ProjectWorkflowTrustWarningText => GetString(nameof(ProjectWorkflowTrustWarningText));
+
+    public static string InspectProjectCommandText => GetString(nameof(InspectProjectCommandText));
+
+    public static string BuildSelectedProjectCommandText => GetString(nameof(BuildSelectedProjectCommandText));
+
+    public static string TestSelectedProjectCommandText => GetString(nameof(TestSelectedProjectCommandText));
+
+    public static string DebugSelectedProjectCommandText => GetString(nameof(DebugSelectedProjectCommandText));
+
+    public static string CancelProjectWorkflowCommandText => GetString(nameof(CancelProjectWorkflowCommandText));
+
     public static string StartDebuggingCommandText => GetString(nameof(StartDebuggingCommandText));
 
     public static string StopDebuggingCommandText => GetString(nameof(StopDebuggingCommandText));

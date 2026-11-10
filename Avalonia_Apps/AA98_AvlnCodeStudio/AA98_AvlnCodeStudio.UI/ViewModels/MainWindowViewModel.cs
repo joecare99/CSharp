@@ -137,7 +137,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             WorkspaceFileChangeService? workspaceFileChangeService = null,
             AxamlMvvmGenerator? axamlMvvmGenerator = null,
             WorkbenchSettingsRuntimeActivator? settingsRuntimeActivator = null,
-            CredentialProviderCatalog? credentialProviderCatalog = null)
+            CredentialProviderCatalog? credentialProviderCatalog = null,
+            IProjectTargetResolver? projectTargetResolver = null,
+            IProjectRuntimeBuilder? projectRuntimeBuilder = null)
         {
             _editorWorkspace = editorWorkspace ?? new EditorDocumentWorkspace(editorComponent);
             _workspaceLoader = workspaceLoader ?? new CSharpWorkspaceLoader();
@@ -156,6 +158,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _csharpSyntaxDiagnosticService = csharpSyntaxDiagnosticService ?? new Services.CSharpSyntaxDiagnosticService();
             _testExecutionService = testExecutionService ?? new NullTestExecutionService();
             _debugSessionService = debugSessionService ?? new NullDebugSessionService();
+            _projectTargetResolver = projectTargetResolver ?? new DotNetProjectTargetResolver();
+            _projectRuntimeBuilder = projectRuntimeBuilder ?? new DotNetProjectRuntimeBuilder();
             _aiChatService = aiChatService;
             _aiSettings = aiSettings;
             _codeStudioSettings = codeStudioSettings;
@@ -2319,6 +2323,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         partial void OnWorkspaceChanged(CSharpWorkspace? value)
         {
+            ResetProjectWorkflow();
             if (AiChatBusy)
             {
                 SendAIChatMessageCancelCommand.Execute(null);
@@ -2381,28 +2386,57 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         [RelayCommand(CanExecute = nameof(CanBuildWorkspace))]
         public async Task BuildWorkspaceAsync(CancellationToken cancellationToken = default)
         {
-            CSharpWorkspace workspace = Workspace
-                ?? throw new InvalidOperationException("Open a C# workspace before building.");
-            List<Diagnostic> diagnostics = [];
-            int succeededCount = 0;
-
-            foreach (CSharpWorkspaceProject project in workspace.Projects)
+            if (ProjectWorkflowBusy)
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                BuilderBuildResult result = await _builderService.BuildProjectAsync(new BuilderBuildRequest
-                {
-                    WorkspaceRootPath = workspace.RootPath,
-                    ProjectPath = project.ProjectPath,
-                }, cancellationToken);
-                succeededCount += result.Succeeded ? 1 : 0;
-                diagnostics.AddRange(result.Diagnostics.Select(MapDiagnostic));
+                return;
             }
 
-            _buildDiagnostics.Clear();
-            _buildDiagnostics.AddRange(diagnostics);
-            await RefreshDiagnosticsAsync(cancellationToken);
-            Editor.StatusText = $"Build: {succeededCount}/{workspace.Projects.Count} projects succeeded.";
-            Editor.NotificationText = $"Build diagnostics: {diagnostics.Count}.";
+            CSharpWorkspace workspace = Workspace
+                ?? throw new InvalidOperationException("Open a C# workspace before building.");
+            ProjectWorkflowBusy = true;
+            try
+            {
+                List<Diagnostic> diagnostics = [];
+                int succeededCount = 0;
+
+                foreach (CSharpWorkspaceProject project in workspace.Projects)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    BuilderBuildResult result = await Task.Run(() => _builderService.BuildProjectAsync(new BuilderBuildRequest
+                    {
+                        WorkspaceRootPath = workspace.RootPath,
+                        ProjectPath = project.ProjectPath,
+                    }, cancellationToken), CancellationToken.None);
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (!ReferenceEquals(workspace, Workspace))
+                    {
+                        return;
+                    }
+
+                    succeededCount += result.Succeeded ? 1 : 0;
+                    diagnostics.AddRange(result.Diagnostics.Select(MapDiagnostic));
+                }
+
+                _buildDiagnostics.Clear();
+                _buildDiagnostics.AddRange(diagnostics);
+                await RefreshDiagnosticsAsync(cancellationToken);
+                if (ReferenceEquals(workspace, Workspace))
+                {
+                    Editor.StatusText = $"Build: {succeededCount}/{workspace.Projects.Count} projects succeeded.";
+                    Editor.NotificationText = $"Build diagnostics: {diagnostics.Count}.";
+                }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested || !ReferenceEquals(workspace, Workspace))
+            {
+                if (ReferenceEquals(workspace, Workspace))
+                {
+                    Editor.StatusText = "Workspace build canceled.";
+                }
+            }
+            finally
+            {
+                ProjectWorkflowBusy = false;
+            }
         }
 
         public async Task OpenWorkspaceFileAsync(string path, CancellationToken cancellationToken = default)
@@ -2422,11 +2456,18 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 return;
             }
 
-            bool workspaceChanged = Workspace is null
+            bool workspaceRootChanged = Workspace is null
                 || !WorkspacePathIdentity.AreEqual(Workspace.RootPath, workspace.RootPath);
-            if (workspaceChanged)
+            bool workspaceChanged = Workspace is null
+                || !WorkspacePathIdentity.AreEqual(Workspace.EntryPath, workspace.EntryPath);
+            if (workspaceRootChanged)
             {
                 _workspaceFileChangeService.ResetHistory();
+            }
+
+            if (workspaceChanged)
+            {
+                _buildDiagnostics.Clear();
                 _testDiagnostics.Clear();
             }
 
@@ -2524,21 +2565,61 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         private bool CanBuildWorkspace()
         {
-            return _builderService is not NullCodeStudioBuilderService
+            return !ProjectWorkflowBusy
+                && _builderService is not NullCodeStudioBuilderService
                 && Workspace is { Projects.Count: > 0 };
         }
 
         [RelayCommand(CanExecute = nameof(CanRunWorkspaceTests))]
         private async Task RunWorkspaceTestsAsync(CancellationToken cancellationToken)
         {
+            if (ProjectWorkflowBusy)
+            {
+                return;
+            }
+
             CSharpWorkspace workspace = Workspace
                 ?? throw new InvalidOperationException("Open a C# workspace before running tests.");
-            TestRunSummary summary = await _testExecutionService.RunTestsAsync(new TestRunRequest
+            ProjectWorkflowBusy = true;
+            try
             {
-                WorkspaceRootPath = workspace.RootPath,
-                ProjectPath = workspace.EntryPath,
-            }, cancellationToken);
+                TestRunSummary summary = await _testExecutionService.RunTestsAsync(new TestRunRequest
+                {
+                    WorkspaceRootPath = workspace.RootPath,
+                    ProjectPath = workspace.EntryPath,
+                }, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                if (!ReferenceEquals(workspace, Workspace))
+                {
+                    return;
+                }
 
+                await ApplyTestDiagnosticsAsync(summary, workspace, cancellationToken);
+                if (ReferenceEquals(workspace, Workspace))
+                {
+                    Editor.StatusText = $"Tests: {summary.Outcome} ({summary.TotalCount} total).";
+                    Editor.NotificationText =
+                        $"Tests: {summary.PassedCount} passed, {summary.FailedCount} failed, {summary.SkippedCount} skipped.";
+                }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested || !ReferenceEquals(workspace, Workspace))
+            {
+                if (ReferenceEquals(workspace, Workspace))
+                {
+                    Editor.StatusText = "Workspace tests canceled.";
+                }
+            }
+            finally
+            {
+                ProjectWorkflowBusy = false;
+            }
+        }
+
+        private async Task ApplyTestDiagnosticsAsync(
+            TestRunSummary summary,
+            CSharpWorkspace workspace,
+            CancellationToken cancellationToken)
+        {
             _testDiagnostics.Clear();
             foreach (TestRunFailure failure in summary.Failures)
             {
@@ -2556,9 +2637,6 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
 
             await RefreshDiagnosticsAsync(cancellationToken);
-            Editor.StatusText = $"Tests: {summary.Outcome} ({summary.TotalCount} total).";
-            Editor.NotificationText =
-                $"Tests: {summary.PassedCount} passed, {summary.FailedCount} failed, {summary.SkippedCount} skipped.";
         }
 
         private static string? TryGetWorkspaceTestSourcePath(string? sourcePath, string workspaceRoot)
@@ -2581,25 +2659,74 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         private bool CanRunWorkspaceTests()
         {
-            return _testExecutionService is not NullTestExecutionService
+            return !ProjectWorkflowBusy
+                && _testExecutionService is not NullTestExecutionService
                 && Workspace is { Projects.Count: > 0 };
         }
 
         [RelayCommand(CanExecute = nameof(CanStartDebugSession))]
         private async Task StartDebugSessionAsync(CancellationToken cancellationToken)
         {
+            if (ProjectWorkflowBusy)
+            {
+                return;
+            }
+
             CSharpWorkspace workspace = Workspace
                 ?? throw new InvalidOperationException("Open a C# workspace before starting a debug session.");
             string targetPath = Path.IsPathRooted(DebugTargetPath)
                 ? DebugTargetPath
                 : Path.Combine(workspace.RootPath, DebugTargetPath);
-            DebugSessionInfo session = await _debugSessionService.StartSessionAsync(new DebugLaunchRequest
+            ProjectWorkflowBusy = true;
+            try
             {
-                Target = targetPath,
-                WorkingDirectory = workspace.RootPath,
-                StopAtEntry = true,
-            }, cancellationToken);
+                await StartAndAdoptDebugSessionAsync(new DebugLaunchRequest
+                {
+                    Target = targetPath,
+                    WorkingDirectory = workspace.RootPath,
+                    StopAtEntry = true,
+                }, () => ReferenceEquals(workspace, Workspace), cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested || !ReferenceEquals(workspace, Workspace))
+            {
+                if (ReferenceEquals(workspace, Workspace))
+                {
+                    Editor.StatusText = "Debug session start canceled.";
+                }
+            }
+            finally
+            {
+                ProjectWorkflowBusy = false;
+            }
+        }
 
+        private async Task StartAndAdoptDebugSessionAsync(
+            DebugLaunchRequest request,
+            Func<bool> isCurrent,
+            CancellationToken cancellationToken)
+        {
+            DebugSessionInfo session = await _debugSessionService.StartSessionAsync(request, cancellationToken);
+            if (cancellationToken.IsCancellationRequested || !isCurrent())
+            {
+                try
+                {
+                    await _debugSessionService.StopSessionAsync(session.SessionId, CancellationToken.None);
+                }
+                catch (Exception exception) when (IsProjectWorkflowException(exception))
+                {
+                    AdoptDebugSession(session, request.Target);
+                    Editor.StatusText = "Could not stop a debug session after its context changed.";
+                    Editor.NotificationText = exception.Message;
+                }
+
+                return;
+            }
+
+            AdoptDebugSession(session, request.Target);
+        }
+
+        private void AdoptDebugSession(DebugSessionInfo session, string? targetPath)
+        {
             _activeDebugSessionId = session.SessionId;
             ActiveDebugSessionState = session.State;
             _debugBreakpoints.Clear();
@@ -2608,6 +2735,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             SelectedDebugStackFrame = null;
             OnPropertyChanged(nameof(HasDebugSession));
             StartDebugSessionCommand.NotifyCanExecuteChanged();
+            DebugSelectedProjectCommand.NotifyCanExecuteChanged();
             StopDebugSessionCommand.NotifyCanExecuteChanged();
             NotifyDebugControlCommands();
             Editor.StatusText = session.State == DebugSessionState.Paused
@@ -2639,6 +2767,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 SelectedDebugStackFrame = null;
                 OnPropertyChanged(nameof(HasDebugSession));
                 StartDebugSessionCommand.NotifyCanExecuteChanged();
+                DebugSelectedProjectCommand.NotifyCanExecuteChanged();
                 StopDebugSessionCommand.NotifyCanExecuteChanged();
                 NotifyDebugControlCommands();
             }
@@ -2734,6 +2863,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private bool CanStartDebugSession()
         {
             if (_debugSessionService is NullDebugSessionService
+                || ProjectWorkflowBusy
                 || Workspace is null
                 || _activeDebugSessionId is not null
                 || string.IsNullOrWhiteSpace(DebugTargetPath))

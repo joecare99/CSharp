@@ -96,9 +96,14 @@
                     <MenuItem Header="_Build">
                         <MenuItem Header="{Binding BuildWorkspaceCommandText}" Command="{Binding BuildWorkspaceCommand}" />
                         <MenuItem Header="{Binding RunTestsCommandText}" Command="{Binding RunWorkspaceTestsCommand}" />
+                        <Separator />
+                        <MenuItem Header="{Binding InspectProjectCommandText}" Command="{Binding InspectSelectedProjectCommand}" />
+                        <MenuItem Header="{Binding BuildSelectedProjectCommandText}" Command="{Binding BuildSelectedProjectCommand}" />
+                        <MenuItem Header="{Binding TestSelectedProjectCommandText}" Command="{Binding TestSelectedProjectCommand}" />
                     </MenuItem>
                     <MenuItem Header="_Debug">
                         <MenuItem Header="{Binding StartDebuggingCommandText}" Command="{Binding StartDebugSessionCommand}" />
+                        <MenuItem Header="{Binding DebugSelectedProjectCommandText}" Command="{Binding DebugSelectedProjectCommand}" />
                         <MenuItem Header="{Binding StopDebuggingCommandText}" Command="{Binding StopDebugSessionCommand}" />
                         <MenuItem Header="{Binding ToggleBreakpointCommandText}" Command="{Binding ToggleBreakpointCommand}" />
                         <MenuItem Header="{Binding ContinueDebuggingCommandText}" Command="{Binding ContinueDebugSessionCommand}" />
@@ -168,6 +173,36 @@
                         </StackPanel>
                         <projectExplorer:ProjectExplorerView Grid.Row="1" DataContext="{Binding ProjectExplorer}" />
                     </Grid>
+                </TabItem>
+                <TabItem Header="{Binding ProjectWorkflowTabText}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="{Binding ProjectWorkflowProjectText}" FontWeight="SemiBold" />
+                            <ComboBox ItemsSource="{Binding PackageProjects}"
+                                      SelectedItem="{Binding SelectedWorkflowProject, Mode=TwoWay}"
+                                      AutomationProperties.Name="{Binding ProjectWorkflowProjectText}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="workspaces:CSharpWorkspaceProject">
+                                        <TextBlock Text="{Binding ProjectPath}" TextTrimming="CharacterEllipsis" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <TextBlock Text="{Binding ProjectWorkflowConfigurationText}" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding WorkflowConfiguration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     AutomationProperties.Name="{Binding ProjectWorkflowConfigurationText}" />
+                            <TextBlock Text="{Binding ProjectWorkflowFrameworkText}" FontWeight="SemiBold" />
+                            <ComboBox ItemsSource="{Binding WorkflowFrameworks}"
+                                      SelectedItem="{Binding SelectedWorkflowFramework, Mode=TwoWay}"
+                                      AutomationProperties.Name="{Binding ProjectWorkflowFrameworkText}" />
+                            <TextBlock Text="{Binding ProjectWorkflowTrustWarningText}" TextWrapping="Wrap" Opacity="0.8" />
+                            <Button Content="{Binding InspectProjectCommandText}" Command="{Binding InspectSelectedProjectCommand}" />
+                            <Button Content="{Binding BuildSelectedProjectCommandText}" Command="{Binding BuildSelectedProjectCommand}" />
+                            <Button Content="{Binding TestSelectedProjectCommandText}" Command="{Binding TestSelectedProjectCommand}" />
+                            <Button Content="{Binding DebugSelectedProjectCommandText}" Command="{Binding DebugSelectedProjectCommand}" />
+                            <Button Content="{Binding CancelProjectWorkflowCommandText}" Command="{Binding CancelProjectWorkflowCommand}" />
+                            <TextBlock Text="{Binding ProjectWorkflowStatus}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ScrollViewer>
                 </TabItem>
                 <TabItem Header="Palette">
                     <Grid>
