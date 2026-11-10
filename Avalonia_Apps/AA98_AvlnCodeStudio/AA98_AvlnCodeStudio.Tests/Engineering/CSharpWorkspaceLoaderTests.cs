@@ -853,6 +853,12 @@ public sealed class CSharpWorkspaceLoaderTests
             Assert.AreEqual(dirtyMarkup, viewModel.Editor.Text);
             Assert.IsTrue(viewModel.Editor.IsDirty);
             Assert.IsFalse(File.ReadAllText(viewModelPath).Contains("_caption", StringComparison.Ordinal));
+
+            Assert.IsTrue(viewModel.WorkspaceFileChangeService.Redo());
+            StringAssert.Contains(File.ReadAllText(axamlPath), "Text=\"{Binding Caption, Mode=TwoWay}\"");
+            StringAssert.Contains(File.ReadAllText(viewModelPath), "private string _caption = string.Empty;");
+            StringAssert.Contains(viewModel.Editor.Text, "Text=\"{Binding Caption, Mode=TwoWay}\"");
+            Assert.IsFalse(viewModel.Editor.IsDirty);
         });
     }
 

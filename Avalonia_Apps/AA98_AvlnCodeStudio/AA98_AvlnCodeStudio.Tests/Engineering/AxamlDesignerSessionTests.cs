@@ -425,6 +425,9 @@ public sealed class AxamlDesignerSessionTests
         Assert.AreEqual("ToolTip", session.SelectedNode!.TypeName);
         Assert.AreEqual(0, session.SelectedNode!.Children.Count);
 
+        Assert.IsTrue(session.AddChildControl("Border"));
+        AxamlPreviewNode border = session.SelectedNode!.Children.Single();
+        session.SelectNode(border);
         Assert.IsTrue(session.AddChildControl("StackPanel"));
         AxamlPreviewNode stackPanel = session.SelectedNode!.Children.Single();
         session.SelectNode(stackPanel);
@@ -437,8 +440,179 @@ public sealed class AxamlDesignerSessionTests
         Assert.IsTrue(session.Undo());
         Assert.AreEqual(0, session.SelectedNode!.Children.Count);
         Assert.IsTrue(session.Undo());
+        Assert.AreEqual("Border", session.SelectedNode!.TypeName);
+        Assert.AreEqual(0, session.SelectedNode.Children.Count);
+        Assert.IsTrue(session.Undo());
         Assert.AreEqual("ToolTip", session.SelectedNode!.TypeName);
         Assert.AreEqual(0, session.SelectedNode.Children.Count);
+    }
+
+    [TestMethod]
+    public void TreeViewStructure_CanBeBuiltAndUndoneOneLevelAtATime()
+    {
+        AxamlDesignerSession session = new();
+        session.Load("<TreeView />");
+        AxamlPreviewNode tree = session.Root!;
+        session.SelectNode(tree);
+
+        Assert.IsTrue(session.AddChildControl("TreeViewItem"));
+        AxamlPreviewNode project = session.Root!.Children.Single();
+        session.SelectNode(project);
+        Assert.IsTrue(session.AddChildControl("TreeViewItem"));
+        Assert.AreEqual(1, session.Root!.Children.Single().Children.Count);
+        Assert.IsTrue(session.Root!.IsSupported);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => session.AddChildControl("Button"));
+
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(0, session.Root!.Children.Single().Children.Count);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(0, session.Root!.Children.Count);
+        Assert.AreEqual("<TreeView />", session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(1, session.Root!.Children.Count);
+    }
+
+    [TestMethod]
+    public void TreeViewItems_CanBeReorderedAndRemovedWithUndoRedo()
+    {
+        const string markup = "<TreeView><TreeViewItem Header='Project'>"
+            + "<TreeViewItem Header='src' /><TreeViewItem Header='tests' />"
+            + "</TreeViewItem></TreeView>";
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        AxamlPreviewNode project = session.Root!.Children.Single();
+        session.SelectNode(project.Children[1]);
+
+        Assert.IsTrue(session.CanMoveSelectedControlEarlier);
+        Assert.IsTrue(session.MoveSelectedControl(-1));
+        CollectionAssert.AreEqual(
+            new[] { "tests", "src" },
+            session.Root!.Children.Single().Children.Select(
+                static item => item.Properties["Header"]).ToArray());
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+        Assert.IsTrue(session.Redo());
+
+        session.SelectNode(session.Root!.Children.Single().Children[0]);
+        Assert.IsTrue(session.CanRemoveSelectedControl);
+        Assert.IsTrue(session.RemoveSelectedControl());
+        Assert.AreEqual("src", session.Root!.Children.Single().Children.Single().Properties["Header"]);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("tests", session.Root!.Children.Single().Children[0].Properties["Header"]);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("src", session.Root!.Children.Single().Children.Single().Properties["Header"]);
+
+        AxamlDesignerSession singleItem = new();
+        singleItem.Load("<TreeView><TreeViewItem Header='Only' /></TreeView>");
+        singleItem.SelectNode(singleItem.Root!.Children.Single());
+        Assert.IsTrue(singleItem.CanRemoveSelectedControl);
+        Assert.IsTrue(singleItem.RemoveSelectedControl());
+        Assert.AreEqual(0, singleItem.Root!.Children.Count);
+        Assert.IsTrue(singleItem.Undo());
+        Assert.AreEqual("Only", singleItem.Root!.Children.Single().Properties["Header"]);
+    }
+
+    [TestMethod]
+    public void SelectorItems_CanBeAddedEditedAndUndoneIndividually()
+    {
+        AxamlDesignerSession session = new();
+        session.Load("<ComboBox />");
+        session.SelectNode(session.Root);
+
+        Assert.IsTrue(session.AddChildControl("ComboBoxItem"));
+        AxamlPreviewNode item = session.Root!.Children.Single();
+        Assert.IsTrue(item.IsSupported);
+        session.SelectNode(item);
+        session.SelectProperty("Content");
+        Assert.IsTrue(session.ApplySelectedValue("Debug"));
+        Assert.IsTrue(session.Markup.Contains("Content=\"Debug\"", StringComparison.Ordinal));
+
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(0, session.Root!.Children.Single().Properties.Count);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(0, session.Root!.Children.Count);
+        Assert.AreEqual("<ComboBox />", session.Markup);
+
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("ComboBoxItem", session.Root!.Children.Single().TypeName);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("Debug", session.Root!.Children.Single().Properties["Content"]);
+
+        session.SelectNode(session.Root.Children.Single());
+        Assert.IsTrue(session.CanRemoveSelectedControl);
+        Assert.IsTrue(session.RemoveSelectedControl());
+        Assert.AreEqual(0, session.Root!.Children.Count);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("Debug", session.Root!.Children.Single().Properties["Content"]);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(0, session.Root!.Children.Count);
+    }
+
+    [TestMethod]
+    public void SelectorItems_CanBeReorderedWithUndoRedo()
+    {
+        foreach ((string selectorType, string itemType) in new[]
+        {
+            ("ComboBox", "ComboBoxItem"),
+            ("ListBox", "ListBoxItem"),
+        })
+        {
+            string markup = $"<{selectorType}><{itemType} Content='First' /><{itemType} Content='Second' /></{selectorType}>";
+            AxamlDesignerSession session = new();
+            session.Load(markup);
+            session.SelectNode(session.Root!.Children[1]);
+
+            Assert.IsTrue(session.CanMoveSelectedControlEarlier, selectorType);
+            Assert.IsTrue(session.MoveSelectedControl(-1), selectorType);
+            CollectionAssert.AreEqual(
+                new[] { "Second", "First" },
+                session.Root!.Children.Select(static item => item.Text).ToArray(),
+                selectorType);
+            string reordered = session.Markup;
+            Assert.IsTrue(session.Undo(), selectorType);
+            Assert.AreEqual(markup, session.Markup, selectorType);
+            Assert.IsTrue(session.Redo(), selectorType);
+            Assert.AreEqual(reordered, session.Markup, selectorType);
+        }
+    }
+
+    [TestMethod]
+    public void ItemsControlItems_CanBeAddedRemovedAndUndone()
+    {
+        AxamlDesignerSession session = new();
+        session.Load("<ItemsControl />");
+        session.SelectNode(session.Root);
+
+        Assert.IsTrue(session.AddChildControl("TextBlock"));
+        Assert.AreEqual("TextBlock", session.Root!.Children.Single().TypeName);
+        session.SelectNode(session.Root.Children.Single());
+        Assert.IsTrue(session.CanRemoveSelectedControl);
+        Assert.IsTrue(session.RemoveSelectedControl());
+        Assert.AreEqual(0, session.Root!.Children.Count);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("TextBlock", session.Root!.Children.Single().TypeName);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("<ItemsControl />", session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("TextBlock", session.Root!.Children.Single().TypeName);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(0, session.Root!.Children.Count);
+
+        const string reorderMarkup = "<ItemsControl><TextBlock Text='First' /><Label Content='Second' /></ItemsControl>";
+        AxamlDesignerSession reordered = new();
+        reordered.Load(reorderMarkup);
+        reordered.SelectNode(reordered.Root!.Children[1]);
+        Assert.IsTrue(reordered.CanMoveSelectedControlEarlier);
+        Assert.IsTrue(reordered.MoveSelectedControl(-1));
+        CollectionAssert.AreEqual(
+            new[] { "Second", "First" },
+            reordered.Root!.Children.Select(static item => item.Text).ToArray());
+        Assert.IsTrue(reordered.Undo());
+        Assert.AreEqual(reorderMarkup, reordered.Markup);
+        Assert.IsTrue(reordered.Redo());
+        CollectionAssert.AreEqual(
+            new[] { "Second", "First" },
+            reordered.Root!.Children.Select(static item => item.Text).ToArray());
     }
 
     [TestMethod]

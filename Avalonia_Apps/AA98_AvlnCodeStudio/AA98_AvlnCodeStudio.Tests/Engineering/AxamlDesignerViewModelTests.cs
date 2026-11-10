@@ -804,6 +804,23 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task TextBlockFontFamily_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<TextBlock xmlns='https://github.com/avaloniaui' FontFamily='Arial' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var fontFamily = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "FontFamily");
+
+        Assert.IsTrue(fontFamily.TrySetValue("DejaVu Sans"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("DejaVu Sans", viewModel.PreviewRoot!.Properties["FontFamily"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Arial", viewModel.PreviewRoot!.Properties["FontFamily"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("DejaVu Sans", viewModel.PreviewRoot!.Properties["FontFamily"]);
+    }
+
+    [TestMethod]
     public async Task LabelTextLayout_IsEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();
@@ -2051,19 +2068,26 @@ public sealed class AxamlDesignerViewModelTests
 
         Assert.AreEqual("ToolTip", viewModel.SelectedNode!.TypeName);
         Assert.IsTrue(viewModel.SelectedNode.CanAppendChildren);
+        viewModel.AddBorderCommand.Execute(null);
+        AxamlPreviewNode border = viewModel.SelectedNode!.Children.Single();
+        viewModel.SelectedNode = border;
         viewModel.AddStackPanelCommand.Execute(null);
         AxamlPreviewNode stackPanel = viewModel.SelectedNode!.Children.Single();
         viewModel.SelectedNode = stackPanel;
         viewModel.AddTextBlockCommand.Execute(null);
         viewModel.AddTextBlockCommand.Execute(null);
-        Assert.AreEqual(2, viewModel.PreviewRoot!.Children.Single().Children.Single().Children.Single().Children.Count);
+        Assert.AreEqual(
+            2,
+            viewModel.PreviewRoot!.Children.Single().Children.Single().Children.Single().Children.Single().Children.Count);
 
         viewModel.UndoCommand.Execute(null);
-        Assert.AreEqual(1, viewModel.PreviewRoot!.Children.Single().Children.Single().Children.Single().Children.Count);
+        Assert.AreEqual(
+            1,
+            viewModel.PreviewRoot!.Children.Single().Children.Single().Children.Single().Children.Single().Children.Count);
         viewModel.RedoCommand.Execute(null);
         Assert.AreEqual(
             2,
-            viewModel.PreviewRoot!.Children.Single().Children.Single().Children.Single().Children.Count);
+            viewModel.PreviewRoot!.Children.Single().Children.Single().Children.Single().Children.Single().Children.Count);
     }
 
     [TestMethod]
@@ -2521,7 +2545,7 @@ public sealed class AxamlDesignerViewModelTests
             "<Window xmlns='https://github.com/avaloniaui' xmlns:custom='using:Sample'><TextBox /><custom:SpecialEditor /></Window>");
 
         viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
-        StringAssert.Contains(viewModel.SelectedCapabilityText, "Editable: AcceptsReturn, AcceptsTab, Background, BorderBrush, BorderThickness, ClipToBounds, CornerRadius, FlowDirection, FontSize, FontStyle, FontWeight, Foreground, Height, HorizontalAlignment, HorizontalContentAlignment, IsReadOnly, IsVisible, LineHeight, Margin, MaxHeight, MaxLength, MaxLines, MaxWidth, MinHeight, MinLines, MinWidth, Opacity, Padding, PlaceholderForeground, PlaceholderText, Text, TextAlignment, TextWrapping, UseFloatingPlaceholder, UseLayoutRounding, VerticalAlignment, VerticalContentAlignment, Width");
+        StringAssert.Contains(viewModel.SelectedCapabilityText, "Editable: AcceptsReturn, AcceptsTab, Background, BorderBrush, BorderThickness, ClipToBounds, CornerRadius, FlowDirection, FontFamily, FontSize, FontStyle, FontWeight, Foreground, Height, HorizontalAlignment, HorizontalContentAlignment, IsReadOnly, IsVisible, LineHeight, Margin, MaxHeight, MaxLength, MaxLines, MaxWidth, MinHeight, MinLines, MinWidth, Opacity, Padding, PlaceholderForeground, PlaceholderText, Text, TextAlignment, TextWrapping, UseFloatingPlaceholder, UseLayoutRounding, VerticalAlignment, VerticalContentAlignment, Width");
         StringAssert.Contains(viewModel.SelectedCapabilityText, "Binding analysis: Text");
         StringAssert.Contains(viewModel.SelectedCapabilityText, "MVVM generation: supported for named controls");
 

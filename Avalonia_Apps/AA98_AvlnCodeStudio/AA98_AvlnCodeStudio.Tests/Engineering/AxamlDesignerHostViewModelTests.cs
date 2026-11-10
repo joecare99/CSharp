@@ -336,6 +336,10 @@ public sealed class AxamlDesignerHostViewModelTests
             Assert.IsTrue(viewModel.WorkspaceFileChangeService.Undo());
             Assert.AreEqual(markup, File.ReadAllText(axamlPath));
             Assert.IsFalse(File.ReadAllText(viewModelPath).Contains("_caption", StringComparison.Ordinal));
+            Assert.IsTrue(viewModel.WorkspaceFileChangeService.Redo());
+            StringAssert.Contains(File.ReadAllText(axamlPath), "{Binding Caption, Mode=TwoWay}");
+            StringAssert.Contains(File.ReadAllText(viewModelPath), "private string _caption = string.Empty;");
+            Assert.IsFalse(viewModel.IsDirty);
         }
         finally
         {

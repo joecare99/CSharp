@@ -266,6 +266,100 @@ public sealed class AxamlControlCatalogTests
     }
 
     [TestMethod]
+    public void Selectors_ExposeStaticItemsAndRejectDynamicSources()
+    {
+        AxamlPreviewService service = new();
+        foreach ((string selectorType, string itemType) in new[]
+        {
+            ("ComboBox", "ComboBoxItem"),
+            ("ListBox", "ListBoxItem"),
+        })
+        {
+            string markup = $"<{selectorType} xmlns='https://github.com/avaloniaui'><{itemType} Content='Local choice' /></{selectorType}>";
+            AxamlPreviewNode selector = service.Parse(markup);
+            AxamlPreviewNode item = selector.Children.Single();
+            AxamlControlCapability capability = AxamlControlCatalog.All.Single(
+                control => control.TypeName == selectorType);
+            AxamlControlCapability itemCapability = AxamlControlCatalog.All.Single(
+                control => control.TypeName == itemType);
+
+            Assert.IsTrue(selector.IsSupported, selectorType);
+            Assert.IsTrue(selector.CanAppendChildren, selectorType);
+            Assert.IsTrue(capability.AllowsSafeChildRemoval, selectorType);
+            Assert.IsTrue(capability.AllowedChildTypes.Contains(itemType), selectorType);
+            Assert.IsTrue(itemCapability.EditableProperties.Contains("Content"), itemType);
+            Assert.AreEqual("Local choice", AxamlPropertyValueValidator.Describe(item, "Content").Value, itemType);
+            Assert.IsFalse(AxamlPropertyValueValidator.Describe(item, "Content").IsReadOnly, itemType);
+
+            string withAddedItem = service.InsertChildControl(
+                $"<{selectorType} />",
+                service.Parse($"<{selectorType} />"),
+                itemType);
+            Assert.IsTrue(service.Parse(withAddedItem).IsSupported, selectorType);
+            Assert.AreEqual(itemType, service.Parse(withAddedItem).Children.Single().TypeName);
+        }
+
+        string[] unsupportedSelectors =
+        [
+            "<ComboBox ItemsSource='{Binding Choices}' />",
+            "<ComboBox ItemTemplate='{StaticResource ChoiceTemplate}' />",
+            "<ComboBox SelectedItem='{Binding Choice}' />",
+            "<ComboBox><ComboBox.Items><ComboBoxItem Content='Choice' /></ComboBox.Items></ComboBox>",
+            "<ComboBox><ListBoxItem Content='Wrong item type' /></ComboBox>",
+            "<ListBox DisplayMemberBinding='{Binding Name}' />",
+            "<ListBox><ComboBoxItem Content='Wrong item type' /></ListBox>",
+            "<ListBox><Button Content='Interactive item' /></ListBox>",
+        ];
+        foreach (string unsupported in unsupportedSelectors)
+        {
+            Assert.IsFalse(service.Parse(unsupported).IsSupported, unsupported);
+        }
+    }
+
+    [TestMethod]
+    public void ItemsControl_ExposesStaticTextItemsAndRejectsDynamicContent()
+    {
+        const string markup = """
+            <ItemsControl xmlns="https://github.com/avaloniaui">
+              <TextBlock Text="First" />
+              <Label Content="Second" />
+            </ItemsControl>
+            """;
+        AxamlPreviewService service = new();
+        AxamlPreviewNode items = service.Parse(markup);
+        AxamlControlCapability capability = AxamlControlCatalog.All.Single(
+            static control => control.TypeName == "ItemsControl");
+
+        Assert.IsTrue(items.IsSupported);
+        Assert.IsTrue(items.CanAppendChildren);
+        Assert.IsTrue(capability.AllowsSafeChildRemoval);
+        CollectionAssert.AreEqual(new[] { "Label", "TextBlock" }, capability.AllowedChildTypes.OrderBy(
+            static typeName => typeName, StringComparer.Ordinal).ToArray());
+        CollectionAssert.AreEqual(new[] { "First", "Second" }, items.Children.Select(
+            static child => child.Text).ToArray());
+
+        string withAddedItem = service.InsertChildControl(
+            "<ItemsControl />",
+            service.Parse("<ItemsControl />"),
+            "TextBlock");
+        Assert.IsTrue(service.Parse(withAddedItem).IsSupported);
+        Assert.AreEqual("TextBlock", service.Parse(withAddedItem).Children.Single().TypeName);
+
+        string[] unsupportedItems =
+        [
+            "<ItemsControl ItemsSource='{Binding Entries}' />",
+            "<ItemsControl ItemTemplate='{StaticResource EntryTemplate}' />",
+            "<ItemsControl><ItemsControl.Items><TextBlock Text='Choice' /></ItemsControl.Items></ItemsControl>",
+            "<ItemsControl><Button Content='Interactive item' /></ItemsControl>",
+            "<ItemsControl><ListBoxItem Content='Wrong item type' /></ItemsControl>",
+        ];
+        foreach (string unsupported in unsupportedItems)
+        {
+            Assert.IsFalse(service.Parse(unsupported).IsSupported, unsupported);
+        }
+    }
+
+    [TestMethod]
     public void TabControl_ExposesSafeTabsAndRestrictsChildTypes()
     {
         const string markup = """
@@ -296,6 +390,56 @@ public sealed class AxamlControlCatalogTests
         Assert.ThrowsExactly<InvalidOperationException>(
             () => service.InsertChildControl(markup, tabs, "Button"));
         Assert.IsFalse(service.Parse("<TabControl><TextBlock /></TabControl>").IsSupported);
+    }
+
+    [TestMethod]
+    public void TreeView_ExposesStaticHierarchyAndRejectsDynamicItems()
+    {
+        const string markup = """
+            <TreeView xmlns="https://github.com/avaloniaui">
+              <TreeViewItem Header="Project" IsExpanded="True">
+                <TreeViewItem Header="src">
+                  <TreeViewItem Header="Main.cs" />
+                </TreeViewItem>
+              </TreeViewItem>
+            </TreeView>
+            """;
+        AxamlPreviewService service = new();
+        AxamlPreviewNode tree = service.Parse(markup);
+        AxamlPreviewNode project = tree.Children.Single();
+        AxamlPreviewNode sourceFolder = project.Children.Single();
+        AxamlControlCapability treeCapability = AxamlControlCatalog.All.Single(
+            static item => item.TypeName == "TreeView");
+        AxamlControlCapability itemCapability = AxamlControlCatalog.All.Single(
+            static item => item.TypeName == "TreeViewItem");
+
+        Assert.IsTrue(tree.IsSupported);
+        Assert.IsTrue(tree.CanAppendChildren);
+        Assert.IsTrue(treeCapability.AllowsSafeChildRemoval);
+        Assert.IsTrue(project.CanAppendChildren);
+        Assert.IsTrue(itemCapability.AllowsSafeChildRemoval);
+        Assert.AreEqual("TreeViewItem", treeCapability.AllowedChildTypes.Single());
+        Assert.AreEqual("TreeViewItem", itemCapability.AllowedChildTypes.Single());
+        Assert.AreEqual("Project", AxamlPropertyValueValidator.Describe(project, "Header").Value);
+        Assert.AreEqual("True", AxamlPropertyValueValidator.Describe(project, "IsExpanded").Value);
+        Assert.AreEqual("False", AxamlPropertyValueValidator.Describe(
+            service.Parse("<TreeViewItem />"),
+            "IsExpanded").Value);
+
+        string withRootItem = service.InsertChildControl("<TreeView />", service.Parse("<TreeView />"), "TreeViewItem");
+        AxamlPreviewNode parsedWithRootItem = service.Parse(withRootItem);
+        Assert.AreEqual(1, parsedWithRootItem.Children.Count);
+        string withNestedItem = service.InsertChildControl(withRootItem, parsedWithRootItem.Children.Single(), "TreeViewItem");
+        Assert.AreEqual(1, service.Parse(withNestedItem).Children.Single().Children.Count);
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => service.InsertChildControl(markup, tree, "Button"));
+        Assert.IsFalse(service.Parse("<TreeView ItemsSource='{Binding Nodes}' />").IsSupported);
+        Assert.IsFalse(service.Parse("<TreeViewItem ItemsSource='{Binding Children}' />").IsSupported);
+        Assert.IsFalse(service.Parse("<TreeView><Button /></TreeView>").IsSupported);
+        Assert.IsFalse(service.Parse("<TreeViewItem><TextBlock /></TreeViewItem>").IsSupported);
+        Assert.IsFalse(service.Parse("<TreeView><!-- keep --><TreeViewItem Header='Project' /></TreeView>").IsSupported);
+        Assert.IsFalse(service.Parse(
+            "<TreeView><TreeView.Items><TreeViewItem Header='Project' /></TreeView.Items></TreeView>").IsSupported);
     }
 
     [TestMethod]
@@ -477,6 +621,22 @@ public sealed class AxamlControlCatalogTests
             .IsSupported);
         Assert.IsFalse(service.Parse(
             "<Button><Button.ToolTip><ToolTip><StackPanel><TextBlock Text='{Binding Help}' /></StackPanel></ToolTip></Button.ToolTip></Button>")
+            .IsSupported);
+        AxamlPreviewNode borderedToolTip = service.Parse(
+            "<Button><Button.ToolTip><ToolTip><Border Padding='4' BorderBrush='Blue' CornerRadius='2'><StackPanel Spacing='4'><TextBlock Text='Title' /><TextBlock Text='Help' /></StackPanel></Border></ToolTip></Button.ToolTip></Button>");
+        Assert.IsTrue(borderedToolTip.IsSupported);
+        Assert.AreEqual("Border", borderedToolTip.Children.Single().Children.Single().TypeName);
+        Assert.AreEqual(
+            2,
+            borderedToolTip.Children.Single().Children.Single().Children.Single().Children.Count);
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ToolTip><ToolTip><Border Padding='{Binding Padding}'><TextBlock Text='Help' /></Border></ToolTip></Button.ToolTip></Button>")
+            .IsSupported);
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ToolTip><ToolTip><Border><Button /></Border></ToolTip></Button.ToolTip></Button>")
+            .IsSupported);
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ToolTip><ToolTip><Border><TextBlock /><TextBlock /></Border></ToolTip></Button.ToolTip></Button>")
             .IsSupported);
         Assert.ThrowsExactly<InvalidOperationException>(
             () => service.InsertToolTip("<ToolTip />", service.Parse("<ToolTip />")));
@@ -806,6 +966,31 @@ public sealed class AxamlControlCatalogTests
     }
 
     [TestMethod]
+    public void TextControls_ExposeSafeLiteralFontFamily()
+    {
+        AxamlPreviewService service = new();
+        foreach (AxamlControlCapability capability in AxamlControlCatalog.All.Where(
+            static item => item.EditableProperties.Contains("FontSize")))
+        {
+            string controlType = capability.TypeName;
+            AxamlPreviewNode unset = service.Parse($"<{controlType} xmlns='https://github.com/avaloniaui' />");
+            AxamlPropertyDescriptor fontFamily = AxamlPropertyValueValidator.Describe(unset, "FontFamily");
+
+            Assert.IsTrue(capability.EditableProperties.Contains("FontFamily"), controlType);
+            Assert.AreEqual(AxamlPropertyEditorKind.Text, fontFamily.EditorKind, controlType);
+            Assert.AreEqual(string.Empty, fontFamily.Value, controlType);
+            Assert.IsNull(fontFamily.ValidationError, controlType);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(controlType, "FontFamily", "DejaVu Sans"), controlType);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(controlType, "FontFamily", "avares://Assets#Injected"), controlType);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(controlType, "FontFamily", "{DynamicResource Font}"), controlType);
+
+            AxamlPreviewNode bound = service.Parse(
+                $"<{controlType} xmlns='https://github.com/avaloniaui' FontFamily='{{Binding Family}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "FontFamily").IsReadOnly, controlType);
+        }
+    }
+
+    [TestMethod]
     public void TextBoxLineLimits_AreNonNegativeIntegerProperties()
     {
         AxamlControlCapability capability = AxamlControlCatalog.All.Single(static item => item.TypeName == "TextBox");
@@ -966,7 +1151,7 @@ public sealed class AxamlControlCatalogTests
     }
 
     [TestMethod]
-    public void Catalog_OnlyEnablesAppendingForExplicitlySupportedLayoutPanels()
+    public void Catalog_OnlyEnablesAppendingForExplicitlySupportedContainers()
     {
         string[] actual = AxamlControlCatalog.All
             .Where(static capability => capability.AllowsAppendingChildren)
@@ -975,12 +1160,12 @@ public sealed class AxamlControlCatalogTests
             .ToArray();
 
         CollectionAssert.AreEqual(
-            new[] { "ContextMenu", "DockPanel", "Menu", "MenuItem", "StackPanel", "TabControl", "TabItem", "ToolTip", "UniformGrid", "WrapPanel" },
+            new[] { "ComboBox", "ContextMenu", "DockPanel", "ItemsControl", "ListBox", "Menu", "MenuItem", "StackPanel", "TabControl", "TabItem", "ToolTip", "TreeView", "TreeViewItem", "UniformGrid", "WrapPanel" },
             actual);
     }
 
     [TestMethod]
-    public void Catalog_OnlyEnablesSafeRemovalForSupportedSingleChildContainers()
+    public void Catalog_OnlyEnablesSafeRemovalForSupportedContainers()
     {
         string[] actual = AxamlControlCatalog.All
             .Where(static capability => capability.AllowsSafeChildRemoval)
@@ -989,7 +1174,7 @@ public sealed class AxamlControlCatalogTests
             .ToArray();
 
         CollectionAssert.AreEqual(
-            new[] { "Border", "ContentControl", "Expander", "GroupBox", "ScrollViewer", "TabItem", "ToolTip", "Viewbox" },
+            new[] { "Border", "ComboBox", "ContentControl", "Expander", "GroupBox", "ItemsControl", "ListBox", "ScrollViewer", "TabItem", "ToolTip", "TreeView", "TreeViewItem", "Viewbox" },
             actual);
     }
 }
