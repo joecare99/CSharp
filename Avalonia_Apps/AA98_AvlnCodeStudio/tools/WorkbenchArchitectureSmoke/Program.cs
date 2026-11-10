@@ -11,6 +11,7 @@ using AA98_AxamlDesigner.Host.Commands;
 using AA98_AxamlDesigner.Host.ViewModels;
 using AA98_AxamlDesigner.Host.Views;
 using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Automation.Peers;
 using Avalonia.Automation.Provider;
 using Avalonia.Controls;
@@ -223,6 +224,7 @@ internal static class Program
         Window window = desktop.MainWindow!;
         VerifyWorkspaceSidebarVisibility(window, workbench);
         await workbench.OpenWorkspaceFileAsync(Path.Combine(fixture, "Sample.csproj"));
+        await VerifyProjectWorkflowAsync(window, workbench);
         ProjectExplorerViewModel explorer = workbench.ProjectExplorer!;
         ProjectExplorerItemViewModel first = FindItem(explorer.RootItems, Path.Combine(fixture, "First.axaml"));
         ProjectExplorerItemViewModel second = FindItem(explorer.RootItems, Path.Combine(fixture, "Second.axaml"));
@@ -264,6 +266,49 @@ internal static class Program
             Expander group = palette.GetVisualDescendants().OfType<Expander>()
                 .Single(expander => string.Equals(expander.Header?.ToString(), groupHeader, StringComparison.Ordinal));
             group.IsExpanded = true;
+        }
+
+        static async Task VerifyProjectWorkflowAsync(Window window, MainWindowViewModel workbench)
+        {
+            TabItem projectTab = window.GetVisualDescendants().OfType<TabItem>()
+                .First(item => string.Equals(item.Header?.ToString(), workbench.ProjectWorkflowTabText, StringComparison.Ordinal));
+            TabControl tabs = projectTab.GetVisualAncestors().OfType<TabControl>().First();
+            object? previousTab = tabs.SelectedItem;
+            tabs.SelectedItem = projectTab;
+            await WaitUntilAsync(() => window.GetVisualDescendants().OfType<ComboBox>()
+                .Any(control => AutomationProperties.GetName(control) == workbench.ProjectWorkflowProjectText),
+                "project workflow controls");
+            ComboBox projectPicker = window.GetVisualDescendants().OfType<ComboBox>()
+                .Single(control => AutomationProperties.GetName(control) == workbench.ProjectWorkflowProjectText);
+            TextBox configuration = window.GetVisualDescendants().OfType<TextBox>()
+                .Single(control => AutomationProperties.GetName(control) == workbench.ProjectWorkflowConfigurationText);
+            Button inspect = window.GetVisualDescendants().OfType<Button>()
+                .Single(control => string.Equals(control.Content?.ToString(), workbench.InspectProjectCommandText, StringComparison.Ordinal));
+            Button debug = window.GetVisualDescendants().OfType<Button>()
+                .Single(control => string.Equals(control.Content?.ToString(), workbench.DebugSelectedProjectCommandText, StringComparison.Ordinal));
+
+            await WaitUntilAsync(() => ReferenceEquals(inspect.Command, workbench.InspectSelectedProjectCommand)
+                && ReferenceEquals(debug.Command, workbench.DebugSelectedProjectCommand), "bound project workflow commands");
+            Check(workbench.SelectedWorkflowProject is null && !inspect.Command!.CanExecute(null),
+                $"A project was selected or inspected without an explicit user action: "
+                + $"selected={workbench.SelectedWorkflowProject?.ProjectPath ?? "<null>"}, "
+                + $"index={projectPicker.SelectedIndex}, inspectCanExecute={inspect.Command!.CanExecute(null)}.");
+            projectPicker.SelectedItem = workbench.Workspace!.Projects[0];
+            await WaitUntilAsync(() => inspect.Command!.CanExecute(null), "enabled project inspection");
+            Check(ReferenceEquals(projectPicker.SelectedItem, workbench.SelectedWorkflowProject)
+                && ReferenceEquals(inspect.Command, workbench.InspectSelectedProjectCommand),
+                "Project selection and inspection command were not bound to the workbench.");
+            await workbench.InspectSelectedProjectCommand.ExecuteAsync(null);
+            Check(workbench.SelectedWorkflowFramework == "net10.0"
+                && workbench.ProjectInspection is { CanDebug: false }
+                && workbench.ProjectWorkflowStatus.Contains("not executable", StringComparison.Ordinal)
+                && !debug.Command!.CanExecute(null),
+                $"A library was not inspected safely: {workbench.ProjectWorkflowStatus}");
+            configuration.Text = "Release";
+            await WaitUntilAsync(() => workbench.ProjectInspection is null, "project context invalidation");
+            Check(workbench.WorkflowConfiguration == "Release" && !debug.Command!.CanExecute(null),
+                "Changing the project configuration did not invalidate the inspected target.");
+            tabs.SelectedItem = previousTab;
         }
 
         static void VerifyWorkspaceSidebarVisibility(Window window, MainWindowViewModel workbench)

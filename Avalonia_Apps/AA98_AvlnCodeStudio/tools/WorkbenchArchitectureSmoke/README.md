@@ -23,6 +23,8 @@ button, standalone review/undo, and the MCP screenshot source and commands,
 including UI-thread dispatch and cancellation of queued commands. Its UI
 actions are programmatic; physical keyboard and screen-reader acceptance
 remains separate.
+The Project tab also exercises explicit project selection, MSBuild inspection,
+non-executable library handling and configuration-change invalidation.
 ContextMenu and ToolTip property elements on supported controls are checked in
 the real preview as closed, inert inline content; ToolTip also renders a
 validated Border/StackPanel composition with multiple literal TextBlocks.
