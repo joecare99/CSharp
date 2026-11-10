@@ -79,6 +79,7 @@ public static class AxamlPropertyValueValidator
                 "GroupName" when node.TypeName == "RadioButton" => string.Empty,
                 "Margin" => "0",
                 "ClipToBounds" => "False",
+                "IsEnabled" => "True",
                 "IsVisible" => "True",
                 "UseFloatingPlaceholder" when node.TypeName == "TextBox" => "False",
                 "Orientation" when node.TypeName is "ProgressBar" or "Slider" => "Horizontal",
@@ -99,6 +100,10 @@ public static class AxamlPropertyValueValidator
                 "TextTrimming" when node.TypeName == "TextBlock" => "None",
                 "TextWrapping" when node.TypeName == "TextBlock" => "Wrap",
                 "TextWrapping" when node.TypeName == "TextBox" => "NoWrap",
+                "StartPoint" when node.TypeName == "Line" => "0,0",
+                "EndPoint" when node.TypeName == "Line" => "80,40",
+                "Points" when node.TypeName == "Polygon" => "40,0 80,60 0,60",
+                "Points" when node.TypeName == "Polyline" => "0,0 80,40",
                 "IsExpanded" when node.TypeName == "TreeViewItem" => "False",
                 "SelectedIndex" when node.TypeName is "ComboBox" or "ListBox" or "TabControl" => "-1",
                 "DayVisible" or "MonthVisible" or "YearVisible" when node.TypeName == "DatePicker" => "True",
@@ -226,6 +231,16 @@ public static class AxamlPropertyValueValidator
             return "Enter a non-negative whole number.";
         }
 
+        if (value.Length == 0 && controlType == "Line" && propertyName is "StartPoint" or "EndPoint")
+        {
+            return "Enter two finite point coordinates separated by a comma.";
+        }
+
+        if (value.Length == 0 && (controlType is "Polyline" or "Polygon") && propertyName == "Points")
+        {
+            return "Enter a list of finite point coordinates.";
+        }
+
         if (controlType is "ComboBox" or "ListBox" or "TabControl" && propertyName == "SelectedIndex")
         {
             return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int selectedIndex)
@@ -331,7 +346,7 @@ public static class AxamlPropertyValueValidator
 
         if (propertyName is "IsExpanded" or "IsChecked" or "IsIndeterminate" or "IsDirectionReversed" or "IsReadOnly"
             or "IsSnapToTickEnabled" or "IsThreeState" or "ShowProgressText"
-            or "ShowGridLines" or "ClipToBounds" or "IsVisible" or "IsTodayHighlighted"
+            or "ShowGridLines" or "ClipToBounds" or "IsEnabled" or "IsVisible" or "IsTodayHighlighted"
             or "AcceptsReturn" or "AcceptsTab" or "UseFloatingPlaceholder" or "UseLayoutRounding" or "IsCancel" or "IsDefault" or "UseSeconds"
             or "DayVisible" or "MonthVisible" or "YearVisible" or "IsTextCompletionEnabled"
             or "IsAccentColorsVisible" or "IsAlphaEnabled" or "IsAlphaVisible"
@@ -416,7 +431,7 @@ public static class AxamlPropertyValueValidator
                 : "Enter a non-negative whole number.";
         }
 
-        if (propertyName is "Width" or "Height" or "MinWidth" or "MaxWidth" or "MinHeight" or "MaxHeight"
+        if (propertyName is "Width" or "Height" or "MinWidth" or "MaxWidth" or "MinHeight" or "MaxHeight" or "StrokeThickness"
             or "FontSize" or "Spacing" or "ItemSpacing" or "LineSpacing" or "ItemWidth" or "ItemHeight"
             or "HorizontalSpacing" or "VerticalSpacing" or "RowSpacing" or "ColumnSpacing")
         {
@@ -470,7 +485,7 @@ public static class AxamlPropertyValueValidator
                     : "Enter one, two, or four finite, non-negative numbers separated by commas.";
         }
 
-        if (propertyName is "Background" or "BorderBrush" or "Foreground" or "PlaceholderForeground")
+        if (propertyName is "Background" or "BorderBrush" or "Fill" or "Foreground" or "PlaceholderForeground" or "Stroke")
         {
             return IsSimpleBrush(value)
                 ? null
@@ -484,6 +499,22 @@ public static class AxamlPropertyValueValidator
                 : "Enter a plain font family name using letters, numbers, spaces, dots, underscores or hyphens.";
         }
 
+        if (controlType == "Line" && propertyName is "StartPoint" or "EndPoint")
+        {
+            return IsSafePoint(value)
+                ? null
+                : "Enter two finite point coordinates separated by a comma; each coordinate must be between -10000 and 10000.";
+        }
+
+        if ((controlType is "Polyline" or "Polygon") && propertyName == "Points")
+        {
+            return IsSafePointList(controlType, value)
+                ? null
+                : controlType == "Polygon"
+                    ? "Enter 3 to 128 finite coordinate pairs separated by spaces; each coordinate must be between -10000 and 10000."
+                    : "Enter 2 to 128 finite coordinate pairs separated by spaces; each coordinate must be between -10000 and 10000.";
+        }
+
         return null;
     }
 
@@ -491,7 +522,7 @@ public static class AxamlPropertyValueValidator
     {
         if (propertyName is "IsExpanded" or "IsChecked" or "IsIndeterminate" or "IsDirectionReversed" or "IsReadOnly"
             or "IsSnapToTickEnabled" or "IsThreeState" or "ShowProgressText"
-            or "ShowGridLines" or "ClipToBounds" or "IsVisible" or "IsTodayHighlighted"
+            or "ShowGridLines" or "ClipToBounds" or "IsEnabled" or "IsVisible" or "IsTodayHighlighted"
             or "AcceptsReturn" or "AcceptsTab" or "UseFloatingPlaceholder" or "UseLayoutRounding" or "IsCancel" or "IsDefault"
             or "DayVisible" or "MonthVisible" or "YearVisible" or "IsTextCompletionEnabled"
             or "IsAccentColorsVisible" or "IsAlphaEnabled" or "IsAlphaVisible"
@@ -543,7 +574,7 @@ public static class AxamlPropertyValueValidator
         }
 
         if (propertyName is "Width" or "Height" or "MinWidth" or "MaxWidth" or "MinHeight" or "MaxHeight" or "MinimumPrefixLength"
-            or "FontSize" or "LineHeight" or "Opacity" or "Spacing" or "ItemSpacing" or "LineSpacing" or "ItemWidth" or "ItemHeight"
+            or "FontSize" or "LineHeight" or "Opacity" or "Spacing" or "StrokeThickness" or "ItemSpacing" or "LineSpacing" or "ItemWidth" or "ItemHeight"
             or "HorizontalSpacing" or "VerticalSpacing" or "RowSpacing" or "ColumnSpacing"
             or "Rows" or "Columns" or "FirstColumn" or "MaxLength" or "MaxLines" or "MinLines"
             || controlType == "Slider" && propertyName == "TickFrequency"
@@ -684,6 +715,27 @@ public static class AxamlPropertyValueValidator
             && value.All(static character =>
                 char.IsLetterOrDigit(character)
                 || character is ' ' or '.' or '_' or '-');
+    }
+
+    private static bool IsSafePoint(string value)
+    {
+        string[] coordinates = value.Split(',', StringSplitOptions.TrimEntries);
+        return value.Length <= 64
+            && coordinates.Length == 2
+            && coordinates.All(static coordinate =>
+                double.TryParse(coordinate, NumberStyles.Float, CultureInfo.InvariantCulture, out double number)
+                && double.IsFinite(number)
+                && number is >= -10000 and <= 10000);
+    }
+
+    private static bool IsSafePointList(string controlType, string value)
+    {
+        string[] points = value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+        int minimumCount = controlType == "Polygon" ? 3 : 2;
+        return value.Length <= 2048
+            && points.Length >= minimumCount
+            && points.Length <= 128
+            && points.All(IsSafePoint);
     }
 
     internal static bool IsFormatProperty(string controlType, string propertyName)
