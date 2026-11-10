@@ -69,6 +69,38 @@ internal static class Program
             File.WriteAllText(Path.Combine(fixture, "ControlPreviews.axaml"),
                 "<StackPanel xmlns=\"https://github.com/avaloniaui\">"
                 + "<ComboBox PlaceholderText=\"Choose an option\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Bottom\" Background=\"White\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"4\" FontSize=\"14\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"Black\" Padding=\"3\" />"
+                + "<ComboBox PlaceholderText=\"Selector selection\" SelectedIndex=\"2\"><ComboBoxItem Content=\"First choice\" /><ComboBoxItem>Second choice</ComboBoxItem><ComboBoxItem><ComboBoxItem.Content><TextBlock Text=\"Property content\" /></ComboBoxItem.Content></ComboBoxItem></ComboBox>"
+                + "<ComboBox PlaceholderText=\"Selector invalid\" SelectedIndex=\"-2\"><ComboBoxItem>First choice</ComboBoxItem></ComboBox>"
+                + "<ComboBox PlaceholderText=\"Selector bound\" SelectedIndex=\"{Binding SelectedIndex}\"><ComboBoxItem Content=\"First choice\" /><ComboBoxItem Content=\"Second choice\" /></ComboBox>"
+                + "<ComboBox PlaceholderText=\"Selector out of range\" SelectedIndex=\"5\"><ComboBoxItem Content=\"First choice\" /></ComboBox>"
+                + "<ComboBox PlaceholderText=\"Selector markup values\" SelectedIndex=\"2\"><ComboBoxItem Content=\"{Binding ItemText}\" /><ComboBoxItem Content=\"{DynamicResource ItemText}\" /><ComboBoxItem Content=\"{StaticResource ItemText}\" /></ComboBox>"
+                + "<ComboBox PlaceholderText=\"Selector empty item\" SelectedIndex=\"0\"><ComboBoxItem Content=\"\" /></ComboBox>"
+                + "<ComboBox PlaceholderText=\"Selector complex content\" SelectedIndex=\"0\"><ComboBoxItem><ComboBoxItem.Content><StackPanel><TextBlock Text=\"Complex first\" /><TextBlock Text=\"Complex second\" /></StackPanel></ComboBoxItem.Content></ComboBoxItem></ComboBox>"
+                + "<DatePicker SelectedDate=\"2028-02-29\" DayVisible=\"False\" MonthVisible=\"True\" YearVisible=\"False\" DayFormat=\"dd\" MonthFormat=\"MMM\" YearFormat=\"yy\" MinYear=\"2020-01-01\" MaxYear=\"2030-12-31\" Width=\"101\" />"
+                + "<DatePicker SelectedDate=\"2028-02-30\" DayVisible=\"sometimes\" DayFormat=\"%\" MonthFormat=\"%\" YearFormat=\"%\" MinYear=\"2030-12-31\" MaxYear=\"2020-01-01\" Width=\"102\" />"
+                + "<DatePicker SelectedDate=\"{Binding StartDate}\" DayVisible=\"{Binding ShowDay}\" DayFormat=\"{Binding DayFormat}\" MonthFormat=\"{Binding MonthFormat}\" YearFormat=\"{Binding YearFormat}\" MinYear=\"{Binding MinYear}\" MaxYear=\"{Binding MaxYear}\" Width=\"103\" />"
+                + "<DatePicker SelectedDate=\"2040-01-01\" MinYear=\"2020-01-01\" MaxYear=\"2030-12-31\" Width=\"104\" />"
+                + "<Calendar SelectedDate=\"2028-02-29\" DisplayDate=\"2028-02-01\" DisplayDateStart=\"2028-01-01\" DisplayDateEnd=\"2028-12-31\" SelectionMode=\"SingleDate\" FirstDayOfWeek=\"Sunday\" IsTodayHighlighted=\"False\" Width=\"108\" />"
+                + "<Calendar SelectedDate=\"2028-02-30\" DisplayDateStart=\"2030-01-01\" DisplayDateEnd=\"2020-12-31\" SelectionMode=\"SingleRange\" FirstDayOfWeek=\"Funday\" IsTodayHighlighted=\"sometimes\" Width=\"109\" />"
+                + "<Calendar SelectedDate=\"{Binding Date}\" DisplayDate=\"{Binding DisplayDate}\" DisplayDateStart=\"{Binding Start}\" DisplayDateEnd=\"{Binding End}\" SelectionMode=\"{Binding Mode}\" FirstDayOfWeek=\"{Binding FirstDay}\" IsTodayHighlighted=\"{Binding Highlight}\" Width=\"110\" />"
+                + "<Calendar SelectedDate=\"2040-01-01\" DisplayDateStart=\"2020-01-01\" DisplayDateEnd=\"2030-12-31\" Width=\"111\" />"
+                + "<AutoCompleteBox Text=\"Par\" PlaceholderText=\"Find a city\" FilterMode=\"Contains\" MinimumPrefixLength=\"2\" IsTextCompletionEnabled=\"True\" Width=\"115\" />"
+                + "<AutoCompleteBox Text=\"Grace\" FilterMode=\"Custom\" MinimumPrefixLength=\"-1\" IsTextCompletionEnabled=\"maybe\" Width=\"116\" />"
+                + "<AutoCompleteBox Text=\"{Binding SearchText}\" PlaceholderText=\"{Binding SearchHint}\" FilterMode=\"{Binding Filter}\" MinimumPrefixLength=\"{Binding PrefixLength}\" IsTextCompletionEnabled=\"{Binding Complete}\" Width=\"117\" />"
+                + "<ColorPicker Color=\"#FF123456\" ColorModel=\"Hsva\" IsAlphaEnabled=\"False\" IsColorSpectrumVisible=\"False\" Width=\"112\" />"
+                + "<ColorPicker Color=\"NotAColor\" ColorModel=\"Unknown\" IsAlphaEnabled=\"maybe\" Width=\"113\" />"
+                + "<ColorPicker Color=\"{Binding Accent}\" ColorModel=\"{Binding Model}\" IsAlphaEnabled=\"{Binding AlphaEnabled}\" Width=\"114\" />"
+                + "<TabControl SelectedIndex=\"1\" Width=\"118\"><TabItem Header=\"General\"><TextBlock Text=\"Profile\" /></TabItem><TabItem Header=\"Advanced\" /></TabControl>"
+                + "<TabControl SelectedIndex=\"-2\" Width=\"119\"><TabItem Header=\"Invalid\" /></TabControl>"
+                + "<TabControl SelectedIndex=\"{Binding ActiveTab}\" Width=\"120\"><TabItem Header=\"Bound\" /></TabControl>"
+                + "<Menu Width=\"121\"><MenuItem Header=\"File\"><MenuItem Header=\"Open\" InputGesture=\"Ctrl+O\" /><Separator /><MenuItem Header=\"Exit\" /></MenuItem></Menu>"
+                + "<Menu Width=\"122\"><MenuItem Header=\"Invalid\" InputGesture=\"NotAKey\" /></Menu>"
+                + "<Button Content=\"Context trigger\" Width=\"123\"><Button.ContextMenu><ContextMenu><MenuItem Header=\"Copy\" InputGesture=\"Ctrl+C\" /><Separator /></ContextMenu></Button.ContextMenu></Button>"
+                + "<TextBox Text=\"Context target\" Width=\"124\"><TextBox.ContextMenu><ContextMenu><MenuItem Header=\"Paste\" /></ContextMenu></TextBox.ContextMenu></TextBox>"
+                + "<Button Content=\"Tooltip target\" Width=\"125\"><Button.ToolTip><ToolTip><StackPanel Spacing=\"4\"><TextBlock Text=\"Helpful text\" /><TextBlock Text=\"More information\" /></StackPanel></ToolTip></Button.ToolTip></Button>"
+                + "<TimePicker SelectedTime=\"13:45:30\" UseSeconds=\"True\" ClockIdentifier=\"12HourClock\" MinuteIncrement=\"5\" SecondIncrement=\"10\" Width=\"105\" />"
+                + "<TimePicker SelectedTime=\"25:99\" UseSeconds=\"sometimes\" ClockIdentifier=\"Invalid\" MinuteIncrement=\"0\" SecondIncrement=\"60\" Width=\"106\" />"
+                + "<TimePicker SelectedTime=\"{Binding StartTime}\" UseSeconds=\"{Binding ShowSeconds}\" ClockIdentifier=\"{Binding Clock}\" MinuteIncrement=\"{Binding Minute}\" SecondIncrement=\"{Binding Second}\" Width=\"107\" />"
                 + "<NumericUpDown Value=\"12.5\" FormatString=\"N2\" Increment=\"0.25\" Minimum=\"0.5\" Maximum=\"40\" AllowSpin=\"False\" ShowButtonSpinner=\"False\" ClipValueToMinMax=\"True\" ButtonSpinnerLocation=\"Left\" TextAlignment=\"Center\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" ParsingNumberStyle=\"Integer\" Margin=\"3,4\" HorizontalAlignment=\"Right\" VerticalAlignment=\"Center\" Width=\"120\" Height=\"60\" MinWidth=\"40\" MaxWidth=\"160\" MinHeight=\"30\" MaxHeight=\"90\" Background=\"#FFF0F0F0\" BorderBrush=\"Green\" BorderThickness=\"2\" CornerRadius=\"3\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"Bold\" Foreground=\"DarkGreen\" Padding=\"2\" />"
                 + "<NumericUpDown Value=\"0\" />"
                 + "<NumericUpDown Value=\"1\" FormatString=\"Q\" ParsingNumberStyle=\"AllowHexSpecifier\" HorizontalAlignment=\"999\" VerticalAlignment=\"999\" HorizontalContentAlignment=\"999\" VerticalContentAlignment=\"999\" />"
@@ -82,9 +114,9 @@ internal static class Program
                 + "<ScrollViewer HorizontalScrollBarVisibility=\"Always\" VerticalScrollBarVisibility=\"None\" Width=\"96\" />"
                 + "<Viewbox StretchDirection=\"UpOnly\" Width=\"93\"><TextBlock Text=\"Scale direction\" /></Viewbox>"
                 + "<Viewbox StretchDirection=\"Sideways\" Width=\"92\"><TextBlock Text=\"Fallback direction\" /></Viewbox>"
-                + "<WrapPanel ItemSpacing=\"5\" LineSpacing=\"7\" ItemWidth=\"40\" ItemHeight=\"20\" ItemsAlignment=\"Center\"><Button Content=\"First item\" /><Button Content=\"Second item\" /></WrapPanel>"
-                + "<WrapPanel />"
-                + "<WrapPanel Orientation=\"Vertical\" ItemSpacing=\"-1\" LineSpacing=\"NaN\" ItemWidth=\"-1\" ItemHeight=\"Infinity\" ItemsAlignment=\"999\" />"
+                + "<WrapPanel Width=\"125\" ItemSpacing=\"5\" LineSpacing=\"7\" ItemWidth=\"40\" ItemHeight=\"20\" ItemsAlignment=\"Center\"><Button Content=\"First item\" /><Button Content=\"Second item\" /></WrapPanel>"
+                + "<WrapPanel Width=\"126\" />"
+                + "<WrapPanel Width=\"127\" Orientation=\"Vertical\" ItemSpacing=\"-1\" LineSpacing=\"NaN\" ItemWidth=\"-1\" ItemHeight=\"Infinity\" ItemsAlignment=\"999\" />"
                 + "<ProgressBar Minimum=\"10\" Maximum=\"90\" Value=\"42.5\" IsIndeterminate=\"False\" ShowProgressText=\"True\" ProgressTextFormat=\"{}{1:0.0}%\" Background=\"White\" BorderBrush=\"Purple\" BorderThickness=\"1\" CornerRadius=\"2\" FontSize=\"13\" FontStyle=\"Normal\" FontWeight=\"Normal\" Foreground=\"Blue\" Padding=\"1\" />"
                 + "<ProgressBar Value=\"35\" IsIndeterminate=\"True\" />"
                 + "<ProgressBar Value=\"25\" ProgressTextFormat=\"{}{2:0}%\" />"
@@ -104,10 +136,16 @@ internal static class Program
                 + "<Border FlowDirection=\"RightToLeft\"><TextBlock Text=\"Inherited RTL direction\" UseLayoutRounding=\"True\" /></Border>"
                 + "<TextBlock Text=\"Invalid flow fallback\" FlowDirection=\"Sideways\" UseLayoutRounding=\"sometimes\" />"
                 + "<TextBlock Text=\"Bound flow fallback\" FlowDirection=\"{Binding Direction}\" UseLayoutRounding=\"{Binding LayoutRounding}\" />"
-                + "<ContentControl HorizontalContentAlignment=\"Stretch\" VerticalContentAlignment=\"Bottom\"><TextBlock Text=\"ContentControl alignment\" /></ContentControl>"
-                + "<Expander Header=\"Expander alignment\" IsExpanded=\"True\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Top\"><TextBlock Text=\"Expander content\" /></Expander>"
-                + "<GroupBox Header=\"GroupBox alignment\" HorizontalContentAlignment=\"Left\" VerticalContentAlignment=\"Bottom\"><TextBlock Text=\"GroupBox content\" /></GroupBox>"
-                + "<Label Content=\"Label alignment\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"Blue\" TextAlignment=\"Right\" TextTrimming=\"WordEllipsis\" TextWrapping=\"NoWrap\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" />"
+                + "<ContentControl HorizontalContentAlignment=\"Stretch\" VerticalContentAlignment=\"Bottom\" Background=\"PaleGreen\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"3\" FontSize=\"16\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"Navy\" Padding=\"4\"><TextBlock Text=\"ContentControl alignment\" /></ContentControl>"
+                + "<Expander Header=\"Expander alignment\" IsExpanded=\"True\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Top\" Background=\"White\" BorderBrush=\"Green\" BorderThickness=\"1\" CornerRadius=\"4\" FontSize=\"17\" FontStyle=\"Oblique\" FontWeight=\"Bold\" Foreground=\"Black\" Padding=\"2\"><TextBlock Text=\"Expander content\" /></Expander>"
+                + "<GroupBox Header=\"GroupBox alignment\" HorizontalContentAlignment=\"Left\" VerticalContentAlignment=\"Bottom\" Background=\"AliceBlue\" BorderBrush=\"Purple\" BorderThickness=\"3\" CornerRadius=\"5\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"DarkGreen\" Padding=\"6\"><TextBlock Text=\"GroupBox content\" /></GroupBox>"
+                + "<ListBox SelectedIndex=\"1\" Background=\"Lavender\" BorderBrush=\"Orange\" BorderThickness=\"2\" CornerRadius=\"6\" FontSize=\"14\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"DarkBlue\" Padding=\"5\"><ListBoxItem Content=\"First item\" /><ListBoxItem>Second item</ListBoxItem></ListBox>"
+                + "<ListBox Background=\"LightYellow\" SelectedIndex=\"-2\"><ListBoxItem>Invalid selection</ListBoxItem></ListBox>"
+                + "<ListBox Background=\"LightCyan\" SelectedIndex=\"5\"><ListBoxItem Content=\"Out of range\" /></ListBox>"
+                + "<ListBox Background=\"LightPink\" SelectedIndex=\"{Binding SelectedIndex}\"><TextBlock Text=\"Bound selection\" /></ListBox>"
+                + "<Label Content=\"Label alignment\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"Blue\" Background=\"#FFF0F0F0\" BorderBrush=\"Red\" BorderThickness=\"2\" CornerRadius=\"7\" Padding=\"8\" LineHeight=\"22\" MaxLines=\"2\" TextAlignment=\"Right\" TextTrimming=\"WordEllipsis\" TextWrapping=\"NoWrap\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" />"
+                + "<Label Content=\"Invalid label layout\" LineHeight=\"0\" MaxLines=\"-1\" />"
+                + "<Label Content=\"Bound label layout\" LineHeight=\"{Binding LineHeight}\" MaxLines=\"{Binding MaxLines}\" />"
                 + "</StackPanel>");
             File.WriteAllText(Path.Combine(fixture, "Sample.cs"), "namespace Sample; public class Example { }");
             File.WriteAllBytes(Path.Combine(fixture, "Image.png"), [0x89, 0x50, 0x4e, 0x47, 0x00]);
@@ -513,16 +551,97 @@ internal static class Program
     private static async Task VerifyCatalogControlPreviewsAsync(Control root)
     {
         await WaitUntilAsync(() => root.GetVisualDescendants().OfType<ComboBox>().Any()
+            && root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>().Any()
+            && root.GetVisualDescendants().OfType<AutoCompleteBox>().Any()
+            && root.GetVisualDescendants().OfType<ColorPicker>().Any()
+            && root.GetVisualDescendants().OfType<TabControl>().Any()
+            && root.GetVisualDescendants().OfType<TimePicker>().Any()
             && root.GetVisualDescendants().OfType<NumericUpDown>().Any()
             && root.GetVisualDescendants().OfType<ProgressBar>().Any()
             && root.GetVisualDescendants().OfType<Slider>().Any()
-            && root.GetVisualDescendants().OfType<WrapPanel>().Count() == 3
+            && root.GetVisualDescendants().OfType<WrapPanel>().Count() >= 3
             && root.GetVisualDescendants().OfType<CheckBox>().Any()
             && root.GetVisualDescendants().OfType<RadioButton>().Any()
             && root.GetVisualDescendants().OfType<ToggleSwitch>().Any(),
             "catalogued numeric, progress, and toggle control previews");
         ComboBox comboBox = root.GetVisualDescendants().OfType<ComboBox>()
             .Single(candidate => candidate.CornerRadius == new CornerRadius(4));
+        ComboBox selectedComboBox = root.GetVisualDescendants().OfType<ComboBox>()
+            .Single(candidate => candidate.PlaceholderText == "Selector selection");
+        ComboBox invalidSelectedComboBox = root.GetVisualDescendants().OfType<ComboBox>()
+            .Single(candidate => candidate.PlaceholderText == "Selector invalid");
+        ComboBox boundSelectedComboBox = root.GetVisualDescendants().OfType<ComboBox>()
+            .Single(candidate => candidate.PlaceholderText == "Selector bound");
+        ComboBox outOfRangeSelectedComboBox = root.GetVisualDescendants().OfType<ComboBox>()
+            .Single(candidate => candidate.PlaceholderText == "Selector out of range");
+        ComboBox markupValueComboBox = root.GetVisualDescendants().OfType<ComboBox>()
+            .Single(candidate => candidate.PlaceholderText == "Selector markup values");
+        ComboBox emptyItemComboBox = root.GetVisualDescendants().OfType<ComboBox>()
+            .Single(candidate => candidate.PlaceholderText == "Selector empty item");
+        ComboBox complexContentComboBox = root.GetVisualDescendants().OfType<ComboBox>()
+            .Single(candidate => candidate.PlaceholderText == "Selector complex content");
+        DatePicker selectedDatePicker = root.GetVisualDescendants().OfType<DatePicker>()
+            .Single(candidate => candidate.Width == 101);
+        DatePicker invalidDatePicker = root.GetVisualDescendants().OfType<DatePicker>()
+            .Single(candidate => candidate.Width == 102);
+        DatePicker boundDatePicker = root.GetVisualDescendants().OfType<DatePicker>()
+            .Single(candidate => candidate.Width == 103);
+        DatePicker outOfRangeDatePicker = root.GetVisualDescendants().OfType<DatePicker>()
+            .Single(candidate => candidate.Width == 104);
+        Avalonia.Controls.Calendar selectedCalendar = root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>()
+            .Single(candidate => candidate.Width == 108);
+        Avalonia.Controls.Calendar invalidCalendar = root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>()
+            .Single(candidate => candidate.Width == 109);
+        Avalonia.Controls.Calendar boundCalendar = root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>()
+            .Single(candidate => candidate.Width == 110);
+        Avalonia.Controls.Calendar outOfRangeCalendar = root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>()
+            .Single(candidate => candidate.Width == 111);
+        AutoCompleteBox configuredAutoCompleteBox = root.GetVisualDescendants().OfType<AutoCompleteBox>()
+            .Single(candidate => candidate.Width == 115);
+        AutoCompleteBox invalidAutoCompleteBox = root.GetVisualDescendants().OfType<AutoCompleteBox>()
+            .Single(candidate => candidate.Width == 116);
+        AutoCompleteBox boundAutoCompleteBox = root.GetVisualDescendants().OfType<AutoCompleteBox>()
+            .Single(candidate => candidate.Width == 117);
+        ColorPicker selectedColorPicker = root.GetVisualDescendants().OfType<ColorPicker>()
+            .Single(candidate => candidate.Width == 112);
+        ColorPicker invalidColorPicker = root.GetVisualDescendants().OfType<ColorPicker>()
+            .Single(candidate => candidate.Width == 113);
+        ColorPicker boundColorPicker = root.GetVisualDescendants().OfType<ColorPicker>()
+            .Single(candidate => candidate.Width == 114);
+        TabControl selectedTabControl = root.GetVisualDescendants().OfType<TabControl>()
+            .Single(candidate => candidate.Width == 118);
+        TabControl invalidTabControl = root.GetVisualDescendants().OfType<TabControl>()
+            .Single(candidate => candidate.Width == 119);
+        TabControl boundTabControl = root.GetVisualDescendants().OfType<TabControl>()
+            .Single(candidate => candidate.Width == 120);
+        Menu previewMenu = root.GetVisualDescendants().OfType<Menu>()
+            .Single(candidate => candidate.Width == 121);
+        Menu invalidGestureMenu = root.GetVisualDescendants().OfType<Menu>()
+            .Single(candidate => candidate.Width == 122);
+        Button contextMenuButton = root.GetVisualDescendants().OfType<Button>()
+            .Single(candidate => candidate.Content is "Context trigger");
+        TextBox[] previewTextBoxes = root.GetVisualDescendants().OfType<TextBox>().ToArray();
+        Check(previewTextBoxes.Any(candidate => candidate.Text == "Context target"),
+            $"The TextBox ContextMenu host was not found in preview. TextBoxes: {string.Join(", ", previewTextBoxes.Select(static candidate => $"{candidate.Text} ({candidate.Width})"))}.");
+        TextBox contextMenuTextBox = previewTextBoxes
+            .Single(candidate => candidate.Text == "Context target");
+        Border[] contextMenuPreviews = root.GetVisualDescendants().OfType<Border>()
+            .Where(candidate => candidate.Tag is AxamlPreviewNode { TypeName: "ContextMenu" })
+            .ToArray();
+        Border buttonContextMenuPreview = contextMenuPreviews.Single(candidate =>
+            candidate.GetVisualDescendants().OfType<MenuItem>().Any(item => item.Header is "Copy"));
+        Border textBoxContextMenuPreview = contextMenuPreviews.Single(candidate =>
+            candidate.GetVisualDescendants().OfType<MenuItem>().Any(item => item.Header is "Paste"));
+        Button tooltipButton = root.GetVisualDescendants().OfType<Button>()
+            .Single(candidate => candidate.Content is "Tooltip target");
+        Border toolTipPreview = root.GetVisualDescendants().OfType<Border>()
+            .Single(candidate => candidate.Tag is AxamlPreviewNode { TypeName: "ToolTip" });
+        TimePicker selectedTimePicker = root.GetVisualDescendants().OfType<TimePicker>()
+            .Single(candidate => candidate.Width == 105);
+        TimePicker invalidTimePicker = root.GetVisualDescendants().OfType<TimePicker>()
+            .Single(candidate => candidate.Width == 106);
+        TimePicker boundTimePicker = root.GetVisualDescendants().OfType<TimePicker>()
+            .Single(candidate => candidate.Width == 107);
         NumericUpDown numericUpDown = root.GetVisualDescendants().OfType<NumericUpDown>()
             .Single(candidate => candidate.Value == 12.5m);
         NumericUpDown defaultNumericUpDown = root.GetVisualDescendants().OfType<NumericUpDown>()
@@ -559,11 +678,11 @@ internal static class Program
         Viewbox invalidViewbox = root.GetVisualDescendants().OfType<Viewbox>()
             .Single(candidate => candidate.Width == 92);
         WrapPanel wrapPanel = root.GetVisualDescendants().OfType<WrapPanel>()
-            .Single(candidate => candidate.ItemSpacing == 5);
+            .Single(candidate => candidate.Width == 125);
         WrapPanel defaultWrapPanel = root.GetVisualDescendants().OfType<WrapPanel>()
-            .Single(candidate => candidate.Orientation == Orientation.Horizontal && double.IsNaN(candidate.ItemWidth));
+            .Single(candidate => candidate.Width == 126);
         WrapPanel invalidWrapPanel = root.GetVisualDescendants().OfType<WrapPanel>()
-            .Single(candidate => candidate.Orientation == Orientation.Vertical);
+            .Single(candidate => candidate.Width == 127);
         CheckBox checkBox = root.GetVisualDescendants().OfType<CheckBox>().Single();
         RadioButton radioButton = root.GetVisualDescendants().OfType<RadioButton>().Single();
         Button keyboardActionButton = root.GetVisualDescendants().OfType<Button>()
@@ -594,8 +713,20 @@ internal static class Program
             .Single(expander => expander.Header?.ToString() == "Expander alignment");
         GroupBox alignedGroupBox = root.GetVisualDescendants().OfType<GroupBox>()
             .Single(groupBox => groupBox.Header?.ToString() == "GroupBox alignment");
+        ListBox styledListBox = root.GetVisualDescendants().OfType<ListBox>()
+            .Single(listBox => listBox.Background is ISolidColorBrush brush && brush.Color == Colors.Lavender);
+        ListBox invalidSelectionListBox = root.GetVisualDescendants().OfType<ListBox>()
+            .Single(listBox => listBox.Background is ISolidColorBrush brush && brush.Color == Colors.LightYellow);
+        ListBox outOfRangeSelectionListBox = root.GetVisualDescendants().OfType<ListBox>()
+            .Single(listBox => listBox.Background is ISolidColorBrush brush && brush.Color == Colors.LightCyan);
+        ListBox boundSelectionListBox = root.GetVisualDescendants().OfType<ListBox>()
+            .Single(listBox => listBox.Background is ISolidColorBrush brush && brush.Color == Colors.LightPink);
         Label alignedLabel = root.GetVisualDescendants().OfType<Label>()
             .Single(label => label.Content is TextBlock labelText && labelText.Text == "Label alignment");
+        Label invalidLabelLayout = root.GetVisualDescendants().OfType<Label>()
+            .Single(label => label.Content is TextBlock labelText && labelText.Text == "Invalid label layout");
+        Label boundLabelLayout = root.GetVisualDescendants().OfType<Label>()
+            .Single(label => label.Content is TextBlock labelText && labelText.Text == "Bound label layout");
         ToggleSwitch toggleSwitch = root.GetVisualDescendants().OfType<ToggleSwitch>().Single();
         Check(comboBox.PlaceholderText == "Choose an option" && !comboBox.IsEnabled
             && comboBox.HorizontalContentAlignment == HorizontalAlignment.Right
@@ -613,6 +744,198 @@ internal static class Program
             && comboForeground.Color == Colors.Black
             && comboBox.Padding == new Thickness(3),
             $"The ComboBox preview did not preserve its appearance or remained interactive: placeholder={comboBox.PlaceholderText}, enabled={comboBox.IsEnabled}, background={comboBox.Background}, border={comboBox.BorderBrush}, borderThickness={comboBox.BorderThickness}, cornerRadius={comboBox.CornerRadius}, fontSize={comboBox.FontSize}, fontStyle={comboBox.FontStyle}, fontWeight={comboBox.FontWeight}, foreground={comboBox.Foreground}, padding={comboBox.Padding}.");
+        Check(selectedComboBox.SelectedIndex == 2 && Equals(selectedComboBox.SelectedItem, "Property content")
+            && !selectedComboBox.IsEnabled
+            && invalidSelectedComboBox.SelectedIndex == -1
+            && boundSelectedComboBox.SelectedIndex == -1
+            && outOfRangeSelectedComboBox.SelectedIndex == -1,
+            $"ComboBox selection was not safely initialized: selected={selectedComboBox.SelectedIndex}/{selectedComboBox.SelectedItem}, invalid={invalidSelectedComboBox.SelectedIndex}, bound={boundSelectedComboBox.SelectedIndex}, outOfRange={outOfRangeSelectedComboBox.SelectedIndex}.");
+        Check(selectedComboBox.ItemsSource is IEnumerable<string> comboBoxItems
+            && comboBoxItems.SequenceEqual(["First choice", "Second choice", "Property content"]),
+            "ComboBoxItem attribute, inline, or property-element content was not preserved as selector options.");
+        Check(markupValueComboBox.ItemsSource is IEnumerable<string> markupItems
+            && markupItems.SequenceEqual(["[Binding ItemText]", "[DynamicResource ItemText]", "[StaticResource ItemText]"])
+            && markupValueComboBox.SelectedIndex == 2
+            && Equals(markupValueComboBox.SelectedItem, "[StaticResource ItemText]")
+            && !markupValueComboBox.IsEnabled,
+            "Selector markup extensions were evaluated instead of displayed as inert placeholders.");
+        Check(emptyItemComboBox.SelectedIndex == 0
+            && Equals(emptyItemComboBox.SelectedItem, string.Empty)
+            && emptyItemComboBox.ItemsSource is IEnumerable<string> emptyItems
+            && emptyItems.SequenceEqual([string.Empty])
+            && !emptyItemComboBox.IsEnabled,
+            "An explicitly empty selector item did not remain a valid inert item.");
+        Check(complexContentComboBox.SelectedIndex == 0
+            && Equals(complexContentComboBox.SelectedItem, "ComboBoxItem")
+            && complexContentComboBox.ItemsSource is IEnumerable<string> complexItems
+            && complexItems.SequenceEqual(["ComboBoxItem"])
+            && !complexContentComboBox.IsEnabled,
+            "Complex selector item content was interpreted instead of using a safe fallback label.");
+        Check(selectedDatePicker.SelectedDate?.Date == new DateTime(2028, 2, 29)
+            && !selectedDatePicker.DayVisible
+            && selectedDatePicker.MonthVisible
+            && !selectedDatePicker.YearVisible
+            && selectedDatePicker.DayFormat == "dd"
+            && selectedDatePicker.MonthFormat == "MMM"
+            && selectedDatePicker.YearFormat == "yy"
+            && selectedDatePicker.MinYear.Date == new DateTime(2020, 1, 1)
+            && selectedDatePicker.MaxYear.Date == new DateTime(2030, 12, 31)
+            && selectedDatePicker.SelectedDate?.Year == 2028
+            && !selectedDatePicker.IsEnabled
+            && invalidDatePicker.SelectedDate is null
+            && invalidDatePicker.DayVisible
+            && invalidDatePicker.MonthVisible
+            && invalidDatePicker.YearVisible
+            && invalidDatePicker.DayFormat == boundDatePicker.DayFormat
+            && invalidDatePicker.MonthFormat == boundDatePicker.MonthFormat
+            && invalidDatePicker.YearFormat == boundDatePicker.YearFormat
+            && invalidDatePicker.MinYear == boundDatePicker.MinYear
+            && invalidDatePicker.MaxYear == boundDatePicker.MaxYear
+            && !invalidDatePicker.IsEnabled
+            && boundDatePicker.SelectedDate is null
+            && boundDatePicker.DayVisible
+            && boundDatePicker.MonthVisible
+            && boundDatePicker.YearVisible
+            && !boundDatePicker.IsEnabled
+            && outOfRangeDatePicker.SelectedDate is null
+            && outOfRangeDatePicker.MinYear.Date == new DateTime(2020, 1, 1)
+            && outOfRangeDatePicker.MaxYear.Date == new DateTime(2030, 12, 31)
+            && !outOfRangeDatePicker.IsEnabled,
+            $"The DatePicker preview did not preserve valid date visibility or safely ignore invalid/bound values: selected={selectedDatePicker.SelectedDate:O}/{selectedDatePicker.DayVisible},{selectedDatePicker.MonthVisible},{selectedDatePicker.YearVisible}, invalid={invalidDatePicker.SelectedDate:O}/{invalidDatePicker.DayVisible},{invalidDatePicker.MonthVisible},{invalidDatePicker.YearVisible}, bound={boundDatePicker.SelectedDate:O}/{boundDatePicker.DayVisible},{boundDatePicker.MonthVisible},{boundDatePicker.YearVisible}.");
+        Check(selectedCalendar.SelectedDate == new DateTime(2028, 2, 29)
+            && selectedCalendar.DisplayDate == new DateTime(2028, 2, 1)
+            && selectedCalendar.DisplayDateStart == new DateTime(2028, 1, 1)
+            && selectedCalendar.DisplayDateEnd == new DateTime(2028, 12, 31)
+            && selectedCalendar.SelectionMode == CalendarSelectionMode.SingleDate
+            && selectedCalendar.FirstDayOfWeek == DayOfWeek.Sunday
+            && !selectedCalendar.IsTodayHighlighted
+            && !selectedCalendar.IsEnabled
+            && invalidCalendar.SelectedDate is null
+            && invalidCalendar.DisplayDateStart is null
+            && invalidCalendar.DisplayDateEnd is null
+            && invalidCalendar.SelectionMode == CalendarSelectionMode.SingleDate
+            && invalidCalendar.FirstDayOfWeek == DayOfWeek.Monday
+            && invalidCalendar.IsTodayHighlighted
+            && !invalidCalendar.IsEnabled
+            && boundCalendar.SelectedDate is null
+            && boundCalendar.DisplayDateStart is null
+            && boundCalendar.DisplayDateEnd is null
+            && boundCalendar.SelectionMode == CalendarSelectionMode.SingleDate
+            && boundCalendar.FirstDayOfWeek == DayOfWeek.Monday
+            && boundCalendar.IsTodayHighlighted
+            && !boundCalendar.IsEnabled
+            && outOfRangeCalendar.SelectedDate is null
+            && outOfRangeCalendar.DisplayDateStart == new DateTime(2020, 1, 1)
+            && outOfRangeCalendar.DisplayDateEnd == new DateTime(2030, 12, 31)
+            && !outOfRangeCalendar.IsEnabled,
+            $"The Calendar preview did not preserve safe date selection, navigation bounds or fallback values: valid={selectedCalendar.SelectedDate}/{selectedCalendar.DisplayDate}, invalid={invalidCalendar.SelectedDate}/{invalidCalendar.DisplayDateStart}/{invalidCalendar.DisplayDateEnd}, bound={boundCalendar.SelectedDate}/{boundCalendar.DisplayDateStart}/{boundCalendar.DisplayDateEnd}, out-of-range={outOfRangeCalendar.SelectedDate}.");
+        Check(configuredAutoCompleteBox.Text == "Par"
+            && configuredAutoCompleteBox.PlaceholderText == "Find a city"
+            && configuredAutoCompleteBox.FilterMode == AutoCompleteFilterMode.Contains
+            && configuredAutoCompleteBox.MinimumPrefixLength == 2
+            && configuredAutoCompleteBox.IsTextCompletionEnabled
+            && !configuredAutoCompleteBox.IsEnabled
+            && invalidAutoCompleteBox.Text == "Grace"
+            && invalidAutoCompleteBox.FilterMode == AutoCompleteFilterMode.StartsWith
+            && invalidAutoCompleteBox.MinimumPrefixLength == 1
+            && !invalidAutoCompleteBox.IsTextCompletionEnabled
+            && !invalidAutoCompleteBox.IsEnabled
+            && boundAutoCompleteBox.Text == string.Empty
+            && boundAutoCompleteBox.PlaceholderText == string.Empty
+            && boundAutoCompleteBox.FilterMode == AutoCompleteFilterMode.StartsWith
+            && boundAutoCompleteBox.MinimumPrefixLength == 1
+            && !boundAutoCompleteBox.IsTextCompletionEnabled
+            && !boundAutoCompleteBox.IsEnabled,
+            $"The AutoCompleteBox preview did not preserve safe text/filter settings or bound-value fallbacks: valid={configuredAutoCompleteBox.Text}/{configuredAutoCompleteBox.FilterMode}/{configuredAutoCompleteBox.MinimumPrefixLength}, invalid={invalidAutoCompleteBox.FilterMode}/{invalidAutoCompleteBox.MinimumPrefixLength}, bound={boundAutoCompleteBox.Text}/{boundAutoCompleteBox.FilterMode}/{boundAutoCompleteBox.MinimumPrefixLength}.");
+        Check(selectedColorPicker.Color == Color.Parse("#FF123456")
+            && selectedColorPicker.ColorModel == ColorModel.Hsva
+            && !selectedColorPicker.IsAlphaEnabled
+            && !selectedColorPicker.IsColorSpectrumVisible
+            && !selectedColorPicker.IsEnabled
+            && invalidColorPicker.Color == Colors.White
+            && invalidColorPicker.ColorModel == ColorModel.Rgba
+            && invalidColorPicker.IsAlphaEnabled
+            && !invalidColorPicker.IsEnabled
+            && boundColorPicker.Color == Colors.White
+            && boundColorPicker.ColorModel == ColorModel.Rgba
+            && boundColorPicker.IsAlphaEnabled
+            && !boundColorPicker.IsEnabled,
+            $"The ColorPicker preview did not preserve a valid color or fall back safely: valid={selectedColorPicker.Color}/{selectedColorPicker.ColorModel}, invalid={invalidColorPicker.Color}/{invalidColorPicker.ColorModel}, bound={boundColorPicker.Color}/{boundColorPicker.ColorModel}.");
+        Check(selectedTimePicker.SelectedTime == new TimeSpan(13, 45, 30)
+            && selectedTimePicker.UseSeconds
+            && selectedTimePicker.ClockIdentifier == "12HourClock"
+            && selectedTimePicker.MinuteIncrement == 5
+            && selectedTimePicker.SecondIncrement == 10
+            && !selectedTimePicker.IsEnabled
+            && invalidTimePicker.SelectedTime is null
+            && !invalidTimePicker.UseSeconds
+            && invalidTimePicker.ClockIdentifier == "24HourClock"
+            && invalidTimePicker.MinuteIncrement == 1
+            && invalidTimePicker.SecondIncrement == 1
+            && !invalidTimePicker.IsEnabled
+            && boundTimePicker.SelectedTime is null
+            && !boundTimePicker.UseSeconds
+            && boundTimePicker.ClockIdentifier == "24HourClock"
+            && boundTimePicker.MinuteIncrement == 1
+            && boundTimePicker.SecondIncrement == 1
+            && !boundTimePicker.IsEnabled,
+            $"The TimePicker preview did not preserve valid time configuration or safely ignore invalid/bound values: selected={selectedTimePicker.SelectedTime}/{selectedTimePicker.ClockIdentifier}/{selectedTimePicker.MinuteIncrement}/{selectedTimePicker.SecondIncrement}, invalid={invalidTimePicker.SelectedTime}/{invalidTimePicker.ClockIdentifier}/{invalidTimePicker.MinuteIncrement}/{invalidTimePicker.SecondIncrement}, bound={boundTimePicker.SelectedTime}/{boundTimePicker.ClockIdentifier}/{boundTimePicker.MinuteIncrement}/{boundTimePicker.SecondIncrement}.");
+        Check(selectedTabControl.SelectedIndex == 1
+            && selectedTabControl.Items.Count == 2
+            && selectedTabControl.Items[0] is TabItem { Header: "General" }
+            && selectedTabControl.Items[1] is TabItem { Header: "Advanced" }
+            && !selectedTabControl.IsEnabled
+            && invalidTabControl.SelectedIndex == 0
+            && invalidTabControl.Items.Count == 1
+            && !invalidTabControl.IsEnabled
+            && boundTabControl.SelectedIndex == 0
+            && !boundTabControl.IsEnabled,
+            $"The TabControl preview did not preserve safe tab headers/selection or fall back for invalid and bound indices: valid={selectedTabControl.SelectedIndex}/{selectedTabControl.Items.Count}, invalid={invalidTabControl.SelectedIndex}, bound={boundTabControl.SelectedIndex}.");
+        MenuItem fileMenuItem = (MenuItem)previewMenu.Items[0]!;
+        Check(!previewMenu.IsEnabled
+            && previewMenu.Items.Count == 1
+            && fileMenuItem.Header is "File"
+            && !fileMenuItem.IsEnabled
+            && fileMenuItem.Items.Count == 3
+            && fileMenuItem.Items[0] is MenuItem
+            {
+                Header: "Open",
+                IsEnabled: false,
+                InputGesture.Key: Key.O,
+                InputGesture.KeyModifiers: KeyModifiers.Control,
+            }
+            && fileMenuItem.Items[1] is Separator
+            && fileMenuItem.Items[2] is MenuItem { Header: "Exit", IsEnabled: false },
+            $"The menu preview did not preserve nested headers/separators while remaining inert: items={previewMenu.Items.Count}, fileItems={fileMenuItem.Items.Count}.");
+        Check(invalidGestureMenu.Items[0] is MenuItem { Header: "Invalid", InputGesture: null, IsEnabled: false },
+            "The menu preview did not safely ignore an invalid input gesture.");
+        MenuItem contextMenuItem = buttonContextMenuPreview.GetVisualDescendants().OfType<MenuItem>().Single();
+        MenuItem textBoxContextMenuItem = textBoxContextMenuPreview.GetVisualDescendants().OfType<MenuItem>().Single();
+        Check(contextMenuButton.Content is "Context trigger"
+            && !contextMenuButton.IsEnabled
+            && contextMenuItem.Header is "Copy"
+            && contextMenuItem.InputGesture?.Key == Key.C
+            && contextMenuItem.InputGesture.KeyModifiers == KeyModifiers.Control
+            && !contextMenuItem.IsEnabled
+            && buttonContextMenuPreview.GetVisualDescendants().OfType<Separator>().Any()
+            && buttonContextMenuPreview.GetVisualDescendants().OfType<TextBlock>()
+                .Any(static text => text.Text == "ContextMenu (closed, inert preview)"),
+            "The Button ContextMenu was not rendered as an explicitly closed, inert inline preview.");
+        Check(contextMenuTextBox.Text is "Context target"
+            && textBoxContextMenuItem.Header is "Paste"
+            && !textBoxContextMenuItem.IsEnabled
+            && textBoxContextMenuPreview.GetVisualDescendants().OfType<TextBlock>()
+                .Any(static text => text.Text == "ContextMenu (closed, inert preview)"),
+            "The TextBox ContextMenu was not rendered as an explicitly closed, inert inline preview.");
+        Check(tooltipButton.Content is "Tooltip target"
+            && !tooltipButton.IsEnabled
+            && toolTipPreview.GetVisualDescendants().OfType<TextBlock>()
+                .Any(static text => text.Text == "ToolTip (closed, inert preview)")
+            && toolTipPreview.GetVisualDescendants().OfType<TextBlock>()
+                .Any(static text => text.Text == "Helpful text")
+            && toolTipPreview.GetVisualDescendants().OfType<TextBlock>()
+                .Any(static text => text.Text == "More information"),
+            "The ToolTip was not rendered as an explicitly closed, inert inline preview.");
         Check(numericUpDown.Value == 12.5m && numericUpDown.FormatString == "N2"
             && !numericUpDown.AllowSpin && !numericUpDown.ShowButtonSpinner && numericUpDown.ClipValueToMinMax
             && numericUpDown.ButtonSpinnerLocation == Location.Left
@@ -848,10 +1171,67 @@ internal static class Program
             "The preview did not inherit explicit flow direction or ignore invalid/bound values.");
         Check(alignedContentControl.HorizontalContentAlignment == HorizontalAlignment.Stretch
             && alignedContentControl.VerticalContentAlignment == VerticalAlignment.Bottom
+            && alignedContentControl.Background is ISolidColorBrush contentControlBackground
+            && contentControlBackground.Color == Colors.PaleGreen
+            && alignedContentControl.BorderBrush is ISolidColorBrush contentControlBorder
+            && contentControlBorder.Color == Colors.Blue
+            && alignedContentControl.BorderThickness == new Thickness(2)
+            && alignedContentControl.CornerRadius == new CornerRadius(3)
+            && alignedContentControl.FontSize == 16
+            && alignedContentControl.FontStyle == FontStyle.Italic
+            && alignedContentControl.FontWeight == FontWeight.Medium
+            && alignedContentControl.Foreground is ISolidColorBrush contentControlForeground
+            && contentControlForeground.Color == Colors.Navy
+            && alignedContentControl.Padding == new Thickness(4)
             && alignedExpander.HorizontalContentAlignment == HorizontalAlignment.Right
             && alignedExpander.VerticalContentAlignment == VerticalAlignment.Top
+            && alignedExpander.Background is ISolidColorBrush expanderBackground
+            && expanderBackground.Color == Colors.White
+            && alignedExpander.BorderBrush is ISolidColorBrush expanderBorder
+            && expanderBorder.Color == Colors.Green
+            && alignedExpander.BorderThickness == new Thickness(1)
+            && alignedExpander.CornerRadius == new CornerRadius(4)
+            && alignedExpander.FontSize == 17
+            && alignedExpander.FontStyle == FontStyle.Oblique
+            && alignedExpander.FontWeight == FontWeight.Bold
+            && alignedExpander.Foreground is ISolidColorBrush expanderForeground
+            && expanderForeground.Color == Colors.Black
+            && alignedExpander.Padding == new Thickness(2)
             && alignedGroupBox.HorizontalContentAlignment == HorizontalAlignment.Left
             && alignedGroupBox.VerticalContentAlignment == VerticalAlignment.Bottom
+            && alignedGroupBox.Background is ISolidColorBrush groupBoxBackground
+            && groupBoxBackground.Color == Colors.AliceBlue
+            && alignedGroupBox.BorderBrush is ISolidColorBrush groupBoxBorder
+            && groupBoxBorder.Color == Colors.Purple
+            && alignedGroupBox.BorderThickness == new Thickness(3)
+            && alignedGroupBox.CornerRadius == new CornerRadius(5)
+            && alignedGroupBox.FontSize == 15
+            && alignedGroupBox.FontStyle == FontStyle.Italic
+            && alignedGroupBox.FontWeight == FontWeight.SemiBold
+            && alignedGroupBox.Foreground is ISolidColorBrush groupBoxForeground
+            && groupBoxForeground.Color == Colors.DarkGreen
+            && alignedGroupBox.Padding == new Thickness(6)
+            && styledListBox.BorderBrush is ISolidColorBrush listBoxBorder
+            && listBoxBorder.Color == Colors.Orange
+            && styledListBox.BorderThickness == new Thickness(2)
+            && styledListBox.CornerRadius == new CornerRadius(6)
+            && styledListBox.FontSize == 14
+            && styledListBox.FontStyle == FontStyle.Italic
+            && styledListBox.FontWeight == FontWeight.Medium
+            && styledListBox.Foreground is ISolidColorBrush listBoxForeground
+            && listBoxForeground.Color == Colors.DarkBlue
+            && styledListBox.Padding == new Thickness(5)
+            && styledListBox.SelectedIndex == 1
+            && Equals(styledListBox.SelectedItem, "Second item")
+            && !styledListBox.IsEnabled
+            && invalidSelectionListBox.SelectedIndex == -1
+            && outOfRangeSelectionListBox.SelectedIndex == -1
+            && boundSelectionListBox.SelectedIndex == -1
+            && styledListBox.ItemsSource is IEnumerable<string> listBoxItems
+            && listBoxItems.SequenceEqual(["First item", "Second item"])
+            && !invalidSelectionListBox.IsEnabled
+            && !outOfRangeSelectionListBox.IsEnabled
+            && !boundSelectionListBox.IsEnabled
             && alignedLabel.HorizontalContentAlignment == HorizontalAlignment.Center
             && alignedLabel.VerticalContentAlignment == VerticalAlignment.Top
             && alignedLabel.FontSize == 18
@@ -859,10 +1239,25 @@ internal static class Program
             && alignedLabel.FontWeight == FontWeight.SemiBold
             && alignedLabel.Foreground is ISolidColorBrush labelForeground
             && labelForeground.Color == Colors.Blue
+            && alignedLabel.Background is ISolidColorBrush labelBackground
+            && labelBackground.Color == Color.FromRgb(240, 240, 240)
+            && alignedLabel.BorderBrush is ISolidColorBrush labelBorder
+            && labelBorder.Color == Colors.Red
+            && alignedLabel.BorderThickness == new Thickness(2)
+            && alignedLabel.CornerRadius == new CornerRadius(7)
+            && alignedLabel.Padding == new Thickness(8)
             && alignedLabel.Content is TextBlock labelText
+            && labelText.LineHeight == 22
+            && labelText.MaxLines == 2
             && labelText.TextAlignment == TextAlignment.Right
             && labelText.TextTrimming == TextTrimming.WordEllipsis
-            && labelText.TextWrapping == TextWrapping.NoWrap,
+            && labelText.TextWrapping == TextWrapping.NoWrap
+            && invalidLabelLayout.Content is TextBlock invalidLabelText
+            && double.IsNaN(invalidLabelText.LineHeight)
+            && invalidLabelText.MaxLines == 0
+            && boundLabelLayout.Content is TextBlock boundLabelText
+            && double.IsNaN(boundLabelText.LineHeight)
+            && boundLabelText.MaxLines == 0,
             $"The Label content-alignment or typography preview did not preserve its values: alignment={alignedLabel.HorizontalContentAlignment}/{alignedLabel.VerticalContentAlignment}, font={alignedLabel.FontSize}/{alignedLabel.FontStyle}/{alignedLabel.FontWeight}, foreground={alignedLabel.Foreground}.");
         Check(toggleSwitch.Content?.ToString() == "Notifications"
             && toggleSwitch.IsChecked == true
