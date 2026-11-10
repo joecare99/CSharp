@@ -198,6 +198,569 @@ public sealed class AxamlControlCatalogTests
     }
 
     [TestMethod]
+    public void Catalog_ExposesSafeAppearanceForTemplatedControls()
+    {
+        string[] templatedControls = ["ContentControl", "Expander", "GroupBox", "Label", "ListBox", "TabItem"];
+        (string Property, string Value, string InvalidValue, AxamlPropertyEditorKind Editor, string DefaultValue)[] properties =
+        [
+            ("Background", "AliceBlue", "Gradient", AxamlPropertyEditorKind.Text, string.Empty),
+            ("BorderBrush", "#FF000000", "Gradient", AxamlPropertyEditorKind.Text, string.Empty),
+            ("BorderThickness", "1,2,3,4", "-1", AxamlPropertyEditorKind.Text, string.Empty),
+            ("CornerRadius", "4,2,4,2", "-1", AxamlPropertyEditorKind.Text, string.Empty),
+            ("FontSize", "18", "-1", AxamlPropertyEditorKind.Number, string.Empty),
+            ("FontStyle", "Italic", "Bold", AxamlPropertyEditorKind.Enum, string.Empty),
+            ("FontWeight", "SemiBold", "Unknown", AxamlPropertyEditorKind.Enum, "Normal"),
+            ("Foreground", "Blue", "Gradient", AxamlPropertyEditorKind.Text, string.Empty),
+            ("Padding", "6,3", "-1", AxamlPropertyEditorKind.Text, string.Empty),
+        ];
+        AxamlPreviewService service = new();
+
+        foreach (string typeName in templatedControls)
+        {
+            AxamlControlCapability capability = AxamlControlCatalog.All.Single(item => item.TypeName == typeName);
+            AxamlPreviewNode unset = service.Parse($"<{typeName} xmlns='https://github.com/avaloniaui' />");
+            foreach ((string property, string value, string invalidValue, AxamlPropertyEditorKind editor, string defaultValue) in properties)
+            {
+                Assert.IsTrue(capability.EditableProperties.Contains(property), $"{typeName}.{property}");
+                AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(unset, property);
+                Assert.AreEqual(editor, descriptor.EditorKind, $"{typeName}.{property}");
+                Assert.AreEqual(defaultValue, descriptor.Value, $"{typeName}.{property} preserves its default");
+                Assert.IsNull(descriptor.ValidationError, $"{typeName}.{property}");
+                Assert.IsNull(AxamlPropertyValueValidator.Validate(typeName, property, value), $"{typeName}.{property}");
+                Assert.IsNotNull(AxamlPropertyValueValidator.Validate(typeName, property, invalidValue), $"{typeName}.{property}");
+            }
+
+            AxamlPreviewNode bound = service.Parse(
+                $"<{typeName} xmlns='https://github.com/avaloniaui' Background='{{Binding Background}}' BorderBrush='{{Binding BorderBrush}}' BorderThickness='{{Binding BorderThickness}}' CornerRadius='{{Binding CornerRadius}}' FontSize='{{Binding FontSize}}' FontStyle='{{Binding FontStyle}}' FontWeight='{{Binding FontWeight}}' Foreground='{{Binding Foreground}}' Padding='{{Binding Padding}}' />");
+            foreach (var (property, _, _, _, _) in properties)
+            {
+                Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, property).IsReadOnly, $"{typeName}.{property} binding");
+            }
+        }
+    }
+
+    [TestMethod]
+    public void SelectorSelectedIndex_IsSafeAndDefaultsToNoSelection()
+    {
+        AxamlPreviewService service = new();
+        foreach (string typeName in new[] { "ComboBox", "ListBox", "TabControl" })
+        {
+            AxamlControlCapability capability = AxamlControlCatalog.All.Single(item => item.TypeName == typeName);
+            AxamlPreviewNode unset = service.Parse($"<{typeName} xmlns='https://github.com/avaloniaui' />");
+            AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(unset, "SelectedIndex");
+
+            Assert.IsTrue(capability.EditableProperties.Contains("SelectedIndex"), $"{typeName}.SelectedIndex");
+            Assert.AreEqual(AxamlPropertyEditorKind.Number, descriptor.EditorKind, $"{typeName}.SelectedIndex");
+            Assert.AreEqual("-1", descriptor.Value, $"{typeName}.SelectedIndex default");
+            Assert.IsNull(descriptor.ValidationError, $"{typeName}.SelectedIndex");
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(typeName, "SelectedIndex", "-1"));
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(typeName, "SelectedIndex", "0"));
+            Assert.IsNull(AxamlPropertyValueValidator.Validate(typeName, "SelectedIndex", "3"));
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(typeName, "SelectedIndex", "-2"));
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate(typeName, "SelectedIndex", "1.5"));
+
+            AxamlPreviewNode bound = service.Parse(
+                $"<{typeName} xmlns='https://github.com/avaloniaui' SelectedIndex='{{Binding Selection}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "SelectedIndex").IsReadOnly, $"{typeName}.SelectedIndex binding");
+        }
+    }
+
+    [TestMethod]
+    public void TabControl_ExposesSafeTabsAndRestrictsChildTypes()
+    {
+        const string markup = """
+            <TabControl xmlns="https://github.com/avaloniaui" SelectedIndex="1">
+              <TabItem Header="General"><TextBlock Text="Settings" /></TabItem>
+              <TabItem Header="Advanced" />
+            </TabControl>
+            """;
+        AxamlPreviewService service = new();
+        AxamlPreviewNode tabs = service.Parse(markup);
+        AxamlPreviewNode firstTab = tabs.Children[0];
+        AxamlControlCapability capability = AxamlControlCatalog.All.Single(
+            static item => item.TypeName == "TabControl");
+        AxamlPropertyDescriptor header = AxamlPropertyValueValidator.Describe(firstTab, "Header");
+
+        Assert.IsTrue(tabs.IsSupported);
+        Assert.IsTrue(tabs.CanAppendChildren);
+        Assert.AreEqual("TabItem", capability.AllowedChildTypes.Single());
+        Assert.AreEqual(AxamlPropertyEditorKind.Number,
+            AxamlPropertyValueValidator.Describe(tabs, "SelectedIndex").EditorKind);
+        Assert.AreEqual("Settings", firstTab.Children.Single().Text);
+        Assert.AreEqual("General", header.Value);
+        Assert.IsFalse(header.IsReadOnly);
+        Assert.IsNull(header.ValidationError);
+
+        string withNewTab = service.InsertChildControl(markup, tabs, "TabItem");
+        Assert.AreEqual(3, service.Parse(withNewTab).Children.Count);
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => service.InsertChildControl(markup, tabs, "Button"));
+        Assert.IsFalse(service.Parse("<TabControl><TextBlock /></TabControl>").IsSupported);
+    }
+
+    [TestMethod]
+    public void Menu_ExposesSafeNestedItemsAndRestrictsChildTypes()
+    {
+        const string markup = """
+            <Menu xmlns="https://github.com/avaloniaui">
+              <MenuItem Header="File">
+                <MenuItem Header="Open" InputGesture="Ctrl+O" />
+                <Separator />
+                <MenuItem Header="Exit" />
+              </MenuItem>
+            </Menu>
+            """;
+        AxamlPreviewService service = new();
+        AxamlPreviewNode menu = service.Parse(markup);
+        AxamlPreviewNode fileMenuItem = menu.Children.Single();
+        AxamlControlCapability menuCapability = AxamlControlCatalog.All.Single(
+            static item => item.TypeName == "Menu");
+        AxamlControlCapability itemCapability = AxamlControlCatalog.All.Single(
+            static item => item.TypeName == "MenuItem");
+
+        Assert.IsTrue(menu.IsSupported);
+        Assert.IsTrue(menu.CanAppendChildren);
+        CollectionAssert.AreEquivalent(new[] { "MenuItem", "Separator" }, menuCapability.AllowedChildTypes.ToArray());
+        CollectionAssert.AreEquivalent(new[] { "MenuItem", "Separator" }, itemCapability.AllowedChildTypes.ToArray());
+        Assert.AreEqual("File", AxamlPropertyValueValidator.Describe(fileMenuItem, "Header").Value);
+        Assert.IsFalse(AxamlPropertyValueValidator.Describe(fileMenuItem, "Header").IsReadOnly);
+        Assert.AreEqual("MenuItem", fileMenuItem.Children[0].TypeName);
+        Assert.AreEqual("Separator", fileMenuItem.Children[1].TypeName);
+        Assert.AreEqual("Exit", fileMenuItem.Children[2].Text);
+        AxamlPropertyDescriptor inputGesture = AxamlPropertyValueValidator.Describe(
+            fileMenuItem.Children[0],
+            "InputGesture");
+        Assert.IsTrue(itemCapability.EditableProperties.Contains("InputGesture"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, inputGesture.EditorKind);
+        Assert.AreEqual("Ctrl+O", inputGesture.Value);
+        Assert.IsNull(inputGesture.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "InputGesture", "Ctrl+S"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("MenuItem", "InputGesture", string.Empty));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "InputGesture", "NotAKey"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "InputGesture", "Ctrl"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("MenuItem", "InputGesture", "Ctrl+S+T"));
+
+        AxamlPreviewNode boundGesture = service.Parse(
+            "<MenuItem InputGesture='{Binding SaveGesture}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundGesture, "InputGesture").IsReadOnly);
+
+        string withNewItem = service.InsertChildControl(markup, menu, "MenuItem");
+        Assert.AreEqual(2, service.Parse(withNewItem).Children.Count);
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => service.InsertChildControl(markup, menu, "Button"));
+        Assert.IsFalse(service.Parse("<Menu><TextBlock /></Menu>").IsSupported);
+        Assert.IsFalse(service.Parse("<MenuItem><Button /></MenuItem>").IsSupported);
+    }
+
+    [TestMethod]
+    public void ControlContextMenu_IsLimitedToOneSafePropertyElementAndCanBeInserted()
+    {
+        const string prefixMarkup = "<ui:Button xmlns:ui='https://github.com/avaloniaui' Content='Open' />";
+        const string existingMarkup = """
+            <Button xmlns="https://github.com/avaloniaui">
+              <Button.ContextMenu>
+                <ContextMenu>
+                  <MenuItem Header="Copy" />
+                  <Separator />
+                </ContextMenu>
+              </Button.ContextMenu>
+            </Button>
+            """;
+        AxamlPreviewService service = new();
+        AxamlPreviewNode button = service.Parse(prefixMarkup);
+        string inserted = service.InsertContextMenu(prefixMarkup, button);
+        AxamlPreviewNode parsedButton = service.Parse(inserted);
+        AxamlPreviewNode contextMenu = parsedButton.Children.Single();
+
+        StringAssert.Contains(inserted, "<ui:Button.ContextMenu>");
+        StringAssert.Contains(inserted, "<ui:ContextMenu />");
+        Assert.IsTrue(parsedButton.IsSupported);
+        Assert.IsTrue(contextMenu.IsSupported);
+        Assert.IsTrue(contextMenu.CanAppendChildren);
+        CollectionAssert.AreEquivalent(
+            new[] { "MenuItem", "Separator" },
+            AxamlControlCatalog.All.Single(static capability => capability.TypeName == "ContextMenu")
+                .AllowedChildTypes.ToArray());
+        Assert.ThrowsExactly<InvalidOperationException>(() => service.InsertContextMenu(inserted, parsedButton));
+
+        const string textBoxMarkup =
+            "<TextBox xmlns='https://github.com/avaloniaui' Text='Search' />";
+        AxamlPreviewNode textBox = service.Parse(textBoxMarkup);
+        string textBoxWithContextMenu = service.InsertContextMenu(textBoxMarkup, textBox);
+        AxamlPreviewNode parsedTextBox = service.Parse(textBoxWithContextMenu);
+        Assert.IsTrue(parsedTextBox.IsSupported);
+        Assert.AreEqual("ContextMenu", parsedTextBox.Children.Single().TypeName);
+        StringAssert.Contains(textBoxWithContextMenu, "<TextBox.ContextMenu>");
+
+        const string emptyContextMarkup =
+            "<Button><Button.ContextMenu><ContextMenu>\n</ContextMenu></Button.ContextMenu></Button>";
+        AxamlPreviewNode staleContextMenu = service.Parse(emptyContextMarkup).Children.Single();
+        string changedContextMarkup = emptyContextMarkup.Replace(
+            "<ContextMenu>\n",
+            "<ContextMenu>\n<MenuItem Header='Open' />\n",
+            StringComparison.Ordinal);
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => service.InsertChildControl(changedContextMarkup, staleContextMenu, "MenuItem"));
+
+        AxamlPreviewNode existingContext = service.Parse(existingMarkup);
+        Assert.IsTrue(existingContext.IsSupported);
+        Assert.AreEqual("ContextMenu", existingContext.Children.Single().TypeName);
+        Assert.AreEqual("MenuItem", existingContext.Children.Single().Children[0].TypeName);
+        Assert.AreEqual("Separator", existingContext.Children.Single().Children[1].TypeName);
+
+        const string expandedButtonMarkup = "<Button Content='Save'></Button>";
+        AxamlPreviewNode expandedButton = service.Parse(expandedButtonMarkup);
+        string expandedButtonWithContextMenu = service.InsertContextMenu(expandedButtonMarkup, expandedButton);
+        StringAssert.Contains(expandedButtonWithContextMenu, "Content='Save'");
+        Assert.IsTrue(service.Parse(expandedButtonWithContextMenu).IsSupported);
+        StringAssert.Contains(expandedButtonWithContextMenu, "<Button.ContextMenu>");
+
+        Assert.IsFalse(service.Parse("<Button ContextMenu='{Binding Actions}' />").IsSupported);
+        Assert.IsFalse(service.Parse("<TextBox ContextMenu='{Binding Actions}' />").IsSupported);
+        const string separatorMarkup = "<Separator />";
+        string separatorWithContextMenu = service.InsertContextMenu(separatorMarkup, service.Parse(separatorMarkup));
+        Assert.IsTrue(service.Parse(separatorWithContextMenu).IsSupported);
+        StringAssert.Contains(separatorWithContextMenu, "<Separator.ContextMenu>");
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ContextMenu><ContextMenu /></Button.ContextMenu><Button.ContextMenu><ContextMenu /></Button.ContextMenu></Button>")
+            .IsSupported);
+        Assert.IsFalse(service.Parse(
+            "<TextBox><TextBox.ContextMenu><ContextMenu /></TextBox.ContextMenu><TextBox.ContextMenu><ContextMenu /></TextBox.ContextMenu></TextBox>")
+            .IsSupported);
+        Assert.IsTrue(service.Parse(
+            "<MenuItem Header='More'><MenuItem.ContextMenu><ContextMenu><MenuItem Header='Nested' /></ContextMenu></MenuItem.ContextMenu></MenuItem>")
+            .IsSupported);
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ContextMenu><ContextMenu><TextBlock /></ContextMenu></Button.ContextMenu></Button>")
+            .IsSupported);
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ContextMenu><ContextMenu ItemsSource='{Binding Actions}' /></Button.ContextMenu></Button>")
+            .IsSupported);
+    }
+
+    [TestMethod]
+    public void ToolTip_IsLimitedToSafeTextAndCanBeInserted()
+    {
+        const string prefixMarkup = "<ui:TextBox xmlns:ui='https://github.com/avaloniaui' />";
+        AxamlPreviewService service = new();
+        string inserted = service.InsertToolTip(prefixMarkup, service.Parse(prefixMarkup));
+        AxamlPreviewNode parsed = service.Parse(inserted);
+
+        Assert.IsTrue(parsed.IsSupported);
+        Assert.AreEqual("ToolTip", parsed.Children.Single().TypeName);
+        Assert.AreEqual("TextBlock", parsed.Children.Single().Children.Single().TypeName);
+        StringAssert.Contains(inserted, "<ui:TextBox.ToolTip>");
+        StringAssert.Contains(inserted, "<ui:ToolTip>");
+        StringAssert.Contains(inserted, "Text=\"Helpful text\"");
+        Assert.ThrowsExactly<InvalidOperationException>(() => service.InsertToolTip(inserted, parsed));
+
+        Assert.IsTrue(service.Parse("<ToolTip />").IsSupported);
+        Assert.IsFalse(service.Parse("<Button ToolTip='{Binding Help}' />").IsSupported);
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ToolTip><ToolTip><Button /></ToolTip></Button.ToolTip></Button>").IsSupported);
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ToolTip><ToolTip><TextBlock Text='{Binding Help}' /></ToolTip></Button.ToolTip></Button>")
+            .IsSupported);
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ToolTip><ToolTip><TextBlock Text='Help' /><TextBlock Text='More' /></ToolTip></Button.ToolTip></Button>")
+            .IsSupported);
+        AxamlPreviewNode richToolTip = service.Parse(
+            "<Button><Button.ToolTip><ToolTip><StackPanel Spacing='4'><TextBlock Text='Title' /><TextBlock Text='Help' /></StackPanel></ToolTip></Button.ToolTip></Button>");
+        Assert.IsTrue(richToolTip.IsSupported);
+        Assert.AreEqual("StackPanel", richToolTip.Children.Single().Children.Single().TypeName);
+        Assert.AreEqual(2, richToolTip.Children.Single().Children.Single().Children.Count);
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ToolTip><ToolTip><StackPanel><Button /></StackPanel></ToolTip></Button.ToolTip></Button>")
+            .IsSupported);
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ToolTip><ToolTip><StackPanel Spacing='{Binding Spacing}'><TextBlock /></StackPanel></ToolTip></Button.ToolTip></Button>")
+            .IsSupported);
+        Assert.IsFalse(service.Parse(
+            "<Button><Button.ToolTip><ToolTip><StackPanel><TextBlock Text='{Binding Help}' /></StackPanel></ToolTip></Button.ToolTip></Button>")
+            .IsSupported);
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => service.InsertToolTip("<ToolTip />", service.Parse("<ToolTip />")));
+    }
+
+    [TestMethod]
+    public void DatePickerSelectedDate_UsesStrictInvariantDateLiterals()
+    {
+        AxamlControlCapability capability = AxamlControlCatalog.All.Single(static item => item.TypeName == "DatePicker");
+        AxamlPreviewService service = new();
+        AxamlPreviewNode selected = service.Parse(
+            "<DatePicker xmlns='https://github.com/avaloniaui' SelectedDate='2024-02-29' />");
+        AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(selected, "SelectedDate");
+
+        Assert.IsTrue(capability.EditableProperties.Contains("SelectedDate"));
+        Assert.AreEqual("2024-02-29", descriptor.Value);
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, descriptor.EditorKind);
+        Assert.IsNull(descriptor.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("DatePicker", "SelectedDate", "2024-02-29"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("DatePicker", "SelectedDate", "2023-02-29"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("DatePicker", "SelectedDate", "02/29/2024"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("DatePicker", "SelectedDate", string.Empty));
+        Assert.AreEqual(
+            string.Empty,
+            AxamlPropertyValueValidator.Describe(service.Parse("<DatePicker />"), "SelectedDate").Value);
+
+        AxamlPreviewNode bound = service.Parse(
+            "<DatePicker xmlns='https://github.com/avaloniaui' SelectedDate='{Binding StartDate}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, "SelectedDate").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void Calendar_ExposesSafeSingleDateSelectionAndNavigation()
+    {
+        AxamlControlCapability capability = AxamlControlCatalog.All.Single(static item => item.TypeName == "Calendar");
+        AxamlControlCapability datePickerCapability = AxamlControlCatalog.All.Single(static item => item.TypeName == "DatePicker");
+        AxamlPreviewService service = new();
+        AxamlPreviewNode unset = service.Parse("<Calendar />");
+        Assert.IsTrue(capability.SupportsMvvmGeneration);
+        Assert.AreEqual("DateTime?", capability.BindableProperties.Single().TypeName);
+        Assert.AreEqual(AxamlBindingMode.TwoWay, capability.BindableProperties.Single().DefaultBindingMode);
+
+        foreach (string propertyName in new[] { "SelectedDate", "DisplayDate", "DisplayDateStart", "DisplayDateEnd" })
+        {
+        AxamlPropertyDescriptor date = AxamlPropertyValueValidator.Describe(unset, propertyName);
+        Assert.IsTrue(capability.EditableProperties.Contains(propertyName), propertyName);
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, date.EditorKind, propertyName);
+        Assert.AreEqual(string.Empty, date.Value, propertyName);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Calendar", propertyName, "2024-02-29"), propertyName);
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Calendar", propertyName, "2024-02-30"), propertyName);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Calendar", propertyName, string.Empty), propertyName);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse($"<Calendar {propertyName}='{{Binding CalendarDate}}' />"),
+            propertyName).IsReadOnly, propertyName);
+        }
+
+        AxamlPropertyDescriptor selectionMode = AxamlPropertyValueValidator.Describe(unset, "SelectionMode");
+        Assert.AreEqual("SingleDate", selectionMode.Value);
+        CollectionAssert.AreEqual(new[] { "None", "SingleDate" }, selectionMode.Options.ToArray());
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Calendar", "SelectionMode", "None"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Calendar", "SelectionMode", "MultipleRange"));
+
+        AxamlPropertyDescriptor firstDayOfWeek = AxamlPropertyValueValidator.Describe(unset, "FirstDayOfWeek");
+        Assert.AreEqual("Monday", firstDayOfWeek.Value);
+        CollectionAssert.AreEqual(
+        new[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" },
+        firstDayOfWeek.Options.ToArray());
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Calendar", "FirstDayOfWeek", "Funday"));
+
+        AxamlPropertyDescriptor todayHighlighted = AxamlPropertyValueValidator.Describe(unset, "IsTodayHighlighted");
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, todayHighlighted.EditorKind);
+        Assert.AreEqual("True", todayHighlighted.Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Calendar", "IsTodayHighlighted", "False"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Calendar", "IsTodayHighlighted", "sometimes"));
+        Assert.AreEqual(AxamlBindingMode.TwoWay, capability.BindableProperties.Single().DefaultBindingMode);
+
+        foreach (string propertyName in new[] { "DayVisible", "MonthVisible", "YearVisible" })
+        {
+            AxamlPropertyDescriptor visibility = AxamlPropertyValueValidator.Describe(
+                service.Parse("<DatePicker />"),
+                propertyName);
+            Assert.IsTrue(datePickerCapability.EditableProperties.Contains(propertyName));
+            Assert.AreEqual(AxamlPropertyEditorKind.Boolean, visibility.EditorKind, propertyName);
+            Assert.AreEqual("True", visibility.Value, propertyName);
+            Assert.IsNull(visibility.ValidationError, propertyName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, "False"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, "sometimes"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, string.Empty), propertyName);
+
+            AxamlPreviewNode boundVisibility = service.Parse(
+                $"<DatePicker {propertyName}='{{Binding ShowPart}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundVisibility, propertyName).IsReadOnly, propertyName);
+        }
+
+        foreach (string propertyName in new[] { "DayFormat", "MonthFormat", "YearFormat" })
+        {
+            AxamlPropertyDescriptor format = AxamlPropertyValueValidator.Describe(
+                service.Parse($"<DatePicker {propertyName}='yyyy' />"),
+                propertyName);
+            Assert.IsTrue(datePickerCapability.EditableProperties.Contains(propertyName));
+            Assert.AreEqual(AxamlPropertyEditorKind.Text, format.EditorKind, propertyName);
+            Assert.AreEqual("yyyy", format.Value, propertyName);
+            Assert.IsNull(format.ValidationError, propertyName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, "MMM"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, "%"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, new string('y', 33)), propertyName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, string.Empty), propertyName);
+
+            AxamlPreviewNode boundFormat = service.Parse(
+                $"<DatePicker {propertyName}='{{Binding DateFormat}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundFormat, propertyName).IsReadOnly, propertyName);
+        }
+
+        foreach (string propertyName in new[] { "MinYear", "MaxYear" })
+        {
+            AxamlPropertyDescriptor year = AxamlPropertyValueValidator.Describe(
+                service.Parse($"<DatePicker {propertyName}='2024-01-01' />"),
+                propertyName);
+            Assert.IsTrue(datePickerCapability.EditableProperties.Contains(propertyName));
+            Assert.AreEqual(AxamlPropertyEditorKind.Text, year.EditorKind, propertyName);
+            Assert.AreEqual("2024-01-01", year.Value, propertyName);
+            Assert.IsNull(year.ValidationError, propertyName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, "1900-01-01"), propertyName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, "2100-12-31"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, "2024"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, "2024-02-30"), propertyName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("DatePicker", propertyName, string.Empty), propertyName);
+
+            AxamlPreviewNode boundYear = service.Parse(
+                $"<DatePicker {propertyName}='{{Binding SelectedYear}}' />");
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(boundYear, propertyName).IsReadOnly, propertyName);
+        }
+    }
+
+    [TestMethod]
+    public void AutoCompleteBox_ExposesSafeTextAndFilterOptions()
+    {
+        AxamlControlCapability capability = AxamlControlCatalog.All.Single(static item => item.TypeName == "AutoCompleteBox");
+        AxamlPreviewService service = new();
+        AxamlPreviewNode unset = service.Parse("<AutoCompleteBox />");
+        Assert.IsTrue(capability.SupportsMvvmGeneration);
+        Assert.AreEqual("string?", capability.BindableProperties.Single().TypeName);
+        Assert.AreEqual(AxamlBindingMode.TwoWay, capability.BindableProperties.Single().DefaultBindingMode);
+
+        AxamlPropertyDescriptor text = AxamlPropertyValueValidator.Describe(
+            service.Parse("<AutoCompleteBox Text='Ada' />"),
+            "Text");
+        Assert.IsTrue(capability.EditableProperties.Contains("Text"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, text.EditorKind);
+        Assert.AreEqual("Ada", text.Value);
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<AutoCompleteBox Text='{Binding SearchText}' />"),
+            "Text").IsReadOnly);
+
+        AxamlPropertyDescriptor filterMode = AxamlPropertyValueValidator.Describe(unset, "FilterMode");
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, filterMode.EditorKind);
+        Assert.AreEqual("StartsWith", filterMode.Value);
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                "None",
+                "StartsWith",
+                "StartsWithCaseSensitive",
+                "StartsWithOrdinal",
+                "StartsWithOrdinalCaseSensitive",
+                "Contains",
+                "ContainsCaseSensitive",
+                "ContainsOrdinal",
+                "ContainsOrdinalCaseSensitive",
+                "Equals",
+                "EqualsCaseSensitive",
+                "EqualsOrdinal",
+                "EqualsOrdinalCaseSensitive",
+            },
+            filterMode.Options.ToArray());
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("AutoCompleteBox", "FilterMode", "ContainsOrdinal"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("AutoCompleteBox", "FilterMode", "Custom"));
+
+        AxamlPropertyDescriptor prefixLength = AxamlPropertyValueValidator.Describe(unset, "MinimumPrefixLength");
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, prefixLength.EditorKind);
+        Assert.AreEqual("1", prefixLength.Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("AutoCompleteBox", "MinimumPrefixLength", "0"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("AutoCompleteBox", "MinimumPrefixLength", "-1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("AutoCompleteBox", "MinimumPrefixLength", "1.5"));
+
+        AxamlPropertyDescriptor completion = AxamlPropertyValueValidator.Describe(unset, "IsTextCompletionEnabled");
+        Assert.AreEqual(AxamlPropertyEditorKind.Boolean, completion.EditorKind);
+        Assert.AreEqual("False", completion.Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("AutoCompleteBox", "IsTextCompletionEnabled", "True"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("AutoCompleteBox", "IsTextCompletionEnabled", "maybe"));
+    }
+
+    [TestMethod]
+    public void ColorPicker_ExposesSafeColorModelAndFeatureOptions()
+    {
+        AxamlControlCapability capability = AxamlControlCatalog.All.Single(static item => item.TypeName == "ColorPicker");
+        AxamlPreviewService service = new();
+        AxamlPreviewNode unset = service.Parse("<ColorPicker />");
+        Assert.IsTrue(capability.SupportsMvvmGeneration);
+        Assert.AreEqual("global::Avalonia.Media.Color", capability.BindableProperties.Single().TypeName);
+        Assert.AreEqual(AxamlBindingMode.TwoWay, capability.BindableProperties.Single().DefaultBindingMode);
+
+        AxamlPropertyDescriptor color = AxamlPropertyValueValidator.Describe(unset, "Color");
+        Assert.IsTrue(capability.EditableProperties.Contains("Color"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, color.EditorKind);
+        Assert.AreEqual("White", color.Value);
+        Assert.IsNull(color.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("ColorPicker", "Color", "#FF123456"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("ColorPicker", "Color", "#ABC"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("ColorPicker", "Color", "Red"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ColorPicker", "Color", "NotAColor"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<ColorPicker Color='{Binding Accent}' />"),
+            "Color").IsReadOnly);
+
+        AxamlPropertyDescriptor colorModel = AxamlPropertyValueValidator.Describe(unset, "ColorModel");
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, colorModel.EditorKind);
+        Assert.AreEqual("Rgba", colorModel.Value);
+        CollectionAssert.AreEqual(new[] { "Hsva", "Rgba" }, colorModel.Options.ToArray());
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ColorPicker", "ColorModel", "Unknown"));
+
+        foreach (string propertyName in new[]
+        {
+            "IsAccentColorsVisible", "IsAlphaEnabled", "IsAlphaVisible", "IsColorComponentsVisible",
+            "IsColorModelVisible", "IsColorPaletteVisible", "IsColorPreviewVisible",
+            "IsColorSpectrumSliderVisible", "IsColorSpectrumVisible", "IsComponentSliderVisible",
+            "IsComponentTextInputVisible", "IsHexInputVisible",
+        })
+        {
+            AxamlPropertyDescriptor option = AxamlPropertyValueValidator.Describe(unset, propertyName);
+            Assert.IsTrue(capability.EditableProperties.Contains(propertyName), propertyName);
+            Assert.AreEqual(AxamlPropertyEditorKind.Boolean, option.EditorKind, propertyName);
+            Assert.AreEqual("True", option.Value, propertyName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("ColorPicker", propertyName, "False"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ColorPicker", propertyName, "maybe"), propertyName);
+        }
+    }
+
+    [TestMethod]
+    public void TimePicker_ExposesSafeSelectionAndClockOptions()
+    {
+        AxamlControlCapability capability = AxamlControlCatalog.All.Single(static item => item.TypeName == "TimePicker");
+        AxamlPreviewService service = new();
+        AxamlPreviewNode unset = service.Parse("<TimePicker />");
+        Assert.IsTrue(capability.SupportsMvvmGeneration);
+        Assert.AreEqual("TimeSpan?", capability.BindableProperties.Single().TypeName);
+        Assert.AreEqual(AxamlBindingMode.TwoWay, capability.BindableProperties.Single().DefaultBindingMode);
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, AxamlPropertyValueValidator.Describe(unset, "SelectedTime").EditorKind);
+        Assert.AreEqual(string.Empty, AxamlPropertyValueValidator.Describe(unset, "SelectedTime").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TimePicker", "SelectedTime", string.Empty));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TimePicker", "SelectedTime", "00:00"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TimePicker", "SelectedTime", "23:59:59"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TimePicker", "SelectedTime", "24:00"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TimePicker", "SelectedTime", "12:60"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TimePicker", "SelectedTime", "12:30:61"));
+
+        AxamlPropertyDescriptor clock = AxamlPropertyValueValidator.Describe(unset, "ClockIdentifier");
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, clock.EditorKind);
+        Assert.AreEqual("24HourClock", clock.Value);
+        CollectionAssert.AreEqual(new[] { "12HourClock", "24HourClock" }, clock.Options.ToArray());
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("TimePicker", "ClockIdentifier", "12HourClock"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TimePicker", "ClockIdentifier", "TwentyFourHourClock"));
+
+        foreach (string propertyName in new[] { "MinuteIncrement", "SecondIncrement" })
+        {
+            AxamlPropertyDescriptor increment = AxamlPropertyValueValidator.Describe(unset, propertyName);
+            Assert.AreEqual(AxamlPropertyEditorKind.Number, increment.EditorKind, propertyName);
+            Assert.AreEqual("1", increment.Value, propertyName);
+            Assert.IsNull(AxamlPropertyValueValidator.Validate("TimePicker", propertyName, "59"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TimePicker", propertyName, "0"), propertyName);
+            Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TimePicker", propertyName, "60"), propertyName);
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+                service.Parse($"<TimePicker {propertyName}='{{Binding Increment}}' />"),
+                propertyName).IsReadOnly, propertyName);
+        }
+
+        Assert.AreEqual("False", AxamlPropertyValueValidator.Describe(unset, "UseSeconds").Value);
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TimePicker", "UseSeconds", "sometimes"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<TimePicker SelectedTime='{Binding StartTime}' />"),
+            "SelectedTime").IsReadOnly);
+    }
+
+    [TestMethod]
     public void Label_ExposesSafeTextProperties()
     {
         AxamlControlCapability capability = AxamlControlCatalog.All.Single(static item => item.TypeName == "Label");
@@ -210,6 +773,8 @@ public sealed class AxamlControlCatalogTests
             ("FontStyle", AxamlPropertyEditorKind.Enum, "Italic", string.Empty),
             ("FontWeight", AxamlPropertyEditorKind.Enum, "SemiBold", "Normal"),
             ("Foreground", AxamlPropertyEditorKind.Text, "Blue", string.Empty),
+            ("LineHeight", AxamlPropertyEditorKind.Number, "22", string.Empty),
+            ("MaxLines", AxamlPropertyEditorKind.Number, "2", string.Empty),
             ("TextAlignment", AxamlPropertyEditorKind.Enum, "Right", string.Empty),
             ("TextTrimming", AxamlPropertyEditorKind.Enum, "WordEllipsis", string.Empty),
             ("TextWrapping", AxamlPropertyEditorKind.Enum, "NoWrap", string.Empty),
@@ -226,13 +791,15 @@ public sealed class AxamlControlCatalogTests
         Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Label", "FontSize", "-1"));
         Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Label", "FontStyle", "Bold"));
         Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Label", "Foreground", "Gradient"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Label", "LineHeight", "0"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Label", "MaxLines", "-1"));
         Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Label", "TextAlignment", "Unknown"));
         Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Label", "TextTrimming", "Unknown"));
         Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Label", "TextWrapping", "Unknown"));
 
         AxamlPreviewNode bound = service.Parse(
-            "<Label xmlns='https://github.com/avaloniaui' FontSize='{Binding Size}' FontStyle='{Binding Style}' FontWeight='{Binding Weight}' Foreground='{Binding Brush}' TextAlignment='{Binding Alignment}' TextTrimming='{Binding Trimming}' TextWrapping='{Binding Wrapping}' />");
-        foreach (string property in new[] { "FontSize", "FontStyle", "FontWeight", "Foreground", "TextAlignment", "TextTrimming", "TextWrapping" })
+            "<Label xmlns='https://github.com/avaloniaui' FontSize='{Binding Size}' FontStyle='{Binding Style}' FontWeight='{Binding Weight}' Foreground='{Binding Brush}' LineHeight='{Binding Height}' MaxLines='{Binding Count}' TextAlignment='{Binding Alignment}' TextTrimming='{Binding Trimming}' TextWrapping='{Binding Wrapping}' />");
+        foreach (string property in new[] { "FontSize", "FontStyle", "FontWeight", "Foreground", "LineHeight", "MaxLines", "TextAlignment", "TextTrimming", "TextWrapping" })
         {
             Assert.IsTrue(AxamlPropertyValueValidator.Describe(bound, property).IsReadOnly, $"Label.{property} binding");
         }
@@ -372,14 +939,21 @@ public sealed class AxamlControlCatalogTests
     {
         string[] expected =
         [
+            "AutoCompleteBox",
             "Button",
+            "Calendar",
             "CheckBox",
+            "ColorPicker",
             "ComboBox",
+            "DatePicker",
+            "MenuItem",
             "NumericUpDown",
             "RadioButton",
             "Slider",
+            "TabControl",
             "TextBlock",
             "TextBox",
+            "TimePicker",
             "ToggleSwitch",
         ];
         string[] actual = AxamlControlCatalog.All
@@ -400,7 +974,9 @@ public sealed class AxamlControlCatalogTests
             .OrderBy(static typeName => typeName, StringComparer.Ordinal)
             .ToArray();
 
-        CollectionAssert.AreEqual(new[] { "DockPanel", "StackPanel", "UniformGrid", "WrapPanel" }, actual);
+        CollectionAssert.AreEqual(
+            new[] { "ContextMenu", "DockPanel", "Menu", "MenuItem", "StackPanel", "TabControl", "TabItem", "ToolTip", "UniformGrid", "WrapPanel" },
+            actual);
     }
 
     [TestMethod]
@@ -413,7 +989,7 @@ public sealed class AxamlControlCatalogTests
             .ToArray();
 
         CollectionAssert.AreEqual(
-            new[] { "Border", "ContentControl", "Expander", "GroupBox", "ScrollViewer", "Viewbox" },
+            new[] { "Border", "ContentControl", "Expander", "GroupBox", "ScrollViewer", "TabItem", "ToolTip", "Viewbox" },
             actual);
     }
 }

@@ -333,6 +333,35 @@ public sealed class AxamlDesignerSessionTests
     }
 
     [TestMethod]
+    public void StructureEditing_WorksForCataloguedMenuAndTabContainers()
+    {
+        string[] markupCases =
+        [
+            "<Menu><MenuItem Header='First' /><Separator /><MenuItem Header='Second' /></Menu>",
+            "<MenuItem Header='Root'><MenuItem Header='First' /><MenuItem Header='Second' /></MenuItem>",
+            "<ContextMenu><MenuItem Header='First' /><Separator /></ContextMenu>",
+            "<TabControl><TabItem Header='First' /><TabItem Header='Second' /></TabControl>",
+        ];
+
+        foreach (string markup in markupCases)
+        {
+            AxamlDesignerSession session = new();
+            session.Load(markup);
+            AxamlPreviewNode firstChild = session.Root!.Children[0];
+            session.SelectNode(firstChild);
+
+            Assert.IsTrue(session.CanMoveSelectedControlLater, markup);
+            Assert.IsTrue(session.MoveSelectedControl(1), markup);
+            Assert.AreEqual(firstChild.TypeName, session.SelectedNode!.TypeName, markup);
+            Assert.IsTrue(session.Undo(), markup);
+            Assert.IsTrue(session.CanRemoveSelectedControl, markup);
+            Assert.IsTrue(session.RemoveSelectedControl(), markup);
+            Assert.IsTrue(session.Undo(), markup);
+            Assert.AreEqual(markup, session.Markup, markup);
+        }
+    }
+
+    [TestMethod]
     public void StructureEditing_RemovesOnlySupportedDirectContentFromSingleChildContainers()
     {
         foreach (string container in new[] { "Border", "ContentControl", "Expander", "GroupBox", "ScrollViewer", "Viewbox" })
@@ -364,6 +393,52 @@ public sealed class AxamlDesignerSessionTests
         collapsedContent.SelectNode(collapsedContent.Root!.Children.Single());
         Assert.IsFalse(collapsedContent.CanRemoveSelectedControl);
         Assert.ThrowsExactly<System.InvalidOperationException>(() => collapsedContent.RemoveSelectedControl());
+    }
+
+    [TestMethod]
+    public void ToolTipContent_CanBeAddedRemovedAndRestoredThroughUndoRedo()
+    {
+        const string markup = "<Window><Button><Button.ToolTip><ToolTip /></Button.ToolTip></Button></Window>";
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        AxamlPreviewNode toolTip = session.Root!.Children.Single();
+
+        Assert.IsTrue(toolTip.CanAppendChildren);
+        session.SelectNode(toolTip);
+        Assert.IsTrue(session.AddChildControl("TextBlock"));
+        Assert.AreEqual("TextBlock", session.SelectedNode!.Children.Single().TypeName);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("TextBlock", session.SelectedNode!.Children.Single().TypeName);
+
+        AxamlPreviewNode textBlock = session.SelectedNode.Children.Single();
+        session.SelectNode(textBlock);
+        Assert.IsTrue(session.CanRemoveSelectedControl);
+        Assert.IsTrue(session.RemoveSelectedControl());
+        Assert.AreEqual("ToolTip", session.SelectedNode!.TypeName);
+        Assert.AreEqual(0, session.SelectedNode.Children.Count);
+        Assert.IsTrue(session.SelectedNode!.CanAppendChildren);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("TextBlock", session.SelectedNode!.TypeName);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("ToolTip", session.SelectedNode!.TypeName);
+        Assert.AreEqual(0, session.SelectedNode!.Children.Count);
+
+        Assert.IsTrue(session.AddChildControl("StackPanel"));
+        AxamlPreviewNode stackPanel = session.SelectedNode!.Children.Single();
+        session.SelectNode(stackPanel);
+        Assert.IsTrue(session.AddChildControl("TextBlock"));
+        Assert.IsTrue(session.AddChildControl("TextBlock"));
+        Assert.AreEqual(2, session.SelectedNode!.Children.Count);
+        Assert.IsTrue(session.Root!.IsSupported);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(1, session.SelectedNode!.Children.Count);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(0, session.SelectedNode!.Children.Count);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("ToolTip", session.SelectedNode!.TypeName);
+        Assert.AreEqual(0, session.SelectedNode.Children.Count);
     }
 
     [TestMethod]

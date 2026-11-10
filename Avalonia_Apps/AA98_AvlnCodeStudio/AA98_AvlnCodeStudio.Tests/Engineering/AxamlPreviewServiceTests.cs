@@ -226,6 +226,23 @@ public sealed class AxamlPreviewServiceTests
     }
 
     [TestMethod]
+    public void Parse_ExposesSelectorItemContentAndInlineText()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode comboBox = service.Parse(
+            "<ComboBox><ComboBoxItem Content='First choice' /><ComboBoxItem>Second choice</ComboBoxItem><ComboBoxItem Content='{Binding Label}' /><ComboBoxItem Content='{StaticResource Label}' /><ComboBoxItem Content='{DynamicResource Label}' /><ComboBoxItem Content='' /><ComboBoxItem><ComboBoxItem.Content><TextBlock Text='Property content' /></ComboBoxItem.Content></ComboBoxItem></ComboBox>");
+
+        Assert.AreEqual("First choice", comboBox.Children[0].Text);
+        Assert.AreEqual("Second choice", comboBox.Children[1].Text);
+        Assert.AreEqual("[Binding Label]", comboBox.Children[2].Text);
+        Assert.AreEqual("[StaticResource Label]", comboBox.Children[3].Text);
+        Assert.AreEqual("[DynamicResource Label]", comboBox.Children[4].Text);
+        Assert.AreEqual(string.Empty, comboBox.Children[5].Text);
+        Assert.AreEqual("ComboBoxItem", comboBox.Children[6].TypeName);
+        Assert.AreEqual("Property content", comboBox.Children[6].Children[0].Text);
+    }
+
+    [TestMethod]
     public void Parse_ExposesTextBlockWrappingAndForegroundSafely()
     {
         AxamlPreviewService service = new();
@@ -593,7 +610,12 @@ public sealed class AxamlPreviewServiceTests
         Assert.IsTrue(AxamlPropertyValueValidator.Describe(
             service.Parse("<StackPanel MinWidth='{Binding Minimum}' />"),
             "MinWidth").IsReadOnly);
-        Assert.IsFalse(service.CanEditProperty(service.Parse("<ComboBox />"), "MinWidth"));
+        AxamlPreviewNode comboBox = service.Parse("<ComboBox MinWidth='40' />");
+        AxamlPropertyDescriptor comboBoxMinWidth = AxamlPropertyValueValidator.Describe(comboBox, "MinWidth");
+        Assert.IsTrue(service.CanEditProperty(comboBox, "MinWidth"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, comboBoxMinWidth.EditorKind);
+        Assert.AreEqual("40", comboBoxMinWidth.Value);
+        Assert.IsNull(comboBoxMinWidth.ValidationError);
     }
 
     [TestMethod]
@@ -1523,6 +1545,18 @@ public sealed class AxamlPreviewServiceTests
             "<StackPanel>\r\n  <StackPanel />\r\n  <Button />\r\n</StackPanel>",
             updated);
         Assert.AreEqual(2, service.Parse(updated).Children.Count);
+    }
+
+    [TestMethod]
+    public void InsertChildControl_RejectsStaleAttachedContentChildren()
+    {
+        const string original = "<Button><Button.ToolTip><ToolTip /></Button.ToolTip></Button>";
+        const string changed = "<Button><Button.ToolTip><ToolTip><TextBlock /></ToolTip></Button.ToolTip></Button>";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode toolTip = service.Parse(original).Children.Single();
+
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => service.InsertChildControl(changed, toolTip, "TextBlock"));
     }
 
     [TestMethod]

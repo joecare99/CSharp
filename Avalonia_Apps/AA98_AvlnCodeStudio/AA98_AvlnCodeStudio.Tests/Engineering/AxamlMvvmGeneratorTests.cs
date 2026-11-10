@@ -16,6 +16,7 @@ public sealed class AxamlMvvmGeneratorTests
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     x:Class="Sample.Views.LoginView">
               <StackPanel>
+                <AutoCompleteBox x:Name="CityAutoCompleteBox" Text="Paris" />
                 <TextBox x:Name="UserNameTextBox" Text="initial" />
                 <CheckBox x:Name="RememberMeCheckBox" IsChecked="True" />
                 <ToggleSwitch x:Name="NotificationsToggleSwitch" IsChecked="False" />
@@ -23,6 +24,17 @@ public sealed class AxamlMvvmGeneratorTests
                 <NumericUpDown x:Name="QuantityNumericUpDown" Value="12.5" />
                 <Slider x:Name="VolumeSlider" Value="0.75" />
                 <ComboBox x:Name="CountryComboBox" SelectedIndex="1" />
+                <DatePicker x:Name="BirthDatePicker" SelectedDate="2024-02-29" />
+                <TimePicker x:Name="ArrivalTimePicker" SelectedTime="13:45:30" />
+                <Calendar x:Name="ReleaseCalendar" SelectedDate="2024-02-29" />
+                <ColorPicker x:Name="ThemeColorPicker" Color="#FF123456" />
+                <TabControl x:Name="SettingsTabControl" SelectedIndex="1">
+                  <TabItem Header="General" />
+                  <TabItem Header="Advanced" />
+                </TabControl>
+                <Menu>
+                  <MenuItem x:Name="OpenMenuItem" Header="Open" />
+                </Menu>
                 <Button x:Name="SubmitButton" Content="Submit" />
                 <TextBlock Text="Static label" />
                 <TextBlock x:Name="WelcomeTextBlock" Text="Welcome" />
@@ -41,6 +53,7 @@ public sealed class AxamlMvvmGeneratorTests
         StringAssert.Contains(changes[0].ProposedContent, "x:DataType=\"vm:LoginViewViewModel\"");
         StringAssert.Contains(changes[0].ProposedContent, "<Window.DataContext>");
         StringAssert.Contains(changes[0].ProposedContent, "<vm:LoginViewViewModel");
+        StringAssert.Contains(changes[0].ProposedContent, "Text=\"{Binding City, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "{Binding UserName, Mode=TwoWay}");
         StringAssert.Contains(changes[0].ProposedContent, "IsChecked=\"{Binding RememberMe, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "IsChecked=\"{Binding Notifications, Mode=TwoWay}\"");
@@ -48,20 +61,33 @@ public sealed class AxamlMvvmGeneratorTests
         StringAssert.Contains(changes[0].ProposedContent, "Value=\"{Binding Quantity, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "Value=\"{Binding Volume, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "SelectedIndex=\"{Binding Country, Mode=TwoWay}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "SelectedDate=\"{Binding Birth, Mode=TwoWay}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "SelectedTime=\"{Binding Arrival, Mode=TwoWay}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "SelectedDate=\"{Binding Release, Mode=TwoWay}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "Color=\"{Binding Theme, Mode=TwoWay}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "SelectedIndex=\"{Binding Settings, Mode=TwoWay}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "Command=\"{Binding OpenCommand}\"");
         StringAssert.Contains(changes[0].ProposedContent, "{Binding SubmitCommand}");
         StringAssert.Contains(changes[0].ProposedContent, "Text=\"{Binding Welcome, Mode=OneWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "Text=\"Static label\"");
         StringAssert.Contains(changes[0].ProposedContent, "Text=\"{Binding ExistingStatus}\"");
         StringAssert.Contains(changes[1].ProposedContent, "namespace Sample.Views;");
+        StringAssert.Contains(changes[1].ProposedContent, "private string? _city = \"Paris\";");
         StringAssert.Contains(changes[1].ProposedContent, "private string _userName = \"initial\";");
         StringAssert.Contains(changes[1].ProposedContent, "private bool? _rememberMe = true;");
         StringAssert.Contains(changes[1].ProposedContent, "private bool? _notifications = false;");
         StringAssert.Contains(changes[1].ProposedContent, "private bool? _personal = true;");
         StringAssert.Contains(changes[1].ProposedContent, "private decimal? _quantity = 12.5m;");
         StringAssert.Contains(changes[1].ProposedContent, "private double _volume = 0.75d;");
+        StringAssert.Contains(changes[1].ProposedContent, "private global::System.DateTimeOffset? _birth = global::System.DateTimeOffset.ParseExact(\"2024-02-29\", \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None);");
+        StringAssert.Contains(changes[1].ProposedContent, "private global::System.TimeSpan? _arrival = global::System.TimeSpan.Parse(\"13:45:30\", global::System.Globalization.CultureInfo.InvariantCulture);");
+        StringAssert.Contains(changes[1].ProposedContent, "private global::System.DateTime? _release = global::System.DateTime.ParseExact(\"2024-02-29\", \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None);");
+        StringAssert.Contains(changes[1].ProposedContent, "private global::Avalonia.Media.Color _theme = global::Avalonia.Media.Color.Parse(\"#FF123456\");");
+        StringAssert.Contains(changes[1].ProposedContent, "private int _settings = 1;");
         StringAssert.Contains(changes[1].ProposedContent, "private int _country = 1;");
         StringAssert.Contains(changes[1].ProposedContent, "private string _welcome = \"Welcome\";");
         StringAssert.Contains(changes[1].ProposedContent, "[RelayCommand]");
+        StringAssert.Contains(changes[1].ProposedContent, "private void Open()");
         StringAssert.Contains(changes[1].ProposedContent, "private void Submit()");
     }
 
@@ -198,5 +224,82 @@ public sealed class AxamlMvvmGeneratorTests
 
         Assert.ThrowsExactly<InvalidDataException>(() =>
             new AxamlMvvmGenerator().Generate("MainWindow.axaml", markup));
+    }
+
+    [TestMethod]
+    public void Generate_RejectsNegativeTabControlSelectedIndex()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Sample.MainWindow">
+              <TabControl x:Name="SettingsTabControl" SelectedIndex="-2">
+                <TabItem Header="General" />
+              </TabControl>
+            </Window>
+            """;
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmGenerator().Generate("MainWindow.axaml", markup));
+    }
+
+    [TestMethod]
+    public void Generate_RejectsInvalidDatePickerSelectedDate()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Sample.Views.ScheduleView">
+              <DatePicker x:Name="StartDatePicker" SelectedDate="2023-02-29" />
+            </Window>
+            """;
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmGenerator().Generate("Views\\ScheduleView.axaml", markup));
+    }
+
+    [TestMethod]
+    public void Generate_RejectsInvalidTimePickerSelectedTime()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Sample.Views.ScheduleView">
+              <TimePicker x:Name="ArrivalTimePicker" SelectedTime="25:00" />
+            </Window>
+            """;
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmGenerator().Generate("Views\\ScheduleView.axaml", markup).ToArray());
+    }
+
+    [TestMethod]
+    public void Generate_RejectsInvalidCalendarSelectedDate()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Sample.Views.ScheduleView">
+              <Calendar x:Name="ReleaseCalendar" SelectedDate="2024-02-30" />
+            </Window>
+            """;
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmGenerator().Generate("Views\\ScheduleView.axaml", markup).ToArray());
+    }
+
+    [TestMethod]
+    public void Generate_RejectsInvalidColorPickerColor()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Sample.Views.ThemeView">
+              <ColorPicker x:Name="AccentColorPicker" Color="NotAColor" />
+            </Window>
+            """;
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmGenerator().Generate("Views\\ThemeView.axaml", markup).ToArray());
     }
 }
