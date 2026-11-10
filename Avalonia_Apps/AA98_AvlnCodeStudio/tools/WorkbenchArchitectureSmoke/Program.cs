@@ -15,6 +15,7 @@ using Avalonia.Automation.Peers;
 using Avalonia.Automation.Provider;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -67,21 +68,46 @@ internal static class Program
                 "<Border xmlns=\"https://github.com/avaloniaui\"><Button /></Border>");
             File.WriteAllText(Path.Combine(fixture, "ControlPreviews.axaml"),
                 "<StackPanel xmlns=\"https://github.com/avaloniaui\">"
-                + "<ComboBox PlaceholderText=\"Choose an option\" Background=\"White\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"4\" FontSize=\"14\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"Black\" Padding=\"3\" />"
-                + "<NumericUpDown Value=\"12.5\" FormatString=\"N2\" Increment=\"0.25\" Minimum=\"0.5\" Maximum=\"40\" AllowSpin=\"False\" ShowButtonSpinner=\"False\" ClipValueToMinMax=\"True\" ButtonSpinnerLocation=\"Left\" TextAlignment=\"Center\" ParsingNumberStyle=\"Integer\" Margin=\"3,4\" HorizontalAlignment=\"Right\" VerticalAlignment=\"Center\" Background=\"#FFF0F0F0\" BorderBrush=\"Green\" BorderThickness=\"2\" CornerRadius=\"3\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"Bold\" Foreground=\"DarkGreen\" Padding=\"2\" />"
+                + "<ComboBox PlaceholderText=\"Choose an option\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Bottom\" Background=\"White\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"4\" FontSize=\"14\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"Black\" Padding=\"3\" />"
+                + "<NumericUpDown Value=\"12.5\" FormatString=\"N2\" Increment=\"0.25\" Minimum=\"0.5\" Maximum=\"40\" AllowSpin=\"False\" ShowButtonSpinner=\"False\" ClipValueToMinMax=\"True\" ButtonSpinnerLocation=\"Left\" TextAlignment=\"Center\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" ParsingNumberStyle=\"Integer\" Margin=\"3,4\" HorizontalAlignment=\"Right\" VerticalAlignment=\"Center\" Width=\"120\" Height=\"60\" MinWidth=\"40\" MaxWidth=\"160\" MinHeight=\"30\" MaxHeight=\"90\" Background=\"#FFF0F0F0\" BorderBrush=\"Green\" BorderThickness=\"2\" CornerRadius=\"3\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"Bold\" Foreground=\"DarkGreen\" Padding=\"2\" />"
                 + "<NumericUpDown Value=\"0\" />"
-                + "<NumericUpDown Value=\"1\" FormatString=\"Q\" ParsingNumberStyle=\"AllowHexSpecifier\" HorizontalAlignment=\"999\" VerticalAlignment=\"999\" />"
+                + "<NumericUpDown Value=\"1\" FormatString=\"Q\" ParsingNumberStyle=\"AllowHexSpecifier\" HorizontalAlignment=\"999\" VerticalAlignment=\"999\" HorizontalContentAlignment=\"999\" VerticalContentAlignment=\"999\" />"
+                + "<DockPanel HorizontalSpacing=\"4\" VerticalSpacing=\"6\" LastChildFill=\"False\"><TextBlock Text=\"Docked preview\" /><Button Content=\"Docked button\" DockPanel.Dock=\"Bottom\" /></DockPanel>"
+                + "<DockPanel HorizontalSpacing=\"-1\" VerticalSpacing=\"NaN\" LastChildFill=\"False\" />"
+                + "<UniformGrid Rows=\"2\" Columns=\"3\" RowSpacing=\"3\" ColumnSpacing=\"5\"><Button Content=\"Uniform one\" /><Button Content=\"Uniform two\" /></UniformGrid>"
+                + "<UniformGrid Columns=\"4\" RowSpacing=\"NaN\" ColumnSpacing=\"-1\" />"
+                + "<Grid RowSpacing=\"2\" ColumnSpacing=\"4\" ShowGridLines=\"True\" Width=\"99\" />"
+                + "<Grid RowSpacing=\"NaN\" ColumnSpacing=\"-1\" ShowGridLines=\"sometimes\" Width=\"98\" />"
+                + "<ScrollViewer HorizontalScrollBarVisibility=\"Hidden\" VerticalScrollBarVisibility=\"Disabled\" Width=\"97\"><TextBlock Text=\"Scroll content\" /></ScrollViewer>"
+                + "<ScrollViewer HorizontalScrollBarVisibility=\"Always\" VerticalScrollBarVisibility=\"None\" Width=\"96\" />"
+                + "<Viewbox StretchDirection=\"UpOnly\" Width=\"93\"><TextBlock Text=\"Scale direction\" /></Viewbox>"
+                + "<Viewbox StretchDirection=\"Sideways\" Width=\"92\"><TextBlock Text=\"Fallback direction\" /></Viewbox>"
+                + "<WrapPanel ItemSpacing=\"5\" LineSpacing=\"7\" ItemWidth=\"40\" ItemHeight=\"20\" ItemsAlignment=\"Center\"><Button Content=\"First item\" /><Button Content=\"Second item\" /></WrapPanel>"
+                + "<WrapPanel />"
+                + "<WrapPanel Orientation=\"Vertical\" ItemSpacing=\"-1\" LineSpacing=\"NaN\" ItemWidth=\"-1\" ItemHeight=\"Infinity\" ItemsAlignment=\"999\" />"
                 + "<ProgressBar Minimum=\"10\" Maximum=\"90\" Value=\"42.5\" IsIndeterminate=\"False\" ShowProgressText=\"True\" ProgressTextFormat=\"{}{1:0.0}%\" Background=\"White\" BorderBrush=\"Purple\" BorderThickness=\"1\" CornerRadius=\"2\" FontSize=\"13\" FontStyle=\"Normal\" FontWeight=\"Normal\" Foreground=\"Blue\" Padding=\"1\" />"
                 + "<ProgressBar Value=\"35\" IsIndeterminate=\"True\" />"
                 + "<ProgressBar Value=\"25\" ProgressTextFormat=\"{}{2:0}%\" />"
                 + "<Slider Minimum=\"-10\" Maximum=\"60\" Value=\"35.5\" TickFrequency=\"5\" IsSnapToTickEnabled=\"True\" IsDirectionReversed=\"True\" TickPlacement=\"Outside\" Orientation=\"Vertical\" Background=\"#FFF0F0F0\" BorderBrush=\"Black\" BorderThickness=\"3\" CornerRadius=\"5\" FontSize=\"16\" FontStyle=\"Oblique\" FontWeight=\"SemiBold\" Foreground=\"Red\" Padding=\"4\" />"
-                + "<CheckBox IsChecked=\"True\" IsThreeState=\"True\" Background=\"#FFF0F0F0\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"1,2,3,4\" FontSize=\"16\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"White\" Padding=\"4\" />"
-                + "<RadioButton IsChecked=\"False\" GroupName=\"Choices\" Background=\"White\" BorderBrush=\"Purple\" BorderThickness=\"1\" CornerRadius=\"4\" FontSize=\"17\" FontStyle=\"Oblique\" FontWeight=\"Bold\" Foreground=\"Black\" Padding=\"3\" />"
-                + "<Button Content=\"Keyboard action preview\" IsDefault=\"True\" IsCancel=\"True\" Opacity=\"0.8\" MinWidth=\"100\" MaxWidth=\"200\" MinHeight=\"30\" MaxHeight=\"60\" Background=\"#FFF0F0F0\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"6,4,2,8\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"White\" Padding=\"8,4\" />"
+                + "<CheckBox IsChecked=\"True\" IsThreeState=\"True\" HorizontalContentAlignment=\"Left\" VerticalContentAlignment=\"Center\" Background=\"#FFF0F0F0\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"1,2,3,4\" FontSize=\"16\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"White\" Padding=\"4\" />"
+                + "<RadioButton IsChecked=\"False\" GroupName=\"Choices\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" Background=\"White\" BorderBrush=\"Purple\" BorderThickness=\"1\" CornerRadius=\"4\" FontSize=\"17\" FontStyle=\"Oblique\" FontWeight=\"Bold\" Foreground=\"Black\" Padding=\"3\" />"
+                + "<Button Content=\"Keyboard action preview\" IsDefault=\"True\" IsCancel=\"True\" HorizontalContentAlignment=\"Left\" VerticalContentAlignment=\"Top\" ClipToBounds=\"True\" Opacity=\"0.8\" MinWidth=\"100\" MaxWidth=\"200\" MinHeight=\"30\" MaxHeight=\"60\" Background=\"#FFF0F0F0\" BorderBrush=\"Blue\" BorderThickness=\"2\" CornerRadius=\"6,4,2,8\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"Medium\" Foreground=\"White\" Padding=\"8,4\" />"
+                + "<Button Content=\"Clip fallback\" ClipToBounds=\"maybe\" />"
+                + "<Button Content=\"Hidden preview\" IsVisible=\"False\" Width=\"90\" />"
+                + "<Button Content=\"Visibility fallback\" IsVisible=\"maybe\" Width=\"89\" />"
                 + "<Border BorderBrush=\"Purple\" CornerRadius=\"12,4,8,2\" BorderThickness=\"2\" Background=\"#FFF0F0F0\" Padding=\"6\"><TextBlock Text=\"Border appearance\" /></Border>"
                 + "<TextBlock Text=\"Alignment preview\" TextAlignment=\"Center\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" LineHeight=\"24\" MaxLines=\"2\" Opacity=\"0.5\" TextTrimming=\"CharacterEllipsis\" TextWrapping=\"NoWrap\" Foreground=\"Red\" />"
-                + "<TextBox Text=\"Input preview\" IsReadOnly=\"False\" MaxLength=\"120\" AcceptsReturn=\"True\" AcceptsTab=\"True\" Background=\"#FFF0F0F0\" BorderBrush=\"Green\" BorderThickness=\"2\" CornerRadius=\"3,6,9,12\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"Medium\" HorizontalAlignment=\"Center\" Opacity=\"0.75\" Padding=\"8,4\" TextAlignment=\"Right\" TextWrapping=\"WrapWithOverflow\" VerticalAlignment=\"Bottom\" Foreground=\"Blue\" />"
-                + "<ToggleSwitch Content=\"Notifications\" IsChecked=\"True\" IsThreeState=\"True\" OnContent=\"Enabled\" OffContent=\"Disabled\" Background=\"PaleGreen\" BorderBrush=\"DarkGreen\" BorderThickness=\"3\" CornerRadius=\"5\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"DarkGreen\" Padding=\"2\" />"
+                + "<TextBox Text=\"Input preview\" PlaceholderText=\"Enter a value\" PlaceholderForeground=\"DarkGray\" IsReadOnly=\"False\" MaxLength=\"120\" MinLines=\"2\" MaxLines=\"5\" LineHeight=\"22\" UseFloatingPlaceholder=\"True\" AcceptsReturn=\"True\" AcceptsTab=\"True\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Bottom\" Background=\"#FFF0F0F0\" BorderBrush=\"Green\" BorderThickness=\"2\" CornerRadius=\"3,6,9,12\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"Medium\" HorizontalAlignment=\"Center\" Opacity=\"0.75\" Padding=\"8,4\" TextAlignment=\"Right\" TextWrapping=\"WrapWithOverflow\" VerticalAlignment=\"Bottom\" Foreground=\"Blue\" />"
+                + "<TextBox Text=\"Default line count preview\" />"
+                + "<TextBox Text=\"Invalid line count preview\" MinLines=\"-1\" MaxLines=\"many\" LineHeight=\"NaN\" UseFloatingPlaceholder=\"sometimes\" PlaceholderForeground=\"Gradient\" />"
+                + "<ToggleSwitch Content=\"Notifications\" IsChecked=\"True\" IsThreeState=\"True\" OnContent=\"Enabled\" OffContent=\"Disabled\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Center\" Background=\"PaleGreen\" BorderBrush=\"DarkGreen\" BorderThickness=\"3\" CornerRadius=\"5\" FontSize=\"15\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"DarkGreen\" Padding=\"2\" />"
+                + "<Border FlowDirection=\"RightToLeft\"><TextBlock Text=\"Inherited RTL direction\" UseLayoutRounding=\"True\" /></Border>"
+                + "<TextBlock Text=\"Invalid flow fallback\" FlowDirection=\"Sideways\" UseLayoutRounding=\"sometimes\" />"
+                + "<TextBlock Text=\"Bound flow fallback\" FlowDirection=\"{Binding Direction}\" UseLayoutRounding=\"{Binding LayoutRounding}\" />"
+                + "<ContentControl HorizontalContentAlignment=\"Stretch\" VerticalContentAlignment=\"Bottom\"><TextBlock Text=\"ContentControl alignment\" /></ContentControl>"
+                + "<Expander Header=\"Expander alignment\" IsExpanded=\"True\" HorizontalContentAlignment=\"Right\" VerticalContentAlignment=\"Top\"><TextBlock Text=\"Expander content\" /></Expander>"
+                + "<GroupBox Header=\"GroupBox alignment\" HorizontalContentAlignment=\"Left\" VerticalContentAlignment=\"Bottom\"><TextBlock Text=\"GroupBox content\" /></GroupBox>"
+                + "<Label Content=\"Label alignment\" FontSize=\"18\" FontStyle=\"Italic\" FontWeight=\"SemiBold\" Foreground=\"Blue\" TextAlignment=\"Right\" TextTrimming=\"WordEllipsis\" TextWrapping=\"NoWrap\" HorizontalContentAlignment=\"Center\" VerticalContentAlignment=\"Top\" />"
                 + "</StackPanel>");
             File.WriteAllText(Path.Combine(fixture, "Sample.cs"), "namespace Sample; public class Example { }");
             File.WriteAllBytes(Path.Combine(fixture, "Image.png"), [0x89, 0x50, 0x4e, 0x47, 0x00]);
@@ -490,6 +516,7 @@ internal static class Program
             && root.GetVisualDescendants().OfType<NumericUpDown>().Any()
             && root.GetVisualDescendants().OfType<ProgressBar>().Any()
             && root.GetVisualDescendants().OfType<Slider>().Any()
+            && root.GetVisualDescendants().OfType<WrapPanel>().Count() == 3
             && root.GetVisualDescendants().OfType<CheckBox>().Any()
             && root.GetVisualDescendants().OfType<RadioButton>().Any()
             && root.GetVisualDescendants().OfType<ToggleSwitch>().Any(),
@@ -509,16 +536,70 @@ internal static class Program
         ProgressBar invalidFormatProgressBar = root.GetVisualDescendants().OfType<ProgressBar>()
             .Single(candidate => candidate.Value == 25);
         Slider slider = root.GetVisualDescendants().OfType<Slider>().Single();
+        DockPanel dockPanel = root.GetVisualDescendants().OfType<DockPanel>()
+            .Single(candidate => candidate.HorizontalSpacing == 4);
+        DockPanel invalidDockPanel = root.GetVisualDescendants().OfType<DockPanel>()
+            .Single(candidate => candidate.LastChildFill == false && candidate.HorizontalSpacing == 0);
+        Avalonia.Controls.Primitives.UniformGrid uniformGrid = root.GetVisualDescendants()
+            .OfType<Avalonia.Controls.Primitives.UniformGrid>()
+            .Single(candidate => candidate.ColumnSpacing == 5);
+        Avalonia.Controls.Primitives.UniformGrid invalidUniformGrid = root.GetVisualDescendants()
+            .OfType<Avalonia.Controls.Primitives.UniformGrid>()
+            .Single(candidate => candidate.Columns == 4);
+        Grid grid = root.GetVisualDescendants().OfType<Grid>()
+            .Single(candidate => candidate.Width == 99);
+        Grid invalidGridSpacing = root.GetVisualDescendants().OfType<Grid>()
+            .Single(candidate => candidate.Width == 98);
+        ScrollViewer scrollViewer = root.GetVisualDescendants().OfType<ScrollViewer>()
+            .Single(candidate => candidate.Width == 97);
+        ScrollViewer invalidScrollViewer = root.GetVisualDescendants().OfType<ScrollViewer>()
+            .Single(candidate => candidate.Width == 96);
+        Viewbox viewbox = root.GetVisualDescendants().OfType<Viewbox>()
+            .Single(candidate => candidate.Width == 93);
+        Viewbox invalidViewbox = root.GetVisualDescendants().OfType<Viewbox>()
+            .Single(candidate => candidate.Width == 92);
+        WrapPanel wrapPanel = root.GetVisualDescendants().OfType<WrapPanel>()
+            .Single(candidate => candidate.ItemSpacing == 5);
+        WrapPanel defaultWrapPanel = root.GetVisualDescendants().OfType<WrapPanel>()
+            .Single(candidate => candidate.Orientation == Orientation.Horizontal && double.IsNaN(candidate.ItemWidth));
+        WrapPanel invalidWrapPanel = root.GetVisualDescendants().OfType<WrapPanel>()
+            .Single(candidate => candidate.Orientation == Orientation.Vertical);
         CheckBox checkBox = root.GetVisualDescendants().OfType<CheckBox>().Single();
         RadioButton radioButton = root.GetVisualDescendants().OfType<RadioButton>().Single();
         Button keyboardActionButton = root.GetVisualDescendants().OfType<Button>()
             .Single(button => button.Content?.ToString() == "Keyboard action preview");
+        Button invalidClipButton = root.GetVisualDescendants().OfType<Button>()
+            .Single(button => button.Content?.ToString() == "Clip fallback");
+        Button hiddenPreviewButton = root.GetVisualDescendants().OfType<Button>()
+            .Single(button => button.Width == 90);
+        Button invalidVisibilityButton = root.GetVisualDescendants().OfType<Button>()
+            .Single(button => button.Width == 89);
         Border styledBorder = root.GetVisualDescendants().OfType<Border>()
             .Single(border => border.CornerRadius == new CornerRadius(12, 4, 8, 2));
         TextBox inputTextBox = root.GetVisualDescendants().OfType<TextBox>().Single(textBox => textBox.MaxLength == 120);
+        TextBox defaultLineCountTextBox = root.GetVisualDescendants().OfType<TextBox>()
+            .Single(textBox => textBox.Text == "Default line count preview");
+        TextBox invalidLineCountTextBox = root.GetVisualDescendants().OfType<TextBox>()
+            .Single(textBox => textBox.Text == "Invalid line count preview");
         TextBlock alignedTextBlock = root.GetVisualDescendants().OfType<TextBlock>().Single(textBlock => textBlock.Text == "Alignment preview");
+        TextBlock inheritedFlowTextBlock = root.GetVisualDescendants().OfType<TextBlock>().Single(textBlock => textBlock.Text == "Inherited RTL direction");
+        TextBlock invalidFlowTextBlock = root.GetVisualDescendants().OfType<TextBlock>().Single(textBlock => textBlock.Text == "Invalid flow fallback");
+        TextBlock boundFlowTextBlock = root.GetVisualDescendants().OfType<TextBlock>().Single(textBlock => textBlock.Text == "Bound flow fallback");
+        ContentControl alignedContentControl = root.GetVisualDescendants().OfType<ContentControl>()
+            .Single(control => control.GetType() == typeof(ContentControl)
+                && control.Content is Control content
+                && content.GetVisualDescendants().OfType<TextBlock>()
+                    .Any(textBlock => textBlock.Text == "ContentControl alignment"));
+        Expander alignedExpander = root.GetVisualDescendants().OfType<Expander>()
+            .Single(expander => expander.Header?.ToString() == "Expander alignment");
+        GroupBox alignedGroupBox = root.GetVisualDescendants().OfType<GroupBox>()
+            .Single(groupBox => groupBox.Header?.ToString() == "GroupBox alignment");
+        Label alignedLabel = root.GetVisualDescendants().OfType<Label>()
+            .Single(label => label.Content is TextBlock labelText && labelText.Text == "Label alignment");
         ToggleSwitch toggleSwitch = root.GetVisualDescendants().OfType<ToggleSwitch>().Single();
         Check(comboBox.PlaceholderText == "Choose an option" && !comboBox.IsEnabled
+            && comboBox.HorizontalContentAlignment == HorizontalAlignment.Right
+            && comboBox.VerticalContentAlignment == VerticalAlignment.Bottom
             && comboBox.Background is ISolidColorBrush comboBackground
             && comboBackground.Color == Colors.White
             && comboBox.BorderBrush is ISolidColorBrush comboBorderBrush
@@ -536,10 +617,15 @@ internal static class Program
             && !numericUpDown.AllowSpin && !numericUpDown.ShowButtonSpinner && numericUpDown.ClipValueToMinMax
             && numericUpDown.ButtonSpinnerLocation == Location.Left
             && numericUpDown.TextAlignment == TextAlignment.Center
+            && numericUpDown.HorizontalContentAlignment == HorizontalAlignment.Center
+            && numericUpDown.VerticalContentAlignment == VerticalAlignment.Top
             && numericUpDown.ParsingNumberStyle == System.Globalization.NumberStyles.Integer
             && numericUpDown.Margin == new Thickness(3, 4)
             && numericUpDown.HorizontalAlignment == Avalonia.Layout.HorizontalAlignment.Right
             && numericUpDown.VerticalAlignment == Avalonia.Layout.VerticalAlignment.Center
+            && numericUpDown.Width == 120 && numericUpDown.Height == 60
+            && numericUpDown.MinWidth == 40 && numericUpDown.MaxWidth == 160
+            && numericUpDown.MinHeight == 30 && numericUpDown.MaxHeight == 90
             && numericUpDown.Increment == 0.25m && numericUpDown.Minimum == 0.5m && numericUpDown.Maximum == 40m && !numericUpDown.IsEnabled
             && numericUpDown.Background is ISolidColorBrush numericBackground
             && numericBackground.Color == Color.FromRgb(240, 240, 240)
@@ -564,8 +650,49 @@ internal static class Program
         Check(invalidFormatNumericUpDown.FormatString == defaultNumericUpDown.FormatString
             && invalidFormatNumericUpDown.ParsingNumberStyle == defaultNumericUpDown.ParsingNumberStyle
             && invalidFormatNumericUpDown.HorizontalAlignment == Avalonia.Layout.HorizontalAlignment.Stretch
-            && invalidFormatNumericUpDown.VerticalAlignment == Avalonia.Layout.VerticalAlignment.Stretch,
+            && invalidFormatNumericUpDown.VerticalAlignment == Avalonia.Layout.VerticalAlignment.Stretch
+            && invalidFormatNumericUpDown.HorizontalContentAlignment == defaultNumericUpDown.HorizontalContentAlignment
+            && invalidFormatNumericUpDown.VerticalContentAlignment == defaultNumericUpDown.VerticalContentAlignment,
             "The NumericUpDown preview applied an invalid format, parsing style or layout alignment.");
+        Check(wrapPanel.ItemSpacing == 5 && wrapPanel.LineSpacing == 7
+            && wrapPanel.ItemWidth == 40 && wrapPanel.ItemHeight == 20
+            && wrapPanel.ItemsAlignment == WrapPanelItemsAlignment.Center
+            && wrapPanel.Children.Count == 2,
+            "The WrapPanel preview did not preserve its spacing, item size, alignment or children.");
+        Check(defaultWrapPanel.ItemSpacing == 0 && defaultWrapPanel.LineSpacing == 0
+            && double.IsNaN(defaultWrapPanel.ItemWidth) && double.IsNaN(defaultWrapPanel.ItemHeight)
+            && defaultWrapPanel.ItemsAlignment == WrapPanelItemsAlignment.Start,
+            "The WrapPanel preview did not preserve its framework defaults.");
+        Check(invalidWrapPanel.ItemSpacing == 0 && invalidWrapPanel.LineSpacing == 0
+            && double.IsNaN(invalidWrapPanel.ItemWidth) && double.IsNaN(invalidWrapPanel.ItemHeight)
+            && invalidWrapPanel.ItemsAlignment == WrapPanelItemsAlignment.Start,
+            "The WrapPanel preview applied an invalid layout value.");
+        Check(dockPanel.HorizontalSpacing == 4 && dockPanel.VerticalSpacing == 6
+            && !dockPanel.LastChildFill && dockPanel.Children.Count == 2,
+            "The DockPanel preview did not preserve spacing, last-child-fill or children.");
+        Check(invalidDockPanel.HorizontalSpacing == 0 && invalidDockPanel.VerticalSpacing == 0
+            && !invalidDockPanel.LastChildFill,
+            "The DockPanel preview applied invalid spacing values.");
+        Check(uniformGrid.Rows == 2 && uniformGrid.Columns == 3
+            && uniformGrid.RowSpacing == 3 && uniformGrid.ColumnSpacing == 5
+            && uniformGrid.Children.Count == 2,
+            "The UniformGrid preview did not preserve its row/column spacing or layout.");
+        Check(invalidUniformGrid.RowSpacing == 0 && invalidUniformGrid.ColumnSpacing == 0,
+            "The UniformGrid preview applied invalid spacing values.");
+        Check(grid.RowSpacing == 2 && grid.ColumnSpacing == 4 && grid.ShowGridLines,
+            "The Grid preview did not preserve row/column spacing or show-grid-lines.");
+        Check(invalidGridSpacing.RowSpacing == 0 && invalidGridSpacing.ColumnSpacing == 0
+            && !invalidGridSpacing.ShowGridLines,
+            "The Grid preview applied invalid spacing or show-grid-lines values.");
+        Check(scrollViewer.HorizontalScrollBarVisibility == ScrollBarVisibility.Hidden
+            && scrollViewer.VerticalScrollBarVisibility == ScrollBarVisibility.Disabled,
+            "The ScrollViewer preview did not preserve its scrollbar visibility settings.");
+        Check(invalidScrollViewer.HorizontalScrollBarVisibility == ScrollBarVisibility.Auto
+            && invalidScrollViewer.VerticalScrollBarVisibility == ScrollBarVisibility.Auto,
+            "The ScrollViewer preview applied invalid scrollbar visibility values.");
+        Check(viewbox.StretchDirection == StretchDirection.UpOnly
+            && invalidViewbox.StretchDirection == StretchDirection.Both,
+            "The Viewbox preview did not preserve or safely default its stretch direction.");
         Check(progressBar.Minimum == 10 && progressBar.Maximum == 90 && progressBar.Value == 42.5
             && !progressBar.IsIndeterminate && progressBar.ShowProgressText
             && progressBar.ProgressTextFormat == "{1:0.0}%"
@@ -604,6 +731,8 @@ internal static class Program
             && slider.Padding == new Thickness(4),
             "The Slider preview did not preserve its value/orientation or remained interactive.");
         Check(checkBox.IsChecked == true && checkBox.IsThreeState && !checkBox.IsEnabled
+            && checkBox.HorizontalContentAlignment == HorizontalAlignment.Left
+            && checkBox.VerticalContentAlignment == VerticalAlignment.Center
             && checkBox.Background is ISolidColorBrush checkBoxBackground
             && checkBoxBackground.Color == Color.FromRgb(240, 240, 240)
             && checkBox.BorderBrush is ISolidColorBrush checkBoxBorderBrush
@@ -618,6 +747,8 @@ internal static class Program
             && checkBox.Padding == new Thickness(4),
             "The CheckBox preview did not preserve its state or remained interactive.");
         Check(radioButton.IsChecked == false && radioButton.GroupName == "Choices" && !radioButton.IsEnabled
+            && radioButton.HorizontalContentAlignment == HorizontalAlignment.Center
+            && radioButton.VerticalContentAlignment == VerticalAlignment.Top
             && radioButton.Background is ISolidColorBrush radioBackground
             && radioBackground.Color == Colors.White
             && radioButton.BorderBrush is ISolidColorBrush radioBorderBrush
@@ -632,6 +763,9 @@ internal static class Program
             && radioButton.Padding == new Thickness(3),
             "The RadioButton preview did not preserve its state or remained interactive.");
         Check(!keyboardActionButton.IsEnabled && !keyboardActionButton.IsDefault && !keyboardActionButton.IsCancel
+            && keyboardActionButton.HorizontalContentAlignment == HorizontalAlignment.Left
+            && keyboardActionButton.VerticalContentAlignment == VerticalAlignment.Top
+            && keyboardActionButton.ClipToBounds && !invalidClipButton.ClipToBounds
             && keyboardActionButton.Opacity == 0.8
             && keyboardActionButton.MinWidth == 100 && keyboardActionButton.MaxWidth == 200
             && keyboardActionButton.MinHeight == 30 && keyboardActionButton.MaxHeight == 60
@@ -648,6 +782,8 @@ internal static class Program
             && buttonForeground.Color == Colors.White
             && keyboardActionButton.Padding == new Thickness(8, 4),
             "The Button preview did not suppress Enter/Escape actions from the source markup.");
+        Check(!hiddenPreviewButton.IsVisible && invalidVisibilityButton.IsVisible,
+            "The Button preview did not preserve visibility or use its safe default.");
         Check(styledBorder.BorderBrush is ISolidColorBrush styledBorderBrush
             && styledBorderBrush.Color == Colors.Purple
             && styledBorder.CornerRadius == new CornerRadius(12, 4, 8, 2)
@@ -656,12 +792,16 @@ internal static class Program
             "The Border preview did not preserve its validated appearance properties.");
         Check(inputTextBox.Text == "Input preview"
             && inputTextBox.MaxLength == 120
+            && inputTextBox.MinLines == 2 && inputTextBox.MaxLines == 5
+            && inputTextBox.LineHeight == 22 && inputTextBox.UseFloatingPlaceholder
             && inputTextBox.AcceptsReturn
             && !inputTextBox.AcceptsTab
             && inputTextBox.Opacity == 0.75
             && inputTextBox.FontSize == 18
             && inputTextBox.TextAlignment == TextAlignment.Right
             && inputTextBox.TextWrapping == TextWrapping.WrapWithOverflow
+            && inputTextBox.PlaceholderForeground is ISolidColorBrush placeholderForeground
+            && placeholderForeground.Color == Colors.DarkGray
             && inputTextBox.FontStyle == FontStyle.Italic
             && inputTextBox.FontWeight == FontWeight.Medium
             && inputTextBox.HorizontalAlignment == HorizontalAlignment.Center
@@ -677,6 +817,16 @@ internal static class Program
             && inputTextBox.Foreground is ISolidColorBrush inputForeground
             && inputForeground.Color == Colors.Blue,
             "The TextBox preview did not preserve its layout/input constraints or remained read-only.");
+        Check(defaultLineCountTextBox.MinLines == 0 && defaultLineCountTextBox.MaxLines == 0
+            && invalidLineCountTextBox.MinLines == defaultLineCountTextBox.MinLines
+            && invalidLineCountTextBox.MaxLines == defaultLineCountTextBox.MaxLines,
+            "The TextBox preview did not preserve the unset line-count defaults or reject invalid values.");
+        Check(double.IsNaN(defaultLineCountTextBox.LineHeight)
+            && double.IsNaN(invalidLineCountTextBox.LineHeight)
+            && !defaultLineCountTextBox.UseFloatingPlaceholder
+            && invalidLineCountTextBox.UseFloatingPlaceholder == defaultLineCountTextBox.UseFloatingPlaceholder
+            && Equals(invalidLineCountTextBox.PlaceholderForeground, defaultLineCountTextBox.PlaceholderForeground),
+            $"The TextBox preview did not preserve line-height/placeholder defaults: line heights {defaultLineCountTextBox.LineHeight}/{invalidLineCountTextBox.LineHeight}, floating placeholders {defaultLineCountTextBox.UseFloatingPlaceholder}/{invalidLineCountTextBox.UseFloatingPlaceholder}.");
         Check(alignedTextBlock.TextAlignment == TextAlignment.Center
             && alignedTextBlock.FontStyle == FontStyle.Italic
             && alignedTextBlock.MaxLines == 2
@@ -690,9 +840,35 @@ internal static class Program
             "The TextBlock preview did not preserve its selected font weight.");
         Check(alignedTextBlock.Foreground is ISolidColorBrush foreground && foreground.Color == Colors.Red,
             "The TextBlock preview did not preserve its foreground brush.");
+        Check(inheritedFlowTextBlock.FlowDirection == FlowDirection.RightToLeft
+            && invalidFlowTextBlock.FlowDirection == FlowDirection.LeftToRight
+            && boundFlowTextBlock.FlowDirection == FlowDirection.LeftToRight
+            && inheritedFlowTextBlock.UseLayoutRounding
+            && invalidFlowTextBlock.UseLayoutRounding == boundFlowTextBlock.UseLayoutRounding,
+            "The preview did not inherit explicit flow direction or ignore invalid/bound values.");
+        Check(alignedContentControl.HorizontalContentAlignment == HorizontalAlignment.Stretch
+            && alignedContentControl.VerticalContentAlignment == VerticalAlignment.Bottom
+            && alignedExpander.HorizontalContentAlignment == HorizontalAlignment.Right
+            && alignedExpander.VerticalContentAlignment == VerticalAlignment.Top
+            && alignedGroupBox.HorizontalContentAlignment == HorizontalAlignment.Left
+            && alignedGroupBox.VerticalContentAlignment == VerticalAlignment.Bottom
+            && alignedLabel.HorizontalContentAlignment == HorizontalAlignment.Center
+            && alignedLabel.VerticalContentAlignment == VerticalAlignment.Top
+            && alignedLabel.FontSize == 18
+            && alignedLabel.FontStyle == FontStyle.Italic
+            && alignedLabel.FontWeight == FontWeight.SemiBold
+            && alignedLabel.Foreground is ISolidColorBrush labelForeground
+            && labelForeground.Color == Colors.Blue
+            && alignedLabel.Content is TextBlock labelText
+            && labelText.TextAlignment == TextAlignment.Right
+            && labelText.TextTrimming == TextTrimming.WordEllipsis
+            && labelText.TextWrapping == TextWrapping.NoWrap,
+            $"The Label content-alignment or typography preview did not preserve its values: alignment={alignedLabel.HorizontalContentAlignment}/{alignedLabel.VerticalContentAlignment}, font={alignedLabel.FontSize}/{alignedLabel.FontStyle}/{alignedLabel.FontWeight}, foreground={alignedLabel.Foreground}.");
         Check(toggleSwitch.Content?.ToString() == "Notifications"
             && toggleSwitch.IsChecked == true
             && toggleSwitch.IsThreeState
+            && toggleSwitch.HorizontalContentAlignment == HorizontalAlignment.Right
+            && toggleSwitch.VerticalContentAlignment == VerticalAlignment.Center
             && toggleSwitch.OnContent?.ToString() == "Enabled"
             && toggleSwitch.OffContent?.ToString() == "Disabled"
             && toggleSwitch.Background is ISolidColorBrush toggleBackground
