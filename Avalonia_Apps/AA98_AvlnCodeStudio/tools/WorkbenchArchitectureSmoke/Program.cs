@@ -86,9 +86,10 @@ internal static class Program
                 + "<DatePicker SelectedDate=\"{Binding StartDate}\" DayVisible=\"{Binding ShowDay}\" DayFormat=\"{Binding DayFormat}\" MonthFormat=\"{Binding MonthFormat}\" YearFormat=\"{Binding YearFormat}\" MinYear=\"{Binding MinYear}\" MaxYear=\"{Binding MaxYear}\" Width=\"103\" />"
                 + "<DatePicker SelectedDate=\"2040-01-01\" MinYear=\"2020-01-01\" MaxYear=\"2030-12-31\" Width=\"104\" />"
                 + "<Calendar SelectedDate=\"2028-02-29\" DisplayDate=\"2028-02-01\" DisplayDateStart=\"2028-01-01\" DisplayDateEnd=\"2028-12-31\" SelectionMode=\"SingleDate\" FirstDayOfWeek=\"Sunday\" IsTodayHighlighted=\"False\" Width=\"108\" />"
-                + "<Calendar SelectedDate=\"2028-02-30\" DisplayDateStart=\"2030-01-01\" DisplayDateEnd=\"2020-12-31\" SelectionMode=\"SingleRange\" FirstDayOfWeek=\"Funday\" IsTodayHighlighted=\"sometimes\" Width=\"109\" />"
+                + "<Calendar SelectedDate=\"2028-02-30\" DisplayDateStart=\"2030-01-01\" DisplayDateEnd=\"2020-12-31\" SelectionMode=\"Unsupported\" FirstDayOfWeek=\"Funday\" IsTodayHighlighted=\"sometimes\" Width=\"109\" />"
                 + "<Calendar SelectedDate=\"{Binding Date}\" DisplayDate=\"{Binding DisplayDate}\" DisplayDateStart=\"{Binding Start}\" DisplayDateEnd=\"{Binding End}\" SelectionMode=\"{Binding Mode}\" FirstDayOfWeek=\"{Binding FirstDay}\" IsTodayHighlighted=\"{Binding Highlight}\" Width=\"110\" />"
                 + "<Calendar SelectedDate=\"2040-01-01\" DisplayDateStart=\"2020-01-01\" DisplayDateEnd=\"2030-12-31\" Width=\"111\" />"
+                + "<Calendar SelectionMode=\"MultipleRange\" Width=\"112\" />"
                 + "<AutoCompleteBox Text=\"Par\" PlaceholderText=\"Find a city\" FilterMode=\"Contains\" MinimumPrefixLength=\"2\" IsTextCompletionEnabled=\"True\" Width=\"115\" />"
                 + "<AutoCompleteBox Text=\"Grace\" FilterMode=\"Custom\" MinimumPrefixLength=\"-1\" IsTextCompletionEnabled=\"maybe\" Width=\"116\" />"
                 + "<AutoCompleteBox Text=\"{Binding SearchText}\" PlaceholderText=\"{Binding SearchHint}\" FilterMode=\"{Binding Filter}\" MinimumPrefixLength=\"{Binding PrefixLength}\" IsTextCompletionEnabled=\"{Binding Complete}\" Width=\"117\" />"
@@ -633,6 +634,8 @@ internal static class Program
             .Single(candidate => candidate.Width == 110);
         Avalonia.Controls.Calendar outOfRangeCalendar = root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>()
             .Single(candidate => candidate.Width == 111);
+        Avalonia.Controls.Calendar multipleRangeCalendar = root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>()
+            .Single(candidate => candidate.Width == 112);
         AutoCompleteBox configuredAutoCompleteBox = root.GetVisualDescendants().OfType<AutoCompleteBox>()
             .Single(candidate => candidate.Width == 115);
         AutoCompleteBox invalidAutoCompleteBox = root.GetVisualDescendants().OfType<AutoCompleteBox>()
@@ -889,7 +892,10 @@ internal static class Program
             && outOfRangeCalendar.SelectedDate is null
             && outOfRangeCalendar.DisplayDateStart == new DateTime(2020, 1, 1)
             && outOfRangeCalendar.DisplayDateEnd == new DateTime(2030, 12, 31)
-            && !outOfRangeCalendar.IsEnabled,
+            && !outOfRangeCalendar.IsEnabled
+            && multipleRangeCalendar.SelectionMode == CalendarSelectionMode.MultipleRange
+            && multipleRangeCalendar.SelectedDate is null
+            && !multipleRangeCalendar.IsEnabled,
             $"The Calendar preview did not preserve safe date selection, navigation bounds or fallback values: valid={selectedCalendar.SelectedDate}/{selectedCalendar.DisplayDate}, invalid={invalidCalendar.SelectedDate}/{invalidCalendar.DisplayDateStart}/{invalidCalendar.DisplayDateEnd}, bound={boundCalendar.SelectedDate}/{boundCalendar.DisplayDateStart}/{boundCalendar.DisplayDateEnd}, out-of-range={outOfRangeCalendar.SelectedDate}.");
         Check(configuredAutoCompleteBox.Text == "Par"
             && configuredAutoCompleteBox.PlaceholderText == "Find a city"
