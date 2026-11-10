@@ -2,6 +2,7 @@ using AA98_AvlnCodeStudio.Model.Workspaces;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -9,6 +10,9 @@ using Avalonia.Media;
 using System;
 using System.Globalization;
 using System.Linq;
+using LineShape = Avalonia.Controls.Shapes.Line;
+using PolygonShape = Avalonia.Controls.Shapes.Polygon;
+using PolylineShape = Avalonia.Controls.Shapes.Polyline;
 
 namespace AA98_AvlnCodeStudio.AxamlDesigner.UI.Controls;
 
@@ -187,6 +191,7 @@ public sealed class AxamlPreviewControl : ContentControl
             "ContextMenu" => BuildContextMenu(node),
             "DatePicker" => BuildDatePicker(node),
             "DockPanel" => BuildDockPanel(node),
+            "Ellipse" => BuildShape(new Ellipse(), node),
             "Expander" => ApplyTemplatedControlAppearance(new Expander
             {
                 Header = node.Text ?? "Expander",
@@ -208,6 +213,13 @@ public sealed class AxamlPreviewControl : ContentControl
             {
                 Content = BuildTextBlock(node),
             }, node),
+            "Line" => BuildShape(new LineShape
+            {
+                StartPoint = ParsePoint(node, "StartPoint", new Point(0, 0)),
+                EndPoint = ParsePoint(node, "EndPoint", new Point(80, 40)),
+                Stroke = Brushes.Black,
+                StrokeThickness = 1,
+            }, node),
             "TextBlock" => BuildTextBlock(node),
             "ListBox" => ApplyTemplatedControlAppearance(new ListBox
             {
@@ -219,6 +231,20 @@ public sealed class AxamlPreviewControl : ContentControl
             "MenuItem" => BuildMenuItem(node),
             "NumericUpDown" => BuildNumericUpDown(node),
             "ProgressBar" => BuildProgressBar(node),
+            "Polygon" => BuildShape(new PolygonShape
+            {
+                Points = ParsePointList(node, [new Point(40, 0), new Point(80, 60), new Point(0, 60)]),
+                Fill = Brushes.LightBlue,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1,
+            }, node),
+            "Polyline" => BuildShape(new PolylineShape
+            {
+                Points = ParsePointList(node, [new Point(0, 0), new Point(80, 40)]),
+                Stroke = Brushes.Black,
+                StrokeThickness = 1,
+            }, node),
+            "Rectangle" => BuildShape(new Rectangle(), node),
             "RadioButton" => BuildRadioButton(node),
             "ScrollViewer" => BuildScrollViewer(node),
             "Separator" => new Separator(),
@@ -318,6 +344,7 @@ public sealed class AxamlPreviewControl : ContentControl
 
     private void ApplyNodeVisualProperties(AxamlPreviewNode node, Control content)
     {
+        content.IsEnabled = false;
         content.Margin = ParseThickness(node, "Margin");
         content.HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment");
         content.VerticalAlignment = ParseVerticalAlignment(node);
@@ -407,6 +434,76 @@ public sealed class AxamlPreviewControl : ContentControl
         }
 
         return border;
+    }
+
+    private static Shape BuildShape(Shape shape, AxamlPreviewNode node)
+    {
+        if (ParseSimpleBrush(node, "Fill") is { } fill)
+        {
+            shape.Fill = fill;
+        }
+
+        if (ParseSimpleBrush(node, "Stroke") is { } stroke)
+        {
+            shape.Stroke = stroke;
+        }
+
+        if (HasValidLiteralValue(node, "StrokeThickness"))
+        {
+            shape.StrokeThickness = ParseDouble(node, "StrokeThickness", 0);
+        }
+
+        return shape;
+    }
+
+    private static Point ParsePoint(AxamlPreviewNode node, string propertyName, Point fallback)
+    {
+        string? value = GetProperty(node, propertyName);
+        if (AxamlPropertyValueValidator.Validate(node.TypeName, propertyName, value ?? string.Empty) is not null
+            || value is null
+            || !TryParsePoint(value, out Point point))
+        {
+            return fallback;
+        }
+
+        return point;
+    }
+
+    private static Point[] ParsePointList(AxamlPreviewNode node, Point[] fallback)
+    {
+        string? value = GetProperty(node, "Points");
+        if (value is null
+            || AxamlPropertyValueValidator.Validate(node.TypeName, "Points", value) is not null)
+        {
+            return fallback;
+        }
+
+        string[] pointValues = value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+        Point[] points = new Point[pointValues.Length];
+        for (int index = 0; index < pointValues.Length; index++)
+        {
+            if (!TryParsePoint(pointValues[index], out points[index]))
+            {
+                return fallback;
+            }
+        }
+
+        return points;
+    }
+
+    private static bool TryParsePoint(string value, out Point point)
+    {
+        string[] coordinates = value.Split(',', StringSplitOptions.TrimEntries);
+        if (coordinates.Length == 2
+            && double.TryParse(coordinates[0], NumberStyles.Float, CultureInfo.InvariantCulture, out double x)
+            && double.TryParse(coordinates[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double y))
+        {
+            point = new Point(x, y);
+            return true;
+        }
+
+        point = default;
+        return false;
     }
 
     private Control BuildButton(AxamlPreviewNode node)
@@ -1231,7 +1328,10 @@ public sealed class AxamlPreviewControl : ContentControl
         TextBox textBox = new()
         {
             Text = node.Text,
-            PlaceholderText = GetProperty(node, "Watermark") ?? GetProperty(node, "PlaceholderText"),
+            PlaceholderText = ParseLiteralText(
+                node,
+                "Watermark",
+                ParseLiteralText(node, "PlaceholderText", string.Empty)),
             AcceptsReturn = ParseBoolean(node, "AcceptsReturn") ?? false,
             // Keep Tab available for host focus navigation in the read-only preview.
             AcceptsTab = false,

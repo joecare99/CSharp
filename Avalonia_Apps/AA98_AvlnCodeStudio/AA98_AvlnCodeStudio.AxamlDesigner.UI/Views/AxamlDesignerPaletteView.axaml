@@ -55,7 +55,12 @@
             <Button Content="TextBlock" Command="{Binding AddTextBlockCommand}" />
             <Button Content="Label" Command="{Binding AddLabelCommand}" />
             <Button Content="Button" Command="{Binding AddButtonCommand}" />
+            <Button Content="Ellipse" Command="{Binding AddEllipseCommand}" />
+            <Button Content="Line" Command="{Binding AddLineCommand}" />
+            <Button Content="Polygon" Command="{Binding AddPolygonCommand}" />
             <Button Content="Progress" Command="{Binding AddProgressBarCommand}" />
+            <Button Content="Polyline" Command="{Binding AddPolylineCommand}" />
+            <Button Content="Rectangle" Command="{Binding AddRectangleCommand}" />
             <Button Content="Separator" Command="{Binding AddSeparatorCommand}" />
             <Button Content="TabControl" Command="{Binding AddTabControlCommand}" />
             <Button Content="TabItem" Command="{Binding AddTabItemCommand}" />
@@ -70,6 +75,25 @@
             <Button Content="RadioButton" Command="{Binding AddRadioButtonCommand}" />
             <Button Content="Slider" Command="{Binding AddSliderCommand}" />
             <Button Content="Toggle" Command="{Binding AddToggleSwitchCommand}" />
+          </UniformGrid>
+        </Expander>
+        <Expander Header="Daten und Auswahl" IsExpanded="False">
+          <UniformGrid Columns="2" Margin="4">
+            <Button Content="AutoCompleteBox" Command="{Binding AddAutoCompleteBoxCommand}" />
+            <Button Content="Calendar" Command="{Binding AddCalendarCommand}" />
+            <Button Content="ColorPicker" Command="{Binding AddColorPickerCommand}" />
+            <Button Content="DatePicker" Command="{Binding AddDatePickerCommand}" />
+            <Button Content="ItemsControl" Command="{Binding AddItemsControlCommand}" />
+            <Button Content="ListBox" Command="{Binding AddListBoxCommand}" />
+            <Button Content="TimePicker" Command="{Binding AddTimePickerCommand}" />
+            <Button Content="TreeView" Command="{Binding AddTreeViewCommand}" />
+          </UniformGrid>
+        </Expander>
+        <Expander Header="Statische Items" IsExpanded="False">
+          <UniformGrid Columns="2" Margin="4">
+            <Button Content="ComboBoxItem" Command="{Binding AddComboBoxItemCommand}" />
+            <Button Content="ListBoxItem" Command="{Binding AddListBoxItemCommand}" />
+            <Button Content="TreeViewItem" Command="{Binding AddTreeViewItemCommand}" />
           </UniformGrid>
         </Expander>
         <Expander Header="Layout und Container" IsExpanded="False">

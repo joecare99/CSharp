@@ -677,9 +677,79 @@ public partial class AxamlDesignerViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void AddAutoCompleteBox()
+    {
+        AddChildControl("AutoCompleteBox");
+    }
+
+    [RelayCommand]
+    private void AddCalendar()
+    {
+        AddChildControl("Calendar");
+    }
+
+    [RelayCommand]
+    private void AddColorPicker()
+    {
+        AddChildControl("ColorPicker");
+    }
+
+    [RelayCommand]
+    private void AddDatePicker()
+    {
+        AddChildControl("DatePicker");
+    }
+
+    [RelayCommand]
+    private void AddItemsControl()
+    {
+        AddChildControl("ItemsControl");
+    }
+
+    [RelayCommand]
     private void AddLabel()
     {
         AddChildControl("Label");
+    }
+
+    [RelayCommand]
+    private void AddLine()
+    {
+        AddChildControl("Line");
+    }
+
+    [RelayCommand(CanExecute = nameof(CanAddComboBoxItem))]
+    private void AddComboBoxItem()
+    {
+        AddChildControl("ComboBoxItem");
+    }
+
+    private bool CanAddComboBoxItem() => CanAddPaletteItem("ComboBox", "ComboBoxItem");
+
+    [RelayCommand]
+    private void AddListBox()
+    {
+        AddChildControl("ListBox");
+    }
+
+    [RelayCommand(CanExecute = nameof(CanAddListBoxItem))]
+    private void AddListBoxItem()
+    {
+        AddChildControl("ListBoxItem");
+    }
+
+    private bool CanAddListBoxItem() => CanAddPaletteItem("ListBox", "ListBoxItem");
+
+    [RelayCommand]
+    private void AddPolygon()
+    {
+        AddChildControl("Polygon");
+    }
+
+    [RelayCommand]
+    private void AddPolyline()
+    {
+        AddChildControl("Polyline");
     }
 
     [RelayCommand]
@@ -689,9 +759,42 @@ public partial class AxamlDesignerViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void AddTimePicker()
+    {
+        AddChildControl("TimePicker");
+    }
+
+    [RelayCommand]
+    private void AddTreeView()
+    {
+        AddChildControl("TreeView");
+    }
+
+    [RelayCommand(CanExecute = nameof(CanAddTreeViewItem))]
+    private void AddTreeViewItem()
+    {
+        AddChildControl("TreeViewItem");
+    }
+
+    private bool CanAddTreeViewItem() => CanAddPaletteItem("TreeView", "TreeViewItem")
+        || CanAddPaletteItem("TreeViewItem", "TreeViewItem");
+
+    [RelayCommand]
     private void AddButton()
     {
         AddChildControl("Button");
+    }
+
+    [RelayCommand]
+    private void AddEllipse()
+    {
+        AddChildControl("Ellipse");
+    }
+
+    [RelayCommand]
+    private void AddRectangle()
+    {
+        AddChildControl("Rectangle");
     }
 
     [RelayCommand]
@@ -909,6 +1012,15 @@ public partial class AxamlDesignerViewModel : ObservableObject
         }
     }
 
+    private bool CanAddPaletteItem(string parentType, string itemType)
+    {
+        return _session.SelectedNode is { IsSupported: true, CanAppendChildren: true } selectedNode
+            && string.Equals(selectedNode.TypeName, parentType, StringComparison.Ordinal)
+            && AxamlControlCatalog.TryGet(parentType, out AxamlControlCapability capability)
+            && capability.AllowsAppendingChildren
+            && capability.AllowedChildTypes.Contains(itemType, StringComparer.Ordinal);
+    }
+
     [RelayCommand(CanExecute = nameof(CanRemoveStructure))]
     private void RemoveStructure() =>
         ApplyStructureEdit(_session.RemoveSelectedControl, "Control removed; Undo restores it.");
@@ -1105,6 +1217,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
         UndoCommand.NotifyCanExecuteChanged();
         RedoCommand.NotifyCanExecuteChanged();
         NotifyStructureCommandsChanged();
+        NotifyPaletteCommandsChanged();
     }
 
     private void SynchronizePropertyRows()
@@ -1326,6 +1439,13 @@ public partial class AxamlDesignerViewModel : ObservableObject
         MoveGridRowLaterCommand.NotifyCanExecuteChanged();
         MoveGridColumnEarlierCommand.NotifyCanExecuteChanged();
         MoveGridColumnLaterCommand.NotifyCanExecuteChanged();
+    }
+
+    private void NotifyPaletteCommandsChanged()
+    {
+        AddComboBoxItemCommand.NotifyCanExecuteChanged();
+        AddListBoxItemCommand.NotifyCanExecuteChanged();
+        AddTreeViewItemCommand.NotifyCanExecuteChanged();
     }
 
     private bool EnsureNoStructureDrafts()
