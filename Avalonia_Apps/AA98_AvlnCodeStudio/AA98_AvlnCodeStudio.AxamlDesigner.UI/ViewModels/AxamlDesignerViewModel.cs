@@ -689,6 +689,12 @@ public partial class AxamlDesignerViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void AddCalendarDatePicker()
+    {
+        AddChildControl("CalendarDatePicker");
+    }
+
+    [RelayCommand]
     private void AddColorPicker()
     {
         AddChildControl("ColorPicker");

@@ -81,6 +81,7 @@
           <UniformGrid Columns="2" Margin="4">
             <Button Content="AutoCompleteBox" Command="{Binding AddAutoCompleteBoxCommand}" />
             <Button Content="Calendar" Command="{Binding AddCalendarCommand}" />
+            <Button Content="CalendarDatePicker" Command="{Binding AddCalendarDatePickerCommand}" />
             <Button Content="ColorPicker" Command="{Binding AddColorPickerCommand}" />
             <Button Content="DatePicker" Command="{Binding AddDatePickerCommand}" />
             <Button Content="ItemsControl" Command="{Binding AddItemsControlCommand}" />

@@ -178,6 +178,7 @@ public sealed class AxamlPreviewControl : ContentControl
             "Border" => BuildBorder(node),
             "Button" => BuildButton(node),
             "Calendar" => BuildCalendar(node),
+            "CalendarDatePicker" => BuildCalendarDatePicker(node),
             "CheckBox" => BuildCheckBox(node),
             "ColorPicker" => BuildColorPicker(node),
             "ComboBox" => ApplyTemplatedControlAppearance(new ComboBox
@@ -185,6 +186,7 @@ public sealed class AxamlPreviewControl : ContentControl
                 PlaceholderText = ParseLiteralText(node, "PlaceholderText", node.Text ?? "ComboBox"),
                 ItemsSource = ParseSelectorItems(node),
                 SelectedIndex = ParseSelectorIndex(node),
+                IsDropDownOpen = false,
                 IsEnabled = false,
             }, node),
             "ContentControl" => BuildContentControl(node),
@@ -511,6 +513,7 @@ public sealed class AxamlPreviewControl : ContentControl
         Button button = new()
         {
             Content = node.Text ?? "Button",
+            CommandParameter = ParseOptionalLiteralText(node, "CommandParameter"),
             IsEnabled = false,
             IsDefault = false,
             IsCancel = false,
@@ -579,6 +582,28 @@ public sealed class AxamlPreviewControl : ContentControl
         if (ParseValidatedFormat(node, "YearFormat") is { } yearFormat)
         {
             datePicker.YearFormat = yearFormat;
+        }
+
+        return datePicker;
+    }
+
+    private static Control BuildCalendarDatePicker(AxamlPreviewNode node)
+    {
+        CalendarDatePicker datePicker = ApplyTemplatedControlAppearance(new CalendarDatePicker
+        {
+            IsDropDownOpen = false,
+            IsTodayHighlighted = ParseBoolean(node, "IsTodayHighlighted") ?? true,
+            PlaceholderText = ParseLiteralText(node, "PlaceholderText", "Choose a date"),
+            IsEnabled = false,
+        }, node);
+        if (ParseCalendarDate(node, "SelectedDate") is { } selectedDate)
+        {
+            datePicker.SelectedDate = selectedDate;
+        }
+
+        if (ParseBoolean(node, "UseFloatingPlaceholder") is bool useFloatingPlaceholder)
+        {
+            datePicker.UseFloatingPlaceholder = useFloatingPlaceholder;
         }
 
         return datePicker;
@@ -695,6 +720,7 @@ public sealed class AxamlPreviewControl : ContentControl
         return ApplyTemplatedControlAppearance(new CheckBox
         {
             Content = node.Text ?? "CheckBox",
+            CommandParameter = ParseOptionalLiteralText(node, "CommandParameter"),
             IsThreeState = ParseBoolean(node, "IsThreeState") ?? false,
             IsEnabled = false,
             IsChecked = ParseBoolean(node, "IsChecked"),
@@ -705,6 +731,7 @@ public sealed class AxamlPreviewControl : ContentControl
     {
         Avalonia.Controls.Calendar calendar = ApplyTemplatedControlAppearance(new Avalonia.Controls.Calendar
         {
+            DisplayMode = ParseCalendarDisplayMode(node),
             SelectionMode = ParseCalendarSelectionMode(node),
             FirstDayOfWeek = ParseCalendarFirstDayOfWeek(node),
             IsTodayHighlighted = ParseBoolean(node, "IsTodayHighlighted") ?? true,
@@ -818,9 +845,21 @@ public sealed class AxamlPreviewControl : ContentControl
     {
         return HasValidLiteralValue(node, "SelectionMode")
             && Enum.TryParse(GetProperty(node, "SelectionMode"), ignoreCase: true, out CalendarSelectionMode selectionMode)
-            && selectionMode is CalendarSelectionMode.None or CalendarSelectionMode.SingleDate
+            && selectionMode is CalendarSelectionMode.None
+                or CalendarSelectionMode.SingleDate
+                or CalendarSelectionMode.SingleRange
+                or CalendarSelectionMode.MultipleRange
                 ? selectionMode
                 : CalendarSelectionMode.SingleDate;
+    }
+
+    private static CalendarMode ParseCalendarDisplayMode(AxamlPreviewNode node)
+    {
+        return HasValidLiteralValue(node, "DisplayMode")
+            && Enum.TryParse(GetProperty(node, "DisplayMode"), ignoreCase: true, out CalendarMode displayMode)
+            && Enum.IsDefined(displayMode)
+                ? displayMode
+                : CalendarMode.Month;
     }
 
     private static DayOfWeek ParseCalendarFirstDayOfWeek(AxamlPreviewNode node)
@@ -857,6 +896,7 @@ public sealed class AxamlPreviewControl : ContentControl
         return ApplyTemplatedControlAppearance(new RadioButton
         {
             Content = node.Text ?? "RadioButton",
+            CommandParameter = ParseOptionalLiteralText(node, "CommandParameter"),
             GroupName = ParseLiteralText(node, "GroupName", string.Empty),
             IsEnabled = false,
             IsChecked = ParseBoolean(node, "IsChecked"),
@@ -966,6 +1006,28 @@ public sealed class AxamlPreviewControl : ContentControl
             control.Foreground = foreground;
         }
 
+        if (ParseSimpleBrush(node, "PlaceholderForeground") is { } placeholderForeground)
+        {
+            switch (control)
+            {
+                case AutoCompleteBox autoCompleteBox:
+                    autoCompleteBox.PlaceholderForeground = placeholderForeground;
+                    break;
+                case CalendarDatePicker calendarDatePicker:
+                    calendarDatePicker.PlaceholderForeground = placeholderForeground;
+                    break;
+                case ComboBox comboBox:
+                    comboBox.PlaceholderForeground = placeholderForeground;
+                    break;
+                case NumericUpDown numericUpDown:
+                    numericUpDown.PlaceholderForeground = placeholderForeground;
+                    break;
+                case TextBox textBox:
+                    textBox.PlaceholderForeground = placeholderForeground;
+                    break;
+            }
+        }
+
         if (HasValidLiteralValue(node, "Padding"))
         {
             control.Padding = ParseThickness(node, "Padding");
@@ -986,6 +1048,7 @@ public sealed class AxamlPreviewControl : ContentControl
         ToggleSwitch toggleSwitch = new()
         {
             Content = node.Text ?? "ToggleSwitch",
+            CommandParameter = ParseOptionalLiteralText(node, "CommandParameter"),
             IsThreeState = ParseBoolean(node, "IsThreeState") ?? false,
             IsEnabled = false,
             IsChecked = ParseBoolean(node, "IsChecked"),
@@ -1153,8 +1216,22 @@ public sealed class AxamlPreviewControl : ContentControl
     {
         MenuItem menuItem = new()
         {
+            CommandParameter = ParseOptionalLiteralText(node, "CommandParameter"),
+            GroupName = ParseLiteralText(node, "GroupName", string.Empty),
             Header = ParseLiteralText(node, "Header", "Menu item"),
-            InputGesture = ParseInputGesture(node),
+            Icon = ParseOptionalLiteralText(node, "Icon") is { } iconText
+                ? new TextBlock { Text = iconText }
+                : null,
+            InputGesture = ParseInputGesture(node, "InputGesture")
+                ?? ParseInputGesture(node, "HotKey"),
+            ToggleType = HasValidLiteralValue(node, "ToggleType")
+                && Enum.TryParse(GetProperty(node, "ToggleType"), ignoreCase: true, out MenuItemToggleType toggleType)
+                && Enum.IsDefined(toggleType)
+                    ? toggleType
+                    : MenuItemToggleType.None,
+            IsChecked = ParseBoolean(node, "IsChecked") ?? false,
+            IsSubMenuOpen = false,
+            StaysOpenOnClick = ParseBoolean(node, "StaysOpenOnClick") ?? false,
             IsEnabled = false,
         };
         foreach (AxamlPreviewNode child in node.Children)
@@ -1202,11 +1279,11 @@ public sealed class AxamlPreviewControl : ContentControl
         return BuildControl(node);
     }
 
-    private static KeyGesture? ParseInputGesture(AxamlPreviewNode node)
+    private static KeyGesture? ParseInputGesture(AxamlPreviewNode node, string propertyName)
     {
-        string? value = GetProperty(node, "InputGesture");
+        string? value = GetProperty(node, propertyName);
         return string.IsNullOrEmpty(value)
-            || AxamlPropertyValueValidator.Validate(node.TypeName, "InputGesture", value) is not null
+            || AxamlPropertyValueValidator.Validate(node.TypeName, propertyName, value) is not null
                 ? null
                 : KeyGesture.Parse(value);
     }
@@ -1359,11 +1436,6 @@ public sealed class AxamlPreviewControl : ContentControl
         if (HasValidLiteralValue(node, "LineHeight"))
         {
             textBox.LineHeight = ParseDouble(node, "LineHeight", 0);
-        }
-
-        if (ParseSimpleBrush(node, "PlaceholderForeground") is { } placeholderForeground)
-        {
-            textBox.PlaceholderForeground = placeholderForeground;
         }
 
         return ApplyTemplatedControlAppearance(textBox, node);
@@ -1662,6 +1734,15 @@ public sealed class AxamlPreviewControl : ContentControl
     {
         string? value = GetProperty(node, propertyName);
         return value is null || value.TrimStart().StartsWith('{') ? fallback : value;
+    }
+
+    private static string? ParseOptionalLiteralText(AxamlPreviewNode node, string propertyName)
+    {
+        string? value = GetProperty(node, propertyName);
+        return value is not null
+            && AxamlPropertyValueValidator.Validate(node.TypeName, propertyName, value) is null
+                ? value
+                : null;
     }
 
     private static string? ParseValidatedFormat(AxamlPreviewNode node, string propertyName)
