@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.UI.Components;
+using AA98_AvlnCodeStudio.UI.Controls;
 using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.Components;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
@@ -41,6 +42,7 @@ public sealed partial class EditorTabViewModel : ObservableObject, IDisposable
     private AxamlDesignerPaletteView? _paletteInputView;
     private int _hasUnappliedDrafts;
     private int _disposed;
+    private bool _synchronizingCaretSelection;
 
     public EditorTabViewModel(
         IAvaloniaEditorComponent component,
@@ -102,6 +104,10 @@ public sealed partial class EditorTabViewModel : ObservableObject, IDisposable
 
         _inputView?.AddHandler(InputElement.PointerPressedEvent, OnTextPointerPressed, RoutingStrategies.Tunnel, true);
         _inputView?.AddHandler(InputElement.GotFocusEvent, OnTextGotFocus, RoutingStrategies.Bubble, true);
+        if (_inputView is EditorTextArea textArea)
+        {
+            textArea.CaretPositionChanged += OnCaretPositionChanged;
+        }
         if (session is null && editorKind == "axaml" && !_hasCustomContributions)
         {
             EnsureDesigner();
@@ -237,6 +243,10 @@ public sealed partial class EditorTabViewModel : ObservableObject, IDisposable
 
         _inputView?.RemoveHandler(InputElement.PointerPressedEvent, OnTextPointerPressed);
         _inputView?.RemoveHandler(InputElement.GotFocusEvent, OnTextGotFocus);
+        if (_inputView is EditorTextArea textArea)
+        {
+            textArea.CaretPositionChanged -= OnCaretPositionChanged;
+        }
         if (_surface is not null)
         {
             _surface.RemoveHandler(InputElement.PointerPressedEvent, OnDesignerPointerPressed);
@@ -245,6 +255,7 @@ public sealed partial class EditorTabViewModel : ObservableObject, IDisposable
         if (Designer is not null)
         {
             Designer.MarkupChanged -= OnDesignerMarkupChanged;
+            Designer.SelectionActivated -= OnDesignerSelectionActivated;
         }
         bool sessionIsContribution = ReferenceEquals(_session, _contributions);
         SetContributions(null);
@@ -324,6 +335,7 @@ public sealed partial class EditorTabViewModel : ObservableObject, IDisposable
 
         Designer = new AxamlDesignerViewModel();
         Designer.MarkupChanged += OnDesignerMarkupChanged;
+        Designer.SelectionActivated += OnDesignerSelectionActivated;
         SetContributions(new AxamlDesignerContributions(Designer));
         OnPropertyChanged(nameof(Designer));
     }
@@ -419,7 +431,7 @@ public sealed partial class EditorTabViewModel : ObservableObject, IDisposable
     }
 
     private void OnTextPointerPressed(object? sender, PointerPressedEventArgs e) =>
-        ActivateByUser(designerSelection: _hasCustomContributions);
+        ActivateByUser(designerSelection: _hasCustomContributions || _editorKind == "axaml");
 
     private void OnDesignerPointerPressed(object? sender, PointerPressedEventArgs e) => ActivateByUser(designerSelection: true);
 
@@ -429,7 +441,7 @@ public sealed partial class EditorTabViewModel : ObservableObject, IDisposable
     {
         if (e.NavigationMethod != NavigationMethod.Unspecified)
         {
-            ActivateByUser(designerSelection: _hasCustomContributions);
+            ActivateByUser(designerSelection: _hasCustomContributions || _editorKind == "axaml");
         }
     }
 
@@ -445,6 +457,44 @@ public sealed partial class EditorTabViewModel : ObservableObject, IDisposable
     {
         Editor.Text = e.Markup;
         Editor.NotificationText = Designer?.StatusText ?? string.Empty;
+    }
+
+    private void OnCaretPositionChanged(object? sender, EventArgs e)
+    {
+        if (_synchronizingCaretSelection || _editorKind != "axaml"
+            || sender is not EditorTextArea textArea || Designer is null)
+        {
+            return;
+        }
+
+        _synchronizingCaretSelection = true;
+        try
+        {
+            Designer.SelectAtCaret(Editor.Text, textArea.CaretOffset);
+        }
+        finally
+        {
+            _synchronizingCaretSelection = false;
+        }
+    }
+
+    private void OnDesignerSelectionActivated(object? sender, EventArgs e)
+    {
+        if (_synchronizingCaretSelection || _inputView is not EditorTextArea textArea
+            || Designer?.SelectedNode is not { SourceStartOffset: >= 0 } node)
+        {
+            return;
+        }
+
+        _synchronizingCaretSelection = true;
+        try
+        {
+            textArea.MoveCaretWithoutFocus(node.SourceStartOffset);
+        }
+        finally
+        {
+            _synchronizingCaretSelection = false;
+        }
     }
 
     private void OnContributionSelectionChanged(object? sender, EventArgs e) =>
