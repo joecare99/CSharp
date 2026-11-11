@@ -1582,7 +1582,7 @@ public sealed class AxamlControlCatalogTests
             .ToArray();
 
         CollectionAssert.AreEqual(
-            new[] { "Border", "Canvas", "ComboBox", "ContentControl", "Expander", "GroupBox", "ItemsControl", "ListBox", "ScrollViewer", "TabItem", "ToolTip", "TreeView", "TreeViewItem", "Viewbox" },
+            new[] { "Border", "Canvas", "ComboBox", "ContentControl", "DockPanel", "Expander", "GroupBox", "ItemsControl", "ListBox", "ScrollViewer", "TabItem", "ToolTip", "TreeView", "TreeViewItem", "Viewbox" },
             actual);
     }
 }

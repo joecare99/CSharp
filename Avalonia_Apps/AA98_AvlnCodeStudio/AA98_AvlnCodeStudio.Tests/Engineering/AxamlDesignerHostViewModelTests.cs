@@ -331,15 +331,26 @@ public sealed class AxamlDesignerHostViewModelTests
             Assert.IsNotNull(proposal, $"{binding.Diagnostic} {viewModel.StatusText}");
             Assert.AreEqual(2, proposal!.Changes.Count);
             StringAssert.Contains(File.ReadAllText(axamlPath), "{Binding Caption, Mode=TwoWay}");
-            StringAssert.Contains(File.ReadAllText(viewModelPath), "private string _caption = string.Empty;");
+            string expectedProperty = Environment.Version.Major >= 10
+                ? "public partial string Caption { get; set; } = string.Empty;"
+                : "private string _caption = string.Empty;";
+            StringAssert.Contains(File.ReadAllText(viewModelPath), expectedProperty);
 
             Assert.IsTrue(viewModel.WorkspaceFileChangeService.Undo());
             Assert.AreEqual(markup, File.ReadAllText(axamlPath));
-            Assert.IsFalse(File.ReadAllText(viewModelPath).Contains("_caption", StringComparison.Ordinal));
+            Assert.IsFalse(File.ReadAllText(viewModelPath).Contains(expectedProperty, StringComparison.Ordinal));
             Assert.IsTrue(viewModel.WorkspaceFileChangeService.Redo());
             StringAssert.Contains(File.ReadAllText(axamlPath), "{Binding Caption, Mode=TwoWay}");
-            StringAssert.Contains(File.ReadAllText(viewModelPath), "private string _caption = string.Empty;");
+            StringAssert.Contains(File.ReadAllText(viewModelPath), expectedProperty);
             Assert.IsFalse(viewModel.IsDirty);
+
+            viewModel.ClearWorkspaceContext();
+            using Process updatedBuild = Process.Start(buildStartInfo)
+                ?? throw new InvalidOperationException("Could not build the updated standalone ViewModel fixture.");
+            Task<string> updatedOutput = updatedBuild.StandardOutput.ReadToEndAsync();
+            Task<string> updatedError = updatedBuild.StandardError.ReadToEndAsync();
+            await updatedBuild.WaitForExitAsync();
+            Assert.AreEqual(0, updatedBuild.ExitCode, $"{await updatedOutput}{await updatedError}");
         }
         finally
         {

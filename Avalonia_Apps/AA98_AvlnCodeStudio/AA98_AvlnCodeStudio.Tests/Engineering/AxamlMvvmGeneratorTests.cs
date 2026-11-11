@@ -44,7 +44,7 @@ public sealed class AxamlMvvmGeneratorTests
             """;
 
         WorkspaceFileChangeRequest[] changes = new AxamlMvvmGenerator()
-            .Generate("Views\\LoginView.axaml", markup)
+            .Generate("Views\\LoginView.axaml", markup, usePartialProperties: true)
             .ToArray();
 
         Assert.AreEqual(2, changes.Length);
@@ -77,27 +77,46 @@ public sealed class AxamlMvvmGeneratorTests
         StringAssert.Contains(changes[0].ProposedContent, "Text=\"{Binding Welcome, Mode=OneWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "Text=\"Static label\"");
         StringAssert.Contains(changes[1].ProposedContent, "namespace Sample.Views;");
-        StringAssert.Contains(changes[1].ProposedContent, "private string? _city = \"Paris\";");
-        StringAssert.Contains(changes[1].ProposedContent, "private string _userName = \"initial\";");
-        StringAssert.Contains(changes[1].ProposedContent, "private bool? _rememberMe = true;");
-        StringAssert.Contains(changes[1].ProposedContent, "private bool? _notifications = false;");
-        StringAssert.Contains(changes[1].ProposedContent, "private bool? _personal = true;");
-        StringAssert.Contains(changes[1].ProposedContent, "private decimal? _quantity = 12.5m;");
-        StringAssert.Contains(changes[1].ProposedContent, "private double _volume = 0.75d;");
-        StringAssert.Contains(changes[1].ProposedContent, "private global::System.DateTimeOffset? _birth = global::System.DateTimeOffset.ParseExact(\"2024-02-29\", \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None);");
-        StringAssert.Contains(changes[1].ProposedContent, "private global::System.DateTime? _event = global::System.DateTime.ParseExact(\"2024-03-01\", \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None);");
-        StringAssert.Contains(changes[1].ProposedContent, "private global::System.TimeSpan? _arrival = global::System.TimeSpan.Parse(\"13:45:30\", global::System.Globalization.CultureInfo.InvariantCulture);");
-        StringAssert.Contains(changes[1].ProposedContent, "private global::System.DateTime? _release = global::System.DateTime.ParseExact(\"2024-02-29\", \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None);");
-        StringAssert.Contains(changes[1].ProposedContent, "private global::Avalonia.Media.Color _theme = global::Avalonia.Media.Color.Parse(\"#FF123456\");");
-        StringAssert.Contains(changes[1].ProposedContent, "private int _settings = 1;");
-        StringAssert.Contains(changes[1].ProposedContent, "private int _country = 1;");
-        StringAssert.Contains(changes[1].ProposedContent, "private string _welcome = \"Welcome\";");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial string? City { get; set; } = \"Paris\";");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial string UserName { get; set; } = \"initial\";");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial bool? RememberMe { get; set; } = true;");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial bool? Notifications { get; set; } = false;");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial bool? Personal { get; set; } = true;");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial decimal? Quantity { get; set; } = 12.5m;");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial double Volume { get; set; } = 0.75d;");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial global::System.DateTimeOffset? Birth { get; set; } = global::System.DateTimeOffset.ParseExact(\"2024-02-29\", \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None);");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial global::System.DateTime? Event { get; set; } = global::System.DateTime.ParseExact(\"2024-03-01\", \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None);");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial global::System.TimeSpan? Arrival { get; set; } = global::System.TimeSpan.Parse(\"13:45:30\", global::System.Globalization.CultureInfo.InvariantCulture);");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial global::System.DateTime? Release { get; set; } = global::System.DateTime.ParseExact(\"2024-02-29\", \"yyyy-MM-dd\", global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None);");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial global::Avalonia.Media.Color Theme { get; set; } = global::Avalonia.Media.Color.Parse(\"#FF123456\");");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial int Settings { get; set; } = 1;");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial int Country { get; set; } = 1;");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial string Welcome { get; set; } = \"Welcome\";");
         StringAssert.Contains(changes[1].ProposedContent, "[RelayCommand]");
         StringAssert.Contains(changes[1].ProposedContent, "private void Open()");
         StringAssert.Contains(changes[1].ProposedContent, "private void Submit(string? commandParameter)");
         StringAssert.Contains(changes[1].ProposedContent, "private void RememberMeCheckBox(string? commandParameter)");
         StringAssert.Contains(changes[1].ProposedContent, "private void NotificationsToggleSwitch()");
         StringAssert.Contains(changes[1].ProposedContent, "private void PersonalRadioButton()");
+    }
+
+    [TestMethod]
+    public void Generate_UsesCompatibleFieldSyntaxWhenPartialPropertiesAreNotEnabled()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Sample.MainWindow">
+              <TextBox x:Name="NameTextBox" Text="initial" />
+            </Window>
+            """;
+
+        WorkspaceFileChangeRequest[] changes = new AxamlMvvmGenerator()
+            .Generate("MainWindow.axaml", markup)
+            .ToArray();
+
+        StringAssert.Contains(changes[1].ProposedContent, "private string _name = \"initial\";");
+        Assert.IsFalse(changes[1].ProposedContent.Contains("public partial string Name", System.StringComparison.Ordinal));
     }
 
     [TestMethod]

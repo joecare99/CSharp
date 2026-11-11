@@ -701,6 +701,23 @@ public sealed class CSharpWorkspaceLoaderTests
                 Path.Combine(root, "LoginView.axaml.cs"),
                 "namespace Sample; public partial class LoginView { }");
             File.WriteAllText(axamlPath, originalMarkup);
+            ProcessStartInfo restoreInfo = new("dotnet")
+            {
+                WorkingDirectory = root,
+                ArgumentList = { "restore", projectPath, "--verbosity", "quiet" },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
+            ClearInheritedMsBuildEnvironment(restoreInfo);
+            using (Process restore = Process.Start(restoreInfo)
+                ?? throw new InvalidOperationException("Could not start the ViewModel fixture restore."))
+            {
+                Task<string> restoreOutput = restore.StandardOutput.ReadToEndAsync();
+                Task<string> restoreError = restore.StandardError.ReadToEndAsync();
+                await restore.WaitForExitAsync();
+                Assert.AreEqual(0, restore.ExitCode, $"{await restoreOutput}{await restoreError}");
+            }
             TestEditorComponentFactory editorFactory = new();
             IAvaloniaEditorComponent editorComponent = editorFactory.Create();
             EditorDocumentWorkspace editorWorkspace = new(editorComponent, editorFactory);
@@ -720,7 +737,9 @@ public sealed class CSharpWorkspaceLoaderTests
 
             string generatedViewModelPath = Path.Combine(root, "LoginViewViewModel.cs");
             Assert.IsTrue(File.Exists(generatedViewModelPath));
-            StringAssert.Contains(File.ReadAllText(generatedViewModelPath), "private string _userName = \"Ada\";");
+            StringAssert.Contains(File.ReadAllText(generatedViewModelPath), Environment.Version.Major >= 10
+                ? "public partial string UserName { get; set; } = \"Ada\";"
+                : "private string _userName = \"Ada\";");
             StringAssert.Contains(viewModel.Editor.Text, "Text=\"{Binding UserName, Mode=TwoWay}\"");
             StringAssert.Contains(viewModel.Editor.Text, "Command=\"{Binding SubmitCommand}\"");
             Assert.IsFalse(viewModel.Editor.IsDirty);
@@ -822,7 +841,9 @@ public sealed class CSharpWorkspaceLoaderTests
                 "[global::CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]");
             StringAssert.Contains(updatedViewModel, "Existing user behavior must survive incremental generation.");
             StringAssert.Contains(updatedViewModel, "public string UserLogic => \"preserve me\";");
-            StringAssert.Contains(updatedViewModel, "private string _userName = string.Empty;");
+            StringAssert.Contains(updatedViewModel, Environment.Version.Major >= 10
+                ? "public partial string UserName { get; set; } = string.Empty;"
+                : "private string _userName = string.Empty;");
             Assert.AreEqual(originalMarkup, File.ReadAllText(axamlPath));
             Assert.AreEqual(originalMarkup, viewModel.Editor.Text);
             Assert.IsFalse(viewModel.Editor.IsDirty);
@@ -966,18 +987,21 @@ public sealed class CSharpWorkspaceLoaderTests
             Assert.AreEqual(dirtyMarkup, reviewedProposal.Changes.Single(change => change.RelativePath == "View.axaml").OriginalOpenDocumentContent);
             Assert.AreEqual(savedMarkup, reviewedProposal.Changes.Single(change => change.RelativePath == "View.axaml").OriginalContent);
             StringAssert.Contains(File.ReadAllText(axamlPath), "Text=\"{Binding Caption, Mode=TwoWay}\"");
-            StringAssert.Contains(File.ReadAllText(viewModelPath), "private string _caption = string.Empty;");
+            string expectedProperty = Environment.Version.Major >= 10
+                ? "public partial string Caption { get; set; } = string.Empty;"
+                : "private string _caption = string.Empty;";
+            StringAssert.Contains(File.ReadAllText(viewModelPath), expectedProperty);
             Assert.IsFalse(viewModel.Editor.IsDirty);
 
             Assert.IsTrue(viewModel.WorkspaceFileChangeService.Undo());
             Assert.AreEqual(savedMarkup, File.ReadAllText(axamlPath));
             Assert.AreEqual(dirtyMarkup, viewModel.Editor.Text);
             Assert.IsTrue(viewModel.Editor.IsDirty);
-            Assert.IsFalse(File.ReadAllText(viewModelPath).Contains("_caption", StringComparison.Ordinal));
+            Assert.IsFalse(File.ReadAllText(viewModelPath).Contains(expectedProperty, StringComparison.Ordinal));
 
             Assert.IsTrue(viewModel.WorkspaceFileChangeService.Redo());
             StringAssert.Contains(File.ReadAllText(axamlPath), "Text=\"{Binding Caption, Mode=TwoWay}\"");
-            StringAssert.Contains(File.ReadAllText(viewModelPath), "private string _caption = string.Empty;");
+            StringAssert.Contains(File.ReadAllText(viewModelPath), expectedProperty);
             StringAssert.Contains(viewModel.Editor.Text, "Text=\"{Binding Caption, Mode=TwoWay}\"");
             Assert.IsFalse(viewModel.Editor.IsDirty);
         });

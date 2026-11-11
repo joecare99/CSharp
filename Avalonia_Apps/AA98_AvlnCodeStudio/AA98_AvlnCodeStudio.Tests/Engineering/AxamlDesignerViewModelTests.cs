@@ -13,6 +13,51 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class AxamlDesignerViewModelTests
 {
     [TestMethod]
+    public void CaretSelection_UsesInnermostElementAndPreservesSource()
+    {
+        const string markup = "<UserControl xmlns='https://github.com/avaloniaui'>\r\n"
+            + " <StackPanel><Button Content='a > b' /><TextBlock>hello</TextBlock></StackPanel>\r\n"
+            + "</UserControl>";
+        AxamlDesignerViewModel viewModel = new();
+        int changes = 0;
+        viewModel.MarkupChanged += (_, _) => changes++;
+        viewModel.LoadMarkup(markup);
+
+        viewModel.SelectAtCaret(markup, markup.IndexOf("a > b", StringComparison.Ordinal));
+        Assert.AreEqual("Button", viewModel.SelectedNode?.TypeName);
+        Assert.IsTrue(viewModel.PropertyProvider.Properties.Any(property => property.Name == "Content"));
+
+        viewModel.SelectAtCaret(markup, markup.IndexOf("hello", StringComparison.Ordinal));
+        Assert.AreEqual("TextBlock", viewModel.SelectedNode?.TypeName);
+        viewModel.SelectAtCaret(markup, markup.IndexOf("</StackPanel>", StringComparison.Ordinal));
+        Assert.AreEqual("StackPanel", viewModel.SelectedNode?.TypeName);
+        Assert.AreEqual(0, changes);
+    }
+
+    [TestMethod]
+    public void CaretSelection_IgnoresStaleInvalidAndUnmappedMarkup()
+    {
+        const string markup = "<UserControl xmlns='https://github.com/avaloniaui'>"
+            + "<UserControl.Resources><ResourceDictionary /></UserControl.Resources>"
+            + "<Button /></UserControl>";
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(markup);
+        viewModel.SelectAtCaret(markup, markup.IndexOf("<Button", StringComparison.Ordinal));
+        AxamlPreviewNode? selected = viewModel.SelectedNode;
+        Assert.AreEqual("Button", selected?.TypeName);
+
+        viewModel.SelectAtCaret(markup, markup.IndexOf("ResourceDictionary", StringComparison.Ordinal));
+        Assert.AreSame(selected, viewModel.SelectedNode);
+        viewModel.SelectAtCaret(markup + " ", 0);
+        Assert.AreSame(selected, viewModel.SelectedNode);
+
+        viewModel.LoadMarkup("<UserControl><Button");
+        AxamlPreviewNode? recoveredSelection = viewModel.SelectedNode;
+        viewModel.SelectAtCaret("<UserControl><Button", 2);
+        Assert.AreSame(recoveredSelection, viewModel.SelectedNode);
+    }
+
+    [TestMethod]
     public void DesignerViewModel_ApplyUndoRedo_PublishesUpdatedMarkup()
     {
         AxamlDesignerViewModel viewModel = new();
@@ -1826,6 +1871,47 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task GridCellPlacement_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(
+            "<Grid xmlns='https://github.com/avaloniaui' RowDefinitions='*,*' ColumnDefinitions='*,*'>"
+            + "<Button Grid.Row='0' Grid.Column='0' /><TextBlock Grid.Row='1' Grid.Column='1' /></Grid>");
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
+        var row = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "Grid.Row");
+
+        Assert.IsTrue(row.TrySetValue("1"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("1", viewModel.SelectedNode!.Properties["Grid.Row"]);
+
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("0", viewModel.SelectedNode!.Properties["Grid.Row"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("1", viewModel.SelectedNode!.Properties["Grid.Row"]);
+    }
+
+    [TestMethod]
+    public async Task GridCellSpan_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(
+            "<Grid xmlns='https://github.com/avaloniaui' RowDefinitions='*,*' ColumnDefinitions='*,*'>"
+            + "<Button Grid.Row='0' Grid.Column='0' /><TextBlock Grid.Row='1' Grid.Column='1' /></Grid>");
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
+        var columnSpan = viewModel.PropertyProvider.Properties.Single(
+            static property => property.Name == "Grid.ColumnSpan");
+
+        Assert.IsTrue(columnSpan.TrySetValue("2"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("2", viewModel.SelectedNode!.Properties["Grid.ColumnSpan"]);
+
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("1", AxamlPropertyValueValidator.Describe(viewModel.SelectedNode!, "Grid.ColumnSpan").Value);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("2", viewModel.SelectedNode!.Properties["Grid.ColumnSpan"]);
+    }
+
+    [TestMethod]
     public async Task UniformGridSpacing_IsEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();
@@ -2282,6 +2368,113 @@ public sealed class AxamlDesignerViewModelTests
         Assert.AreEqual("Second", viewModel.SelectedNode!.StableName);
         viewModel.RedoCommand.Execute(null);
         Assert.AreEqual("Second", viewModel.PreviewRoot!.Children[0].StableName);
+    }
+
+    [TestMethod]
+    public void DockPanelStructureCommands_KeepLastChildFillClientLast()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(
+            "<DockPanel><Button DockPanel.Dock='Top' /><Separator DockPanel.Dock='Bottom' /><TextBlock /></DockPanel>");
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[1];
+
+        Assert.IsTrue(viewModel.MoveStructureEarlierCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.MoveStructureLaterCommand.CanExecute(null));
+        viewModel.MoveStructureEarlierCommand.Execute(null);
+        CollectionAssert.AreEqual(
+            new[] { "Separator", "Button", "TextBlock" },
+            viewModel.PreviewRoot!.Children.Select(static child => child.TypeName).ToArray());
+        Assert.IsTrue(viewModel.UndoCommand.CanExecute(null));
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Button", viewModel.PreviewRoot!.Children[0].TypeName);
+
+        viewModel.SelectedNode = viewModel.PreviewRoot.Children[^1];
+        Assert.IsFalse(viewModel.MoveStructureEarlierCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.MoveStructureLaterCommand.CanExecute(null));
+        Assert.IsTrue(viewModel.RemoveStructureCommand.CanExecute(null));
+        viewModel.RemoveStructureCommand.Execute(null);
+        Assert.AreEqual(2, viewModel.PreviewRoot!.Children.Count);
+    }
+
+    [TestMethod]
+    public void GridDefinitionCommands_AddAutoTracksAndRespectSelection()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Grid><Button /></Grid>");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+
+        Assert.IsTrue(viewModel.IsSelectedGrid);
+        Assert.IsTrue(viewModel.AddGridRowDefinitionCommand.CanExecute(null));
+        Assert.IsTrue(viewModel.AddGridColumnDefinitionCommand.CanExecute(null));
+        viewModel.AddGridRowDefinitionCommand.Execute(null);
+        viewModel.AddGridColumnDefinitionCommand.Execute(null);
+        Assert.AreEqual(2, viewModel.PreviewRoot!.RowDefinitions.Count);
+        Assert.AreEqual(2, viewModel.PreviewRoot.ColumnDefinitions.Count);
+        Assert.IsTrue(viewModel.UndoCommand.CanExecute(null));
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(0, viewModel.PreviewRoot!.ColumnDefinitions.Count);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(0, viewModel.PreviewRoot!.RowDefinitions.Count);
+        Assert.AreEqual(0, viewModel.PreviewRoot.ColumnDefinitions.Count);
+
+        viewModel.RedoCommand.Execute(null);
+        viewModel.RedoCommand.Execute(null);
+        Assert.IsTrue(viewModel.RemoveGridRowDefinitionCommand.CanExecute(null));
+        Assert.IsTrue(viewModel.RemoveGridColumnDefinitionCommand.CanExecute(null));
+        viewModel.RemoveGridRowDefinitionCommand.Execute(null);
+        Assert.AreEqual(1, viewModel.PreviewRoot!.RowDefinitions.Count);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(2, viewModel.PreviewRoot!.RowDefinitions.Count);
+        viewModel.RemoveGridColumnDefinitionCommand.Execute(null);
+        Assert.AreEqual(1, viewModel.PreviewRoot!.ColumnDefinitions.Count);
+
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children.Single();
+        Assert.IsFalse(viewModel.IsSelectedGrid);
+        Assert.IsFalse(viewModel.AddGridRowDefinitionCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.AddGridColumnDefinitionCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.RemoveGridRowDefinitionCommand.CanExecute(null));
+        Assert.IsFalse(viewModel.RemoveGridColumnDefinitionCommand.CanExecute(null));
+    }
+
+    [TestMethod]
+    public void GridTrackSizeEditor_ResizesSelectedExplicitTrackAndValidatesInput()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        string? changedMarkup = null;
+        viewModel.MarkupChanged += (_, eventArgs) => changedMarkup = eventArgs.Markup;
+        viewModel.LoadMarkup("<Grid RowDefinitions='*,Auto' ColumnDefinitions='Auto,2*'><Button /></Grid>");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+
+        Assert.AreEqual(4, viewModel.GridTrackOptions.Count);
+        Assert.AreEqual("Row 0: *", viewModel.SelectedGridTrackOption);
+        Assert.IsFalse(viewModel.ApplyGridTrackSizeCommand.CanExecute(null));
+
+        viewModel.SelectedGridTrackOption = "Row 1: Auto";
+        viewModel.GridTrackSizeValue = "NaN";
+        Assert.IsTrue(viewModel.HasGridTrackSizeValidationError);
+        Assert.IsFalse(viewModel.ApplyGridTrackSizeCommand.CanExecute(null));
+
+        viewModel.GridTrackSizeValue = "120";
+        Assert.IsFalse(viewModel.HasGridTrackSizeValidationError);
+        Assert.IsTrue(viewModel.ApplyGridTrackSizeCommand.CanExecute(null));
+        viewModel.ApplyGridTrackSizeCommand.Execute(null);
+        StringAssert.Contains(changedMarkup, "RowDefinitions='*,120'");
+        Assert.AreEqual("Row 1: 120", viewModel.SelectedGridTrackOption);
+        Assert.IsTrue(viewModel.UndoCommand.CanExecute(null));
+        viewModel.UndoCommand.Execute(null);
+        StringAssert.Contains(changedMarkup, "RowDefinitions='*,Auto'");
+
+        viewModel.SelectedGridTrackOption = "Column 1: 2*";
+        viewModel.GridTrackSizeValue = "Auto";
+        Assert.IsTrue(viewModel.ApplyGridTrackSizeCommand.CanExecute(null));
+        viewModel.ApplyGridTrackSizeCommand.Execute(null);
+        StringAssert.Contains(changedMarkup, "ColumnDefinitions='Auto,Auto'");
+
+        viewModel.LoadMarkup("<Grid><Button /></Grid>");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        Assert.AreEqual(0, viewModel.GridTrackOptions.Count);
+        Assert.IsFalse(viewModel.HasGridTrackOptions);
+        Assert.IsFalse(viewModel.ApplyGridTrackSizeCommand.CanExecute(null));
     }
 
     [TestMethod]

@@ -50,6 +50,97 @@ public sealed class AxamlDesignerSessionTests
     }
 
     [TestMethod]
+    public void ResourceContextChange_PreservesUndoRedoSelectionAndUsesNewProjectForHistory()
+    {
+        string fixture = Path.Combine(Environment.CurrentDirectory, "designer-context-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            string first = CreateResourceProject(fixture, "First", "First caption");
+            string second = CreateResourceProject(fixture, "Second", "Second caption");
+            string firstView = Path.Combine(first, "Views", "View.axaml");
+            string secondView = Path.Combine(second, "Views", "View.axaml");
+            const string markup = """
+                <StackPanel xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml' xmlns:p='clr-namespace:Sample.Properties'>
+                  <Button Width='100' Content='{x:Static p:Resources.Caption}'/>
+                </StackPanel>
+                """;
+            AxamlDesignerSession session = new();
+            session.Load(markup);
+            session.SelectNode(session.Root!.Children[0]);
+            session.SelectProperty("Width");
+            Assert.IsTrue(session.ApplySelectedValue("120"));
+            Assert.IsTrue(session.ApplySelectedValue("140"));
+            Assert.IsTrue(session.Undo());
+            string editedMarkup = session.Markup;
+            Assert.IsTrue(session.CanUndo);
+            Assert.IsTrue(session.CanRedo);
+
+            session.SetResourceContext(firstView, first);
+            Assert.AreEqual(editedMarkup, session.Markup);
+            Assert.AreEqual("First caption", session.SelectedNode!.Text);
+            Assert.AreEqual("Width", session.SelectedProperty);
+            Assert.AreEqual("120", session.SelectedValue);
+            Assert.IsTrue(session.CanUndo);
+            Assert.IsTrue(session.CanRedo);
+
+            session.SetResourceContext(secondView, second);
+            Assert.AreEqual("Second caption", session.SelectedNode!.Text);
+            Assert.IsTrue(session.CanUndo);
+            Assert.IsTrue(session.CanRedo);
+            Assert.IsTrue(session.Undo());
+            Assert.AreEqual("100", session.SelectedValue);
+            Assert.AreEqual("Second caption", session.SelectedNode!.Text);
+            Assert.IsTrue(session.Redo());
+            Assert.AreEqual("120", session.SelectedValue);
+            Assert.IsTrue(session.Redo());
+            Assert.AreEqual("140", session.SelectedValue);
+            Assert.AreEqual("Second caption", session.SelectedNode!.Text);
+
+            session.SetResourceContext(null, null);
+            Assert.AreEqual("{x:Static p:Resources.Caption}", session.SelectedNode!.Text);
+            Assert.IsTrue(session.CanUndo);
+        }
+        finally
+        {
+            if (Directory.Exists(fixture))
+            {
+                Directory.Delete(fixture, true);
+            }
+        }
+    }
+
+    [TestMethod]
+    public void ResourceContextChange_DoesNotSplitAnInProgressPropertyEdit()
+    {
+        AxamlDesignerSession session = new();
+        session.Load("<StackPanel Width='100' />");
+        session.SelectNode(session.Root);
+        session.BeginPropertyEdit("Width");
+        Assert.IsTrue(session.ApplySelectedValue("120"));
+        session.SetResourceContext(null, "unavailable");
+        Assert.IsTrue(session.ApplySelectedValue("140"));
+        session.EndPropertyEdit();
+
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("100", session.SelectedValue);
+        Assert.IsFalse(session.CanUndo);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("140", session.SelectedValue);
+    }
+
+    private static string CreateResourceProject(string fixture, string folder, string caption)
+    {
+        string root = Path.Combine(fixture, folder);
+        Directory.CreateDirectory(Path.Combine(root, "Properties"));
+        Directory.CreateDirectory(Path.Combine(root, "Views"));
+        File.WriteAllText(Path.Combine(root, "Sample.csproj"), "<Project />");
+        File.WriteAllText(Path.Combine(root, "Views", "View.axaml"), "");
+        File.WriteAllText(Path.Combine(root, "Properties", "Resources.resx"),
+            $"<root><data name='Caption'><value>{caption}</value></data></root>");
+        return root;
+    }
+
+    [TestMethod]
     public void ApplyValues_UpdatesMultipleLayoutPropertiesAsOneUndoableEdit()
     {
         AxamlDesignerSession session = new();
@@ -694,7 +785,8 @@ public sealed class AxamlDesignerSessionTests
         string[] markupCases =
         [
             "<Grid><Button /><TextBlock /></Grid>",
-            "<DockPanel><Button /><TextBlock /></DockPanel>",
+            "<DockPanel><Button DockPanel.Dock='{Binding Side}' /><TextBlock /></DockPanel>",
+            "<av:DockPanel xmlns:av='https://github.com/avaloniaui'><av:Button DockPanel.Dock='Top' /><av:TextBlock /></av:DockPanel>",
             "<StackPanel><Button /><UnknownControl /></StackPanel>",
             "<StackPanel>unexpected<Button /></StackPanel>",
         ];
@@ -713,6 +805,73 @@ public sealed class AxamlDesignerSessionTests
             Assert.AreEqual(markup, session.Markup);
             Assert.IsFalse(session.CanUndo);
         }
+    }
+
+    [TestMethod]
+    public void DockPanelStructure_RemovesDirectChildrenWithUndoRedo()
+    {
+        const string original = "<DockPanel><Button DockPanel.Dock='Top' /><TextBlock /></DockPanel>";
+        const string removedDockedChild = "<DockPanel><TextBlock /></DockPanel>";
+        AxamlDesignerSession session = new();
+        session.Load(original);
+        session.SelectNode(session.Root!.Children[0]);
+
+        Assert.IsTrue(session.CanRemoveSelectedControl);
+        Assert.IsTrue(session.RemoveSelectedControl());
+        Assert.AreEqual(removedDockedChild, session.Markup);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(original, session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(removedDockedChild, session.Markup);
+
+        session.SelectNode(session.Root!.Children[0]);
+        Assert.IsTrue(session.RemoveSelectedControl());
+        Assert.AreEqual("<DockPanel></DockPanel>", session.Markup);
+    }
+
+    [TestMethod]
+    public void DockPanelStructure_ReordersDockedChildrenWithoutMovingLastChildFillClient()
+    {
+        const string original =
+            "<DockPanel><Button DockPanel.Dock='Top' /><Separator DockPanel.Dock='Bottom' /><TextBlock /></DockPanel>";
+        AxamlDesignerSession session = new();
+        session.Load(original);
+        session.SelectNode(session.Root!.Children[1]);
+
+        Assert.IsTrue(session.CanMoveSelectedControlEarlier);
+        Assert.IsFalse(session.CanMoveSelectedControlLater);
+        Assert.IsTrue(session.MoveSelectedControl(-1));
+        CollectionAssert.AreEqual(
+            new[] { "Separator", "Button", "TextBlock" },
+            session.Root!.Children.Select(static child => child.TypeName).ToArray());
+        Assert.AreEqual("TextBlock", session.Root.Children[^1].TypeName);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(original, session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("TextBlock", session.Root!.Children[^1].TypeName);
+
+        session.SelectNode(session.Root.Children[^1]);
+        Assert.IsFalse(session.CanMoveSelectedControlEarlier);
+        Assert.IsFalse(session.CanMoveSelectedControlLater);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => session.MoveSelectedControl(-1));
+    }
+
+    [TestMethod]
+    public void DockPanelStructure_ReordersChildrenWhenLastChildFillIsDisabled()
+    {
+        const string original =
+            "<DockPanel LastChildFill='False'><Button DockPanel.Dock='Top' /><TextBlock DockPanel.Dock='Left' /></DockPanel>";
+        AxamlDesignerSession session = new();
+        session.Load(original);
+        session.SelectNode(session.Root!.Children[0]);
+
+        Assert.IsTrue(session.CanMoveSelectedControlLater);
+        Assert.IsTrue(session.MoveSelectedControl(1));
+        CollectionAssert.AreEqual(
+            new[] { "TextBlock", "Button" },
+            session.Root!.Children.Select(static child => child.TypeName).ToArray());
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(original, session.Markup);
     }
 
     [TestMethod]
@@ -773,6 +932,237 @@ public sealed class AxamlDesignerSessionTests
     }
 
     [TestMethod]
+    public void GridDefinitions_AddRowsAndColumnsAndPreserveAttributeQuotesWithUndoRedo()
+    {
+        const string original = "<Grid RowDefinitions='*' ColumnDefinitions='*'><Button /></Grid>";
+        AxamlDesignerSession session = new();
+        session.Load(original);
+        session.SelectNode(session.Root);
+
+        Assert.IsTrue(session.CanAddGridRowDefinition);
+        Assert.IsTrue(session.AddGridRowDefinition());
+        StringAssert.Contains(session.Markup, "RowDefinitions='*,Auto'");
+        CollectionAssert.AreEqual(new[] { "*", "Auto" }, session.Root!.RowDefinitions.ToArray());
+        Assert.AreEqual("0", session.Root.Children.Single().Properties.GetValueOrDefault("Grid.Row", "0"));
+
+        Assert.IsTrue(session.CanAddGridColumnDefinition);
+        Assert.IsTrue(session.AddGridColumnDefinition());
+        StringAssert.Contains(session.Markup, "ColumnDefinitions='*,Auto'");
+        CollectionAssert.AreEqual(new[] { "*", "Auto" }, session.Root!.ColumnDefinitions.ToArray());
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("*", session.Root!.ColumnDefinitions.Single());
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(original, session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.IsTrue(session.Redo());
+        CollectionAssert.AreEqual(new[] { "*", "Auto" }, session.Root!.RowDefinitions.ToArray());
+        CollectionAssert.AreEqual(new[] { "*", "Auto" }, session.Root.ColumnDefinitions.ToArray());
+    }
+
+    [TestMethod]
+    public void GridDefinitions_AddToPropertyElementsAndPreservePrefixesAndImplicitStarTracks()
+    {
+        const string prefixedMarkup = """
+            <av:Grid xmlns:av='https://github.com/avaloniaui'>
+              <av:Grid.RowDefinitions>
+                <av:RowDefinition Height='*' />
+              </av:Grid.RowDefinitions>
+              <av:Button />
+            </av:Grid>
+            """;
+        AxamlDesignerSession prefixed = new();
+        prefixed.Load(prefixedMarkup);
+        prefixed.SelectNode(prefixed.Root);
+
+        Assert.IsTrue(prefixed.AddGridRowDefinition());
+        StringAssert.Contains(prefixed.Markup, "<av:RowDefinition Height=\"Auto\" />");
+        Assert.IsTrue(prefixed.AddGridColumnDefinition());
+        StringAssert.Contains(prefixed.Markup, "<av:Grid.ColumnDefinitions>");
+        StringAssert.Contains(prefixed.Markup, "<av:ColumnDefinition Width=\"*\" />");
+        StringAssert.Contains(prefixed.Markup, "<av:ColumnDefinition Width=\"Auto\" />");
+        Assert.AreEqual(2, prefixed.Root!.RowDefinitions.Count);
+        Assert.AreEqual(2, prefixed.Root.ColumnDefinitions.Count);
+        Assert.IsTrue(prefixed.Root.HasSafeGridLayout);
+
+        AxamlDesignerSession implicitTracks = new();
+        implicitTracks.Load("<Grid><Button /></Grid>");
+        implicitTracks.SelectNode(implicitTracks.Root);
+        Assert.IsTrue(implicitTracks.AddGridRowDefinition());
+        StringAssert.Contains(implicitTracks.Markup, "<RowDefinition Height=\"*\" />");
+        StringAssert.Contains(implicitTracks.Markup, "<RowDefinition Height=\"Auto\" />");
+        Assert.AreEqual(2, implicitTracks.Root!.RowDefinitions.Count);
+        Assert.IsTrue(implicitTracks.Root.HasSafeGridLayout);
+    }
+
+    [TestMethod]
+    public void GridDefinitions_RejectUnsafeLayoutsAndCellLimit()
+    {
+        AxamlDesignerSession unsafeGrid = new();
+        unsafeGrid.Load("<Grid RowDefinitions='{Binding Rows}' />");
+        unsafeGrid.SelectNode(unsafeGrid.Root);
+        Assert.IsFalse(unsafeGrid.CanAddGridRowDefinition);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => unsafeGrid.AddGridRowDefinition());
+        Assert.AreEqual("<Grid RowDefinitions='{Binding Rows}' />", unsafeGrid.Markup);
+
+        string rows = string.Join(',', Enumerable.Repeat("Auto", 1000));
+        string columns = string.Join(',', Enumerable.Repeat("Auto", 100));
+        AxamlDesignerSession fullGrid = new();
+        fullGrid.Load($"<Grid RowDefinitions='{rows}' ColumnDefinitions='{columns}' />");
+        fullGrid.SelectNode(fullGrid.Root);
+        Assert.IsFalse(fullGrid.CanAddGridRowDefinition);
+        Assert.IsFalse(fullGrid.CanAddGridColumnDefinition);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => fullGrid.AddGridColumnDefinition());
+        Assert.IsFalse(fullGrid.CanUndo);
+    }
+
+    [TestMethod]
+    public void GridDefinitions_RemoveOnlyUnusedEndTracksAndSupportUndoRedo()
+    {
+        const string attributeMarkup =
+            "<Grid RowDefinitions='*,Auto' ColumnDefinitions=\"*,Auto\"><Button /></Grid>";
+        AxamlDesignerSession attributes = new();
+        attributes.Load(attributeMarkup);
+        attributes.SelectNode(attributes.Root);
+
+        Assert.IsTrue(attributes.CanRemoveGridRowDefinition);
+        Assert.IsTrue(attributes.CanRemoveGridColumnDefinition);
+        Assert.IsTrue(attributes.RemoveGridRowDefinition());
+        StringAssert.Contains(attributes.Markup, "RowDefinitions='*'");
+        Assert.IsTrue(attributes.RemoveGridColumnDefinition());
+        StringAssert.Contains(attributes.Markup, "ColumnDefinitions=\"*\"");
+        Assert.AreEqual(1, attributes.Root!.RowDefinitions.Count);
+        Assert.AreEqual(1, attributes.Root.ColumnDefinitions.Count);
+        Assert.IsTrue(attributes.Undo());
+        Assert.AreEqual(2, attributes.Root!.ColumnDefinitions.Count);
+        Assert.IsTrue(attributes.Undo());
+        Assert.AreEqual(attributeMarkup, attributes.Markup);
+        Assert.IsTrue(attributes.Redo());
+        Assert.IsTrue(attributes.Redo());
+        Assert.AreEqual(1, attributes.Root!.RowDefinitions.Count);
+        Assert.AreEqual(1, attributes.Root.ColumnDefinitions.Count);
+
+        const string propertyMarkup = """
+            <av:Grid xmlns:av='https://github.com/avaloniaui'>
+              <av:Grid.RowDefinitions>
+                <av:RowDefinition Height='*' />
+                <av:RowDefinition Height='Auto' />
+              </av:Grid.RowDefinitions>
+              <av:Grid.ColumnDefinitions>
+                <av:ColumnDefinition Width='*' />
+                <av:ColumnDefinition Width='Auto' />
+              </av:Grid.ColumnDefinitions>
+              <av:Button />
+            </av:Grid>
+            """;
+        AxamlDesignerSession propertyElements = new();
+        propertyElements.Load(propertyMarkup);
+        propertyElements.SelectNode(propertyElements.Root);
+
+        Assert.IsTrue(propertyElements.RemoveGridRowDefinition());
+        Assert.IsTrue(propertyElements.RemoveGridColumnDefinition());
+        Assert.AreEqual(1, propertyElements.Root!.RowDefinitions.Count);
+        Assert.AreEqual(1, propertyElements.Root.ColumnDefinitions.Count);
+        StringAssert.Contains(propertyElements.Markup, "<av:RowDefinition Height='*' />");
+        StringAssert.Contains(propertyElements.Markup, "<av:ColumnDefinition Width='*' />");
+        Assert.IsFalse(propertyElements.Markup.Contains("Height='Auto'", StringComparison.Ordinal));
+        Assert.IsFalse(propertyElements.Markup.Contains("Width='Auto'", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    public void GridDefinitions_KeepOccupiedSpansAndImplicitOrSingleTracks()
+    {
+        AxamlDesignerSession occupiedBySpans = new();
+        occupiedBySpans.Load(
+            "<Grid RowDefinitions='*,Auto' ColumnDefinitions='*,Auto'><Button Grid.RowSpan='2' Grid.ColumnSpan='2' /></Grid>");
+        occupiedBySpans.SelectNode(occupiedBySpans.Root);
+        Assert.IsFalse(occupiedBySpans.CanRemoveGridRowDefinition);
+        Assert.IsFalse(occupiedBySpans.CanRemoveGridColumnDefinition);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => occupiedBySpans.RemoveGridRowDefinition());
+
+        AxamlDesignerSession singleTracks = new();
+        singleTracks.Load("<Grid RowDefinitions='Auto' ColumnDefinitions='Auto'><Button /></Grid>");
+        singleTracks.SelectNode(singleTracks.Root);
+        Assert.IsFalse(singleTracks.CanRemoveGridRowDefinition);
+        Assert.IsFalse(singleTracks.CanRemoveGridColumnDefinition);
+
+        AxamlDesignerSession implicitTracks = new();
+        implicitTracks.Load("<Grid><Button /></Grid>");
+        implicitTracks.SelectNode(implicitTracks.Root);
+        Assert.IsFalse(implicitTracks.CanRemoveGridRowDefinition);
+        Assert.IsFalse(implicitTracks.CanRemoveGridColumnDefinition);
+    }
+
+    [TestMethod]
+    public void GridDefinitions_ResizeExplicitTracksAndPreserveBothSourceForms()
+    {
+        const string attributeMarkup =
+            "<Grid RowDefinitions='* , Auto' ColumnDefinitions=\"Auto, 2*\"><Button /></Grid>";
+        AxamlDesignerSession attributes = new();
+        attributes.Load(attributeMarkup);
+        attributes.SelectNode(attributes.Root);
+
+        Assert.IsTrue(attributes.CanSetGridDefinitionSize(isRow: true, index: 1, "120"));
+        Assert.IsFalse(attributes.CanSetGridDefinitionSize(isRow: true, index: 1, "-1"));
+        Assert.IsFalse(attributes.CanSetGridDefinitionSize(isRow: true, index: 2, "120"));
+        Assert.IsFalse(attributes.SetGridDefinitionSize(isRow: true, index: 0, "*"));
+        Assert.IsTrue(attributes.SetGridDefinitionSize(isRow: true, index: 1, "120"));
+        StringAssert.Contains(attributes.Markup, "RowDefinitions='* , 120'");
+        Assert.IsTrue(attributes.SetGridDefinitionSize(isRow: false, index: 1, "3*"));
+        StringAssert.Contains(attributes.Markup, "ColumnDefinitions=\"Auto, 3*\"");
+        CollectionAssert.AreEqual(new[] { "*", "120" }, attributes.Root!.RowDefinitions.ToArray());
+        CollectionAssert.AreEqual(new[] { "Auto", "3*" }, attributes.Root.ColumnDefinitions.ToArray());
+        Assert.IsTrue(attributes.Undo());
+        Assert.IsTrue(attributes.Undo());
+        Assert.AreEqual(attributeMarkup, attributes.Markup);
+        Assert.IsTrue(attributes.Redo());
+        Assert.IsTrue(attributes.Redo());
+        Assert.AreEqual("120", attributes.Root!.RowDefinitions[1]);
+        Assert.AreEqual("3*", attributes.Root.ColumnDefinitions[1]);
+
+        const string propertyMarkup = """
+            <av:Grid xmlns:av='https://github.com/avaloniaui'>
+              <av:Grid.RowDefinitions>
+                <av:RowDefinition Height='*' />
+                <av:RowDefinition />
+              </av:Grid.RowDefinitions>
+              <av:Button />
+            </av:Grid>
+            """;
+        AxamlDesignerSession propertyElements = new();
+        propertyElements.Load(propertyMarkup);
+        propertyElements.SelectNode(propertyElements.Root);
+
+        Assert.IsTrue(propertyElements.SetGridDefinitionSize(isRow: true, index: 0, "2*"));
+        StringAssert.Contains(propertyElements.Markup, "<av:RowDefinition Height='2*' />");
+        Assert.IsTrue(propertyElements.SetGridDefinitionSize(isRow: true, index: 1, "96"));
+        StringAssert.Contains(propertyElements.Markup, "<av:RowDefinition Height=\"96\" />");
+        CollectionAssert.AreEqual(new[] { "2*", "96" }, propertyElements.Root!.RowDefinitions.ToArray());
+        Assert.IsTrue(propertyElements.Root.HasSafeGridLayout);
+    }
+
+    [TestMethod]
+    public void GridDefinitions_RejectUnsafeTrackSizeSourcesAndValues()
+    {
+        AxamlDesignerSession session = new();
+        session.Load("<Grid><Button /></Grid>");
+        session.SelectNode(session.Root);
+        Assert.IsFalse(session.CanSetGridDefinitionSize(isRow: true, index: 0, "*"));
+
+        session.Load("<Grid RowDefinitions='Auto' ColumnDefinitions='*'><Button /></Grid>");
+        session.SelectNode(session.Root);
+        foreach (string value in new[] { "{Binding Size}", "-1", "NaN", "Infinity", "1e9999", "" })
+        {
+            Assert.IsFalse(session.CanSetGridDefinitionSize(isRow: true, index: 0, value), value);
+        }
+
+        Assert.IsFalse(session.CanUndo);
+        Assert.ThrowsExactly<System.InvalidOperationException>(
+            () => session.SetGridDefinitionSize(isRow: true, index: 0, "{Binding Size}"));
+        Assert.AreEqual("<Grid RowDefinitions='Auto' ColumnDefinitions='*'><Button /></Grid>", session.Markup);
+        Assert.IsTrue(session.Root!.HasSafeGridLayout);
+    }
+
+    [TestMethod]
     public void GridPlacement_QualifiesMissingCoordinatesAndPreservesNamespaceDeclarations()
     {
         const string markup = """
@@ -826,6 +1216,7 @@ public sealed class AxamlDesignerSessionTests
                   <av:StackPanel>
                     <av:Grid RowDefinitions="*,*" ColumnDefinitions="*,*"><av:Button /></av:Grid>
                     <av:DockPanel LastChildFill="False"><av:TextBlock /></av:DockPanel>
+                    <av:Grid><av:TextBlock /></av:Grid>
                   </av:StackPanel>
                 </av:UserControl>
                 """;
@@ -837,6 +1228,11 @@ public sealed class AxamlDesignerSessionTests
             Assert.IsTrue(session.AddChildControl("Label"));
             session.SelectNode(session.Root!.Children[1]);
             Assert.IsTrue(session.AddChildControl("Button", AxamlDockPanelPlacement.Bottom));
+            session.SelectNode(session.Root!.Children[2]);
+            Assert.IsTrue(session.AddGridRowDefinition());
+            Assert.IsTrue(session.AddGridColumnDefinition());
+            StringAssert.Contains(session.Markup, "<av:Grid.RowDefinitions>");
+            StringAssert.Contains(session.Markup, "<av:ColumnDefinition Width=\"Auto\" />");
 
             string projectPath = Path.Combine(directory, "GridFixture.csproj");
             File.WriteAllText(projectPath, """

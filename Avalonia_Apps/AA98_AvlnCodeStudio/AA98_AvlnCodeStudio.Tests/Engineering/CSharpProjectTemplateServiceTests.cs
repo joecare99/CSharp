@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -159,12 +160,12 @@ public sealed class CSharpProjectTemplateServiceTests
                 .PrepareProjectChangeRequests("avalonia-mvvm", projectPath, "net10.0")
                 .ToArray();
 
-            Assert.AreEqual(7, requests.Length);
+            Assert.AreEqual(8, requests.Length);
             Assert.IsFalse(File.Exists(projectPath));
-            Assert.IsFalse(File.Exists(Path.Combine(root, "MainWindowViewModel.cs")));
+            Assert.IsFalse(File.Exists(Path.Combine(root, "ViewModels", "MainWindowViewModel.cs")));
             StringAssert.Contains(
-                requests.Single(request => request.RelativePath == "MainWindowViewModel.cs").ProposedContent,
-                "[ObservableProperty]");
+                requests.Single(request => request.RelativePath == Path.Combine("ViewModels", "MainWindowViewModel.cs")).ProposedContent,
+                "public partial string Name { get; set; }");
 
             WorkspaceFileChangeService changes = new(new NoOpenDocuments());
             WorkspaceFileChangeProposal proposal = changes.Prepare(root, requests);
@@ -173,8 +174,8 @@ public sealed class CSharpProjectTemplateServiceTests
             changes.Apply(proposal, confirmed: true);
 
             Assert.IsTrue(File.Exists(projectPath));
-            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "MainWindow.axaml")), "GreetCommand");
-            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "MainWindowViewModel.cs")), "[RelayCommand]");
+            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "Views", "MainWindow.axaml")), "GreetCommand");
+            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "ViewModels", "MainWindowViewModel.cs")), "[RelayCommand]");
         });
     }
 
@@ -245,9 +246,9 @@ public sealed class CSharpProjectTemplateServiceTests
             string projectContent = File.ReadAllText(projectPath);
             StringAssert.Contains(projectContent, "CommunityToolkit.Mvvm");
             StringAssert.Contains(projectContent, "<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>");
-            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "MainWindow.axaml")), "GreetCommand");
-            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "MainWindowViewModel.cs")), "[ObservableProperty]");
-            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "MainWindowViewModel.cs")), "[RelayCommand]");
+            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "Views", "MainWindow.axaml")), "GreetCommand");
+            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "ViewModels", "MainWindowViewModel.cs")), "[ObservableProperty]");
+            StringAssert.Contains(File.ReadAllText(Path.Combine(root, "ViewModels", "MainWindowViewModel.cs")), "[RelayCommand]");
 
             const string generatedMarkup = """
                 <Window xmlns="https://github.com/avaloniaui"
@@ -290,6 +291,43 @@ public sealed class CSharpProjectTemplateServiceTests
     }
 
     [TestMethod]
+    public async Task CreateAvaloniaMvvmProject_UsesSeparateNamespacesAndExternalBuildArtifacts()
+    {
+        await WithTemporaryDirectoryAsync(async root =>
+        {
+            File.WriteAllText(
+                Path.Combine(root, "Directory.Packages.props"),
+                "<Project><PropertyGroup><ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally></PropertyGroup></Project>");
+            foreach (string framework in new[] { "net8.0", "net9.0", "net10.0" })
+            {
+                string frameworkDirectory = Path.Combine(root, framework);
+                string sourceDirectory = Path.Combine(frameworkDirectory, "src");
+                Directory.CreateDirectory(sourceDirectory);
+                string projectPath = new CSharpProjectTemplateService().CreateProject(
+                    "avalonia-mvvm", Path.Combine(sourceDirectory, "My-App.csproj"), framework);
+
+                string view = File.ReadAllText(Path.Combine(sourceDirectory, "Views", "MainWindow.axaml"));
+                StringAssert.Contains(view, "x:Class=\"My_App.Views.MainWindow\"");
+                StringAssert.Contains(view, "xmlns:vm=\"using:My_App.ViewModels\"");
+                StringAssert.Contains(File.ReadAllText(Path.Combine(sourceDirectory, "Views", "MainWindow.axaml.cs")), "namespace My_App.Views;");
+                string viewModel = File.ReadAllText(Path.Combine(sourceDirectory, "ViewModels", "MainWindowViewModel.cs"));
+                StringAssert.Contains(viewModel, "namespace My_App.ViewModels;");
+                StringAssert.Contains(viewModel, "public partial string Name { get; set; }");
+                StringAssert.Contains(File.ReadAllText(Path.Combine(sourceDirectory, "Models", "GreetingMessage.cs")), "namespace My_App.Models;");
+                Assert.AreEqual(1, new CSharpWorkspaceLoader().Load(projectPath).Projects.Count);
+
+                await BuildProjectAsync(projectPath);
+
+                Assert.IsTrue(Directory.Exists(Path.Combine(frameworkDirectory, "bin", "My-App")));
+                Assert.IsTrue(File.Exists(Path.Combine(frameworkDirectory, "obj", "My-App", "project.assets.json")));
+                Assert.IsFalse(Directory.Exists(Path.Combine(sourceDirectory, "bin")));
+                Assert.IsFalse(Directory.Exists(Path.Combine(sourceDirectory, "obj")));
+                Directory.Delete(frameworkDirectory, recursive: true);
+            }
+        });
+    }
+
+    [TestMethod]
     public async Task CreateTestProject_GeneratedProjectExecutesItsExampleTest()
     {
         await WithTemporaryDirectoryAsync(async root =>
@@ -306,6 +344,7 @@ public sealed class CSharpProjectTemplateServiceTests
             Assert.AreEqual(TestRunOutcome.Passed, result.Outcome);
             Assert.AreEqual(1, result.TotalCount);
             Assert.AreEqual(1, result.PassedCount);
+            AssertExternalBuildArtifacts(projectPath);
         });
     }
 
@@ -323,42 +362,63 @@ public sealed class CSharpProjectTemplateServiceTests
             string libraryProject = service.CreateClassLibraryProject(Path.Combine(libraryDirectory, "Shared.csproj"));
 
             await Task.WhenAll(BuildProjectAsync(consoleProject), BuildProjectAsync(libraryProject));
+            AssertExternalBuildArtifacts(consoleProject);
+            AssertExternalBuildArtifacts(libraryProject);
         });
+    }
+
+    private static void AssertExternalBuildArtifacts(string projectPath)
+    {
+        string sourceDirectory = Path.GetDirectoryName(projectPath)!;
+        string parentDirectory = Path.GetDirectoryName(sourceDirectory)!;
+        string projectName = Path.GetFileNameWithoutExtension(projectPath);
+        Assert.IsTrue(File.Exists(Path.Combine(
+            parentDirectory, "bin", projectName, "Debug", $"net{Environment.Version.Major}.0", projectName + ".dll")));
+        Assert.IsTrue(File.Exists(Path.Combine(parentDirectory, "obj", projectName, "project.assets.json")));
+        Assert.IsFalse(Directory.Exists(Path.Combine(sourceDirectory, "bin")));
+        Assert.IsFalse(Directory.Exists(Path.Combine(sourceDirectory, "obj")));
     }
 
     private static void WithTemporaryDirectory(Action<string> action)
     {
-        string root = Path.Combine(Path.GetTempPath(), $"AA98_CSharpProjectTemplate_{Guid.NewGuid():N}");
-        Directory.CreateDirectory(root);
+        string root = CreateTestDirectory();
         try
         {
             action(root);
         }
         finally
         {
-            Directory.Delete(root, recursive: true);
+            Directory.Delete(Path.GetDirectoryName(root)!, recursive: true);
         }
     }
 
     private static async Task WithTemporaryDirectoryAsync(Func<string, Task> action)
     {
-        string root = Path.Combine(Path.GetTempPath(), $"AA98_CSharpProjectTemplate_{Guid.NewGuid():N}");
-        Directory.CreateDirectory(root);
+        string root = CreateTestDirectory();
         try
         {
             await action(root);
         }
         finally
         {
-            Directory.Delete(root, recursive: true);
+            Directory.Delete(Path.GetDirectoryName(root)!, recursive: true);
         }
+    }
+
+    private static string CreateTestDirectory([CallerFilePath] string sourceFilePath = "")
+    {
+        string repositoryRoot = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(sourceFilePath)!, "..", ".."));
+        string root = Path.Combine(repositoryRoot, $"TemplateTest_{Guid.NewGuid():N}", "src");
+        Directory.CreateDirectory(root);
+        File.WriteAllText(Path.Combine(root, "Directory.Packages.props"), "<Project />");
+        return root;
     }
 
     private static async Task BuildProjectAsync(string projectPath)
     {
         ProcessStartInfo startInfo = new("dotnet")
         {
-            WorkingDirectory = Path.GetTempPath(),
+            WorkingDirectory = Path.GetDirectoryName(projectPath)!,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
