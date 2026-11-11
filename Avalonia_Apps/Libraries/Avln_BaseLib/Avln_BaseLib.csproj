@@ -35,10 +35,10 @@
 	  <Compile Remove="Models\Interfaces\ILog.cs" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Avalonia" Version="12.1.5" />
-	  <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.1.5" />
+	  <PackageReference Include="Avalonia" Version="12.1.6" />
+	  <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="12.1.6" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.14" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\BaseLib\BaseLib.csproj" />
