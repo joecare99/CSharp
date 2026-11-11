@@ -12,17 +12,20 @@ public sealed class ConfigLayerStorePathResolverTests
     [TestMethod]
     public void ResolveUserAndSystemPaths_UsesSeparateExplicitRoots()
     {
+        string root = Path.Combine(Path.GetTempPath(), "ConfigLayerPathResolverTests", Guid.NewGuid().ToString("N"));
+        string userRoot = Path.Combine(root, "user");
+        string systemRoot = Path.Combine(root, "system");
         ConfigLayerStorePathResolver resolver = new(
             "Contoso",
             "Editor",
-            userRoot: @"C:\user-data",
-            systemRoot: @"C:\shared-data");
+            userRoot: userRoot,
+            systemRoot: systemRoot);
 
         Assert.AreEqual(
-            Path.GetFullPath(@"C:\user-data\Contoso\Editor\config\layers\user.json"),
+            Path.Combine(userRoot, "Contoso", "Editor", "config", "layers", "user.json"),
             resolver.ResolveUserPath());
         Assert.AreEqual(
-            Path.GetFullPath(@"C:\shared-data\Contoso\Editor\config\layers\system.json"),
+            Path.Combine(systemRoot, "Contoso", "Editor", "config", "layers", "system.json"),
             resolver.ResolveSystemPath());
     }
 
@@ -66,14 +69,15 @@ public sealed class ConfigLayerStorePathResolverTests
             systemRoot: Path.GetTempPath());
         Assert.ThrowsExactly<InvalidOperationException>(() => noGroupRoot.ResolveGroupPath("Engineering"));
 
+        string groupRoot = Path.Combine(Path.GetTempPath(), "ConfigLayerGroupPathTests", Guid.NewGuid().ToString("N"));
         ConfigLayerStorePathResolver withGroupRoot = new(
             "Contoso",
             "Editor",
             userRoot: Path.GetTempPath(),
             systemRoot: Path.GetTempPath(),
-            groupRoot: @"C:\managed-groups");
+            groupRoot: groupRoot);
         Assert.AreEqual(
-            Path.GetFullPath(@"C:\managed-groups\Contoso\Editor\config\layers\Engineering.json"),
+            Path.Combine(groupRoot, "Contoso", "Editor", "config", "layers", "Engineering.json"),
             withGroupRoot.ResolveGroupPath("Engineering"));
         Assert.ThrowsExactly<ArgumentException>(() => withGroupRoot.ResolveGroupPath(@"..\OtherGroup"));
         Assert.ThrowsExactly<ArgumentException>(() => withGroupRoot.ResolveGroupPath("DOMAIN:Group"));
