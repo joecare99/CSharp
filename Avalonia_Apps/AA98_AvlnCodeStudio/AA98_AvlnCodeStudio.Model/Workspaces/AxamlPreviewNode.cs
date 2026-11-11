@@ -11,6 +11,10 @@ public sealed class AxamlPreviewNode
 
     public string? StableName { get; init; }
 
+    public string? ParentTypeName { get; init; }
+
+    public int ParentSourceStartOffset { get; init; } = -1;
+
     public string? Text { get; init; }
 
     public bool IsSupported { get; init; }

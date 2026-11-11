@@ -10,6 +10,7 @@ public static class AxamlPropertyValueValidator
     private static readonly string[] s_orientations = ["Horizontal", "Vertical"];
     private static readonly string[] s_tickPlacements = ["None", "TopLeft", "BottomRight", "Outside"];
     private static readonly string[] s_spinnerLocations = ["Left", "Right"];
+    private static readonly string[] s_dockPanelPlacements = ["Left", "Top", "Right", "Bottom"];
     private static readonly string[] s_horizontalAlignments = ["Left", "Center", "Right", "Stretch"];
     private static readonly string[] s_verticalAlignments = ["Top", "Center", "Bottom", "Stretch"];
     private static readonly string[] s_flowDirections = ["LeftToRight", "RightToLeft"];
@@ -98,6 +99,7 @@ public static class AxamlPropertyValueValidator
                 "ItemsAlignment" when node.TypeName == "WrapPanel" => "Start",
                 "HorizontalSpacing" or "VerticalSpacing" when node.TypeName == "DockPanel" => "0",
                 "LastChildFill" when node.TypeName == "DockPanel" => "True",
+                "DockPanel.Dock" when node.ParentTypeName == "DockPanel" => "Left",
                 "RowSpacing" or "ColumnSpacing" when node.TypeName is "Grid" or "UniformGrid" => "0",
                 "ShowGridLines" when node.TypeName == "Grid" => "False",
                 "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility" when node.TypeName == "ScrollViewer" => "Auto",
@@ -286,6 +288,22 @@ public static class AxamlPropertyValueValidator
             return "Use a plain literal string; bindings and markup extensions are not evaluated.";
         }
 
+        if (propertyName is "Canvas.Left" or "Canvas.Top")
+        {
+            return double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double offset)
+                && double.IsFinite(offset)
+                && offset is >= -100_000 and <= 100_000
+                    ? null
+                    : "Enter a finite canvas coordinate between -100000 and 100000.";
+        }
+
+        if (controlType == "Image" && propertyName == "Source")
+        {
+            return value.Length <= 256 && !value.Any(char.IsControl)
+                ? null
+                : "Enter an image source reference of at most 256 characters without control characters.";
+        }
+
         if (propertyName is "Text" or "Content" or "Header" or "Icon" or "PlaceholderText" or "OffContent" or "OnContent" or "GroupName" or "CommandParameter")
         {
             return null;
@@ -432,7 +450,7 @@ public static class AxamlPropertyValueValidator
 
         if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection" or "ClockIdentifier" or "ColorModel" or "FilterMode" or "ToggleType"
             or "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility"
-            or "TextAlignment" or "TextTrimming" or "TextWrapping"
+            or "TextAlignment" or "TextTrimming" or "TextWrapping" or "DockPanel.Dock"
             or "FirstDayOfWeek" or "SelectionMode" or "DisplayMode")
         {
             string[] options = GetEditor(controlType, propertyName).Options;
@@ -559,7 +577,7 @@ public static class AxamlPropertyValueValidator
             return (AxamlPropertyEditorKind.Boolean, []);
         }
 
-        if (propertyName is "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection" or "ClockIdentifier" or "ColorModel" or "FilterMode" or "ToggleType"
+        if (propertyName is         "Orientation" or "TickPlacement" or "ButtonSpinnerLocation" or "ParsingNumberStyle" or "ItemsAlignment" or "HorizontalAlignment" or "VerticalAlignment" or "HorizontalContentAlignment" or "VerticalContentAlignment" or "FlowDirection" or "FontStyle" or "FontWeight" or "Stretch" or "StretchDirection" or "ClockIdentifier" or "ColorModel" or "FilterMode" or "ToggleType" or "DockPanel.Dock"
             or "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility"
             or "TextAlignment" or "TextTrimming" or "TextWrapping" or "FirstDayOfWeek" or "SelectionMode" or "DisplayMode")
         {
@@ -568,6 +586,7 @@ public static class AxamlPropertyValueValidator
                 "Orientation" => s_orientations,
                 "TickPlacement" => s_tickPlacements,
                 "ButtonSpinnerLocation" => s_spinnerLocations,
+                "DockPanel.Dock" => s_dockPanelPlacements,
                 "ParsingNumberStyle" => s_numberStyles,
                 "ItemsAlignment" => s_wrapPanelItemsAlignments,
                 "HorizontalAlignment" => s_horizontalAlignments,

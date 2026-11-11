@@ -43,7 +43,8 @@ public sealed class AxamlMvvmGenerator
         string viewModelName = viewClassName + "ViewModel";
 
         XAttribute? dataType = root.Attribute(s_xamlNamespace + "DataType");
-        if (dataType is not null && !dataType.Value.EndsWith($":{viewModelName}", StringComparison.Ordinal))
+        if (dataType is not null
+            && !IsGeneratedViewModelDataType(root, dataType.Value, viewModelNamespace, viewModelName))
         {
             throw new InvalidDataException("AXAML already declares a different x:DataType; it was not replaced.");
         }
@@ -512,6 +513,28 @@ public sealed class AxamlMvvmGenerator
                 dataContext.AddAfterSelf(new XText(whitespace.Value));
             }
         }
+    }
+
+    private static bool IsGeneratedViewModelDataType(
+        XElement root,
+        string value,
+        string viewModelNamespace,
+        string viewModelName)
+    {
+        int separator = value.IndexOf(':');
+        if (separator <= 0
+            || separator == value.Length - 1
+            || value.IndexOf(':', separator + 1) >= 0
+            || !string.Equals(value[(separator + 1)..], viewModelName, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        string prefix = value[..separator];
+        return string.Equals(
+            root.GetNamespaceOfPrefix(prefix)?.NamespaceName,
+            $"using:{viewModelNamespace}",
+            StringComparison.Ordinal);
     }
 
     private static string GetOrCreateViewModelPrefix(XElement root, string viewModelNamespace)

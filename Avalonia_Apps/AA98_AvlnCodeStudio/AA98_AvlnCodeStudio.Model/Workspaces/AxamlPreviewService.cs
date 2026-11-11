@@ -26,6 +26,15 @@ public sealed class AxamlPreviewService
     public AxamlPreviewNode Parse(string axaml)
     {
         ArgumentNullException.ThrowIfNull(axaml);
+        XDocument document = LoadDocument(axaml);
+        XElement root = document.Root
+            ?? throw new InvalidDataException("The AXAML document has no root element.");
+        int controlCount = 0;
+        return ParseElement(root, axaml, depth: 0, ref controlCount, parentTypeName: null, parentSourceStartOffset: -1);
+    }
+
+    private static XDocument LoadDocument(string axaml)
+    {
         if (axaml.Length > MaximumDocumentCharacters)
         {
             throw new InvalidDataException($"AXAML preview is limited to {MaximumDocumentCharacters} characters.");
@@ -40,11 +49,7 @@ public sealed class AxamlPreviewService
         };
         using StringReader textReader = new(axaml);
         using XmlReader xmlReader = XmlReader.Create(textReader, settings);
-        XDocument document = XDocument.Load(xmlReader, LoadOptions.SetLineInfo);
-        XElement root = document.Root
-            ?? throw new InvalidDataException("The AXAML document has no root element.");
-        int controlCount = 0;
-        return ParseElement(root, axaml, depth: 0, ref controlCount);
+        return XDocument.Load(xmlReader, LoadOptions.SetLineInfo);
     }
 
     public AxamlPreviewParseResult ParseForPreview(string axaml)
@@ -93,9 +98,17 @@ public sealed class AxamlPreviewService
     public IReadOnlyList<string> GetEditableProperties(AxamlPreviewNode node)
     {
         ArgumentNullException.ThrowIfNull(node);
-        return AxamlControlCatalog.TryGet(node.TypeName, out AxamlControlCapability capability)
-            ? capability.EditableProperties
-            : [];
+        if (!AxamlControlCatalog.TryGet(node.TypeName, out AxamlControlCapability capability))
+        {
+            return [];
+        }
+
+        return node.ParentTypeName switch
+        {
+            "Canvas" => [.. capability.EditableProperties, "Canvas.Left", "Canvas.Top"],
+            "DockPanel" => [.. capability.EditableProperties, "DockPanel.Dock"],
+            _ => capability.EditableProperties,
+        };
     }
 
     public string UpdateTextAttribute(string axaml, AxamlPreviewNode node, string value)
@@ -114,6 +127,16 @@ public sealed class AxamlPreviewService
 
     public string UpdateAttribute(string axaml, AxamlPreviewNode node, string propertyName, string value)
     {
+        if (propertyName is "Canvas.Left" or "Canvas.Top" && node.ParentTypeName == "Canvas")
+        {
+            return UpdateCanvasPosition(axaml, node, propertyName, value);
+        }
+
+        if (propertyName == "DockPanel.Dock" && node.ParentTypeName == "DockPanel")
+        {
+            return UpdateDockPanelDock(axaml, node, value);
+        }
+
         return UpdateAttributeCore(axaml, node, propertyName, value, allowExistingBinding: false);
     }
 
@@ -177,7 +200,7 @@ public sealed class AxamlPreviewService
         string propertyName,
         string value,
         bool allowExistingBinding,
-        bool allowGridPlacement = false,
+        bool allowQualifiedAttachedProperty = false,
         string? insertedAttributeName = null)
     {
         ArgumentNullException.ThrowIfNull(node);
@@ -190,8 +213,8 @@ public sealed class AxamlPreviewService
                 && AxamlControlCatalog.TryGet(node.TypeName, out AxamlControlCapability capability)
                 && capability.BindableProperties.Any(property => property.Name == propertyName)
                 && !node.PropertyElementNames.Contains($"{node.TypeName}.{propertyName}", StringComparer.Ordinal))
-            && !(allowGridPlacement
-                && propertyName is "Grid.Row" or "Grid.Column"
+            && !(allowQualifiedAttachedProperty
+                && propertyName is "Grid.Row" or "Grid.Column" or "Canvas.Left" or "Canvas.Top" or "DockPanel.Dock"
                 && node.IsSupported
                 && node.SourceStartOffset >= 0))
         {
@@ -237,7 +260,7 @@ public sealed class AxamlPreviewService
             tagStart,
             tagEnd,
             propertyName,
-            matchQualifiedName: allowGridPlacement,
+            matchQualifiedName: allowQualifiedAttachedProperty,
             out int attributeNameStart,
             out int attributeEnd);
         if (value.Length == 0)
@@ -336,6 +359,7 @@ public sealed class AxamlPreviewService
         }
 
         bool isGrid = string.Equals(parent.TypeName, "Grid", StringComparison.Ordinal);
+        bool isCanvas = string.Equals(parent.TypeName, "Canvas", StringComparison.Ordinal);
         bool isDockPanel = string.Equals(parent.TypeName, "DockPanel", StringComparison.Ordinal);
         bool dockPanelFillsLastChild = isDockPanel
             && !string.Equals(
@@ -424,6 +448,8 @@ public sealed class AxamlPreviewService
             ? $" {prefix}Grid.Row=\"{gridCell.Row}\" {prefix}Grid.Column=\"{gridCell.Column}\""
             : isDockPanel && dockPanelPlacement != AxamlDockPanelPlacement.Client
                 ? $" {prefix}DockPanel.Dock=\"{dockPanelPlacement}\""
+                : isCanvas
+                    ? $" {prefix}Canvas.Left=\"{parent.Children.Count * 24}\" {prefix}Canvas.Top=\"{parent.Children.Count * 24}\""
             : string.Empty;
         string childMarkup = $"<{childQualifiedName}{placementAttributes} />";
         string lineIndentation = GetLineIndentation(axaml, tagStart);
@@ -783,7 +809,126 @@ public sealed class AxamlPreviewService
             propertyName,
             value.ToString(CultureInfo.InvariantCulture),
             allowExistingBinding: false,
-            allowGridPlacement: true,
+            allowQualifiedAttachedProperty: true,
+            insertedAttributeName: insertedAttributeName);
+    }
+
+    private string UpdateCanvasPosition(
+        string axaml,
+        AxamlPreviewNode child,
+        string propertyName,
+        string value)
+    {
+        ArgumentNullException.ThrowIfNull(axaml);
+        ArgumentNullException.ThrowIfNull(child);
+        ArgumentNullException.ThrowIfNull(value);
+        if (AxamlPropertyValueValidator.Validate(child.TypeName, propertyName, value) is { } validationError)
+        {
+            throw new InvalidOperationException($"The '{propertyName}' value is invalid: {validationError}");
+        }
+
+        AxamlPreviewNode root = Parse(axaml);
+        AxamlPreviewNode currentChild = FindNodeAtSourceOffset(root, child.SourceStartOffset)
+            ?? throw new InvalidDataException("The selected Canvas child no longer exists in the AXAML source.");
+        if (currentChild.ParentTypeName != "Canvas")
+        {
+            throw new InvalidOperationException("Canvas coordinates can only be edited on a direct Canvas child.");
+        }
+
+        AxamlPreviewNode parent = FindNodeAtSourceOffset(root, currentChild.ParentSourceStartOffset)
+            ?? throw new InvalidDataException("The selected Canvas no longer exists in the AXAML source.");
+        XElement sourceChild = GetStructureChild(axaml, parent, currentChild);
+        string insertedAttributeName = propertyName;
+        if (sourceChild.Name.Namespace == s_avaloniaNamespace
+            && sourceChild.GetDefaultNamespace() != s_avaloniaNamespace)
+        {
+            string? prefix = sourceChild.GetPrefixOfNamespace(s_avaloniaNamespace);
+            if (string.IsNullOrEmpty(prefix))
+            {
+                throw new InvalidOperationException("The Canvas placement namespace cannot be resolved safely.");
+            }
+
+            insertedAttributeName = $"{prefix}:{propertyName}";
+        }
+
+        return UpdateAttributeCore(
+            axaml,
+            currentChild,
+            propertyName,
+            value,
+            allowExistingBinding: false,
+            allowQualifiedAttachedProperty: true,
+            insertedAttributeName: insertedAttributeName);
+    }
+
+    private string UpdateDockPanelDock(string axaml, AxamlPreviewNode child, string value)
+    {
+        ArgumentNullException.ThrowIfNull(axaml);
+        ArgumentNullException.ThrowIfNull(child);
+        ArgumentNullException.ThrowIfNull(value);
+        if (AxamlPropertyValueValidator.Validate(child.TypeName, "DockPanel.Dock", value) is { } validationError)
+        {
+            throw new InvalidOperationException($"The 'DockPanel.Dock' value is invalid: {validationError}");
+        }
+
+        AxamlPreviewNode root = Parse(axaml);
+        AxamlPreviewNode currentChild = FindNodeAtSourceOffset(root, child.SourceStartOffset)
+            ?? throw new InvalidDataException("The selected DockPanel child no longer exists in the AXAML source.");
+        if (currentChild.ParentTypeName != "DockPanel"
+            || currentChild.PropertyElementNames.Contains("DockPanel.Dock", StringComparer.Ordinal)
+            || currentChild.Properties.TryGetValue("DockPanel.Dock", out string? currentValue)
+                && IsMarkupExtensionValue(currentChild.TypeName, "DockPanel.Dock", currentValue))
+        {
+            throw new InvalidOperationException("DockPanel placement can only be edited for a direct child with a literal value.");
+        }
+
+        AxamlPreviewNode parent = FindNodeAtSourceOffset(root, currentChild.ParentSourceStartOffset)
+            ?? throw new InvalidDataException("The selected DockPanel no longer exists in the AXAML source.");
+        XElement sourceRoot = LoadDocument(axaml).Root
+            ?? throw new InvalidDataException("The AXAML document has no root element.");
+        XElement sourceParent = sourceRoot.DescendantsAndSelf()
+            .SingleOrDefault(element => GetSourceStartOffset(element, axaml) == parent.SourceStartOffset)
+            ?? throw new InvalidDataException("The selected DockPanel no longer exists in the AXAML source.");
+        XElement sourceChild = sourceParent.Elements()
+            .SingleOrDefault(element => GetSourceStartOffset(element, axaml) == currentChild.SourceStartOffset)
+            ?? throw new InvalidDataException("The selected child is no longer a direct DockPanel child.");
+        if (sourceParent.Name.LocalName != "DockPanel"
+            || sourceChild.Name.Namespace != sourceParent.Name.Namespace)
+        {
+            throw new InvalidOperationException("DockPanel placement can only be edited for a supported direct child.");
+        }
+
+        XAttribute[] placementAttributes = sourceChild.Attributes()
+            .Where(static attribute => attribute.Name.LocalName == "DockPanel.Dock")
+            .ToArray();
+        if (placementAttributes.Length > 1
+            || placementAttributes.Any(static attribute =>
+                attribute.Name.Namespace != XNamespace.None
+                && attribute.Name.Namespace != s_avaloniaNamespace))
+        {
+            throw new InvalidOperationException("The DockPanel placement namespace cannot be resolved safely.");
+        }
+
+        string insertedAttributeName = "DockPanel.Dock";
+        if (sourceChild.Name.Namespace == s_avaloniaNamespace
+            && sourceChild.GetDefaultNamespace() != s_avaloniaNamespace)
+        {
+            string? prefix = sourceChild.GetPrefixOfNamespace(s_avaloniaNamespace);
+            if (string.IsNullOrEmpty(prefix))
+            {
+                throw new InvalidOperationException("The DockPanel placement namespace cannot be resolved safely.");
+            }
+
+            insertedAttributeName = $"{prefix}:DockPanel.Dock";
+        }
+
+        return UpdateAttributeCore(
+            axaml,
+            currentChild,
+            "DockPanel.Dock",
+            value,
+            allowExistingBinding: false,
+            allowQualifiedAttachedProperty: true,
             insertedAttributeName: insertedAttributeName);
     }
 
@@ -1015,7 +1160,13 @@ public sealed class AxamlPreviewService
 
                     int controlCount = 0;
                     AxamlPreviewNode node = DisableSourceEdits(
-                        ParseElement(element, fragment, depth: 0, ref controlCount));
+                        ParseElement(
+                            element,
+                            fragment,
+                            depth: 0,
+                            ref controlCount,
+                            parentTypeName: null,
+                            parentSourceStartOffset: -1));
                     recovered.Add((index, elementEnd, node));
                 }
                 catch (XmlException exception)
@@ -1079,6 +1230,8 @@ public sealed class AxamlPreviewService
             {
                 TypeName = node.TypeName,
                 Text = node.Text,
+                ParentTypeName = node.ParentTypeName,
+                ParentSourceStartOffset = -1,
                 IsSupported = node.IsSupported,
                 SourceStartOffset = -1,
                 HasTextPropertyElement = node.HasTextPropertyElement,
@@ -1263,7 +1416,13 @@ public sealed class AxamlPreviewService
             return -1;
         }
 
-    private static AxamlPreviewNode ParseElement(XElement element, string source, int depth, ref int controlCount)
+    private static AxamlPreviewNode ParseElement(
+        XElement element,
+        string source,
+        int depth,
+        ref int controlCount,
+        string? parentTypeName,
+        int parentSourceStartOffset)
     {
         if (depth > MaximumTreeDepth)
         {
@@ -1276,6 +1435,7 @@ public sealed class AxamlPreviewService
         }
 
         string typeName = element.Name.LocalName;
+        int sourceStartOffset = GetSourceStartOffset(element, source);
         bool canAppendChildren = AxamlControlCatalog.TryGet(typeName, out AxamlControlCapability capability)
             && capability.AllowsAppendingChildren
             && element.Elements().Count() < capability.MaximumChildren
@@ -1297,7 +1457,7 @@ public sealed class AxamlPreviewService
                 StringComparer.Ordinal);
         foreach (XAttribute attribute in element.Attributes().Where(static attribute =>
             attribute.Name.Namespace == s_avaloniaNamespace
-            && attribute.Name.LocalName is "Grid.Row" or "Grid.Column" or "Grid.RowSpan" or "Grid.ColumnSpan" or "DockPanel.Dock"))
+            && attribute.Name.LocalName is "Grid.Row" or "Grid.Column" or "Grid.RowSpan" or "Grid.ColumnSpan" or "DockPanel.Dock" or "Canvas.Left" or "Canvas.Top"))
         {
             properties.TryAdd(attribute.Name.LocalName, attribute.Value);
         }
@@ -1337,13 +1497,25 @@ public sealed class AxamlPreviewService
                 {
                     if (LooksLikeControl(propertyChild))
                     {
-                        children.Add(ParseElement(propertyChild, source, depth + 1, ref controlCount));
+                        children.Add(ParseElement(
+                            propertyChild,
+                            source,
+                            depth + 1,
+                            ref controlCount,
+                            typeName,
+                            sourceStartOffset));
                     }
                 }
             }
             else if (LooksLikeControl(child))
             {
-                children.Add(ParseElement(child, source, depth + 1, ref controlCount));
+                children.Add(ParseElement(
+                    child,
+                    source,
+                    depth + 1,
+                    ref controlCount,
+                    typeName,
+                    sourceStartOffset));
             }
         }
 
@@ -1370,11 +1542,12 @@ public sealed class AxamlPreviewService
         }
 
         string? text = GetDisplayText(typeName, properties, element);
-        int sourceStartOffset = GetSourceStartOffset(element, source);
         return new AxamlPreviewNode
         {
             TypeName = typeName,
             StableName = (string?)element.Attribute(s_xamlNamespace + "Name") ?? (string?)element.Attribute("Name"),
+            ParentTypeName = parentTypeName,
+            ParentSourceStartOffset = parentSourceStartOffset,
             Text = text,
             IsSupported = IsSupportedElement(element, typeName),
             SourceStartOffset = sourceStartOffset,
@@ -1711,10 +1884,55 @@ public sealed class AxamlPreviewService
             "ComboBox" or "ItemsControl" or "ListBox" => IsSupportedStaticItemsContent(element, typeName, childControls),
             "ContextMenu" => IsSupportedContextMenuContent(element, childControls),
             "ToolTip" => IsSupportedToolTipContent(element, childControls),
+            "Image" => element.Elements().All(
+                    static child => child.Name.LocalName is "Image.ContextMenu" or "Image.ToolTip")
+                && !element.Nodes().Any(static node =>
+                    node is XComment or XProcessingInstruction or XCData
+                    || node is XText text && !string.IsNullOrWhiteSpace(text.Value)),
+            "Canvas" => IsSupportedCanvasContent(element, childControls),
             "Menu" or "MenuItem" => childControls.All(
                 static child => child.Name.LocalName is "MenuItem" or "Separator"),
             _ => true,
         };
+    }
+
+    private static bool IsSupportedCanvasContent(XElement element, XElement[] childControls)
+    {
+        if (childControls.Length != element.Elements().Count()
+            || element.Nodes().Any(static node =>
+                node is XComment or XProcessingInstruction or XCData
+                || node is XText text && !string.IsNullOrWhiteSpace(text.Value)))
+        {
+            return false;
+        }
+
+        foreach (XElement child in childControls)
+        {
+            if (child.Name.Namespace != element.Name.Namespace
+                || !IsSupportedElement(child, child.Name.LocalName))
+            {
+                return false;
+            }
+
+            XAttribute[] positions = child.Attributes()
+                .Where(static attribute => attribute.Name.LocalName is "Canvas.Left" or "Canvas.Top")
+                .ToArray();
+            if (positions.Any(static attribute =>
+                    attribute.Name.Namespace != XNamespace.None
+                    && attribute.Name.Namespace != s_avaloniaNamespace)
+                || positions.GroupBy(static attribute => attribute.Name.LocalName, StringComparer.Ordinal)
+                    .Any(static group => group.Count() > 1)
+                || positions.Any(attribute =>
+                    AxamlPropertyValueValidator.Validate(
+                        child.Name.LocalName,
+                        attribute.Name.LocalName,
+                        attribute.Value) is not null))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static bool IsSupportedStaticItemsContent(
