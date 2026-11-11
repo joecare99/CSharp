@@ -6,6 +6,10 @@ Run in an interactive desktop session:
 dotnet run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj
 ```
 
+For the resource/focus check only, pass `-- --resources-only`. If the read-only
+AA05 calculator sample exists at its development path, this checks its visible
+button caption, local margin/padding and source focus in both real hosts.
+
 The test uses temporary synthetic files and opens the real Workbench and
 standalone designer windows. It checks editor previews, pinned tabs, external
 palette and properties, draft recovery, safe handling of unsupported files,
@@ -15,8 +19,9 @@ RadioButton state/group, shared opacity for every catalog control, TextBlock ali
 Button background/border/foreground/thickness/corners/typography/padding and content alignment plus default/cancel source values without host keyboard activation; literal command parameters on Button, MenuItem, CheckBox, RadioButton and ToggleSwitch are displayed inertly, while commands and parameter bindings are never resolved or invoked,
 Border border brush/corner radius/thickness/padding, and
 TextBox border thickness/corners alongside its text/editing constraints, plus shared border/typography appearance on CheckBox, RadioButton and ToggleSwitch while each remains inert,
-preview structure selection, source-preserving reorder and designer undo/redo,
-Grid cell movement/removal, rendered spans and cross-target draft protection,
+preview pointer selection of disabled controls and visible nested ListBox, Tab and
+TreeView items, synchronized source caret/tree/inspector, source-preserving reorder and designer undo/redo,
+Grid cell movement/removal, safe Auto row/column expansion and removal of unused final tracks, explicit track-size editing, rendered spans and cross-target draft protection,
 single-content container removal and undo,
 tab/window close protection, a registered synthetic binary editor and its Save
 button, standalone review/undo, and the MCP screenshot source and commands,
@@ -36,7 +41,9 @@ children are rejected.
 Canvas children can be appended with deterministic offset coordinates; direct-child
 Canvas.Left/Canvas.Top literals are validated, edited in the property inspector and
 rendered in the inert preview. Unset positions retain Avalonia's defaults, while
-bindings and unsupported Canvas content are rejected. Direct DockPanel children expose
+bindings and unsupported Canvas content are rejected. Safe Grid children expose
+bounded, collision-checked row/column/span placement in the property inspector. Direct
+DockPanel children expose
 a validated `DockPanel.Dock` enum in the inspector, and the preview applies literal
 placements without evaluating bindings.
 Rectangle, Ellipse, Line, Polygon and Polyline can be inserted from the palette

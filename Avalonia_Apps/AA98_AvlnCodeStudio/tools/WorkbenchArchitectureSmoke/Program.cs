@@ -49,7 +49,9 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
-        s_root = Directory.CreateTempSubdirectory("AvlnWorkbenchArchitecture-").FullName;
+        s_root = Directory.CreateDirectory(Path.Combine(
+            Environment.CurrentDirectory, "AvlnWorkbenchArchitecture-" + Guid.NewGuid().ToString("N"))).FullName;
+        bool resourcesOnly = args.Contains("--resources-only", StringComparer.Ordinal);
         try
         {
             Environment.SetEnvironmentVariable("CONFIG_ROOT", Path.Combine(s_root, "config"));
@@ -125,6 +127,7 @@ internal static class Program
                 + "<Grid RowSpacing=\"2\" ColumnSpacing=\"4\" ShowGridLines=\"True\" Width=\"99\" />"
                 + "<Grid RowSpacing=\"NaN\" ColumnSpacing=\"-1\" ShowGridLines=\"sometimes\" Width=\"98\" />"
                 + "<Canvas Width=\"140\" Height=\"100\" Background=\"White\"><Button Content=\"Positioned\" Canvas.Left=\"15.5\" Canvas.Top=\"21\" /><TextBlock Text=\"Default position\" /></Canvas>"
+                + "<Grid Width=\"141\" RowDefinitions=\"Auto,*,*\" ColumnDefinitions=\"*,*\"><Button Content=\"Grid cell\" Grid.Row=\"0\" Grid.Column=\"0\" Grid.RowSpan=\"2\" /><TextBlock Text=\"Grid neighbor\" Grid.Row=\"2\" Grid.Column=\"1\" /></Grid>"
                 + "<ScrollViewer HorizontalScrollBarVisibility=\"Hidden\" VerticalScrollBarVisibility=\"Disabled\" Width=\"97\"><TextBlock Text=\"Scroll content\" /></ScrollViewer>"
                 + "<ScrollViewer HorizontalScrollBarVisibility=\"Always\" VerticalScrollBarVisibility=\"None\" Width=\"96\" />"
                 + "<Viewbox StretchDirection=\"UpOnly\" Width=\"93\"><TextBlock Text=\"Scale direction\" /></Viewbox>"
@@ -180,8 +183,8 @@ internal static class Program
 
             return AppBuilder.Configure<SmokeApplication>()
                 .UsePlatformDetect()
-                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture)))
-                .StartWithClassicDesktopLifetime(args);
+                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly)))
+                .StartWithClassicDesktopLifetime(resourcesOnly ? [] : args);
         }
         finally
         {
@@ -190,19 +193,26 @@ internal static class Program
         }
     }
 
-    private static async Task RunAsync(string fixture)
+    private static async Task RunAsync(string fixture, bool resourcesOnly)
     {
         IClassicDesktopStyleApplicationLifetime desktop =
             (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
         int exitCode = 0;
         try
         {
-            await VerifyWorkbenchAsync(desktop, fixture);
-            await VerifyStandaloneAsync(desktop, fixture);
+            if (!resourcesOnly)
+            {
+                await VerifyWorkbenchAsync(desktop, fixture);
+                await VerifyStandaloneAsync(desktop, fixture);
+            }
+            await VerifyReportedResourcePreviewAsync(desktop);
             EditorDocumentWorkspace workspace = SmokeApplication.Services!.GetRequiredService<EditorDocumentWorkspace>();
             desktop.MainWindow!.Close();
             Check(workspace.Tabs.Count == 0, "Closing the workbench did not dispose its document tabs.");
-            Console.WriteLine("Architecture: navigation, catalog control previews, structure and Grid editing, designer contributions, binary editor, drafts, safe files, standalone review/undo, MCP dispatch and screenshot verified.");
+            if (!resourcesOnly)
+            {
+                Console.WriteLine("Architecture: navigation, catalog control previews, structure and Grid editing, designer contributions, binary editor, drafts, safe files, standalone review/undo, MCP dispatch and screenshot verified.");
+            }
         }
         catch (Exception exception)
         {
@@ -219,6 +229,85 @@ internal static class Program
         }
 
         desktop.Shutdown(exitCode);
+    }
+
+    private static async Task VerifyReportedResourcePreviewAsync(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        const string root = @"C:\Projekte\CSharp\Avalonia_Apps\AA05_CommandParCalc\AA05_CommandParCalc";
+        string path = Path.Combine(root, "Views", "CommandParCalculatorView.axaml");
+        if (!File.Exists(path))
+        {
+            Console.WriteLine("Calculator preview smoke skipped: read-only sample is not present.");
+            return;
+        }
+
+        MainWindowViewModel workbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
+        workbench.Workspace = new CSharpWorkspaceLoader().Load(Path.Combine(root, "AA05_CommandParCalc.csproj"));
+        await workbench.EditorWorkspace.OpenOrActivateAsync(path);
+        EditorTabViewModel tab = workbench.ActiveEditorTab;
+        await WaitUntilAsync(() => tab.View.GetVisualDescendants().OfType<AxamlPreviewControl>()
+            .SelectMany(preview => preview.GetVisualDescendants().OfType<Button>())
+            .Any(button => Equals(button.Content, "7")), "calculator Workbench caption");
+        Button workbenchButton = tab.View.GetVisualDescendants().OfType<AxamlPreviewControl>()
+            .SelectMany(preview => preview.GetVisualDescendants().OfType<Button>())
+            .Single(button => Equals(button.Content, "7"));
+        Check(workbenchButton.Margin == new Thickness(-5) && workbenchButton.Padding == new Thickness(10),
+            "The Workbench calculator Button style was not rendered.");
+        EditorTextArea editor = (EditorTextArea)tab.TextView!;
+        int offset = tab.Editor.Text.IndexOf("x:Name=\"btn7\"", StringComparison.Ordinal);
+        editor.SetCaretOffset(offset);
+        await WaitUntilAsync(() => tab.Designer!.SelectedNode?.StableName == "btn7", "calculator Workbench source focus");
+        AxamlPropertyRowViewModel widthDraft = tab.Designer!.PropertyRows.Single(row => row.Name == "Width");
+        Check(!widthDraft.TrySetValue("-2"), "The calculator draft fixture was not rejected.");
+        Check(editor.FindControl<AvaloniaEdit.TextEditor>("PART_Editor")!.TextArea.Focus(), "Workbench editor could not obtain focus.");
+        Check(editor.IsKeyboardFocusWithin, "Workbench editor did not obtain focus before context change.");
+        workbench.Workspace = null;
+        Check(editor.IsKeyboardFocusWithin, "Workbench resource context change lost editor focus.");
+        Check(editor.CaretOffset == offset, "Workbench resource context change lost caret position.");
+        Check(tab.Designer.SelectedNode?.StableName == "btn7", "Workbench resource context change lost selection.");
+        Check(tab.Designer.PropertyRows.Single(row => row.Name == "Width").Value == "-2",
+            "Workbench resource context change lost draft.");
+        workbench.Workspace = new CSharpWorkspaceLoader().Load(Path.Combine(root, "AA05_CommandParCalc.csproj"));
+        Check(editor.IsKeyboardFocusWithin && tab.Designer.PropertyRows.Single(row => row.Name == "Width").Value == "-2",
+            "Restoring the Workbench resource context lost focus or draft.");
+        tab.Designer.DiscardAllPropertyDrafts();
+        Check(!tab.IsDirty, "Calculator Workbench preview modified the source.");
+
+        AxamlDesignerHostViewModel host = new();
+        AA98_AxamlDesigner.Host.Views.MainWindow window = new() { DataContext = host };
+        window.Show();
+        try
+        {
+            Check(host.SetWorkspaceEntry(Path.Combine(root, "AA05_CommandParCalc.csproj")) && host.OpenDocument(path),
+                "The standalone calculator could not be opened.");
+            await WaitUntilAsync(() => window.GetVisualDescendants().OfType<AxamlPreviewControl>()
+                .SelectMany(preview => preview.GetVisualDescendants().OfType<Button>())
+                .Any(button => Equals(button.Content, "7")), "calculator standalone caption");
+            Button standaloneButton = window.GetVisualDescendants().OfType<AxamlPreviewControl>()
+                .SelectMany(preview => preview.GetVisualDescendants().OfType<Button>())
+                .Single(button => Equals(button.Content, "7"));
+            Check(standaloneButton.Margin == new Thickness(-5) && standaloneButton.Padding == new Thickness(10),
+                "The standalone calculator Button style was not rendered.");
+            EditorTextArea standaloneEditor = window.GetVisualDescendants().OfType<EditorTextArea>().Single();
+            int standaloneOffset = host.Markup.IndexOf("x:Name=\"btn7\"", StringComparison.Ordinal);
+            standaloneEditor.SetCaretOffset(standaloneOffset);
+            await WaitUntilAsync(() => host.Designer.SelectedNode?.StableName == "btn7", "calculator standalone source focus");
+            Check(standaloneEditor.FindControl<AvaloniaEdit.TextEditor>("PART_Editor")!.TextArea.Focus(), "Standalone editor could not obtain focus.");
+            Check(standaloneEditor.IsKeyboardFocusWithin, "Standalone editor did not obtain focus before context change.");
+            host.ClearWorkspaceContext();
+            Check(standaloneEditor.IsKeyboardFocusWithin, "Standalone resource context change lost editor focus.");
+            Check(standaloneEditor.CaretOffset == standaloneOffset, "Standalone resource context change lost caret position.");
+            Check(host.Designer.SelectedNode?.StableName == "btn7", "Standalone resource context change lost selection.");
+            Check(!host.IsDirty, "Calculator standalone preview modified the source.");
+        }
+        finally
+        {
+            host.ClearWorkspaceContext();
+            window.DataContext = null;
+            window.Close();
+            workbench.Workspace = null;
+        }
+        Console.WriteLine("Calculator: Workbench/standalone caption, local style and source focus verified.");
     }
 
     private static async Task VerifyWorkbenchAsync(IClassicDesktopStyleApplicationLifetime desktop, string fixture)
@@ -409,6 +498,94 @@ internal static class Program
         designer.SelectedNode = designer.PreviewRoot!.Children[0];
         await WaitUntilAsync(() => workbench.SelectedEditorPropertyView is { } view
             && window.GetVisualDescendants().Contains(view), "the external property contribution");
+        EditorTextArea sourceEditor = (EditorTextArea)secondTab.TextView;
+        Check(sourceEditor.CaretOffset == designer.SelectedNode!.SourceStartOffset,
+            "Tree selection did not synchronize the source caret.");
+        string unchangedMarkup = secondTab.Editor.Text;
+        sourceEditor.MoveCaretWithoutFocus(unchangedMarkup.IndexOf("Label", StringComparison.Ordinal));
+        await WaitUntilAsync(() => designer.SelectedNode?.StableName == "Label"
+            && ReferenceEquals(structure.SelectedItem, designer.SelectedNode),
+            "source caret selection");
+        Check(workbench.PropertySelectionCaption.Contains("TextBlock", StringComparison.Ordinal)
+            && secondTab.Editor.Text == unchangedMarkup,
+            "Source selection did not update the inspector or changed markup.");
+        sourceEditor.MoveCaretWithoutFocus(unchangedMarkup.IndexOf("Input", StringComparison.Ordinal));
+        await WaitUntilAsync(() => designer.SelectedNode?.StableName == "Input", "source caret return selection");
+        designer.SelectedNode = designer.PreviewRoot!.Children[1];
+        AxamlPreviewControl preview = secondTab.View.GetVisualDescendants().OfType<AxamlPreviewControl>().Single();
+        await WaitUntilAsync(() => preview.GetVisualDescendants().OfType<Border>()
+            .Any(border => ReferenceEquals(border.Tag, designer.PreviewRoot!.Children[0])
+                && border.Bounds.Width > 0 && border.Bounds.Height > 0),
+            "preview selection layout");
+        Border inputWrapper = preview.GetVisualDescendants().OfType<Border>()
+            .First(border => ReferenceEquals(border.Tag, designer.PreviewRoot!.Children[0]));
+        Point inputPoint = inputWrapper.TranslatePoint(
+            new Point(inputWrapper.Bounds.Width / 2, inputWrapper.Bounds.Height / 2), preview)
+            ?? throw new InvalidOperationException("The preview input has no visible coordinates.");
+        AxamlPreviewNode? hitNode = preview.FindNodeAtPoint(inputPoint);
+        Check(ReferenceEquals(hitNode, designer.PreviewRoot!.Children[0]),
+            $"The inert nested TextBox could not be hit-tested: got {hitNode?.TypeName ?? "none"} at {inputPoint}, wrapper {inputWrapper.Bounds}, preview {preview.Bounds}.");
+        PointerPressedEventArgs press = new(
+            inputWrapper,
+            new Pointer(1, PointerType.Mouse, true),
+            window,
+            preview.TranslatePoint(inputPoint, window)
+                ?? throw new InvalidOperationException("The preview has no window coordinates."),
+            0,
+            new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+            KeyModifiers.None,
+            1)
+        {
+            RoutedEvent = InputElement.PointerPressedEvent,
+        };
+        inputWrapper.RaiseEvent(press);
+        Check(press.Handled,
+            $"Preview pointer was not handled (selected={designer.SelectedNode?.StableName}, pressed={press.GetCurrentPoint(preview).Properties.IsLeftButtonPressed}, point={press.GetPosition(preview)}, expected={inputPoint}, routed={press.RoutedEvent}).");
+        await WaitUntilAsync(() => designer.SelectedNode?.StableName == "Input"
+            && ReferenceEquals(structure.SelectedItem, designer.SelectedNode), "preview pointer selection");
+        Check(press.Handled && sourceEditor.CaretOffset == designer.SelectedNode!.SourceStartOffset
+            && secondTab.Editor.Text == unchangedMarkup,
+            "Preview selection did not synchronize the caret or changed the source.");
+        AxamlPreviewNode itemsRoot = new AxamlPreviewService().Parse(
+            "<StackPanel xmlns='https://github.com/avaloniaui'>"
+            + "<ListBox Height='80'><ListBoxItem Content='One'/><ListBoxItem Content='Two'/></ListBox>"
+            + "<TabControl Height='80'><TabItem Header='First'/><TabItem Header='Second'/></TabControl>"
+            + "<TreeView Height='80'><TreeViewItem Header='Parent' IsExpanded='True'>"
+            + "<TreeViewItem Header='Child'/></TreeViewItem></TreeView></StackPanel>");
+        AxamlPreviewControl itemsPreview = new() { PreviewNode = itemsRoot };
+        Window itemsWindow = new() { Width = 400, Height = 350, Content = itemsPreview };
+        itemsWindow.Show();
+        try
+        {
+            await WaitUntilAsync(() => itemsPreview.GetVisualDescendants().OfType<ListBox>()
+                .Any(list => list.ContainerFromIndex(1) is { Bounds.Width: > 0, Bounds.Height: > 0 })
+                && itemsPreview.GetVisualDescendants().OfType<TabControl>()
+                    .Any(tabs => tabs.ContainerFromIndex(1) is { Bounds.Width: > 0, Bounds.Height: > 0 })
+                && itemsPreview.GetVisualDescendants().OfType<TreeViewItem>()
+                    .Any(item => ReferenceEquals(item.Tag, itemsRoot.Children[2].Children[0].Children[0])
+                        && item.Bounds.Width > 0 && item.Bounds.Height > 0),
+                "nested inert item layout");
+            Control listItem = itemsPreview.GetVisualDescendants().OfType<ListBox>().Single().ContainerFromIndex(1)!;
+            Control tabItem = itemsPreview.GetVisualDescendants().OfType<TabControl>().Single().ContainerFromIndex(1)!;
+            Control treeItem = itemsPreview.GetVisualDescendants().OfType<TreeViewItem>()
+                .Single(item => ReferenceEquals(item.Tag, itemsRoot.Children[2].Children[0].Children[0]));
+            foreach ((Control item, AxamlPreviewNode expectedNode) in new[]
+            {
+                (listItem, itemsRoot.Children[0].Children[1]),
+                (tabItem, itemsRoot.Children[1].Children[1]),
+                (treeItem, itemsRoot.Children[2].Children[0].Children[0]),
+            })
+            {
+                Point point = item.TranslatePoint(new Point(item.Bounds.Width / 2, item.Bounds.Height / 2), itemsPreview)
+                    ?? throw new InvalidOperationException("The item has no preview coordinates.");
+                Check(ReferenceEquals(itemsPreview.FindNodeAtPoint(point), expectedNode),
+                    $"Inert {expectedNode.TypeName} was not selected at its visible item.");
+            }
+        }
+        finally
+        {
+            itemsWindow.Close();
+        }
         Check(!secondTab.IsPreview && workbench.PropertySelectionCaption.Contains("Editor - ", StringComparison.Ordinal),
             "Editor activation did not pin the tab and select its properties.");
         Check(!secondTab.View.GetVisualDescendants().Contains(workbench.SelectedEditorPropertyView),
@@ -566,6 +743,17 @@ internal static class Program
         string originalMarkup = host.Markup;
         structure.SelectedItem = host.Designer.PreviewRoot!.Children[1];
         await WaitUntilAsync(() => host.Designer.SelectedNode?.TypeName == "Button", "standalone structure selection");
+        EditorTextArea standaloneEditor = window.GetVisualDescendants().OfType<EditorTextArea>().Single();
+        Check(standaloneEditor.CaretOffset == host.Designer.SelectedNode!.SourceStartOffset,
+            "Standalone tree selection did not synchronize the source caret.");
+        standaloneEditor.MoveCaretWithoutFocus(originalMarkup.IndexOf("<TextBox", StringComparison.Ordinal));
+        await WaitUntilAsync(() => host.Designer.SelectedNode?.TypeName == "TextBox"
+            && ReferenceEquals(structure.SelectedItem, host.Designer.SelectedNode),
+            "standalone source caret selection");
+        Check(host.Markup == originalMarkup && !host.IsDirty,
+            "Standalone caret selection changed the source.");
+        standaloneEditor.MoveCaretWithoutFocus(originalMarkup.IndexOf("<Button", StringComparison.Ordinal));
+        await WaitUntilAsync(() => host.Designer.SelectedNode?.TypeName == "Button", "standalone source return selection");
         Invoke(palette, "Up");
         await WaitUntilAsync(() => host.Designer.PreviewRoot!.Children[0].TypeName == "Button"
             && host.Designer.SelectedNode?.TypeName == "Button", "standalone structure reorder");
@@ -879,6 +1067,8 @@ internal static class Program
             .Single(candidate => candidate.Columns == 4);
         Grid grid = root.GetVisualDescendants().OfType<Grid>()
             .Single(candidate => candidate.Width == 99);
+        Grid placedGrid = root.GetVisualDescendants().OfType<Grid>()
+            .Single(candidate => candidate.Width == 141);
         Grid invalidGridSpacing = root.GetVisualDescendants().OfType<Grid>()
             .Single(candidate => candidate.Width == 98);
         ScrollViewer scrollViewer = root.GetVisualDescendants().OfType<ScrollViewer>()
@@ -1324,6 +1514,13 @@ internal static class Program
             "The UniformGrid preview applied invalid spacing values.");
         Check(grid.RowSpacing == 2 && grid.ColumnSpacing == 4 && grid.ShowGridLines,
             "The Grid preview did not preserve row/column spacing or show-grid-lines.");
+        Check(placedGrid.Children.Count == 2
+            && Grid.GetRow(placedGrid.Children[0]) == 0
+            && Grid.GetColumn(placedGrid.Children[0]) == 0
+            && Grid.GetRowSpan(placedGrid.Children[0]) == 2
+            && Grid.GetRow(placedGrid.Children[1]) == 2
+            && Grid.GetColumn(placedGrid.Children[1]) == 1,
+            "The Grid preview did not apply child rows, columns or spans.");
         Check(invalidGridSpacing.RowSpacing == 0 && invalidGridSpacing.ColumnSpacing == 0
             && !invalidGridSpacing.ShowGridLines,
             "The Grid preview applied invalid spacing or show-grid-lines values.");
@@ -1704,6 +1901,59 @@ internal static class Program
         designer.UndoCommand.Execute(null);
         designer.UndoCommand.Execute(null);
         Check(getMarkup() == original && !isDirty(), "Grid removal and move undo did not restore the original.");
+
+        designer.SelectedNode = designer.PreviewRoot;
+        Button addGridRow = palette.GetVisualDescendants().OfType<Button>()
+            .Single(button => string.Equals(button.Content?.ToString(), "Add Auto row", StringComparison.Ordinal));
+        Check(addGridRow.IsEnabled && addGridRow.Command?.CanExecute(null) == true,
+            "The safe Grid did not enable the Add Auto row action.");
+        Invoke(palette, "Add Auto row");
+        await WaitUntilAsync(() => designer.PreviewRoot!.RowDefinitions.Count == 4
+            && getMarkup().Contains("RowDefinitions=\"*,*,*,Auto\"", StringComparison.Ordinal),
+            "adding a Grid row definition");
+        Invoke(palette, "Add Auto column");
+        await WaitUntilAsync(() => designer.PreviewRoot!.ColumnDefinitions.Count == 5
+            && getMarkup().Contains("ColumnDefinitions=\"*,*,*,*,Auto\"", StringComparison.Ordinal),
+            "adding a Grid column definition");
+        Check(isDirty(), "Grid definition additions did not update the shared document.");
+        Button removeGridRow = palette.GetVisualDescendants().OfType<Button>()
+            .Single(button => string.Equals(button.Content?.ToString(), "Remove last row", StringComparison.Ordinal));
+        Button removeGridColumn = palette.GetVisualDescendants().OfType<Button>()
+            .Single(button => string.Equals(button.Content?.ToString(), "Remove last column", StringComparison.Ordinal));
+        Check(removeGridRow.IsEnabled && removeGridRow.Command?.CanExecute(null) == true
+            && removeGridColumn.IsEnabled && removeGridColumn.Command?.CanExecute(null) == true,
+            "The unused final Grid row and column were not removable.");
+        Invoke(palette, "Remove last row");
+        await WaitUntilAsync(() => designer.PreviewRoot!.RowDefinitions.Count == 3,
+            "removing an unused final Grid row");
+        Invoke(palette, "Remove last column");
+        await WaitUntilAsync(() => designer.PreviewRoot!.ColumnDefinitions.Count == 4,
+            "removing an unused final Grid column");
+        await WaitUntilAsync(() => getMarkup() == original && !isDirty(),
+            "removing unused Grid tracks back to the clean document");
+        designer.UndoCommand.Execute(null);
+        designer.UndoCommand.Execute(null);
+        Check(designer.PreviewRoot!.RowDefinitions.Count == 4
+            && designer.PreviewRoot.ColumnDefinitions.Count == 5,
+            "Grid track removal undo did not restore the expanded definitions.");
+        designer.UndoCommand.Execute(null);
+        designer.UndoCommand.Execute(null);
+        await WaitUntilAsync(() => getMarkup() == original && !isDirty(),
+            "undoing Grid definition additions and removals");
+        designer.SelectedNode = designer.PreviewRoot;
+        designer.SelectedGridTrackOption = "Row 2: *";
+        designer.GridTrackSizeValue = "2*";
+        Button setGridTrackSize = palette.GetVisualDescendants().OfType<Button>()
+            .Single(button => string.Equals(button.Content?.ToString(), "Set track size", StringComparison.Ordinal));
+        Check(setGridTrackSize.IsEnabled && setGridTrackSize.Command?.CanExecute(null) == true,
+            "The explicit Grid track size editor was not enabled.");
+        Invoke(palette, "Set track size");
+        await WaitUntilAsync(() => designer.PreviewRoot!.RowDefinitions.ElementAtOrDefault(2) == "2*"
+            && getMarkup().Contains("RowDefinitions=\"*,*,2*\"", StringComparison.Ordinal),
+            "resizing an explicit Grid row");
+        designer.UndoCommand.Execute(null);
+        await WaitUntilAsync(() => getMarkup() == original && !isDirty(),
+            "undoing an explicit Grid track size");
 
         AxamlPreviewNode invalidGrid = new AxamlPreviewService().Parse(
             "<Grid RowDefinitions='-1,NaN' ColumnDefinitions='*'><Button Grid.Row='-1' Grid.RowSpan='0' /></Grid>");
