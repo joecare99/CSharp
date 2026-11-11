@@ -2,8 +2,10 @@
   <Import Project="..\Solution.props" />
   <PropertyGroup>
     <UpDir>..\$(UpDir)</UpDir>
-    <BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath Condition="'$(HostArtifactRoot)' != ''">$(HostArtifactRoot)\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath Condition="'$(HostArtifactRoot)' != ''">$(HostArtifactRoot)\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath Condition="'$(HostArtifactRoot)' == ''">$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath Condition="'$(HostArtifactRoot)' == ''">$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 </Project>

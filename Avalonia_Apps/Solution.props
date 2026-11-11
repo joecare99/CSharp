@@ -1,8 +1,16 @@
 <Project>
+	<PropertyGroup Condition="'$(HostArtifactRoot)' == '' and '$(UpDir)' == '' and '$(OS)' == 'Windows_NT'">
+		<HostArtifactRoot>$(MSBuildThisFileDirectory)..\artifacts\windows</HostArtifactRoot>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(HostArtifactRoot)' == '' and '$(UpDir)' == '' and '$(OS)' != 'Windows_NT'">
+		<HostArtifactRoot>$(MSBuildThisFileDirectory)..\artifacts\linux</HostArtifactRoot>
+	</PropertyGroup>
 	<PropertyGroup>
-		<UpDir>..</UpDir>
-		<BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-		<BaseIntermediateOutputPath>$(UpDir)\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<UpDir Condition="'$(UpDir)' == ''">..</UpDir>
+		<BaseOutputPath Condition="'$(HostArtifactRoot)' != ''">$(HostArtifactRoot)\bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<BaseIntermediateOutputPath Condition="'$(HostArtifactRoot)' != ''">$(HostArtifactRoot)\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<BaseOutputPath Condition="'$(HostArtifactRoot)' == ''">$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<BaseIntermediateOutputPath Condition="'$(HostArtifactRoot)' == ''">$(UpDir)\..\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<DefineConstants>NULLABLE</DefineConstants>

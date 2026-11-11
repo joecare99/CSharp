@@ -20,7 +20,7 @@ and [Microsoft lifecycle table](https://learn.microsoft.com/en-us/lifecycle/prod
 ## Automated solution tests
 
 ```powershell
-dotnet test .\AA98_AvlnCodeStudio.slnx --framework net10.0
+.\tools\build\dotnet-isolated.ps1 test .\AA98_AvlnCodeStudio.slnx --framework net10.0
 ```
 
 The first run restores packages. Do not add `--no-restore` unless the complete
@@ -37,18 +37,25 @@ $testProjects = @(
 )
 foreach ($framework in @('net8.0', 'net9.0')) {
   foreach ($project in $testProjects) {
-    dotnet test $project --framework $framework --verbosity quiet
+    .\tools\build\dotnet-isolated.ps1 test $project --framework $framework --verbosity quiet
     if ($LASTEXITCODE -ne 0) { throw "Test failed: $project ($framework)" }
   }
 }
 ```
 
-Keep Linux `bin`/`obj` outputs isolated from Windows outputs when both hosts use
-the same checkout.
-For a shared Windows/WSL checkout, pass an early-import isolation props file
-and a separate `LinuxConfigArtifactsRoot`, as described in the Workbench MVVM
-smoke README. Keep restore and test in one WSL invocation when the artifact
-root is ephemeral.
+For WSL/Linux, use the same wrapper and commands, for example:
+
+```bash
+bash tools/build/dotnet-isolated.sh test ./AA98_AvlnCodeStudio.slnx --framework net10.0
+```
+
+The wrapper sets the absolute `HostArtifactRoot` as a global MSBuild property
+before evaluation, including for all project references. Defaults are
+`artifacts/windows` and `artifacts/linux` beneath the shared workspace parent,
+so `bin`/`obj` are not shared across hosts. Both wrappers accept the normal
+`dotnet` command-line arguments; use `-p:HostArtifactRoot=<absolute-path>` with
+a direct `dotnet` invocation to select a custom root. Existing `UpDir`-based
+artifact-root overrides remain available.
 
 ## Interactive desktop smokes
 
@@ -56,9 +63,9 @@ Run each applicable smoke independently and require its success message and a
 zero process exit code:
 
 ```powershell
-dotnet run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj
-dotnet run --project tools\WorkbenchMvvmSmoke\WorkbenchMvvmSmoke.csproj
-dotnet run --project tools\ProjectSettingsReviewSmoke\ProjectSettingsReviewSmoke.csproj
+.\tools\build\dotnet-isolated.ps1 run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj
+.\tools\build\dotnet-isolated.ps1 run --project tools\WorkbenchMvvmSmoke\WorkbenchMvvmSmoke.csproj
+.\tools\build\dotnet-isolated.ps1 run --project tools\ProjectSettingsReviewSmoke\ProjectSettingsReviewSmoke.csproj
 ```
 
 These cover integrated designer and project-settings workflows using temporary
@@ -69,7 +76,7 @@ The project-debug smoke additionally requires a trusted NetCoreDbg installation:
 
 ```powershell
 $env:AVLN_NETCOREDBG_PATH = "C:\path\to\netcoredbg.exe"
-dotnet run --project tools\WorkbenchDebugSmoke\WorkbenchDebugSmoke.csproj
+.\tools\build\dotnet-isolated.ps1 run --project tools\WorkbenchDebugSmoke\WorkbenchDebugSmoke.csproj
 ```
 
 On Linux, point `AVLN_NETCOREDBG_PATH` at the Linux adapter and run in a
