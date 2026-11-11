@@ -23,7 +23,8 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
-        s_root = Directory.CreateTempSubdirectory("AvlnWorkbenchMvvm-").FullName;
+        s_root = Path.Combine(Directory.GetCurrentDirectory(), $"AvlnWorkbenchMvvm-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(s_root);
         try
         {
             Environment.SetEnvironmentVariable("CONFIG_ROOT", Path.Combine(s_root, "config"));
@@ -38,7 +39,10 @@ internal static class Program
                 projectPath,
                 """
                 <Project Sdk="Microsoft.NET.Sdk">
-                  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+                  <PropertyGroup>
+                    <TargetFramework>net10.0</TargetFramework>
+                    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+                  </PropertyGroup>
                   <ItemGroup>
                     <PackageReference Include="Avalonia" Version="12.1.5" />
                     <PackageReference Include="Avalonia.Controls.ColorPicker" Version="12.1.5" />
@@ -91,6 +95,7 @@ internal static class Program
         int exitCode = 0;
         try
         {
+            await BuildFixtureAsync(projectPath, restoreOnly: true);
             MainWindowViewModel workbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
             await workbench.OpenWorkspaceFileAsync(projectPath);
             Check(workbench.Workspace?.Projects.Count == 1, "The fixture project was not opened in the Workbench.");
@@ -156,15 +161,15 @@ internal static class Program
                 "The approved proposal did not bind the ColorPicker.");
             Check(generatedMarkup.Contains("SelectedIndex=\"{Binding Settings, Mode=TwoWay}\"", StringComparison.Ordinal),
                 "The approved proposal did not bind the TabControl selection.");
-            Check(generatedViewModel.Contains("private string _userName = \"Ada\";", StringComparison.Ordinal),
+            Check(generatedViewModel.Contains("public partial string UserName { get; set; } = \"Ada\";", StringComparison.Ordinal),
                 "The generated ViewModel did not preserve the TextBox's initial value.");
-            Check(generatedViewModel.Contains("private string? _city = \"Paris\";", StringComparison.Ordinal),
+            Check(generatedViewModel.Contains("public partial string? City { get; set; } = \"Paris\";", StringComparison.Ordinal),
                 "The generated ViewModel did not preserve the AutoCompleteBox's initial value.");
             Check(generatedViewModel.Contains(
-                    "private global::Avalonia.Media.Color _theme = global::Avalonia.Media.Color.Parse(\"#FF123456\");",
+                    "public partial global::Avalonia.Media.Color Theme { get; set; } = global::Avalonia.Media.Color.Parse(\"#FF123456\");",
                     StringComparison.Ordinal),
                 "The generated ViewModel did not preserve the ColorPicker's initial color.");
-            Check(generatedViewModel.Contains("private int _settings = 1;", StringComparison.Ordinal),
+            Check(generatedViewModel.Contains("public partial int Settings { get; set; } = 1;", StringComparison.Ordinal),
                     "The generated ViewModel did not preserve the selected tab index.");
             Check(generatedViewModel.Contains("private void Save(string? commandParameter)", StringComparison.Ordinal),
                 "The generated ViewModel did not include the parameterized MenuItem command.");
@@ -195,7 +200,7 @@ internal static class Program
         desktop.Shutdown(exitCode);
     }
 
-    private static async Task BuildFixtureAsync(string projectPath)
+    private static async Task BuildFixtureAsync(string projectPath, bool restoreOnly = false)
     {
         string dotnetHost = ResolveDotnetHost();
         ProcessStartInfo startInfo = new(dotnetHost)
@@ -205,7 +210,7 @@ internal static class Program
             RedirectStandardError = true,
             UseShellExecute = false,
         };
-        startInfo.ArgumentList.Add("build");
+        startInfo.ArgumentList.Add(restoreOnly ? "restore" : "build");
         startInfo.ArgumentList.Add(projectPath);
         startInfo.ArgumentList.Add("--verbosity");
         startInfo.ArgumentList.Add("quiet");
