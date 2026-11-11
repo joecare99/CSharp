@@ -1,4 +1,13 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using AA98_AvlnCodeStudio.Editor.Components;
+using AA98_AvlnCodeStudio.Editor.Services;
+using AA98_AvlnCodeStudio.Model.Documents;
+using AA98_AvlnCodeStudio.UI;
+using AA98_AvlnCodeStudio.UI.Components;
+using AA98_AvlnCodeStudio.UI.Services;
+using AA98_AvlnCodeStudio.UI.ViewModels;
+using Avalonia.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using Project.Explorer;
 using Project.Explorer.Avalonia.ViewModels;
 using System;
@@ -13,6 +22,73 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 [TestClass]
 public sealed class ProjectExplorerPreviewTests
 {
+    [TestMethod]
+    public async Task WorkspaceOpen_UsesSelectedSolutionAndPreservesExternalFileSelectionOnRefresh()
+    {
+        string root = Path.Combine(Directory.GetCurrentDirectory(), $"SolutionExplorer-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string solutionDirectory = Path.Combine(root, "solution");
+            string projectDirectory = Path.Combine(solutionDirectory, "app");
+            Directory.CreateDirectory(projectDirectory);
+            string externalFile = Path.Combine(root, "Solution.props");
+            await File.WriteAllTextAsync(externalFile, "<Project />");
+            await File.WriteAllTextAsync(Path.Combine(projectDirectory, "App.csproj"), "<Project />");
+            string solution = Path.Combine(solutionDirectory, "Selected.slnx");
+            await File.WriteAllTextAsync(solution,
+                "<Solution><Folder Name=\"/UpDir/\"><File Path=\"../Solution.props\" /></Folder>" +
+                "<Project Path=\"app/App.csproj\" /></Solution>");
+            await File.WriteAllTextAsync(Path.Combine(solutionDirectory, "Other.slnx"),
+                "<Solution><Project Path=\"app/App.csproj\" /></Solution>");
+
+            ServiceCollection registrations = new();
+            App.ConfigureServices(registrations, static () => null, Path.Combine(root, "config"));
+            registrations.AddSingleton<IAvaloniaEditorComponentFactory>(new TestEditorComponentFactory());
+            using ServiceProvider services = registrations.BuildServiceProvider();
+            MainWindowViewModel host = services.GetRequiredService<MainWindowViewModel>();
+            ProjectExplorerViewModel explorer = host.ProjectExplorer!;
+
+            await host.OpenWorkspaceFileAsync(solution);
+            ProjectExplorerItemViewModel solutionItem = explorer.RootItems.Single();
+            Assert.AreEqual(solution, solutionItem.Item.Path);
+            ProjectExplorerItemViewModel folder = solutionItem.Children.Single(i => i.Name == "UpDir");
+            ProjectExplorerItemViewModel file = folder.Children.Single();
+            Assert.AreEqual(externalFile, file.Item.Path);
+            Assert.IsTrue(file.IsAvailable);
+            explorer.SetExpanded(solutionItem, true);
+            explorer.SetExpanded(folder, true);
+            explorer.SelectedItem = file;
+            Assert.AreEqual("Navigation - Solution.props", host.PropertySelectionCaption);
+            await explorer.OpenAsync(file);
+            Assert.AreEqual(externalFile, host.EditorWorkspace.ActiveTab.FilePath);
+            Assert.IsFalse(host.EditorWorkspace.ActiveTab.IsDiagnostic);
+            Assert.AreEqual("<Project />", host.Editor.Text);
+
+            await explorer.RefreshCommand.ExecuteAsync(null);
+            Assert.AreEqual(file.Id, explorer.SelectedItem?.Id);
+            Assert.IsTrue(explorer.RootItems.Single().IsExpanded);
+            Assert.IsTrue(explorer.RootItems.Single().Children.Single(i => i.Name == "UpDir").IsExpanded);
+            Assert.AreEqual(externalFile, host.EditorWorkspace.ActiveTab.FilePath);
+            Assert.AreEqual(string.Empty, explorer.ErrorMessage);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    private sealed class TestEditorComponentFactory : IAvaloniaEditorComponentFactory
+    {
+        public IAvaloniaEditorComponent Create()
+        {
+            EditorWorkflow workflow = new(new FileEditorDocument(), new DesignEditorFileDialogService(), new FileSystemTextDocumentStorageService());
+            return new AvaloniaEditorComponent(workflow, new EditorViewModel(workflow), new TextBlock());
+        }
+
+        IEditorComponent IEditorComponentFactory.Create() => Create();
+    }
+
     [TestMethod]
     public async Task Selection_IsImmediateButDebouncedPreviewAndExplicitActivationAreDistinct()
     {

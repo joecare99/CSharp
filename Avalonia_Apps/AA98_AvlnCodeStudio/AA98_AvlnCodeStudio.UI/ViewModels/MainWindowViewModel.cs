@@ -1931,7 +1931,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                         await _csharpSyntaxDiagnosticService.GetNewCompilerErrorsAsync(
                             project.ProjectPath,
                             sourceRequest,
-                            cancellationToken);
+                            cancellationToken,
+                            workspace.RootPath);
                     if (newCompilerErrors.Count > 0)
                     {
                         throw new InvalidDataException(
@@ -1969,14 +1970,27 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                     return;
                 }
 
+                bool usePartialProperties = await _csharpSyntaxDiagnosticService
+                    .SupportsObservablePartialPropertiesAsync(project.ProjectPath, cancellationToken);
                 IReadOnlyList<WorkspaceFileChangeRequest> requests =
-                    _axamlMvvmGenerator.Generate(relativeAxamlPath, Editor.Text);
+                    _axamlMvvmGenerator.Generate(relativeAxamlPath, Editor.Text, usePartialProperties);
                 string viewModelPath = Path.GetFullPath(
                     Path.Combine(workspace.RootPath, requests[1].RelativePath));
                 if (File.Exists(viewModelPath))
                 {
                     throw new InvalidDataException(
                         $"'{requests[1].RelativePath}' already exists. Incremental MVVM generation is not supported yet; the existing ViewModel was left unchanged.");
+                }
+
+                IReadOnlyList<string> generatedCompilerErrors =
+                    await _csharpSyntaxDiagnosticService.GetNewSourceCompilerErrorsAsync(
+                        workspace.RootPath, project.ProjectPath, requests[1], cancellationToken);
+                if (generatedCompilerErrors.Count > 0)
+                {
+                    throw new InvalidDataException(
+                        "The generated ViewModel would introduce C# compiler errors:"
+                        + Environment.NewLine
+                        + string.Join(Environment.NewLine, generatedCompilerErrors));
                 }
 
                 AxamlMvvmSemanticResolution semanticResolution =
@@ -2329,11 +2343,11 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 SendAIChatMessageCancelCommand.Execute(null);
             }
             GenerateAxamlMvvmCommand.NotifyCanExecuteChanged();
-            QueueAxamlMvvmBindingContext(
-                string.Equals(Path.GetExtension(Editor.CurrentFilePath), ".axaml", StringComparison.OrdinalIgnoreCase)
-                    ? Editor.Text
-                    : null,
-                Editor.CurrentFilePath);
+            foreach (EditorTabViewModel tab in _editorWorkspace.Tabs)
+            {
+                RefreshAxamlResourceContext(tab);
+            }
+            RefreshAxamlPreview();
             string? previousProjectPath = SelectedPackageProject?.ProjectPath;
             PackageProjects.Clear();
             if (value is not null)
@@ -2447,7 +2461,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             CSharpWorkspace workspace = _workspaceLoader.Load(path);
             if (ProjectExplorer is not null)
             {
-                await ProjectExplorer.LoadAsync(workspace.RootPath, cancellationToken);
+                await ProjectExplorer.LoadAsync(workspace.EntryPath, cancellationToken);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -3395,7 +3409,21 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             bool isAxamlDocument = !string.IsNullOrWhiteSpace(filePath)
                 && string.Equals(Path.GetExtension(filePath), ".axaml", StringComparison.OrdinalIgnoreCase);
             string? markup = isAxamlDocument ? Editor.Text : null;
+            RefreshAxamlResourceContext(ActiveEditorTab);
             QueueAxamlMvvmBindingContext(markup, filePath);
+        }
+
+        private void RefreshAxamlResourceContext(EditorTabViewModel tab)
+        {
+            string? path = tab.Editor.CurrentFilePath;
+            if (!string.Equals(Path.GetExtension(path), ".axaml", StringComparison.OrdinalIgnoreCase))
+            {
+                path = null;
+            }
+
+            tab.Designer?.SetResourceContext(
+                path,
+                AxamlResourceProjectResolver.FindProjectRoot(Workspace, Workspace?.RootPath, path));
         }
 
         private void QueueAxamlMvvmBindingContext(string? markup, string? filePath)
@@ -3566,7 +3594,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 await _csharpSyntaxDiagnosticService.GetNewCompilerErrorsAsync(
                     project.ProjectPath,
                     sourceRequest,
-                    CancellationToken.None);
+                    CancellationToken.None,
+                    workspace.RootPath);
             if (newCompilerErrors.Count > 0)
             {
                 throw new InvalidDataException(

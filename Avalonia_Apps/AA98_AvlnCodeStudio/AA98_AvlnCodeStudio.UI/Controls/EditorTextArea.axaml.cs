@@ -34,12 +34,15 @@ public partial class EditorTextArea : UserControl
             _editor.Text = Text ?? string.Empty;
             _editor.TextChanged += OnEditorTextChanged;
             _editor.KeyDown += OnEditorKeyDown;
+            _editor.TextArea.Caret.PositionChanged += OnCaretPositionChanged;
         }
     }
 
     public event EventHandler? CompletionRequested;
 
     public event EventHandler? GoToDefinitionRequested;
+
+    public event EventHandler? CaretPositionChanged;
 
     public int CaretOffset => _editor?.CaretOffset ?? 0;
 
@@ -83,6 +86,14 @@ public partial class EditorTextArea : UserControl
         _editor.Focus(Avalonia.Input.NavigationMethod.Unspecified);
     }
 
+    public void MoveCaretWithoutFocus(int offset)
+    {
+        if (_editor is not null)
+        {
+            _editor.CaretOffset = Math.Clamp(offset, 0, (_editor.Text ?? string.Empty).Length);
+        }
+    }
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -116,6 +127,15 @@ public partial class EditorTextArea : UserControl
         _isUpdatingFromEditor = true;
         Text = _editor.Text;
         _isUpdatingFromEditor = false;
+        CaretPositionChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnCaretPositionChanged(object? sender, EventArgs e)
+    {
+        if (!_isUpdatingFromProperty)
+        {
+            CaretPositionChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private void OnEditorKeyDown(object? sender, KeyEventArgs e)

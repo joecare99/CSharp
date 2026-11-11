@@ -665,7 +665,10 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
                 await File.ReadAllTextAsync(Path.Combine(root, "MainWindowViewModel.cs")));
             StringAssert.Contains(sourceChange.ProposedContent, "// Preserve this user-authored implementation.");
             StringAssert.Contains(sourceChange.ProposedContent, "[global::CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]");
-            StringAssert.Contains(sourceChange.ProposedContent, "private string _notice = string.Empty;");
+            StringAssert.Contains(sourceChange.ProposedContent,
+                await service.SupportsObservablePartialPropertiesAsync(projectPath)
+                    ? "public partial string Notice { get; set; } = string.Empty;"
+                    : "private string _notice = string.Empty;");
             StringAssert.Contains(sourceChange.ProposedContent, "[global::CommunityToolkit.Mvvm.Input.RelayCommand]");
             StringAssert.Contains(sourceChange.ProposedContent, "private void Exit()");
             Assert.AreEqual(
@@ -701,6 +704,166 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
         {
             Directory.Delete(root, recursive: true);
         }
+    }
+
+    [TestMethod]
+    public async Task ObservableProperties_UseActualProjectGeneratorAndPreserveOlderProjects()
+    {
+        if (Environment.Version.Major < 10)
+        {
+            return;
+        }
+
+        string root = Path.Combine(Directory.GetCurrentDirectory(), $"mvvm-property-fixture-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            foreach ((string language, string toolkit, bool modern) in new[]
+            {
+                ("14", "8.4.2", true),
+                ("13", "8.4.2", false),
+                ("14", "8.4.0", false),
+            })
+            {
+                string directory = Path.Combine(root, $"cs{language}-toolkit{toolkit}");
+                Directory.CreateDirectory(directory);
+                string projectPath = Path.Combine(directory, "Fixture.csproj");
+                string viewModelPath = Path.Combine(directory, "ExistingViewModel.cs");
+                string projectText = $"""
+                    <Project Sdk="Microsoft.NET.Sdk">
+                      <PropertyGroup>
+                        <OutputType>Exe</OutputType>
+                        <TargetFramework>net10.0</TargetFramework>
+                        <LangVersion>{language}</LangVersion>
+                        <Nullable>enable</Nullable>
+                        <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+                      </PropertyGroup>
+                      <ItemGroup><PackageReference Include="CommunityToolkit.Mvvm" Version="{toolkit}" /></ItemGroup>
+                    </Project>
+                    """;
+                await File.WriteAllTextAsync(projectPath, projectText);
+                await File.WriteAllTextAsync(viewModelPath, """
+                    namespace Sample;
+                    public partial class ExistingViewModel : global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+                    {
+                        private string _notice = "";
+                        private string Clash = "";
+                    }
+                    """);
+                await File.WriteAllTextAsync(Path.Combine(directory, "Program.cs"), """
+                    using System;
+                    var generated = new Sample.MainWindowViewModel();
+                    if (generated.Name != "initial") throw new Exception("Initial value");
+                    bool changed = false;
+                    generated.PropertyChanged += (_, e) => changed = e.PropertyName == nameof(generated.Name);
+                    generated.Name = "changed";
+                    if (!changed || generated.Name != "changed") throw new Exception("Setter notification");
+                    """);
+
+                await RunFixtureAsync("restore", projectPath);
+                using CSharpSyntaxDiagnosticService service = new();
+                Assert.AreEqual(modern, await service.SupportsObservablePartialPropertiesAsync(projectPath),
+                    $"Incorrect capability for C# {language}, Toolkit {toolkit}.");
+
+                WorkspaceFileChangeRequest[] generated = new AxamlMvvmGenerator().Generate(
+                    "MainWindow.axaml",
+                    """
+                    <Window xmlns="https://github.com/avaloniaui"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            x:Class="Sample.MainWindow">
+                      <TextBox x:Name="NameTextBox" Text="initial" />
+                    </Window>
+                    """,
+                    await service.SupportsObservablePartialPropertiesAsync(projectPath)).ToArray();
+                StringAssert.Contains(generated[1].ProposedContent, modern
+                    ? "public partial string Name { get; set; } = \"initial\";"
+                    : "private string _name = \"initial\";");
+                Assert.AreEqual(0, (await service.GetNewSourceCompilerErrorsAsync(
+                    directory, projectPath, generated[1])).Count);
+                WorkspaceFileChangeRequest conflictingSource = WorkspaceFileChangeRequest.CreateNew(
+                    generated[1].RelativePath,
+                    generated[1].ProposedContent.Replace(
+                        "partial class MainWindowViewModel",
+                        "partial class Name",
+                        StringComparison.Ordinal));
+                Assert.IsTrue((await service.GetNewSourceCompilerErrorsAsync(
+                    directory, projectPath, conflictingSource)).Count > 0);
+
+                string memberName = modern ? "Notice" : "Title";
+                AxamlMvvmMemberPlanEntry[] additions =
+                [
+                    new(new AxamlMvvmMemberRequirement(memberName, "string", IsCommand: false),
+                        AxamlMvvmMemberPlanAction.Create, null),
+                ];
+                WorkspaceFileChangeRequest edit = await service.PlanViewModelSourceAdditionAsync(
+                    root, projectPath, "Sample.ExistingViewModel", additions);
+                StringAssert.Contains(edit.ProposedContent, modern
+                    ? "public partial string Notice { get; set; } = string.Empty;"
+                    : "private string _title = string.Empty;");
+                Assert.AreEqual(0, (await service.GetNewCompilerErrorsAsync(
+                    projectPath, edit, workspaceRoot: root)).Count);
+                await Assert.ThrowsExactlyAsync<InvalidDataException>(() =>
+                    service.PlanViewModelSourceAdditionAsync(directory, projectPath, "Sample.ExistingViewModel",
+                    [
+                        new(new AxamlMvvmMemberRequirement("Clash", "string", IsCommand: false),
+                            AxamlMvvmMemberPlanAction.Create, null),
+                    ]));
+                Assert.AreEqual(projectText, await File.ReadAllTextAsync(projectPath));
+                Assert.AreEqual(edit.ExpectedContent, await File.ReadAllTextAsync(viewModelPath));
+                await File.WriteAllTextAsync(viewModelPath, edit.ProposedContent);
+                await File.WriteAllTextAsync(Path.Combine(directory, generated[1].RelativePath), generated[1].ProposedContent);
+                await RunFixtureAsync("run", projectPath);
+            }
+
+            string multiDirectory = Path.Combine(root, "multi-target");
+            Directory.CreateDirectory(multiDirectory);
+            string multiProject = Path.Combine(multiDirectory, "Fixture.csproj");
+            await File.WriteAllTextAsync(multiProject, """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+                    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+                  </PropertyGroup>
+                  <ItemGroup><PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" /></ItemGroup>
+                </Project>
+                """);
+            using CSharpSyntaxDiagnosticService multiService = new();
+            Assert.IsFalse(await multiService.SupportsObservablePartialPropertiesAsync(multiProject));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    private static async Task RunFixtureAsync(string command, string projectPath)
+    {
+        ProcessStartInfo start = new("dotnet")
+        {
+            WorkingDirectory = Path.GetDirectoryName(projectPath)!,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+        };
+        start.ArgumentList.Add(command);
+        if (command == "run")
+        {
+            start.ArgumentList.Add("--project");
+            start.ArgumentList.Add(projectPath);
+            start.ArgumentList.Add("--no-restore");
+        }
+        else
+        {
+            start.ArgumentList.Add(projectPath);
+        }
+        start.ArgumentList.Add("--verbosity");
+        start.ArgumentList.Add("quiet");
+        ClearInheritedMsBuildEnvironment(start);
+        using Process process = Process.Start(start) ?? throw new InvalidOperationException("Could not start fixture.");
+        Task<string> output = process.StandardOutput.ReadToEndAsync();
+        Task<string> error = process.StandardError.ReadToEndAsync();
+        await process.WaitForExitAsync();
+        Assert.AreEqual(0, process.ExitCode, $"{command} failed: {await output}{await error}");
     }
 
     [TestMethod]

@@ -35,6 +35,13 @@ public sealed class FileSystemProjectExplorerSource : IProjectExplorerSource
         string normalizedRootPath = Path.GetFullPath(rootPath);
         return Task.Run(() =>
         {
+            if (!Directory.Exists(normalizedRootPath) && SolutionProjectExplorerBuilder.Supports(normalizedRootPath))
+            {
+                return new ProjectExplorerSnapshot(
+                    normalizedRootPath,
+                    [SolutionProjectExplorerBuilder.Build(normalizedRootPath, _supportedExtensions, cancellationToken)]);
+            }
+
             ProjectExplorerItem rootItem = CreateDirectoryItem(
                 normalizedRootPath,
                 ProjectExplorerItemKind.Project,

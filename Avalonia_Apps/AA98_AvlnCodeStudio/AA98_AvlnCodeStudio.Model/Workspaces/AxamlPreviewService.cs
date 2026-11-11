@@ -23,14 +23,24 @@ public sealed class AxamlPreviewService
     /// <summary>
     /// Parses an AXAML document and returns its preview tree.
     /// </summary>
-    public AxamlPreviewNode Parse(string axaml)
+    public AxamlPreviewNode Parse(string axaml) => Parse(axaml, null, null);
+
+    public AxamlPreviewNode Parse(string axaml, string? documentPath, string? projectRoot)
     {
         ArgumentNullException.ThrowIfNull(axaml);
         XDocument document = LoadDocument(axaml);
         XElement root = document.Root
             ?? throw new InvalidDataException("The AXAML document has no root element.");
         int controlCount = 0;
-        return ParseElement(root, axaml, depth: 0, ref controlCount, parentTypeName: null, parentSourceStartOffset: -1);
+        return ParseElement(
+            root,
+            axaml,
+            depth: 0,
+            ref controlCount,
+            parentTypeName: null,
+            parentSourceStartOffset: -1,
+            parentHasSafeGridLayout: false,
+            resources: new AxamlPreviewResources(documentPath, projectRoot));
     }
 
     private static XDocument LoadDocument(string axaml)
@@ -52,11 +62,11 @@ public sealed class AxamlPreviewService
         return XDocument.Load(xmlReader, LoadOptions.SetLineInfo);
     }
 
-    public AxamlPreviewParseResult ParseForPreview(string axaml)
+    public AxamlPreviewParseResult ParseForPreview(string axaml, string? documentPath = null, string? projectRoot = null)
     {
         try
         {
-            return new AxamlPreviewParseResult(Parse(axaml), null);
+            return new AxamlPreviewParseResult(Parse(axaml, documentPath, projectRoot), null);
         }
         catch (XmlException exception)
         {
@@ -107,6 +117,8 @@ public sealed class AxamlPreviewService
         {
             "Canvas" => [.. capability.EditableProperties, "Canvas.Left", "Canvas.Top"],
             "DockPanel" => [.. capability.EditableProperties, "DockPanel.Dock"],
+            "Grid" when node.ParentHasSafeGridLayout =>
+                [.. capability.EditableProperties, "Grid.Row", "Grid.Column", "Grid.RowSpan", "Grid.ColumnSpan"],
             _ => capability.EditableProperties,
         };
     }
@@ -135,6 +147,12 @@ public sealed class AxamlPreviewService
         if (propertyName == "DockPanel.Dock" && node.ParentTypeName == "DockPanel")
         {
             return UpdateDockPanelDock(axaml, node, value);
+        }
+
+        if (propertyName is "Grid.Row" or "Grid.Column" or "Grid.RowSpan" or "Grid.ColumnSpan"
+            && node.ParentTypeName == "Grid")
+        {
+            return UpdateGridCell(axaml, node, propertyName, value);
         }
 
         return UpdateAttributeCore(axaml, node, propertyName, value, allowExistingBinding: false);
@@ -437,7 +455,7 @@ public sealed class AxamlPreviewService
 
         if (isGrid || parentCapability.AllowsSafeChildRemoval)
         {
-            GetStructureChild(axaml, parent, child: null);
+            GetStructureChild(axaml, parent, child: null, allowDockPanelStructure: isDockPanel);
         }
 
         string qualifiedName = GetElementName(parent.SourceStartTag);
@@ -664,9 +682,180 @@ public sealed class AxamlPreviewService
             axaml.AsSpan(appendInsertionOffset));
     }
 
+    private static string UpdateGridDefinitionsAttribute(
+        string axaml,
+        AxamlPreviewNode grid,
+        string propertyName,
+        string value)
+    {
+        int tagStart = grid.SourceStartOffset;
+        int tagEnd = ValidateSourceTag(axaml, grid);
+        int valueStart = FindAttributeValueStart(
+            axaml,
+            tagStart,
+            tagEnd,
+            propertyName,
+            matchQualifiedName: false,
+            out _,
+            out _);
+        if (valueStart < 0)
+        {
+            throw new InvalidOperationException("The Grid definition attribute could not be located safely.");
+        }
+
+        char quote = axaml[valueStart - 1];
+        int valueEnd = axaml.IndexOf(quote, valueStart);
+        if (valueEnd < 0 || valueEnd > tagEnd)
+        {
+            throw new InvalidDataException("The Grid definition attribute is malformed.");
+        }
+
+        return string.Concat(
+            axaml.AsSpan(0, valueStart),
+            EscapeAttributeValue(value).AsSpan(),
+            axaml.AsSpan(valueEnd));
+    }
+
+    private static string UpdateGridDefinitionAttribute(
+        string axaml,
+        XElement definition,
+        string propertyName,
+        string value)
+    {
+        int tagStart = GetSourceStartOffset(definition, axaml);
+        if (tagStart < 0)
+        {
+            throw new InvalidOperationException("The Grid definition element cannot be located safely.");
+        }
+
+        int tagEnd = FindStartTagEnd(axaml, tagStart);
+        int valueStart = FindAttributeValueStart(
+            axaml,
+            tagStart,
+            tagEnd,
+            propertyName,
+            matchQualifiedName: false,
+            out int attributeNameStart,
+            out _);
+        if (valueStart >= 0)
+        {
+            char quote = axaml[valueStart - 1];
+            int valueEnd = axaml.IndexOf(quote, valueStart);
+            if (valueEnd < 0 || valueEnd > tagEnd)
+            {
+                throw new InvalidDataException("The Grid definition attribute is malformed.");
+            }
+
+            return string.Concat(
+                axaml.AsSpan(0, valueStart),
+                EscapeAttributeValue(value).AsSpan(),
+                axaml.AsSpan(valueEnd));
+        }
+
+        if (attributeNameStart >= 0)
+        {
+            throw new InvalidDataException("The Grid definition attribute could not be located safely.");
+        }
+
+        int beforeClosing = tagEnd;
+        while (beforeClosing > tagStart && char.IsWhiteSpace(axaml[beforeClosing - 1]))
+        {
+            beforeClosing--;
+        }
+
+        int insertionOffset = beforeClosing > tagStart && axaml[beforeClosing - 1] == '/'
+            ? beforeClosing - 1
+            : tagEnd;
+        while (insertionOffset > tagStart && char.IsWhiteSpace(axaml[insertionOffset - 1]))
+        {
+            insertionOffset--;
+        }
+
+        string attribute = $" {propertyName}=\"{EscapeAttributeValue(value)}\"";
+        return string.Concat(
+            axaml.AsSpan(0, insertionOffset),
+            attribute,
+            axaml.AsSpan(insertionOffset));
+    }
+
+    private static string ReplaceTrimmedValue(string sourceValue, string replacement)
+    {
+        int start = 0;
+        while (start < sourceValue.Length && char.IsWhiteSpace(sourceValue[start]))
+        {
+            start++;
+        }
+
+        int end = sourceValue.Length;
+        while (end > start && char.IsWhiteSpace(sourceValue[end - 1]))
+        {
+            end--;
+        }
+
+        return string.Concat(sourceValue.AsSpan(0, start), replacement, sourceValue.AsSpan(end));
+    }
+
+    private static string InsertGridDefinitions(
+        string axaml,
+        XElement definitionsElement,
+        string[] definitionMarkup)
+    {
+        int tagStart = GetSourceStartOffset(definitionsElement, axaml);
+        if (tagStart < 0)
+        {
+            throw new InvalidOperationException("The Grid definition element cannot be located safely.");
+        }
+
+        int tagEnd = FindStartTagEnd(axaml, tagStart);
+        string qualifiedName = GetElementName(axaml[tagStart..(tagEnd + 1)]);
+        string lineIndentation = GetLineIndentation(axaml, tagStart);
+        string childIndentation = lineIndentation + "  ";
+        string newline = axaml.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
+        string children = string.Join(newline + childIndentation, definitionMarkup);
+
+        int slash = tagEnd - 1;
+        while (slash > tagStart && char.IsWhiteSpace(axaml[slash]))
+        {
+            slash--;
+        }
+
+        if (slash > tagStart && axaml[slash] == '/')
+        {
+            string openingTag = axaml[tagStart..slash] + ">";
+            return string.Concat(
+                axaml[..tagStart],
+                openingTag,
+                newline,
+                childIndentation,
+                children,
+                newline,
+                lineIndentation,
+                $"</{qualifiedName}>",
+                axaml[(tagEnd + 1)..]);
+        }
+
+        int closingTagStart = FindMatchingEndTag(axaml, tagEnd, qualifiedName);
+        int closingLineStart = axaml.LastIndexOf('\n', closingTagStart - 1) + 1;
+        bool closingTagHasOwnLine = axaml.AsSpan(closingLineStart, closingTagStart - closingLineStart)
+            .Trim()
+            .IsEmpty;
+        int insertionOffset = closingTagHasOwnLine ? closingLineStart : closingTagStart;
+        string insertion = closingTagHasOwnLine
+            ? $"{childIndentation}{children}{newline}"
+            : $"{newline}{childIndentation}{children}{newline}{lineIndentation}";
+        return string.Concat(
+            axaml.AsSpan(0, insertionOffset),
+            insertion,
+            axaml.AsSpan(insertionOffset));
+    }
+
     internal string RemoveChildControl(string axaml, AxamlPreviewNode parent, AxamlPreviewNode child)
     {
-        XElement sourceChild = GetStructureChild(axaml, parent, child);
+        XElement sourceChild = GetStructureChild(
+            axaml,
+            parent,
+            child,
+            allowDockPanelStructure: parent.TypeName == "DockPanel");
         if (sourceChild.DescendantsAndSelf().Any(element =>
                 element.Name.LocalName.Contains('.', StringComparison.Ordinal)
                 || !IsSupportedElement(element, element.Name.LocalName))
@@ -698,7 +887,20 @@ public sealed class AxamlPreviewService
         AxamlPreviewNode sibling,
         bool moveEarlier)
     {
-        GetStructureChild(axaml, parent, child, sibling);
+        GetStructureChild(
+            axaml,
+            parent,
+            child,
+            sibling,
+            allowDockPanelStructure: parent.TypeName == "DockPanel");
+        if (parent.TypeName == "DockPanel"
+            && IsDockPanelLastChildFill(parent)
+            && (ReferenceEquals(parent.Children[^1], child)
+                || ReferenceEquals(parent.Children[^1], sibling)))
+        {
+            throw new InvalidOperationException(
+                "The last DockPanel child is the LastChildFill client and cannot be reordered.");
+        }
 
         (int childStart, int childEnd) = GetElementRange(axaml, child);
         (int siblingStart, int siblingEnd) = GetElementRange(axaml, sibling);
@@ -740,11 +942,256 @@ public sealed class AxamlPreviewService
 
         int targetRow = GetGridIndex(child, "Grid.Row") + rowChange;
         int targetColumn = GetGridIndex(child, "Grid.Column") + columnChange;
-        int rowSpan = GetGridSpan(child, "Grid.RowSpan");
-        int columnSpan = GetGridSpan(child, "Grid.ColumnSpan");
+        return CanPlaceGridChild(parent, child, targetRow, targetColumn);
+    }
+
+    internal bool CanAddGridDefinition(AxamlPreviewNode grid, bool addRow)
+    {
+        ArgumentNullException.ThrowIfNull(grid);
+        if (grid.TypeName != "Grid" || !grid.IsSupported || !grid.HasSafeGridLayout)
+        {
+            return false;
+        }
+
+        long rowCount = Math.Max(1, grid.RowDefinitions.Count);
+        long columnCount = Math.Max(1, grid.ColumnDefinitions.Count);
+        if (addRow)
+        {
+            rowCount++;
+        }
+        else
+        {
+            columnCount++;
+        }
+
+        return rowCount * columnCount <= MaximumGridCells;
+    }
+
+    internal bool CanRemoveGridDefinition(AxamlPreviewNode grid, bool removeRow)
+    {
+        ArgumentNullException.ThrowIfNull(grid);
+        if (grid.TypeName != "Grid" || !grid.IsSupported || !grid.HasSafeGridLayout)
+        {
+            return false;
+        }
+
+        IReadOnlyList<string> definitions = removeRow ? grid.RowDefinitions : grid.ColumnDefinitions;
+        if (definitions.Count <= 1)
+        {
+            return false;
+        }
+
+        int lastTrack = definitions.Count - 1;
+        string indexProperty = removeRow ? "Grid.Row" : "Grid.Column";
+        string spanProperty = removeRow ? "Grid.RowSpan" : "Grid.ColumnSpan";
+        return grid.Children.All(child =>
+            (long)GetGridIndex(child, indexProperty) + GetGridSpan(child, spanProperty) <= lastTrack);
+    }
+
+    internal bool CanSetGridDefinitionSize(AxamlPreviewNode grid, bool isRow, int index, string value)
+    {
+        ArgumentNullException.ThrowIfNull(grid);
+        ArgumentNullException.ThrowIfNull(value);
+        IReadOnlyList<string> definitions = isRow ? grid.RowDefinitions : grid.ColumnDefinitions;
+        return grid.TypeName == "Grid"
+            && grid.IsSupported
+            && grid.HasSafeGridLayout
+            && index >= 0
+            && index < definitions.Count
+            && IsSafeGridLength(value);
+    }
+
+    internal string AddGridDefinition(string axaml, AxamlPreviewNode grid, bool addRow)
+    {
+        ArgumentNullException.ThrowIfNull(axaml);
+        ArgumentNullException.ThrowIfNull(grid);
+        if (!CanAddGridDefinition(grid, addRow))
+        {
+            throw new InvalidOperationException(
+                "Add a Grid row or column only when its static layout is safe and the cell limit will not be exceeded.");
+        }
+
+        XElement sourceGrid = GetStructureChild(axaml, grid, child: null);
+        string propertyName = addRow ? "RowDefinitions" : "ColumnDefinitions";
+        string propertyElementName = $"Grid.{propertyName}";
+        string definitionName = addRow ? "RowDefinition" : "ColumnDefinition";
+        string dimensionName = addRow ? "Height" : "Width";
+        XAttribute? definitionsAttribute = sourceGrid.Attribute(propertyName);
+        if (definitionsAttribute is not null)
+        {
+            string value = string.IsNullOrWhiteSpace(definitionsAttribute.Value)
+                ? "*,Auto"
+                : $"{definitionsAttribute.Value},Auto";
+            return UpdateGridDefinitionsAttribute(axaml, grid, propertyName, value);
+        }
+
+        XElement? definitionsElement = sourceGrid.Elements()
+            .SingleOrDefault(element => element.Name.LocalName == propertyElementName);
+        string qualifiedGridName = GetElementName(grid.SourceStartTag!);
+        int colon = qualifiedGridName.LastIndexOf(':');
+        string prefix = colon < 0 ? string.Empty : qualifiedGridName[..(colon + 1)];
+        string[] definitionMarkup = definitionsElement is not null
+            && definitionsElement.Elements().Any()
+                ? [$"<{prefix}{definitionName} {dimensionName}=\"Auto\" />"]
+                : [
+                    $"<{prefix}{definitionName} {dimensionName}=\"*\" />",
+                    $"<{prefix}{definitionName} {dimensionName}=\"Auto\" />",
+                ];
+
+        return definitionsElement is null
+            ? InsertPropertyElement(axaml, grid, propertyName, definitionMarkup)
+            : InsertGridDefinitions(axaml, definitionsElement, definitionMarkup);
+    }
+
+    internal string RemoveGridDefinition(string axaml, AxamlPreviewNode grid, bool removeRow)
+    {
+        ArgumentNullException.ThrowIfNull(axaml);
+        ArgumentNullException.ThrowIfNull(grid);
+        if (!CanRemoveGridDefinition(grid, removeRow))
+        {
+            throw new InvalidOperationException(
+                "Remove a Grid track only when the explicit final track is unused by every child.");
+        }
+
+        XElement sourceGrid = GetStructureChild(axaml, grid, child: null);
+        string propertyName = removeRow ? "RowDefinitions" : "ColumnDefinitions";
+        string propertyElementName = $"Grid.{propertyName}";
+        string definitionName = removeRow ? "RowDefinition" : "ColumnDefinition";
+        IReadOnlyList<string> definitions = removeRow ? grid.RowDefinitions : grid.ColumnDefinitions;
+        if (GetGridDefinitionCount(sourceGrid, propertyName, propertyElementName, definitionName) != definitions.Count)
+        {
+            throw new InvalidDataException("The Grid definitions changed; select the Grid again before editing.");
+        }
+
+        if (sourceGrid.Attribute(propertyName) is { } definitionsAttribute)
+        {
+            int lastComma = definitionsAttribute.Value.LastIndexOf(',');
+            if (lastComma < 0)
+            {
+                throw new InvalidDataException("The Grid definition list changed; select the Grid again before editing.");
+            }
+
+            return UpdateGridDefinitionsAttribute(axaml, grid, propertyName, definitionsAttribute.Value[..lastComma]);
+        }
+
+        XElement? definitionsElement = sourceGrid.Elements()
+            .SingleOrDefault(element => element.Name.LocalName == propertyElementName);
+        XElement? lastDefinition = definitionsElement?.Elements().LastOrDefault();
+        if (lastDefinition is null || lastDefinition.Name.LocalName != definitionName)
+        {
+            throw new InvalidDataException("The final Grid definition cannot be located safely.");
+        }
+
+        (int start, int end) = GetElementRange(axaml, lastDefinition);
+        int removalStart = start;
+        int lineStart = axaml.LastIndexOf('\n', start - 1) + 1;
+        if (axaml.AsSpan(lineStart, start - lineStart).Trim().IsEmpty)
+        {
+            removalStart = lineStart;
+        }
+
+        int removalEnd = end;
+        while (removalEnd < axaml.Length && axaml[removalEnd] is ' ' or '\t')
+        {
+            removalEnd++;
+        }
+
+        if (removalEnd < axaml.Length && axaml[removalEnd] == '\r')
+        {
+            removalEnd++;
+        }
+
+        if (removalEnd < axaml.Length && axaml[removalEnd] == '\n')
+        {
+            removalEnd++;
+        }
+
+        return string.Concat(axaml.AsSpan(0, removalStart), axaml.AsSpan(removalEnd));
+    }
+
+    internal string SetGridDefinitionSize(
+        string axaml,
+        AxamlPreviewNode grid,
+        bool isRow,
+        int index,
+        string value)
+    {
+        ArgumentNullException.ThrowIfNull(axaml);
+        ArgumentNullException.ThrowIfNull(grid);
+        ArgumentNullException.ThrowIfNull(value);
+        if (!CanSetGridDefinitionSize(grid, isRow, index, value))
+        {
+            throw new InvalidOperationException("The selected Grid track or GridLength value is not safe to edit.");
+        }
+
+        XElement sourceGrid = GetStructureChild(axaml, grid, child: null);
+        string propertyName = isRow ? "RowDefinitions" : "ColumnDefinitions";
+        string propertyElementName = $"Grid.{propertyName}";
+        string definitionName = isRow ? "RowDefinition" : "ColumnDefinition";
+        string dimensionName = isRow ? "Height" : "Width";
+        IReadOnlyList<string> definitions = isRow ? grid.RowDefinitions : grid.ColumnDefinitions;
+        if (GetGridDefinitionCount(sourceGrid, propertyName, propertyElementName, definitionName) != definitions.Count)
+        {
+            throw new InvalidDataException("The Grid definitions changed; select the Grid again before editing.");
+        }
+
+        string normalizedValue = value.Trim();
+        if (sourceGrid.Attribute(propertyName) is { } definitionsAttribute)
+        {
+            string[] sourceValues = definitionsAttribute.Value.Split(',');
+            if (!sourceValues.Select(static item => item.Trim()).SequenceEqual(definitions, StringComparer.Ordinal))
+            {
+                throw new InvalidDataException("The Grid definitions no longer match the preview.");
+            }
+
+            sourceValues[index] = ReplaceTrimmedValue(sourceValues[index], normalizedValue);
+            return UpdateGridDefinitionsAttribute(axaml, grid, propertyName, string.Join(',', sourceValues));
+        }
+
+        XElement? definitionsElement = sourceGrid.Elements()
+            .SingleOrDefault(element => element.Name.LocalName == propertyElementName);
+        XElement[] sourceDefinitions = definitionsElement?.Elements().ToArray() ?? [];
+        string[] propertyValues = sourceDefinitions
+            .Select(definition => ((string?)definition.Attribute(dimensionName) ?? "*").Trim())
+            .ToArray();
+        if (!propertyValues.SequenceEqual(definitions, StringComparer.Ordinal)
+            || index >= sourceDefinitions.Length
+            || sourceDefinitions[index].Name.LocalName != definitionName)
+        {
+            throw new InvalidDataException("The Grid definitions no longer match the preview.");
+        }
+
+        return UpdateGridDefinitionAttribute(
+            axaml,
+            sourceDefinitions[index],
+            dimensionName,
+            normalizedValue);
+    }
+
+    private bool CanPlaceGridChild(
+        AxamlPreviewNode parent,
+        AxamlPreviewNode child,
+        int targetRow,
+        int targetColumn,
+        int? targetRowSpan = null,
+        int? targetColumnSpan = null)
+    {
+        if (parent.TypeName != "Grid"
+            || !parent.HasSafeGridLayout
+            || !child.IsSupported
+            || !parent.Children.Any(candidate => ReferenceEquals(candidate, child))
+            || targetRow < 0
+            || targetColumn < 0)
+        {
+            return false;
+        }
+
+        int rowSpan = targetRowSpan ?? GetGridSpan(child, "Grid.RowSpan");
+        int columnSpan = targetColumnSpan ?? GetGridSpan(child, "Grid.ColumnSpan");
         int rowCount = Math.Max(1, parent.RowDefinitions.Count);
         int columnCount = Math.Max(1, parent.ColumnDefinitions.Count);
-        if (targetRow < 0 || targetColumn < 0
+        if (rowSpan < 1
+            || columnSpan < 1
             || (long)targetRow + rowSpan > rowCount
             || (long)targetColumn + columnSpan > columnCount)
         {
@@ -772,6 +1219,74 @@ public sealed class AxamlPreviewService
         }
 
         return true;
+    }
+
+    private string UpdateGridCell(
+        string axaml,
+        AxamlPreviewNode child,
+        string propertyName,
+        string value)
+    {
+        ArgumentNullException.ThrowIfNull(axaml);
+        ArgumentNullException.ThrowIfNull(child);
+        ArgumentNullException.ThrowIfNull(value);
+        if (AxamlPropertyValueValidator.Validate(child.TypeName, propertyName, value) is { } validationError)
+        {
+            throw new InvalidOperationException($"The '{propertyName}' value is invalid: {validationError}");
+        }
+
+        AxamlPreviewNode root = Parse(axaml);
+        AxamlPreviewNode currentChild = FindNodeAtSourceOffset(root, child.SourceStartOffset)
+            ?? throw new InvalidDataException("The selected Grid child no longer exists in the AXAML source.");
+        AxamlPreviewNode parent = FindNodeAtSourceOffset(root, currentChild.ParentSourceStartOffset)
+            ?? throw new InvalidDataException("The selected Grid no longer exists in the AXAML source.");
+        if (currentChild.ParentTypeName != "Grid"
+            || !currentChild.ParentHasSafeGridLayout
+            || parent.TypeName != "Grid"
+            || !parent.HasSafeGridLayout)
+        {
+            throw new InvalidOperationException("Grid cell placement can only be edited within a safely resolved Grid.");
+        }
+
+        int targetRow = propertyName == "Grid.Row"
+            ? int.Parse(value, NumberStyles.None, CultureInfo.InvariantCulture)
+            : GetGridIndex(currentChild, "Grid.Row");
+        int targetColumn = propertyName == "Grid.Column"
+            ? int.Parse(value, NumberStyles.None, CultureInfo.InvariantCulture)
+            : GetGridIndex(currentChild, "Grid.Column");
+        int targetRowSpan = propertyName == "Grid.RowSpan"
+            ? int.Parse(value, NumberStyles.None, CultureInfo.InvariantCulture)
+            : GetGridSpan(currentChild, "Grid.RowSpan");
+        int targetColumnSpan = propertyName == "Grid.ColumnSpan"
+            ? int.Parse(value, NumberStyles.None, CultureInfo.InvariantCulture)
+            : GetGridSpan(currentChild, "Grid.ColumnSpan");
+        if (!CanPlaceGridChild(parent, currentChild, targetRow, targetColumn, targetRowSpan, targetColumnSpan))
+        {
+            throw new InvalidOperationException("The target Grid cell is out of range or occupied by another control.");
+        }
+
+        XElement sourceChild = GetStructureChild(axaml, parent, currentChild);
+        string insertedAttributeName = propertyName;
+        if (sourceChild.Name.Namespace == s_avaloniaNamespace
+            && sourceChild.GetDefaultNamespace() != s_avaloniaNamespace)
+        {
+            string? prefix = sourceChild.GetPrefixOfNamespace(s_avaloniaNamespace);
+            if (string.IsNullOrEmpty(prefix))
+            {
+                throw new InvalidOperationException("The Grid placement namespace cannot be resolved safely.");
+            }
+
+            insertedAttributeName = $"{prefix}:{propertyName}";
+        }
+
+        return UpdateAttributeCore(
+            axaml,
+            currentChild,
+            propertyName,
+            value,
+            allowExistingBinding: false,
+            allowQualifiedAttachedProperty: true,
+            insertedAttributeName: insertedAttributeName);
     }
 
     internal string MoveGridChild(
@@ -940,10 +1455,18 @@ public sealed class AxamlPreviewService
         string axaml,
         AxamlPreviewNode parent,
         AxamlPreviewNode? child,
-        AxamlPreviewNode? adjacentChild = null)
+        AxamlPreviewNode? adjacentChild = null,
+        bool allowDockPanelStructure = false)
     {
         bool isGrid = parent.TypeName == "Grid" && parent.HasSafeGridLayout;
-        bool isAppendableContainer = parent.TypeName is not ("DockPanel" or "Grid")
+        bool isDockPanel = parent.TypeName == "DockPanel"
+            && allowDockPanelStructure
+            && parent.CanAppendChildren
+            && AxamlControlCatalog.TryGet(parent.TypeName, out AxamlControlCapability dockPanelCapability)
+            && dockPanelCapability.AllowsAppendingChildren
+            && dockPanelCapability.AllowsSafeChildRemoval;
+        bool isAppendableContainer = parent.TypeName != "Grid"
+            && (parent.TypeName != "DockPanel" || isDockPanel)
             && parent.CanAppendChildren
             && AxamlControlCatalog.TryGet(parent.TypeName, out AxamlControlCapability parentCapability)
             && parentCapability.AllowsAppendingChildren;
@@ -1007,6 +1530,11 @@ public sealed class AxamlPreviewService
         if (sourceParent is null)
         {
             throw new InvalidDataException("The selected container could not be located in the AXAML source.");
+        }
+
+        if (isDockPanel && !HasSafeDockPanelChildren(sourceParent))
+        {
+            throw new InvalidOperationException("The DockPanel contains unsupported or ambiguous child placements.");
         }
 
         if (isGrid
@@ -1091,6 +1619,36 @@ public sealed class AxamlPreviewService
         return (node.SourceStartOffset, FindStartTagEnd(axaml, closingStart) + 1);
     }
 
+    private static (int Start, int End) GetElementRange(string axaml, XElement element)
+    {
+        int start = GetSourceStartOffset(element, axaml);
+        if (start < 0 || start >= axaml.Length || axaml[start] != '<')
+        {
+            throw new InvalidOperationException("The Grid definition cannot be located safely.");
+        }
+
+        int tagEnd = FindStartTagEnd(axaml, start);
+        string sourceName = GetElementName(axaml[start..(tagEnd + 1)]);
+        if (!string.Equals(sourceName[(sourceName.LastIndexOf(':') + 1)..], element.Name.LocalName, StringComparison.Ordinal))
+        {
+            throw new InvalidDataException("The Grid definition source changed; select the Grid again.");
+        }
+
+        int beforeEnd = tagEnd - 1;
+        while (beforeEnd > start && char.IsWhiteSpace(axaml[beforeEnd]))
+        {
+            beforeEnd--;
+        }
+
+        if (axaml[beforeEnd] == '/')
+        {
+            return (start, tagEnd + 1);
+        }
+
+        int closingStart = FindMatchingEndTag(axaml, tagEnd, sourceName);
+        return (start, FindStartTagEnd(axaml, closingStart) + 1);
+    }
+
     private static int ValidateSourceTag(string axaml, AxamlPreviewNode node)
     {
         int start = node.SourceStartOffset;
@@ -1166,7 +1724,9 @@ public sealed class AxamlPreviewService
                             depth: 0,
                             ref controlCount,
                             parentTypeName: null,
-                            parentSourceStartOffset: -1));
+                            parentSourceStartOffset: -1,
+                            parentHasSafeGridLayout: false,
+                            resources: new AxamlPreviewResources(null, null)));
                     recovered.Add((index, elementEnd, node));
                 }
                 catch (XmlException exception)
@@ -1422,7 +1982,9 @@ public sealed class AxamlPreviewService
         int depth,
         ref int controlCount,
         string? parentTypeName,
-        int parentSourceStartOffset)
+        int parentSourceStartOffset,
+        bool parentHasSafeGridLayout,
+        AxamlPreviewResources resources)
     {
         if (depth > MaximumTreeDepth)
         {
@@ -1439,7 +2001,7 @@ public sealed class AxamlPreviewService
         bool canAppendChildren = AxamlControlCatalog.TryGet(typeName, out AxamlControlCapability capability)
             && capability.AllowsAppendingChildren
             && element.Elements().Count() < capability.MaximumChildren
-            && (typeName != "DockPanel" || HasLiteralLastChildFill(element))
+            && (typeName != "DockPanel" || HasLiteralLastChildFill(element) && HasSafeDockPanelChildren(element))
             && !element.Nodes().OfType<XText>().Any(static value => !string.IsNullOrWhiteSpace(value.Value))
             && element.Elements().All(child =>
                 !child.Name.LocalName.Contains('.', StringComparison.Ordinal)
@@ -1484,12 +2046,19 @@ public sealed class AxamlPreviewService
             else if (childName == $"{typeName}.RowDefinitions")
             {
                 rowDefinitions.AddRange(child.Elements().Select(static definition =>
-                    (string?)definition.Attribute("Height") ?? "Auto"));
+                    (string?)definition.Attribute("Height") ?? "*"));
             }
             else if (childName == $"{typeName}.ColumnDefinitions")
             {
                 columnDefinitions.AddRange(child.Elements().Select(static definition =>
-                    (string?)definition.Attribute("Width") ?? "Auto"));
+                    (string?)definition.Attribute("Width") ?? "*"));
+            }
+            else if (childName is var propertyName
+                && (propertyName == $"{typeName}.Resources"
+                    || propertyName == $"{typeName}.Styles"
+                    || propertyName == $"{typeName}.DataContext"))
+            {
+                continue;
             }
             else if (childName.Contains('.', StringComparison.Ordinal))
             {
@@ -1503,7 +2072,9 @@ public sealed class AxamlPreviewService
                             depth + 1,
                             ref controlCount,
                             typeName,
-                            sourceStartOffset));
+                            sourceStartOffset,
+                            hasSafeGridLayout,
+                            resources));
                     }
                 }
             }
@@ -1515,7 +2086,9 @@ public sealed class AxamlPreviewService
                     depth + 1,
                     ref controlCount,
                     typeName,
-                    sourceStartOffset));
+                    sourceStartOffset,
+                    hasSafeGridLayout,
+                    resources));
             }
         }
 
@@ -1541,13 +2114,21 @@ public sealed class AxamlPreviewService
             }
         }
 
+        Dictionary<string, string> previewProperties = resources.GetPreviewProperties(element, properties);
         string? text = GetDisplayText(typeName, properties, element);
+        if (GetEditablePropertyName(typeName) is string displayProperty
+            && properties.TryGetValue(displayProperty, out string? sourceText)
+            && resources.TryResolve(element, sourceText, out string? resolvedText))
+        {
+            text = resolvedText;
+        }
         return new AxamlPreviewNode
         {
             TypeName = typeName,
             StableName = (string?)element.Attribute(s_xamlNamespace + "Name") ?? (string?)element.Attribute("Name"),
             ParentTypeName = parentTypeName,
             ParentSourceStartOffset = parentSourceStartOffset,
+            ParentHasSafeGridLayout = parentHasSafeGridLayout,
             Text = text,
             IsSupported = IsSupportedElement(element, typeName),
             SourceStartOffset = sourceStartOffset,
@@ -1563,6 +2144,7 @@ public sealed class AxamlPreviewService
             CanRemoveSingleChild = canRemoveSingleChild,
             PropertyElementNames = propertyElementNames,
             Properties = properties,
+            PreviewProperties = previewProperties,
             Children = children,
             RowDefinitions = rowDefinitions,
             ColumnDefinitions = columnDefinitions,
@@ -2249,7 +2831,7 @@ public sealed class AxamlPreviewService
                             definition,
                             childName == "Grid.RowDefinitions" ? "Height" : "Width")
                         || !IsSafeGridLength((string?)definition.Attribute(
-                            childName == "Grid.RowDefinitions" ? "Height" : "Width") ?? "Auto")))
+                            childName == "Grid.RowDefinitions" ? "Height" : "Width") ?? "*")))
                 {
                     return false;
                 }
@@ -2328,6 +2910,46 @@ public sealed class AxamlPreviewService
             || string.Equals(attribute.Value, "True", StringComparison.OrdinalIgnoreCase)
             || string.Equals(attribute.Value, "False", StringComparison.OrdinalIgnoreCase);
     }
+
+    private static bool HasSafeDockPanelChildren(XElement element)
+    {
+        foreach (XElement child in element.Elements())
+        {
+            if (child.Name.LocalName.Contains('.', StringComparison.Ordinal)
+                || child.Name.Namespace != element.Name.Namespace
+                || !LooksLikeControl(child)
+                || !IsSupportedElement(child, child.Name.LocalName)
+                || child.Elements().Any(static propertyElement =>
+                    propertyElement.Name.LocalName == "DockPanel.Dock"))
+            {
+                return false;
+            }
+
+            XAttribute[] placements = child.Attributes()
+                .Where(static attribute => attribute.Name.LocalName == "DockPanel.Dock")
+                .ToArray();
+            if (placements.Length > 1
+                || placements.Any(attribute =>
+                    attribute.Name.Namespace != s_avaloniaNamespace
+                    && !(attribute.Name.Namespace == XNamespace.None
+                        && (child.Name.Namespace == XNamespace.None
+                            || child.GetDefaultNamespace() == s_avaloniaNamespace)))
+                || placements.Any(attribute =>
+                    AxamlPropertyValueValidator.Validate(
+                        child.Name.LocalName,
+                        "DockPanel.Dock",
+                        attribute.Value) is not null))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsDockPanelLastChildFill(AxamlPreviewNode parent) =>
+        !parent.Properties.TryGetValue("LastChildFill", out string? value)
+        || !string.Equals(value, "False", StringComparison.OrdinalIgnoreCase);
 
     private static int GetGridDefinitionCount(
         XElement grid,

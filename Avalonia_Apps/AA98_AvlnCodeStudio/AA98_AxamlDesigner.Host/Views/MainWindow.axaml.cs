@@ -31,16 +31,31 @@ public partial class MainWindow : Window
 
     private bool _closeConfirmed;
     private bool _isClosingPromptActive;
+    private bool _synchronizingSelection;
+    private AxamlDesignerHostViewModel? _selectionHost;
 
     public MainWindow()
     {
         InitializeComponent();
+        SourceEditor.CaretPositionChanged += OnCaretPositionChanged;
         DataContextChanged += OnDataContextChanged;
         Closing += OnWindowClosing;
+        Closed += OnWindowClosed;
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
+        if (_selectionHost is not null)
+        {
+            _selectionHost.Designer.SelectionActivated -= OnDesignerSelectionActivated;
+        }
+
+        _selectionHost = DataContext as AxamlDesignerHostViewModel;
+        if (_selectionHost is not null)
+        {
+            _selectionHost.Designer.SelectionActivated += OnDesignerSelectionActivated;
+        }
+
         if (DataContext is AxamlDesignerHostViewModel viewModel)
         {
             viewModel.SetScreenshotCapture(DesignerView.CapturePreviewPngAsync);
@@ -61,6 +76,53 @@ public partial class MainWindow : Window
                         && ReferenceEquals(viewModel.Designer.SelectedNode, selection));
                 return await dialog.ShowDialog(this);
             };
+        }
+    }
+
+    private void OnCaretPositionChanged(object? sender, EventArgs e)
+    {
+        if (_synchronizingSelection || _selectionHost is not { } host)
+        {
+            return;
+        }
+
+        _synchronizingSelection = true;
+        try
+        {
+            host.Designer.SelectAtCaret(host.Markup, SourceEditor.CaretOffset);
+        }
+        finally
+        {
+            _synchronizingSelection = false;
+        }
+    }
+
+    private void OnDesignerSelectionActivated(object? sender, EventArgs e)
+    {
+        if (_synchronizingSelection || _selectionHost?.Designer.SelectedNode is not { SourceStartOffset: >= 0 } node)
+        {
+            return;
+        }
+
+        _synchronizingSelection = true;
+        try
+        {
+            SourceEditor.MoveCaretWithoutFocus(node.SourceStartOffset);
+        }
+        finally
+        {
+            _synchronizingSelection = false;
+        }
+    }
+
+    private void OnWindowClosed(object? sender, EventArgs e)
+    {
+        SourceEditor.CaretPositionChanged -= OnCaretPositionChanged;
+        DataContextChanged -= OnDataContextChanged;
+        if (_selectionHost is not null)
+        {
+            _selectionHost.Designer.SelectionActivated -= OnDesignerSelectionActivated;
+            _selectionHost = null;
         }
     }
 

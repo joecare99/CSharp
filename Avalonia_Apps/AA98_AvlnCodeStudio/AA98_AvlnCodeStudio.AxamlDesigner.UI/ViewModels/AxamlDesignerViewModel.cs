@@ -18,8 +18,12 @@ namespace AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
 public partial class AxamlDesignerViewModel : ObservableObject
 {
     private readonly AxamlDesignerSession _session;
+    private readonly Dictionary<string, GridTrackTarget> _gridTrackTargets = new(StringComparer.Ordinal);
     private bool _synchronizing;
     private string _currentMarkup = string.Empty;
+    private AxamlSourceSelection? _sourceSelection;
+    private AxamlPreviewNode? _sourceSelectionRoot;
+    private string? _sourceSelectionMarkup;
 
     public Func<AxamlBindingRowViewModel, Task<bool>>? ApplyMissingBindingAsync { get; set; }
 
@@ -134,6 +138,33 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
     public event EventHandler<AxamlDesignerMarkupChangedEventArgs>? MarkupChanged;
 
+    public event EventHandler? SelectionActivated;
+
+    public void SetResourceContext(string? documentPath, string? projectRoot)
+    {
+        AxamlPreviewNode? previousRoot = _session.Root;
+        _session.SetResourceContext(documentPath, projectRoot);
+        if (!ReferenceEquals(previousRoot, _session.Root))
+        {
+            SynchronizeState();
+        }
+    }
+
+    public void SelectAtCaret(string markup, int offset)
+    {
+        if (!string.Equals(markup, _currentMarkup, StringComparison.Ordinal)
+            || offset < 0 || offset > markup.Length)
+        {
+            return;
+        }
+
+        AxamlPreviewNode? node = _sourceSelection?.Find(offset);
+        if (node is not null && !ReferenceEquals(node, SelectedNode))
+        {
+            SelectedNode = node;
+        }
+    }
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPreview))]
     [NotifyPropertyChangedFor(nameof(StructureRoots))]
@@ -141,6 +172,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsDockPanelSelected))]
+    [NotifyPropertyChangedFor(nameof(IsSelectedGrid))]
     [NotifyPropertyChangedFor(nameof(SelectedElementName))]
     [NotifyPropertyChangedFor(nameof(SelectedCapabilityText))]
     private AxamlPreviewNode? _selectedNode;
@@ -156,6 +188,12 @@ public partial class AxamlDesignerViewModel : ObservableObject
     private string? _selectedProperty;
 
     [ObservableProperty]
+    private string? _selectedGridTrackOption;
+
+    [ObservableProperty]
+    private string _gridTrackSizeValue = string.Empty;
+
+    [ObservableProperty]
     private string _selectedValue = string.Empty;
 
     [ObservableProperty]
@@ -166,6 +204,28 @@ public partial class AxamlDesignerViewModel : ObservableObject
     private string _statusText = string.Empty;
 
     public ObservableCollection<string> EditableProperties { get; } = [];
+
+    public ObservableCollection<string> GridTrackOptions { get; } = [];
+
+    public bool HasGridTrackOptions => GridTrackOptions.Count > 0;
+
+    public string GridTrackSizeValidationError
+    {
+        get
+        {
+            if (SelectedGridTrackOption is not { } option
+                || !_gridTrackTargets.TryGetValue(option, out GridTrackTarget target)
+                || string.Equals(GridTrackSizeValue, target.Size, StringComparison.Ordinal)
+                || _session.CanSetGridDefinitionSize(target.IsRow, target.Index, GridTrackSizeValue))
+            {
+                return string.Empty;
+            }
+
+            return "Use Auto, *, a non-negative number, or a non-negative star weight.";
+        }
+    }
+
+    public bool HasGridTrackSizeValidationError => GridTrackSizeValidationError.Length > 0;
 
     public ObservableCollection<AxamlPropertyRowViewModel> PropertyRows { get; } = [];
 
@@ -190,6 +250,9 @@ public partial class AxamlDesignerViewModel : ObservableObject
     public bool IsDockPanelSelected =>
         string.Equals(SelectedNode?.TypeName, "DockPanel", StringComparison.Ordinal);
 
+    public bool IsSelectedGrid =>
+        string.Equals(SelectedNode?.TypeName, "Grid", StringComparison.Ordinal);
+
     public bool IsSelectedGridChild => _session.IsSelectedGridChild;
 
     private bool IsDockPanelClientFillEnabled =>
@@ -205,9 +268,15 @@ public partial class AxamlDesignerViewModel : ObservableObject
         ? "Apply or discard all property drafts before changing the structure."
         : IsSelectedGridChild
             ? _session.CanEditSelectedGridLayout
-                ? "Move by row or column into unoccupied cells; spans are preserved. Remove is available for safe content."
+                ? "Move by row or column into free cells; spans are preserved. Select the Grid to add rows or columns."
                 : "Grid editing requires an unambiguous static layout with supported children and non-overlapping cells."
-            : "Remove from supported single-child containers; reorder simple panels; move Grid children by cell.";
+            : IsSelectedGrid
+                ? SelectedNode is { HasSafeGridLayout: true }
+                    ? GetGridDefinitionAvailabilityText()
+                    : "Grid definition changes require an unambiguous static layout with supported children and valid placements."
+            : SelectedNode?.ParentTypeName == "DockPanel"
+                ? "Remove or reorder direct DockPanel children; when LastChildFill is enabled, keep the final client child last."
+                : "Remove from supported single-child containers; reorder simple panels; move Grid children by cell.";
 
     public string SelectedElementName => SelectedNode?.TypeName ?? "Select a control in the preview.";
 
@@ -241,13 +310,17 @@ public partial class AxamlDesignerViewModel : ObservableObject
             string children = capability.MaximumChildren == 0
                 ? "none"
                 : capability.TypeName == "Grid"
-                    ? SelectedNode.CanAddGridChild
-                        ? $"{childLimit}; next unoccupied cell"
+                    ? SelectedNode.HasSafeGridLayout
+                        ? SelectedNode.CanAddGridChild
+                            ? $"{childLimit}; next unoccupied cell; Auto track expansion is available within the cell limit"
+                            : _session.CanAddGridRowDefinition || _session.CanAddGridColumnDefinition
+                                ? $"{childLimit}; add an Auto row or column to create more cells"
+                                : $"{childLimit}; Grid cell safety limit reached"
                         : $"{childLimit}; correct invalid or unsupported markup before adding controls"
                 : capability.TypeName == "DockPanel"
                     ? SelectedNode.CanAppendChildren
                         ? IsDockPanelClientFillEnabled
-                            ? $"{childLimit}; choose placement; docked children stay before Client"
+                            ? $"{childLimit}; choose placement; docked children stay before Client; safe removal and reordering"
                             : $"{childLimit}; choose an explicit dock side; LastChildFill is disabled"
                         : $"{childLimit}; correct invalid or unsupported markup before adding controls"
                 : capability.AllowsAppendingChildren && SelectedNode.CanAppendChildren
@@ -881,6 +954,47 @@ public partial class AxamlDesignerViewModel : ObservableObject
         AddChildControl("Grid");
     }
 
+    [RelayCommand(CanExecute = nameof(CanAddGridRowDefinition))]
+    private void AddGridRowDefinition() =>
+        ApplyStructureEdit(_session.AddGridRowDefinition, "An Auto row was added to the Grid.");
+
+    [RelayCommand(CanExecute = nameof(CanAddGridColumnDefinition))]
+    private void AddGridColumnDefinition() =>
+        ApplyStructureEdit(_session.AddGridColumnDefinition, "An Auto column was added to the Grid.");
+
+    [RelayCommand(CanExecute = nameof(CanRemoveGridRowDefinition))]
+    private void RemoveGridRowDefinition() =>
+        ApplyStructureEdit(_session.RemoveGridRowDefinition, "The unused final Grid row was removed.");
+
+    [RelayCommand(CanExecute = nameof(CanRemoveGridColumnDefinition))]
+    private void RemoveGridColumnDefinition() =>
+        ApplyStructureEdit(_session.RemoveGridColumnDefinition, "The unused final Grid column was removed.");
+
+    [RelayCommand(CanExecute = nameof(CanApplyGridTrackSize))]
+    private void ApplyGridTrackSize()
+    {
+        if (SelectedGridTrackOption is not { } option
+            || !_gridTrackTargets.TryGetValue(option, out GridTrackTarget target)
+            || !CanApplyGridTrackSize())
+        {
+            return;
+        }
+
+        try
+        {
+            if (_session.SetGridDefinitionSize(target.IsRow, target.Index, GridTrackSizeValue))
+            {
+                SynchronizeState();
+                StatusText = $"Grid {(target.IsRow ? "row" : "column")} {target.Index} size was applied.";
+                RaiseMarkupChanged();
+            }
+        }
+        catch (Exception exception) when (exception is InvalidDataException or InvalidOperationException or ArgumentException or XmlException)
+        {
+            StatusText = $"Grid track size edit failed: {exception.Message}";
+        }
+    }
+
     [RelayCommand]
     private void AddGroupBox()
     {
@@ -1087,6 +1201,38 @@ public partial class AxamlDesignerViewModel : ObservableObject
     private bool CanMoveGridColumnLater() =>
         !HasUnappliedPropertyDrafts && _session.CanMoveSelectedGridControl(0, 1);
 
+    private bool CanAddGridRowDefinition() =>
+        !HasUnappliedPropertyDrafts && _session.CanAddGridRowDefinition;
+
+    private bool CanAddGridColumnDefinition() =>
+        !HasUnappliedPropertyDrafts && _session.CanAddGridColumnDefinition;
+
+    private bool CanRemoveGridRowDefinition() =>
+        !HasUnappliedPropertyDrafts && _session.CanRemoveGridRowDefinition;
+
+    private bool CanRemoveGridColumnDefinition() =>
+        !HasUnappliedPropertyDrafts && _session.CanRemoveGridColumnDefinition;
+
+    private bool CanApplyGridTrackSize() =>
+        !HasUnappliedPropertyDrafts
+        && SelectedGridTrackOption is { } option
+        && _gridTrackTargets.TryGetValue(option, out GridTrackTarget target)
+        && !string.Equals(GridTrackSizeValue.Trim(), target.Size, StringComparison.Ordinal)
+        && _session.CanSetGridDefinitionSize(target.IsRow, target.Index, GridTrackSizeValue);
+
+    private string GetGridDefinitionAvailabilityText()
+    {
+        bool canAdd = _session.CanAddGridRowDefinition || _session.CanAddGridColumnDefinition;
+        bool canRemove = _session.CanRemoveGridRowDefinition || _session.CanRemoveGridColumnDefinition;
+        return (canAdd, canRemove) switch
+        {
+            (true, true) => "Add Auto rows or columns, or remove only a final track unused by every child and span.",
+            (true, false) => "Add Auto rows or columns to expand this safe static Grid; existing placements remain unchanged.",
+            (false, true) => "The cell limit prevents expansion; only unused final tracks can be removed.",
+            _ => "The Grid has reached the 100,000-cell limit and has no unused final track to remove.",
+        };
+    }
+
     private void ApplyStructureEdit(Func<bool> edit, string successMessage)
     {
         if (!EnsureNoStructureDrafts())
@@ -1135,6 +1281,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
         {
             _session.SelectNode(value);
             SynchronizeState();
+            SelectionActivated?.Invoke(this, EventArgs.Empty);
         }
         catch (InvalidOperationException exception)
         {
@@ -1162,6 +1309,26 @@ public partial class AxamlDesignerViewModel : ObservableObject
         }
 
         ApplySelectedValueCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnSelectedGridTrackOptionChanged(string? value)
+    {
+        if (_synchronizing)
+        {
+            return;
+        }
+
+        GridTrackSizeValue = value is not null && _gridTrackTargets.TryGetValue(value, out GridTrackTarget target)
+            ? target.Size
+            : string.Empty;
+        ApplyGridTrackSizeCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnGridTrackSizeValueChanged(string value)
+    {
+        OnPropertyChanged(nameof(GridTrackSizeValidationError));
+        OnPropertyChanged(nameof(HasGridTrackSizeValidationError));
+        ApplyGridTrackSizeCommand.NotifyCanExecuteChanged();
     }
 
     [RelayCommand(CanExecute = nameof(CanUndoDesigner))]
@@ -1205,6 +1372,13 @@ public partial class AxamlDesignerViewModel : ObservableObject
             _currentMarkup = _session.Markup;
         }
 
+        if (!ReferenceEquals(_sourceSelectionRoot, _session.Root)
+            || !string.Equals(_sourceSelectionMarkup, _currentMarkup, StringComparison.Ordinal))
+        {
+            _sourceSelectionRoot = _session.Root;
+            _sourceSelectionMarkup = _currentMarkup;
+            _sourceSelection = AxamlSourceSelection.Create(_currentMarkup, _session.Root, _session.PreviewDiagnostic);
+        }
         _synchronizing = true;
         try
         {
@@ -1218,6 +1392,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
 
             SelectedProperty = _session.SelectedProperty;
             SelectedValue = _session.SelectedValue;
+            SynchronizeGridTracks();
             SynchronizePropertyRows();
             RestoreUnchangedDrafts();
             RefreshDraftAvailability();
@@ -1238,6 +1413,46 @@ public partial class AxamlDesignerViewModel : ObservableObject
         NotifyPaletteCommandsChanged();
     }
 
+    private void SynchronizeGridTracks()
+    {
+        GridTrackTarget? selectedTarget = SelectedGridTrackOption is { } current
+            && _gridTrackTargets.TryGetValue(current, out GridTrackTarget target)
+                ? target
+                : null;
+        GridTrackOptions.Clear();
+        _gridTrackTargets.Clear();
+        if (_session.SelectedNode is { TypeName: "Grid", HasSafeGridLayout: true } grid)
+        {
+            AddGridTrackOptions(isRow: true, grid.RowDefinitions);
+            AddGridTrackOptions(isRow: false, grid.ColumnDefinitions);
+        }
+
+        SelectedGridTrackOption = selectedTarget is { } selected
+            ? GridTrackOptions.FirstOrDefault(option =>
+                _gridTrackTargets[option].IsRow == selected.IsRow
+                && _gridTrackTargets[option].Index == selected.Index)
+            : null;
+        SelectedGridTrackOption ??= GridTrackOptions.FirstOrDefault();
+        GridTrackSizeValue = SelectedGridTrackOption is { } selection
+            && _gridTrackTargets.TryGetValue(selection, out GridTrackTarget selectedTrack)
+                ? selectedTrack.Size
+                : string.Empty;
+        OnPropertyChanged(nameof(HasGridTrackOptions));
+        OnPropertyChanged(nameof(GridTrackSizeValidationError));
+        OnPropertyChanged(nameof(HasGridTrackSizeValidationError));
+        ApplyGridTrackSizeCommand.NotifyCanExecuteChanged();
+    }
+
+    private void AddGridTrackOptions(bool isRow, IReadOnlyList<string> definitions)
+    {
+        for (int index = 0; index < definitions.Count; index++)
+        {
+            string label = $"{(isRow ? "Row" : "Column")} {index}: {definitions[index]}";
+            GridTrackOptions.Add(label);
+            _gridTrackTargets.Add(label, new GridTrackTarget(isRow, index, definitions[index]));
+        }
+    }
+
     private void SynchronizePropertyRows()
     {
         AxamlPreviewNode? node = _session.SelectedNode;
@@ -1250,7 +1465,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
         HashSet<string> propertyNames = new(node.Properties.Keys, StringComparer.Ordinal);
         if (AxamlControlCatalog.TryGet(node.TypeName, out AxamlControlCapability capability))
         {
-            propertyNames.UnionWith(capability.EditableProperties);
+            propertyNames.UnionWith(_session.EditableProperties);
             SynchronizeBindingRows(node, capability);
         }
         else
@@ -1457,6 +1672,10 @@ public partial class AxamlDesignerViewModel : ObservableObject
         MoveGridRowLaterCommand.NotifyCanExecuteChanged();
         MoveGridColumnEarlierCommand.NotifyCanExecuteChanged();
         MoveGridColumnLaterCommand.NotifyCanExecuteChanged();
+        AddGridRowDefinitionCommand.NotifyCanExecuteChanged();
+        AddGridColumnDefinitionCommand.NotifyCanExecuteChanged();
+        RemoveGridRowDefinitionCommand.NotifyCanExecuteChanged();
+        RemoveGridColumnDefinitionCommand.NotifyCanExecuteChanged();
     }
 
     private void NotifyPaletteCommandsChanged()
@@ -1531,6 +1750,8 @@ public partial class AxamlDesignerViewModel : ObservableObject
     {
         return Math.Clamp(value, 16, 4096).ToString("0.#", CultureInfo.InvariantCulture);
     }
+
+    private readonly record struct GridTrackTarget(bool IsRow, int Index, string Size);
 }
 
 public sealed class AxamlDesignerMarkupChangedEventArgs(string markup) : EventArgs

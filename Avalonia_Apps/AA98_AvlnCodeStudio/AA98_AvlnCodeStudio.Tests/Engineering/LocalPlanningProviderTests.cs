@@ -79,6 +79,214 @@ public class LocalPlanningProviderTests
         }
     }
 
+    [TestMethod]
+    public async Task WriteAsync_RejectsRootedAndTraversingSourcePaths()
+    {
+        string testRootPath = Path.Combine(Path.GetTempPath(), "AA98_LocalPlanningProviderTests", Guid.NewGuid().ToString("N"));
+        string repositoryRootPath = Path.Combine(testRootPath, "repository");
+        string outsidePath = Path.Combine(testRootPath, "outside.md");
+        Directory.CreateDirectory(testRootPath);
+
+        try
+        {
+            LocalPlanningProvider provider = new();
+            PlanningWriteRequest request = new()
+            {
+                RepositoryRootPath = repositoryRootPath,
+                PlanningRootPath = "DevOps",
+            };
+            request.Items.Add(new PlanningItem
+            {
+                Id = "AA98-T901",
+                Title = "Rooted Source",
+                Kind = PlanningItemKind.Task,
+                SourcePath = outsidePath,
+            });
+            request.Items.Add(new PlanningItem
+            {
+                Id = "AA98-T902",
+                Title = "Traversing Source",
+                Kind = PlanningItemKind.Task,
+                SourcePath = Path.Combine("..", "outside.md"),
+            });
+            request.Items.Add(new PlanningItem
+            {
+                Id = "AA98-T906",
+                Title = "Windows Style Traversal",
+                Kind = PlanningItemKind.Task,
+                SourcePath = @"..\outside.md",
+            });
+            request.Items.Add(new PlanningItem
+            {
+                Id = "AA98-T907",
+                Title = "Windows Drive Path",
+                Kind = PlanningItemKind.Task,
+                SourcePath = @"C:\outside.md",
+            });
+
+            PlanningWriteResult result = await provider.WriteAsync(request).ConfigureAwait(false);
+
+            Assert.AreEqual(0, result.WrittenSourcePaths.Count);
+            Assert.AreEqual(4, result.Diagnostics.Count);
+            Assert.IsTrue(result.Diagnostics.All(static diagnostic => diagnostic.Code == "PLW003"));
+            Assert.IsFalse(File.Exists(outsidePath));
+        }
+        finally
+        {
+            Directory.Delete(testRootPath, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task WriteAsync_RejectsTraversingPlanningRoot()
+    {
+        string testRootPath = Path.Combine(Path.GetTempPath(), "AA98_LocalPlanningProviderTests", Guid.NewGuid().ToString("N"));
+        string repositoryRootPath = Path.Combine(testRootPath, "repository");
+        string outsidePath = Path.Combine(testRootPath, "outside");
+        Directory.CreateDirectory(testRootPath);
+
+        try
+        {
+            LocalPlanningProvider provider = new();
+            PlanningWriteRequest request = new()
+            {
+                RepositoryRootPath = repositoryRootPath,
+                PlanningRootPath = Path.Combine("..", "outside"),
+            };
+            request.Items.Add(new PlanningItem
+            {
+                Id = "AA98-T903",
+                Title = "Invalid Planning Root",
+                Kind = PlanningItemKind.Task,
+            });
+
+            PlanningWriteResult result = await provider.WriteAsync(request).ConfigureAwait(false);
+
+            Assert.AreEqual(0, result.WrittenSourcePaths.Count);
+            Assert.AreEqual(1, result.Diagnostics.Count);
+            Assert.AreEqual("PLW003", result.Diagnostics.Single().Code);
+            Assert.IsFalse(Directory.Exists(outsidePath));
+        }
+        finally
+        {
+            Directory.Delete(testRootPath, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task WriteAsync_RejectsGeneratedFallbackPathOutsidePlanningRoot()
+    {
+        string testRootPath = Path.Combine(Path.GetTempPath(), "AA98_LocalPlanningProviderTests", Guid.NewGuid().ToString("N"));
+        string repositoryRootPath = Path.Combine(testRootPath, "repository");
+        string outsidePath = Path.Combine(repositoryRootPath, "DevOps", "outside-Escaping-Id.md");
+        Directory.CreateDirectory(testRootPath);
+
+        try
+        {
+            LocalPlanningProvider provider = new();
+            PlanningWriteRequest request = new()
+            {
+                RepositoryRootPath = repositoryRootPath,
+                PlanningRootPath = "DevOps",
+            };
+            request.Items.Add(new PlanningItem
+            {
+                Id = Path.Combine("..", "outside"),
+                Title = "Escaping Id",
+                Kind = PlanningItemKind.Task,
+            });
+
+            PlanningWriteResult result = await provider.WriteAsync(request).ConfigureAwait(false);
+
+            Assert.AreEqual(0, result.WrittenSourcePaths.Count);
+            Assert.AreEqual(1, result.Diagnostics.Count);
+            Assert.AreEqual("PLW003", result.Diagnostics.Single().Code);
+            Assert.IsFalse(File.Exists(outsidePath));
+        }
+        finally
+        {
+            Directory.Delete(testRootPath, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task WriteAsync_RejectsPlanningRootSymlinkEscape()
+    {
+        string testRootPath = Path.Combine(Path.GetTempPath(), "AA98_LocalPlanningProviderTests", Guid.NewGuid().ToString("N"));
+        string repositoryRootPath = Path.Combine(testRootPath, "repository");
+        string outsidePath = Path.Combine(testRootPath, "outside");
+        Directory.CreateDirectory(repositoryRootPath);
+        Directory.CreateDirectory(outsidePath);
+
+        try
+        {
+            CreateDirectorySymbolicLinkOrInconclusive(Path.Combine(repositoryRootPath, "DevOps"), outsidePath);
+            LocalPlanningProvider provider = new();
+            PlanningWriteRequest request = new()
+            {
+                RepositoryRootPath = repositoryRootPath,
+                PlanningRootPath = "DevOps",
+            };
+            request.Items.Add(new PlanningItem
+            {
+                Id = "AA98-T904",
+                Title = "Symlinked Planning Root",
+                Kind = PlanningItemKind.Task,
+            });
+
+            PlanningWriteResult result = await provider.WriteAsync(request).ConfigureAwait(false);
+
+            Assert.AreEqual(0, result.WrittenSourcePaths.Count);
+            Assert.AreEqual(1, result.Diagnostics.Count);
+            Assert.AreEqual("PLW003", result.Diagnostics.Single().Code);
+            Assert.IsFalse(File.Exists(Path.Combine(outsidePath, "Tasks", "AA98-T904-Symlinked-Planning-Root.md")));
+        }
+        finally
+        {
+            Directory.Delete(testRootPath, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task WriteAsync_RejectsDocumentDirectorySymlinkEscape()
+    {
+        string testRootPath = Path.Combine(Path.GetTempPath(), "AA98_LocalPlanningProviderTests", Guid.NewGuid().ToString("N"));
+        string repositoryRootPath = Path.Combine(testRootPath, "repository");
+        string documentDirectory = Path.Combine(repositoryRootPath, "DevOps", "Tasks");
+        string outsidePath = Path.Combine(testRootPath, "outside");
+        Directory.CreateDirectory(documentDirectory);
+        Directory.CreateDirectory(outsidePath);
+
+        try
+        {
+            CreateDirectorySymbolicLinkOrInconclusive(Path.Combine(documentDirectory, "linked"), outsidePath);
+            LocalPlanningProvider provider = new();
+            PlanningWriteRequest request = new()
+            {
+                RepositoryRootPath = repositoryRootPath,
+                PlanningRootPath = "DevOps",
+            };
+            request.Items.Add(new PlanningItem
+            {
+                Id = "AA98-T905",
+                Title = "Symlinked Document Directory",
+                Kind = PlanningItemKind.Task,
+                SourcePath = Path.Combine("DevOps", "Tasks", "linked", "outside.md"),
+            });
+
+            PlanningWriteResult result = await provider.WriteAsync(request).ConfigureAwait(false);
+
+            Assert.AreEqual(0, result.WrittenSourcePaths.Count);
+            Assert.AreEqual(1, result.Diagnostics.Count);
+            Assert.AreEqual("PLW003", result.Diagnostics.Single().Code);
+            Assert.IsFalse(File.Exists(Path.Combine(outsidePath, "outside.md")));
+        }
+        finally
+        {
+            Directory.Delete(testRootPath, recursive: true);
+        }
+    }
+
     /// <summary>
     /// Verifies that saving an existing document preserves its content outside editable metadata.
     /// </summary>
@@ -176,6 +384,18 @@ public class LocalPlanningProviderTests
         finally
         {
             Directory.Delete(repositoryRootPath, recursive: true);
+        }
+    }
+
+    private static void CreateDirectorySymbolicLinkOrInconclusive(string linkPath, string targetPath)
+    {
+        try
+        {
+            Directory.CreateSymbolicLink(linkPath, targetPath);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or PlatformNotSupportedException)
+        {
+            Assert.Inconclusive($"The test environment does not permit directory symbolic links: {exception.Message}");
         }
     }
 }

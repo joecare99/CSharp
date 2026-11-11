@@ -100,6 +100,8 @@ public static class AxamlPropertyValueValidator
                 "HorizontalSpacing" or "VerticalSpacing" when node.TypeName == "DockPanel" => "0",
                 "LastChildFill" when node.TypeName == "DockPanel" => "True",
                 "DockPanel.Dock" when node.ParentTypeName == "DockPanel" => "Left",
+                "Grid.Row" or "Grid.Column" when node.ParentTypeName == "Grid" => "0",
+                "Grid.RowSpan" or "Grid.ColumnSpan" when node.ParentTypeName == "Grid" => "1",
                 "RowSpacing" or "ColumnSpacing" when node.TypeName is "Grid" or "UniformGrid" => "0",
                 "ShowGridLines" when node.TypeName == "Grid" => "False",
                 "HorizontalScrollBarVisibility" or "VerticalScrollBarVisibility" when node.TypeName == "ScrollViewer" => "Auto",
@@ -459,6 +461,22 @@ public static class AxamlPropertyValueValidator
                 : $"Choose one of: {string.Join(", ", options)}.";
         }
 
+        if (propertyName is "Grid.Row" or "Grid.Column")
+        {
+            return int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out int gridIndex)
+                && gridIndex is >= 0 and <= 100_000
+                ? null
+                : "Enter a non-negative Grid index no greater than 100000.";
+        }
+
+        if (propertyName is "Grid.RowSpan" or "Grid.ColumnSpan")
+        {
+            return int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out int gridSpan)
+                && gridSpan is >= 1 and <= 100_000
+                ? null
+                : "Enter a positive Grid span no greater than 100000.";
+        }
+
         if (controlType == "AutoCompleteBox" && propertyName == "MinimumPrefixLength")
         {
             return int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out int prefixLength)
@@ -623,6 +641,7 @@ public static class AxamlPropertyValueValidator
             or "FontSize" or "LineHeight" or "Opacity" or "Spacing" or "StrokeThickness" or "ItemSpacing" or "LineSpacing" or "ItemWidth" or "ItemHeight"
             or "HorizontalSpacing" or "VerticalSpacing" or "RowSpacing" or "ColumnSpacing"
             or "Rows" or "Columns" or "FirstColumn" or "MaxLength" or "MaxLines" or "MinLines"
+            or "Grid.Row" or "Grid.Column" or "Grid.RowSpan" or "Grid.ColumnSpan"
             || controlType == "Slider" && propertyName == "TickFrequency"
             || controlType is "ProgressBar" or "Slider" && propertyName is "Minimum" or "Maximum" or "Value"
             || controlType == "NumericUpDown" && propertyName is "Increment" or "Minimum" or "Maximum" or "Value"

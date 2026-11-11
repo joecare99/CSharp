@@ -1,9 +1,9 @@
 {
   "id": "class-library",
   "name": "Class Library",
-  "description": "A reusable C# class library.",
+  "description": "A reusable C# class library. Build artifacts are written to sibling bin and obj directories.",
   "defaultProjectFileName": "ClassLibrary.csproj",
-  "projectFileContent": "<Project Sdk=\"Microsoft.NET.Sdk\">\n  <PropertyGroup>\n    <TargetFramework>{{TargetFramework}}</TargetFramework>\n    <ImplicitUsings>enable</ImplicitUsings>\n    <Nullable>enable</Nullable>\n  </PropertyGroup>\n</Project>\n",
+  "projectFileContent": "<Project>\n  <PropertyGroup>\n    <BaseOutputPath>../bin/$(MSBuildProjectName)/</BaseOutputPath>\n    <BaseIntermediateOutputPath>../obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>\n  </PropertyGroup>\n  <Import Project=\"Sdk.props\" Sdk=\"Microsoft.NET.Sdk\" />\n  <PropertyGroup>\n    <TargetFramework>{{TargetFramework}}</TargetFramework>\n    <ImplicitUsings>enable</ImplicitUsings>\n    <Nullable>enable</Nullable>\n  </PropertyGroup>\n  <Import Project=\"Sdk.targets\" Sdk=\"Microsoft.NET.Sdk\" />\n</Project>\n",
   "files": [
     {
       "path": "Class1.cs",

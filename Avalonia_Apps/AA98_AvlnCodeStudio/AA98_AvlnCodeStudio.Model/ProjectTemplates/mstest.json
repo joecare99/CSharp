@@ -1,9 +1,9 @@
 {
   "id": "mstest",
   "name": "MSTest Project",
-  "description": "A C# test project using MSTest.",
+  "description": "A C# test project using MSTest. Build artifacts are written to sibling bin and obj directories.",
   "defaultProjectFileName": "Sample.Tests.csproj",
-  "projectFileContent": "<Project Sdk=\"Microsoft.NET.Sdk\">\n  <PropertyGroup>\n    <TargetFramework>{{TargetFramework}}</TargetFramework>\n    <IsTestProject>true</IsTestProject>\n    <IsPackable>false</IsPackable>\n    <ImplicitUsings>enable</ImplicitUsings>\n    <Nullable>enable</Nullable>\n  </PropertyGroup>\n  <ItemGroup>\n    <PackageReference Include=\"Microsoft.NET.Test.Sdk\" Version=\"18.3.0\" />\n    <PackageReference Include=\"MSTest\" Version=\"4.1.0\" />\n  </ItemGroup>\n</Project>\n",
+  "projectFileContent": "<Project>\n  <PropertyGroup>\n    <BaseOutputPath>../bin/$(MSBuildProjectName)/</BaseOutputPath>\n    <BaseIntermediateOutputPath>../obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>\n  </PropertyGroup>\n  <Import Project=\"Sdk.props\" Sdk=\"Microsoft.NET.Sdk\" />\n  <PropertyGroup>\n    <TargetFramework>{{TargetFramework}}</TargetFramework>\n    <IsTestProject>true</IsTestProject>\n    <IsPackable>false</IsPackable>\n    <ImplicitUsings>enable</ImplicitUsings>\n    <Nullable>enable</Nullable>\n  </PropertyGroup>\n  <ItemGroup>\n    <PackageReference Include=\"Microsoft.NET.Test.Sdk\" Version=\"18.3.0\" />\n    <PackageReference Include=\"MSTest\" Version=\"4.1.0\" />\n  </ItemGroup>\n  <Import Project=\"Sdk.targets\" Sdk=\"Microsoft.NET.Sdk\" />\n</Project>\n",
   "files": [
     {
       "path": "SampleTests.cs",

@@ -1,9 +1,9 @@
 {
   "id": "avalonia-mvvm",
   "name": "Avalonia MVVM Application",
-  "description": "A cross-platform Avalonia desktop application using CommunityToolkit.Mvvm.",
+  "description": "A cross-platform Avalonia desktop application with Views, ViewModels and Models using CommunityToolkit.Mvvm; requires the .NET 10 SDK or newer.",
   "defaultProjectFileName": "{{ProjectName}}.csproj",
-  "projectFileContent": "<Project Sdk=\"Microsoft.NET.Sdk\">\n  <PropertyGroup>\n    <OutputType>WinExe</OutputType>\n    <TargetFramework>{{TargetFramework}}</TargetFramework>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>\n  </PropertyGroup>\n  <ItemGroup>\n    <PackageReference Include=\"Avalonia\" Version=\"12.1.4\" />\n    <PackageReference Include=\"Avalonia.Desktop\" Version=\"12.1.4\" />\n    <PackageReference Include=\"Avalonia.Themes.Fluent\" Version=\"12.1.4\" />\n    <PackageReference Include=\"Avalonia.Fonts.Inter\" Version=\"12.1.4\" />\n    <PackageReference Include=\"CommunityToolkit.Mvvm\" Version=\"8.4.2\" />\n  </ItemGroup>\n</Project>\n",
+  "projectFileContent": "<Project>\n  <PropertyGroup>\n    <BaseOutputPath>../bin/$(MSBuildProjectName)/</BaseOutputPath>\n    <BaseIntermediateOutputPath>../obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>\n  </PropertyGroup>\n  <Import Project=\"Sdk.props\" Sdk=\"Microsoft.NET.Sdk\" />\n  <PropertyGroup>\n    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>\n    <OutputType>WinExe</OutputType>\n    <TargetFramework>{{TargetFramework}}</TargetFramework>\n    <LangVersion>14.0</LangVersion>\n    <Nullable>enable</Nullable>\n    <ImplicitUsings>enable</ImplicitUsings>\n    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>\n  </PropertyGroup>\n  <ItemGroup>\n    <PackageReference Include=\"Avalonia\" Version=\"12.1.4\" />\n    <PackageReference Include=\"Avalonia.Desktop\" Version=\"12.1.4\" />\n    <PackageReference Include=\"Avalonia.Themes.Fluent\" Version=\"12.1.4\" />\n    <PackageReference Include=\"Avalonia.Fonts.Inter\" Version=\"12.1.4\" />\n    <PackageReference Include=\"CommunityToolkit.Mvvm\" Version=\"8.4.2\" />\n  </ItemGroup>\n  <Import Project=\"Sdk.targets\" Sdk=\"Microsoft.NET.Sdk\" />\n</Project>\n",
   "files": [
     {
       "path": "Program.cs",
@@ -15,19 +15,23 @@
     },
     {
       "path": "App.axaml.cs",
-      "content": "using Avalonia;\nusing Avalonia.Controls.ApplicationLifetimes;\nusing Avalonia.Markup.Xaml;\n\nnamespace {{ProjectNameIdentifier}};\n\npublic partial class App : Application\n{\n    public override void Initialize()\n    {\n        AvaloniaXamlLoader.Load(this);\n    }\n\n    public override void OnFrameworkInitializationCompleted()\n    {\n        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)\n        {\n            desktop.MainWindow = new MainWindow\n            {\n                DataContext = new MainWindowViewModel(),\n            };\n        }\n\n        base.OnFrameworkInitializationCompleted();\n    }\n}\n"
+      "content": "using Avalonia;\nusing Avalonia.Controls.ApplicationLifetimes;\nusing Avalonia.Markup.Xaml;\nusing {{ProjectNameIdentifier}}.ViewModels;\nusing {{ProjectNameIdentifier}}.Views;\n\nnamespace {{ProjectNameIdentifier}};\n\npublic partial class App : Application\n{\n    public override void Initialize()\n    {\n        AvaloniaXamlLoader.Load(this);\n    }\n\n    public override void OnFrameworkInitializationCompleted()\n    {\n        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)\n        {\n            desktop.MainWindow = new MainWindow\n            {\n                DataContext = new MainWindowViewModel(),\n            };\n        }\n\n        base.OnFrameworkInitializationCompleted();\n    }\n}\n"
     },
     {
-      "path": "MainWindow.axaml",
-      "content": "<Window xmlns=\"https://github.com/avaloniaui\"\n        xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"\n        xmlns:vm=\"using:{{ProjectNameIdentifier}}\"\n        x:Class=\"{{ProjectNameIdentifier}}.MainWindow\"\n        x:DataType=\"vm:MainWindowViewModel\"\n        Title=\"{{ProjectName}}\"\n        Width=\"480\"\n        Height=\"280\">\n  <StackPanel Margin=\"24\" Spacing=\"12\" VerticalAlignment=\"Center\">\n    <TextBlock Text=\"Name\" />\n    <TextBox Text=\"{Binding Name, Mode=TwoWay}\" PlaceholderText=\"Enter your name\" />\n    <Button Content=\"Greet\" Command=\"{Binding GreetCommand}\" HorizontalAlignment=\"Left\" />\n    <TextBlock Text=\"{Binding Greeting}\" />\n  </StackPanel>\n</Window>\n"
+      "path": "Views/MainWindow.axaml",
+      "content": "<Window xmlns=\"https://github.com/avaloniaui\"\n        xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"\n        xmlns:vm=\"using:{{ProjectNameIdentifier}}.ViewModels\"\n        x:Class=\"{{ProjectNameIdentifier}}.Views.MainWindow\"\n        x:DataType=\"vm:MainWindowViewModel\"\n        Title=\"{{ProjectName}}\"\n        Width=\"480\"\n        Height=\"280\">\n  <StackPanel Margin=\"24\" Spacing=\"12\" VerticalAlignment=\"Center\">\n    <TextBlock Text=\"Name\" />\n    <TextBox Text=\"{Binding Name, Mode=TwoWay}\" PlaceholderText=\"Enter your name\" />\n    <Button Content=\"Greet\" Command=\"{Binding GreetCommand}\" HorizontalAlignment=\"Left\" />\n    <TextBlock Text=\"{Binding Greeting}\" />\n  </StackPanel>\n</Window>\n"
     },
     {
-      "path": "MainWindow.axaml.cs",
-      "content": "using Avalonia.Controls;\n\nnamespace {{ProjectNameIdentifier}};\n\npublic partial class MainWindow : Window\n{\n    public MainWindow()\n    {\n        InitializeComponent();\n    }\n}\n"
+      "path": "Views/MainWindow.axaml.cs",
+      "content": "using Avalonia.Controls;\n\nnamespace {{ProjectNameIdentifier}}.Views;\n\npublic partial class MainWindow : Window\n{\n    public MainWindow()\n    {\n        InitializeComponent();\n    }\n}\n"
     },
     {
-      "path": "MainWindowViewModel.cs",
-      "content": "using CommunityToolkit.Mvvm.ComponentModel;\nusing CommunityToolkit.Mvvm.Input;\n\nnamespace {{ProjectNameIdentifier}};\n\npublic partial class MainWindowViewModel : ObservableObject\n{\n    [ObservableProperty]\n    private string _name = string.Empty;\n\n    [ObservableProperty]\n    private string _greeting = \"Enter a name and choose Greet.\";\n\n    [RelayCommand]\n    private void Greet()\n    {\n        Greeting = string.IsNullOrWhiteSpace(Name)\n            ? \"Please enter a name first.\"\n            : $\"Hello, {Name}!\";\n    }\n}\n"
+      "path": "ViewModels/MainWindowViewModel.cs",
+      "content": "using CommunityToolkit.Mvvm.ComponentModel;\nusing CommunityToolkit.Mvvm.Input;\nusing {{ProjectNameIdentifier}}.Models;\n\nnamespace {{ProjectNameIdentifier}}.ViewModels;\n\npublic partial class MainWindowViewModel : ObservableObject\n{\n    public MainWindowViewModel()\n    {\n        Name = string.Empty;\n        Greeting = \"Enter a name and choose Greet.\";\n    }\n\n    [ObservableProperty]\n    public partial string Name { get; set; }\n\n    [ObservableProperty]\n    public partial string Greeting { get; set; }\n\n    [RelayCommand]\n    private void Greet()\n    {\n        Greeting = GreetingMessage.Create(Name);\n    }\n}\n"
+    },
+    {
+      "path": "Models/GreetingMessage.cs",
+      "content": "namespace {{ProjectNameIdentifier}}.Models;\n\npublic static class GreetingMessage\n{\n    public static string Create(string name)\n    {\n        return string.IsNullOrWhiteSpace(name)\n            ? \"Please enter a name first.\"\n            : $\"Hello, {name}!\";\n    }\n}\n"
     }
   ]
 }

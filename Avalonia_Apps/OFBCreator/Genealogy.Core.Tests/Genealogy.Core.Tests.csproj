@@ -25,6 +25,6 @@
     <ProjectReference Include="..\Genealogy.Core\Genealogy.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="18.12.0" />
   </ItemGroup>
 </Project>

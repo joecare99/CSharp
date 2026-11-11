@@ -130,6 +130,54 @@ public sealed class AxamlPreviewServiceTests
     }
 
     [TestMethod]
+    public void GridCellPlacement_IsEditableForSafeDirectChildrenAndRejectsCollisions()
+    {
+        const string markup =
+            "<av:Grid xmlns:av='https://github.com/avaloniaui' RowDefinitions='*,*' ColumnDefinitions='*,*'>"
+            + "<av:Button av:Grid.Row='0' av:Grid.Column='0' />"
+            + "<av:TextBlock av:Grid.Row='1' av:Grid.Column='1' /></av:Grid>";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode grid = service.Parse(markup);
+        AxamlPreviewNode button = grid.Children[0];
+        AxamlPropertyDescriptor row = AxamlPropertyValueValidator.Describe(button, "Grid.Row");
+
+        Assert.IsTrue(grid.HasSafeGridLayout);
+        Assert.IsTrue(button.ParentHasSafeGridLayout);
+        Assert.IsTrue(service.GetEditableProperties(button).Contains("Grid.Row"));
+        Assert.IsTrue(service.GetEditableProperties(button).Contains("Grid.Column"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, row.EditorKind);
+        Assert.AreEqual("0", row.Value);
+        Assert.IsNull(row.ValidationError);
+        AxamlPropertyDescriptor columnSpan = AxamlPropertyValueValidator.Describe(button, "Grid.ColumnSpan");
+        Assert.AreEqual(AxamlPropertyEditorKind.Number, columnSpan.EditorKind);
+        Assert.AreEqual("1", columnSpan.Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "Grid.Row", "100000"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "Grid.Row", "-1"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "Grid.Column", "100001"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "Grid.ColumnSpan", "2"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "Grid.ColumnSpan", "0"));
+
+        string updated = service.UpdateAttribute(markup, button, "Grid.Row", "1");
+        Assert.IsTrue(updated.Contains("av:Grid.Row='1'", StringComparison.Ordinal));
+        AxamlPreviewNode movedButton = service.Parse(updated).Children[0];
+        Assert.AreEqual("1", movedButton.Properties["Grid.Row"]);
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => service.UpdateAttribute(updated, movedButton, "Grid.Column", "1"));
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => service.UpdateAttribute(updated, movedButton, "Grid.ColumnSpan", "2"));
+
+        AxamlPreviewNode nestedButton = service.Parse(
+            "<Grid RowDefinitions='*,*'><StackPanel><Button /></StackPanel></Grid>")
+            .Children.Single().Children.Single();
+        Assert.IsFalse(service.GetEditableProperties(nestedButton).Contains("Grid.Row"));
+
+        const string unsafeMarkup = "<Grid RowDefinitions='*,*'><Button Grid.Row='{Binding Row}' /></Grid>";
+        AxamlPreviewNode boundButton = service.Parse(unsafeMarkup).Children.Single();
+        Assert.IsFalse(boundButton.ParentHasSafeGridLayout);
+        Assert.IsFalse(service.GetEditableProperties(boundButton).Contains("Grid.Row"));
+    }
+
+    [TestMethod]
     public void Parse_ExposesEditableToggleSwitchContentAndNumericValue()
     {
         AxamlPreviewService service = new();

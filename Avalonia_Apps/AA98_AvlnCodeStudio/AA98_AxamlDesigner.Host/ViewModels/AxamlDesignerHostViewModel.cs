@@ -25,6 +25,8 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
     private readonly CSharpSyntaxDiagnosticService _csharpSyntaxDiagnosticService = new();
     private CSharpWorkspace? _workspace;
     private CancellationTokenSource? _bindingContextRefresh;
+    private string? _resourceDocumentPath;
+    private string? _resourceProjectRoot;
 
     public AxamlDesignerHostViewModel()
     {
@@ -135,6 +137,7 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
             NotifyDocumentStateChanged();
             StatusText = ClearWorkspaceContextIfDocumentIsOutside(fullPath)
                 ?? $"Opened {Path.GetFileName(fullPath)}.";
+            RefreshResourceContext();
             QueueBindingContextRefresh();
             return true;
         }
@@ -173,6 +176,7 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
             NotifyDocumentStateChanged();
             StatusText = ClearWorkspaceContextIfDocumentIsOutside(fullPath)
                 ?? $"Saved {Path.GetFileName(fullPath)}.";
+            RefreshResourceContext();
             return true;
         }
         catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException)
@@ -199,6 +203,7 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
             NotifyDocumentStateChanged();
             StatusText = ClearWorkspaceContextIfDocumentIsOutside(fullPath)
                 ?? $"Saved {Path.GetFileName(fullPath)}.";
+            RefreshResourceContext();
             return true;
         }
         catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException)
@@ -245,6 +250,7 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
                 WorkspaceContextStatus =
                     "Workspace directory selected, but no unique .sln, .slnx, or .csproj entry was found. Select one explicitly.";
                 StatusText = WorkspaceContextStatus;
+                RefreshResourceContext();
                 QueueBindingContextRefresh();
                 return true;
             }
@@ -309,6 +315,7 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
             WorkspaceContextStatus =
                 $"Workspace loaded: {Path.GetFileName(fullEntryPath)} ({workspace.Projects.Count} C# project(s)).";
             StatusText = WorkspaceContextStatus;
+            RefreshResourceContext();
             QueueBindingContextRefresh();
             return true;
         }
@@ -402,7 +409,23 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
         WorkspaceEntryPath = string.Empty;
         WorkspaceContextStatus = "No project/workspace selected. Multi-file changes are unavailable.";
         StatusText = WorkspaceContextStatus;
+        RefreshResourceContext();
         QueueBindingContextRefresh();
+    }
+
+    private void RefreshResourceContext()
+    {
+        string? documentPath = string.IsNullOrWhiteSpace(FilePath) ? null : FilePath;
+        string? projectRoot = AxamlResourceProjectResolver.FindProjectRoot(_workspace, WorkspaceRootPath, documentPath);
+        if (WorkspacePathIdentity.Comparer.Equals(_resourceDocumentPath, documentPath)
+            && WorkspacePathIdentity.Comparer.Equals(_resourceProjectRoot, projectRoot))
+        {
+            return;
+        }
+
+        Designer.SetResourceContext(documentPath, projectRoot);
+        _resourceDocumentPath = documentPath;
+        _resourceProjectRoot = projectRoot;
     }
 
     private void QueueBindingContextRefresh()
@@ -573,7 +596,8 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
             IReadOnlyList<string> newCompilerErrors =
                 await _csharpSyntaxDiagnosticService.GetNewCompilerErrorsAsync(
                     resolution.ProjectPath,
-                    sourceRequest);
+                    sourceRequest,
+                    workspaceRoot: workspaceRoot);
             if (newCompilerErrors.Count > 0)
             {
                 throw new InvalidDataException(

@@ -490,6 +490,92 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         }
     }
 
+    public async Task<bool> SupportsObservablePartialPropertiesAsync(
+        string projectPath,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
+        await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            ProjectContext context = await GetProjectContextAsync(projectPath, cancellationToken)
+                .ConfigureAwait(false);
+            Microsoft.CodeAnalysis.Project project = context.Workspace.CurrentSolution.GetProject(context.ProjectId)
+                ?? throw new InvalidOperationException($"Could not load project '{projectPath}'.");
+            return await SupportsObservablePartialPropertiesAsync(project, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _workspaceGate.Release();
+        }
+    }
+
+    private static async Task<bool> SupportsObservablePartialPropertiesAsync(
+        Microsoft.CodeAnalysis.Project project,
+        CancellationToken cancellationToken)
+    {
+        // MSBuildWorkspace opens one target framework; do not infer compatibility for the others.
+        if (string.IsNullOrWhiteSpace(project.FilePath))
+        {
+            return false;
+        }
+
+        try
+        {
+            using Microsoft.Build.Evaluation.ProjectCollection collection = new();
+            Microsoft.Build.Evaluation.Project evaluated = collection.LoadProject(project.FilePath);
+            if (evaluated.GetPropertyValue("TargetFrameworks")
+                .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Length > 1)
+            {
+                return false;
+            }
+        }
+        catch (Exception exception) when (exception is Microsoft.Build.Exceptions.InvalidProjectFileException
+            or IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            return false;
+        }
+
+        Compilation baseline = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Could not compile project '{project.FilePath}'.");
+        string className = "ObservablePropertyProbe" + Guid.NewGuid().ToString("N");
+        string source = $$"""
+            namespace AA98GeneratedCapabilityProbe;
+            public partial class {{className}} : global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+            {
+                [global::CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+                public partial string Value { get; set; } = string.Empty;
+            }
+            """;
+        Document document = project.AddDocument(className + ".cs", SourceText.From(source));
+        Compilation probe = await document.Project.GetCompilationAsync(cancellationToken).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Could not compile the capability probe for '{project.FilePath}'.");
+        IPropertySymbol? property = probe.GetTypeByMetadataName("AA98GeneratedCapabilityProbe." + className)
+            ?.GetMembers("Value").OfType<IPropertySymbol>().FirstOrDefault();
+        if (property?.PartialImplementationPart is null)
+        {
+            return false;
+        }
+
+        Dictionary<string, int> baselineErrors = baseline.GetDiagnostics(cancellationToken)
+            .Where(static diagnostic => diagnostic.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error)
+            .GroupBy(GetCompilerDiagnosticKey, StringComparer.Ordinal)
+            .ToDictionary(static group => group.Key, static group => group.Count(), StringComparer.Ordinal);
+        foreach (Diagnostic diagnostic in probe.GetDiagnostics(cancellationToken)
+                     .Where(static diagnostic => diagnostic.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error))
+        {
+            string key = GetCompilerDiagnosticKey(diagnostic);
+            if (!baselineErrors.TryGetValue(key, out int count) || count == 0)
+            {
+                return false;
+            }
+
+            baselineErrors[key] = count - 1;
+        }
+
+        return true;
+    }
+
     public async Task<WorkspaceFileChangeRequest> PlanViewModelSourceAdditionAsync(
         string workspaceRoot,
         string projectPath,
@@ -520,6 +606,8 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                 ?? throw new InvalidOperationException($"Could not compile project '{projectPath}'.");
             INamedTypeSymbol viewModelType = compilation.GetTypeByMetadataName(viewModelTypeName)
                 ?? throw new InvalidDataException($"ViewModel type '{viewModelTypeName}' could not be uniquely resolved.");
+            bool usePartialProperties = additions.Any(static entry => !entry.Requirement.IsCommand)
+                && await SupportsObservablePartialPropertiesAsync(project, cancellationToken).ConfigureAwait(false);
             INamedTypeSymbol? observableObjectType = compilation.GetTypeByMetadataName(
                 "CommunityToolkit.Mvvm.ComponentModel.ObservableObject");
             if (observableObjectType is null
@@ -635,7 +723,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                 }
 
                 string fieldName = "_" + char.ToLowerInvariant(requirement.Name[0]) + requirement.Name[1..];
-                if (!existingNames.Add(fieldName))
+                if (!usePartialProperties && !existingNames.Add(fieldName))
                 {
                     throw new InvalidDataException(
                         $"Generated backing field '{fieldName}' conflicts with an existing ViewModel member.");
@@ -652,7 +740,9 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
 
                 membersToInsert.Add(
                     $"[global::CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]{Environment.NewLine}"
-                    + $"private {fieldType} {fieldName} = {initialValue};");
+                    + (usePartialProperties
+                        ? $"public partial {fieldType} {requirement.Name} {{ get; set; }} = {initialValue};"
+                        : $"private {fieldType} {fieldName} = {initialValue};"));
             }
 
             (ClassDeclarationSyntax targetDeclaration, Document sourceDocument) = declarations
@@ -721,7 +811,8 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
     public async Task<IReadOnlyList<string>> GetNewCompilerErrorsAsync(
         string projectPath,
         WorkspaceFileChangeRequest request,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        string? workspaceRoot = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
         ArgumentNullException.ThrowIfNull(request);
@@ -739,7 +830,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                 context.Workspace.CurrentSolution.GetProject(context.ProjectId)
                 ?? throw new InvalidOperationException($"Could not load project '{projectPath}'.");
             string targetPath = Path.GetFullPath(Path.Combine(
-                Path.GetDirectoryName(projectPath)!,
+                workspaceRoot ?? Path.GetDirectoryName(projectPath)!,
                 request.RelativePath));
             Document? document = project.Documents.FirstOrDefault(candidate =>
                 candidate.FilePath is not null
@@ -791,6 +882,73 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             }
 
             return newErrors;
+        }
+        finally
+        {
+            _workspaceGate.Release();
+        }
+    }
+
+    public async Task<IReadOnlyList<string>> GetNewSourceCompilerErrorsAsync(
+        string workspaceRoot,
+        string projectPath,
+        WorkspaceFileChangeRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRoot);
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
+        ArgumentNullException.ThrowIfNull(request);
+        if (request.Target != WorkspaceFileChangeTarget.MustNotExist)
+        {
+            throw new InvalidDataException("A new source file is required for compiler validation.");
+        }
+
+        string targetPath = Path.GetFullPath(Path.Combine(workspaceRoot, request.RelativePath));
+        if (!IsWithinDirectory(targetPath, Path.GetDirectoryName(Path.GetFullPath(projectPath))!)
+            || File.Exists(targetPath))
+        {
+            throw new InvalidDataException("The generated source must be a new file within the target project.");
+        }
+
+        await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            ProjectContext context = await GetProjectContextAsync(projectPath, cancellationToken)
+                .ConfigureAwait(false);
+            Microsoft.CodeAnalysis.Project project = context.Workspace.CurrentSolution.GetProject(context.ProjectId)
+                ?? throw new InvalidOperationException($"Could not load project '{projectPath}'.");
+            if (project.Documents.Any(document => document.FilePath is not null
+                && WorkspacePathIdentity.AreEqual(document.FilePath, targetPath)))
+            {
+                throw new InvalidDataException($"The generated source '{request.RelativePath}' already exists in the project.");
+            }
+
+            Compilation baseline = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"Could not compile project '{projectPath}'.");
+            Document added = project.AddDocument(Path.GetFileName(targetPath),
+                SourceText.From(request.ProposedContent), filePath: targetPath);
+            Compilation updated = await added.Project.GetCompilationAsync(cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"Could not compile the generated source for '{projectPath}'.");
+            Dictionary<string, int> remainingErrors = baseline.GetDiagnostics(cancellationToken)
+                .Where(static diagnostic => diagnostic.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error)
+                .GroupBy(GetCompilerDiagnosticKey, StringComparer.Ordinal)
+                .ToDictionary(static group => group.Key, static group => group.Count(), StringComparer.Ordinal);
+            List<string> errors = [];
+            foreach (Diagnostic diagnostic in updated.GetDiagnostics(cancellationToken)
+                         .Where(static diagnostic => diagnostic.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error))
+            {
+                string key = GetCompilerDiagnosticKey(diagnostic);
+                if (remainingErrors.TryGetValue(key, out int count) && count > 0)
+                {
+                    remainingErrors[key] = count - 1;
+                }
+                else
+                {
+                    errors.Add(diagnostic.ToString());
+                }
+            }
+
+            return errors;
         }
         finally
         {
