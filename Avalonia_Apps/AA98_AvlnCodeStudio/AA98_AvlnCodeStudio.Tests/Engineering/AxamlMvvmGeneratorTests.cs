@@ -129,6 +129,39 @@ public sealed class AxamlMvvmGeneratorTests
     }
 
     [TestMethod]
+    public void Generate_ValidatesExistingDataTypeNamespaceAndPreservesMatchingPrefix()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:models="using:Sample"
+                    x:Class="Sample.MainWindow"
+                    x:DataType="models:MainWindowViewModel">
+              <TextBox x:Name="NameTextBox" />
+            </Window>
+            """;
+
+        WorkspaceFileChangeRequest[] changes = new AxamlMvvmGenerator()
+            .Generate("MainWindow.axaml", markup)
+            .ToArray();
+
+        StringAssert.Contains(changes[0].ProposedContent, "x:DataType=\"models:MainWindowViewModel\"");
+        Assert.IsFalse(changes[0].ProposedContent.Contains("xmlns:vm=", System.StringComparison.Ordinal));
+
+        string wrongNamespace = markup.Replace("using:Sample", "using:Other", System.StringComparison.Ordinal);
+        InvalidDataException namespaceException = Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmGenerator().Generate("MainWindow.axaml", wrongNamespace));
+        StringAssert.Contains(namespaceException.Message, "different x:DataType");
+
+        string wrongType = markup.Replace(
+            "models:MainWindowViewModel",
+            "models:OtherViewModel",
+            System.StringComparison.Ordinal);
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmGenerator().Generate("MainWindow.axaml", wrongType));
+    }
+
+    [TestMethod]
     public void Generate_RejectsBoundCommandParameterInsteadOfRedirectingItsDataContext()
     {
         const string markup = """

@@ -39,6 +39,97 @@ public sealed class AxamlPreviewServiceTests
     }
 
     [TestMethod]
+    public void CanvasCoordinates_AreEditableOnlyForDirectSupportedChildren()
+    {
+        const string markup =
+            "<av:Canvas xmlns:av='https://github.com/avaloniaui'><av:Button av:Canvas.Left='12.5' av:Canvas.Top='3' /></av:Canvas>";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode canvas = service.Parse(markup);
+        AxamlPreviewNode button = canvas.Children.Single();
+
+        Assert.IsTrue(canvas.IsSupported);
+        Assert.IsTrue(canvas.CanAppendChildren);
+        Assert.AreEqual("Canvas", button.ParentTypeName);
+        Assert.IsTrue(service.GetEditableProperties(button).Contains("Canvas.Left"));
+        Assert.IsTrue(service.GetEditableProperties(button).Contains("Canvas.Top"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "Canvas.Left", "-100000"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "Canvas.Top", "1.25"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "Canvas.Left", "NaN"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "Canvas.Top", "100001"));
+
+        string updated = service.UpdateAttribute(markup, button, "Canvas.Left", "-4.25");
+        Assert.IsTrue(updated.Contains("av:Canvas.Left='-4.25'", StringComparison.Ordinal));
+        Assert.IsTrue(updated.Contains("av:Canvas.Top='3'", StringComparison.Ordinal));
+
+        AxamlPreviewNode nestedCanvas = service.Parse(
+            "<Canvas><StackPanel><Button /></StackPanel></Canvas>").Children.Single().Children.Single();
+        Assert.IsFalse(service.GetEditableProperties(nestedCanvas).Contains("Canvas.Left"));
+
+        AxamlPreviewNode boundCanvas = service.Parse(
+            "<Canvas><Button Canvas.Left='{Binding X}' /></Canvas>");
+        Assert.IsFalse(boundCanvas.IsSupported);
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => service.UpdateAttribute(
+                "<Canvas><Button Canvas.Left='{Binding X}' /></Canvas>",
+                boundCanvas.Children.Single(),
+                "Canvas.Left",
+                "10"));
+    }
+
+    [TestMethod]
+    public void DockPanelPlacement_IsEditableOnlyForDirectChildrenAndPreservesNamespace()
+    {
+        const string markup =
+            "<av:DockPanel xmlns:av='https://github.com/avaloniaui'><av:Button av:DockPanel.Dock='Top' /></av:DockPanel>";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode dockPanel = service.Parse(markup);
+        AxamlPreviewNode button = dockPanel.Children.Single();
+        AxamlPropertyDescriptor placement = AxamlPropertyValueValidator.Describe(button, "DockPanel.Dock");
+
+        Assert.AreEqual("DockPanel", button.ParentTypeName);
+        Assert.IsTrue(service.GetEditableProperties(button).Contains("DockPanel.Dock"));
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, placement.EditorKind);
+        Assert.AreEqual("Top", placement.Value);
+        CollectionAssert.AreEqual(
+            new[] { "Left", "Top", "Right", "Bottom" },
+            placement.Options.ToArray());
+        Assert.IsNull(placement.ValidationError);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Button", "DockPanel.Dock", "Bottom"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "DockPanel.Dock", "Client"));
+
+        string updated = service.UpdateAttribute(markup, button, "DockPanel.Dock", "Bottom");
+        Assert.IsTrue(updated.Contains("av:DockPanel.Dock='Bottom'", StringComparison.Ordinal));
+
+        const string unsetMarkup =
+            "<av:DockPanel xmlns:av='https://github.com/avaloniaui'><av:Button /></av:DockPanel>";
+        string inserted = service.UpdateAttribute(
+            unsetMarkup,
+            service.Parse(unsetMarkup).Children.Single(),
+            "DockPanel.Dock",
+            "Right");
+        Assert.IsTrue(inserted.Contains("av:DockPanel.Dock=\"Right\"", StringComparison.Ordinal));
+
+        AxamlPreviewNode defaultButton = service.Parse("<DockPanel><Button /></DockPanel>").Children.Single();
+        Assert.AreEqual("Left", AxamlPropertyValueValidator.Describe(defaultButton, "DockPanel.Dock").Value);
+
+        AxamlPreviewNode nestedButton = service.Parse("<DockPanel><StackPanel><Button /></StackPanel></DockPanel>")
+            .Children.Single().Children.Single();
+        Assert.IsFalse(service.GetEditableProperties(nestedButton).Contains("DockPanel.Dock"));
+
+        const string boundMarkup = "<DockPanel><Button DockPanel.Dock='{Binding Side}' /></DockPanel>";
+        AxamlPreviewNode boundButton = service.Parse(boundMarkup).Children.Single();
+        Assert.IsFalse(service.CanEditProperty(boundButton, "DockPanel.Dock"));
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => service.UpdateAttribute(boundMarkup, boundButton, "DockPanel.Dock", "Right"));
+
+        const string foreignMarkup =
+            "<DockPanel xmlns:custom='urn:custom'><Button custom:DockPanel.Dock='Right' /></DockPanel>";
+        AxamlPreviewNode foreignButton = service.Parse(foreignMarkup).Children.Single();
+        Assert.ThrowsExactly<InvalidOperationException>(
+            () => service.UpdateAttribute(foreignMarkup, foreignButton, "DockPanel.Dock", "Right"));
+    }
+
+    [TestMethod]
     public void Parse_ExposesEditableToggleSwitchContentAndNumericValue()
     {
         AxamlPreviewService service = new();

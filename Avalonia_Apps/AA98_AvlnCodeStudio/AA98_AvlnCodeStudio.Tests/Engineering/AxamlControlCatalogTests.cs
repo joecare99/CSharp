@@ -635,6 +635,43 @@ public sealed class AxamlControlCatalogTests
     }
 
     [TestMethod]
+    public void Image_ExposesLiteralSourceAndStretchWithoutLoadingOrInterpretingSource()
+    {
+        AxamlPreviewService service = new();
+        const string literalSource = "avares://Sample/Assets/logo.png";
+        AxamlPreviewNode image = service.Parse(
+            $"<Image xmlns='https://github.com/avaloniaui' Source='{literalSource}' Stretch='UniformToFill' StretchDirection='DownOnly' />");
+        AxamlControlCapability capability = AxamlControlCatalog.All.Single(
+            static item => item.TypeName == "Image");
+
+        Assert.IsTrue(image.IsSupported);
+        Assert.IsFalse(capability.SupportsMvvmGeneration);
+        Assert.IsTrue(capability.EditableProperties.Contains("Source"));
+        Assert.IsFalse(image.CanAppendChildren);
+        AxamlPropertyDescriptor source = AxamlPropertyValueValidator.Describe(image, "Source");
+        Assert.AreEqual(AxamlPropertyEditorKind.Text, source.EditorKind);
+        Assert.AreEqual(literalSource, source.Value);
+        Assert.IsFalse(source.IsReadOnly);
+        Assert.IsNull(source.ValidationError);
+        Assert.AreEqual(AxamlPropertyEditorKind.Enum, AxamlPropertyValueValidator.Describe(image, "Stretch").EditorKind);
+        Assert.AreEqual("UniformToFill", AxamlPropertyValueValidator.Describe(image, "Stretch").Value);
+        Assert.AreEqual("DownOnly", AxamlPropertyValueValidator.Describe(image, "StretchDirection").Value);
+        Assert.AreEqual("Uniform", AxamlPropertyValueValidator.Describe(service.Parse("<Image />"), "Stretch").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Image", "Source", "https://example.invalid/image.png"));
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("Image", "Source", string.Empty));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Image", "Source", new string('a', 257)));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Image", "Source", "bad\u0001source"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Image", "Source", "{StaticResource Logo}"));
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(
+            service.Parse("<Image Source='{Binding Logo}' />"),
+            "Source").IsReadOnly);
+        Assert.IsFalse(service.Parse("<Image><Button /></Image>").IsSupported);
+        Assert.IsFalse(service.Parse("<Image><Image.Source>source.png</Image.Source></Image>").IsSupported);
+        Assert.IsTrue(service.Parse(
+            "<Image><Image.ToolTip><ToolTip><TextBlock Text='Logo' /></ToolTip></Image.ToolTip></Image>").IsSupported);
+    }
+
+    [TestMethod]
     public void CommandParameter_IsLiteralTextForCommandCapableControls()
     {
         AxamlPreviewService service = new();
@@ -1531,7 +1568,7 @@ public sealed class AxamlControlCatalogTests
             .ToArray();
 
         CollectionAssert.AreEqual(
-            new[] { "ComboBox", "ContextMenu", "DockPanel", "ItemsControl", "ListBox", "Menu", "MenuItem", "StackPanel", "TabControl", "TabItem", "ToolTip", "TreeView", "TreeViewItem", "UniformGrid", "WrapPanel" },
+            new[] { "Canvas", "ComboBox", "ContextMenu", "DockPanel", "ItemsControl", "ListBox", "Menu", "MenuItem", "StackPanel", "TabControl", "TabItem", "ToolTip", "TreeView", "TreeViewItem", "UniformGrid", "WrapPanel" },
             actual);
     }
 
@@ -1545,7 +1582,7 @@ public sealed class AxamlControlCatalogTests
             .ToArray();
 
         CollectionAssert.AreEqual(
-            new[] { "Border", "ComboBox", "ContentControl", "Expander", "GroupBox", "ItemsControl", "ListBox", "ScrollViewer", "TabItem", "ToolTip", "TreeView", "TreeViewItem", "Viewbox" },
+            new[] { "Border", "Canvas", "ComboBox", "ContentControl", "Expander", "GroupBox", "ItemsControl", "ListBox", "ScrollViewer", "TabItem", "ToolTip", "TreeView", "TreeViewItem", "Viewbox" },
             actual);
     }
 }

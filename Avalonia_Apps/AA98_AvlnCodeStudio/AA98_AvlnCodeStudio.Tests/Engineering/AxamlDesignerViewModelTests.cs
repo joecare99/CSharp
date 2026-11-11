@@ -1807,6 +1807,25 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task DockPanelChildPlacement_IsEditableAndUndoable()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup(
+            "<DockPanel xmlns='https://github.com/avaloniaui'><Button DockPanel.Dock='Top' /></DockPanel>");
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children.Single();
+        var placement = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "DockPanel.Dock");
+
+        Assert.IsTrue(placement.TrySetValue("Right"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("Right", viewModel.SelectedNode!.Properties["DockPanel.Dock"]);
+
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("Top", viewModel.SelectedNode!.Properties["DockPanel.Dock"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("Right", viewModel.SelectedNode!.Properties["DockPanel.Dock"]);
+    }
+
+    [TestMethod]
     public async Task UniformGridSpacing_IsEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();
@@ -3000,6 +3019,7 @@ public sealed class AxamlDesignerViewModelTests
             ("<CalendarDatePicker />", viewModel => viewModel.AddCalendarDatePickerCommand.Execute(null)),
             ("<ColorPicker />", viewModel => viewModel.AddColorPickerCommand.Execute(null)),
             ("<DatePicker />", viewModel => viewModel.AddDatePickerCommand.Execute(null)),
+            ("<Image", viewModel => viewModel.AddImageCommand.Execute(null)),
             ("<Label />", viewModel => viewModel.AddLabelCommand.Execute(null)),
             ("<ItemsControl />", viewModel => viewModel.AddItemsControlCommand.Execute(null)),
             ("<ListBox />", viewModel => viewModel.AddListBoxCommand.Execute(null)),
@@ -3015,6 +3035,7 @@ public sealed class AxamlDesignerViewModelTests
             ("<Slider />", viewModel => viewModel.AddSliderCommand.Execute(null)),
             ("<ToggleSwitch />", viewModel => viewModel.AddToggleSwitchCommand.Execute(null)),
             ("<Border />", viewModel => viewModel.AddBorderCommand.Execute(null)),
+            ("<Canvas", viewModel => viewModel.AddCanvasCommand.Execute(null)),
             ("<ContentControl />", viewModel => viewModel.AddContentControlCommand.Execute(null)),
             ("<DockPanel />", viewModel => viewModel.AddDockPanelCommand.Execute(null)),
             ("<Expander />", viewModel => viewModel.AddExpanderCommand.Execute(null)),
@@ -3043,6 +3064,29 @@ public sealed class AxamlDesignerViewModelTests
             Assert.IsTrue(viewModel.CanUndo);
             Assert.IsFalse(string.IsNullOrWhiteSpace(viewModel.StatusText));
         }
+    }
+
+    [TestMethod]
+    public async Task DesignerViewModel_ImageSourceEditsAreUndoableAndBindingsRemainReadOnly()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<Image xmlns='https://github.com/avaloniaui' Source='avares://Sample/Assets/old.png' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+
+        var source = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "Source");
+        Assert.IsTrue(source.TrySetValue("avares://Sample/Assets/new.png"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("avares://Sample/Assets/new.png", viewModel.PreviewRoot!.Properties["Source"]);
+
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("avares://Sample/Assets/old.png", viewModel.PreviewRoot!.Properties["Source"]);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("avares://Sample/Assets/new.png", viewModel.PreviewRoot!.Properties["Source"]);
+
+        viewModel.LoadMarkup("<Image xmlns='https://github.com/avaloniaui' Source='{Binding Logo}' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        source = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "Source");
+        Assert.IsFalse(source.TrySetValue("avares://Sample/Assets/new.png"));
     }
 
     [TestMethod]

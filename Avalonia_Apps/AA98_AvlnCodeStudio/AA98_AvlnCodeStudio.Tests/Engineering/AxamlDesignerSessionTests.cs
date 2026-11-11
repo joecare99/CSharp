@@ -198,6 +198,29 @@ public sealed class AxamlDesignerSessionTests
     }
 
     [TestMethod]
+    public void AddChildControl_CanvasPositionsChildrenAndSupportsUndoRedo()
+    {
+        AxamlDesignerSession session = new();
+        session.Load("<av:Canvas xmlns:av='https://github.com/avaloniaui' />");
+        session.SelectNode(session.Root);
+
+        Assert.IsTrue(session.AddChildControl("Button"));
+        Assert.IsTrue(session.AddChildControl("TextBlock"));
+
+        StringAssert.Contains(session.Markup, "<av:Button av:Canvas.Left=\"0\" av:Canvas.Top=\"0\" />");
+        StringAssert.Contains(session.Markup, "<av:TextBlock av:Canvas.Left=\"24\" av:Canvas.Top=\"24\" />");
+        Assert.AreEqual("Canvas", session.Root!.Children[0].ParentTypeName);
+        Assert.AreEqual("24", session.Root.Children[1].Properties["Canvas.Left"]);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(1, session.Root!.Children.Count);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("<av:Canvas xmlns:av='https://github.com/avaloniaui' />", session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(2, session.Root!.Children.Count);
+    }
+
+    [TestMethod]
     public void AddChildControl_RejectsNonContainersExistingContentAndUnknownControls()
     {
         AxamlDesignerSession session = new();
