@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -34,7 +35,7 @@ public sealed class AxamlPreviewControl : ContentControl
         AddHandler(
             InputElement.PointerPressedEvent,
             OnPreviewPointerPressed,
-            RoutingStrategies.Bubble,
+            RoutingStrategies.Tunnel,
             handledEventsToo: true);
         AddHandler(InputElement.PointerReleasedEvent, OnResizePointerReleased, RoutingStrategies.Bubble);
         AddHandler(InputElement.PointerCaptureLostEvent, OnResizePointerCaptureLost, RoutingStrategies.Bubble);
@@ -54,6 +55,9 @@ public sealed class AxamlPreviewControl : ContentControl
         set => SetValue(SelectedNodeProperty, value);
     }
 
+    /// <summary>Finds the foremost visible preview node without activating its inert controls.</summary>
+    public AxamlPreviewNode? FindNodeAtPoint(Point point) => HitTestSelection(this, point, false).Node;
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -67,47 +71,103 @@ public sealed class AxamlPreviewControl : ContentControl
 
     private void OnPreviewPointerPressed(object? sender, PointerPressedEventArgs args)
     {
-        Control? control = args.Source as Control;
-        bool isResizeGrip = false;
-        AxamlPreviewNode? node = null;
-        Control? nodeContainer = null;
-        while (control is not null)
-        {
-            if (control.Classes.Contains("axaml-resize-grip"))
-            {
-                isResizeGrip = true;
-            }
-
-            if (control.Tag is AxamlPreviewNode previewNode)
-            {
-                node = previewNode;
-                nodeContainer = control;
-                break;
-            }
-
-            control = control.Parent as Control;
-        }
-
-        if (node is not null)
-        {
-            SetCurrentValue(SelectedNodeProperty, node);
-            args.Handled = true;
-        }
-
-        if (!isResizeGrip
-            || node is null
-            || nodeContainer is not Border { Child: Grid { Children.Count: > 0 } grid }
-            || grid.Children[0] is not Control content)
+        if (!args.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
             return;
         }
 
-        _resizeGesture = new ResizeGesture(
-            node,
-            args.GetPosition(this),
-            content.Bounds.Width,
-            content.Bounds.Height);
+        Point point = args.GetPosition(this);
+        (AxamlPreviewNode? node, Control? nodeContainer, bool isResizeGrip) = HitTestSelection(this, point, false);
+        if (node is null)
+        {
+            return;
+        }
+
+        double width = 0;
+        double height = 0;
+        if (isResizeGrip
+            && nodeContainer is Border { Child: Grid { Children.Count: > 0 } grid }
+            && grid.Children[0] is Control content)
+        {
+            width = content.Bounds.Width;
+            height = content.Bounds.Height;
+        }
+
+        SetCurrentValue(SelectedNodeProperty, node);
+        args.Handled = true;
+
+        if (!isResizeGrip || width <= 0 || height <= 0)
+        {
+            return;
+        }
+
+        _resizeGesture = new ResizeGesture(node, point, width, height);
         args.Pointer.Capture(this);
+    }
+
+    private (AxamlPreviewNode? Node, Control? Container, bool IsResizeGrip) HitTestSelection(
+        Visual visual, Point point, bool withinGrip)
+    {
+        if (!visual.IsVisible || this.TranslatePoint(point, visual) is not { } local)
+        {
+            return default;
+        }
+
+        bool contains = new Rect(visual.Bounds.Size).Contains(local);
+        if (visual.ClipToBounds && !contains)
+        {
+            return default;
+        }
+
+        bool isGrip = withinGrip || visual is Control control && control.Classes.Contains("axaml-resize-grip") && contains;
+        foreach (Visual child in visual.GetVisualChildren().Reverse())
+        {
+            var result = HitTestSelection(child, point, isGrip);
+            if (result.Node is not null)
+            {
+                return result;
+            }
+
+            if (result.IsResizeGrip)
+            {
+                isGrip = true;
+                break;
+            }
+        }
+
+        if (contains && visual is Control taggedControl)
+        {
+            AxamlPreviewNode? node = taggedControl.Tag as AxamlPreviewNode ?? FindItemNode(taggedControl);
+            if (node is not null)
+            {
+                return (node, taggedControl, isGrip);
+            }
+        }
+
+        return (null, null, isGrip);
+    }
+
+    private static AxamlPreviewNode? FindItemNode(Control container)
+    {
+        ItemsControl? owner = ItemsControl.ItemsControlFromItemContainer(container);
+        if (owner is null || owner is not (ListBox or TabControl) && owner.GetType() != typeof(ItemsControl))
+        {
+            return null;
+        }
+
+        AxamlPreviewNode? parent = owner.GetVisualAncestors()
+            .OfType<Control>()
+            .Select(static ancestor => ancestor.Tag as AxamlPreviewNode)
+            .FirstOrDefault(static node => node is not null);
+        if (parent is null
+            || parent.TypeName != owner.GetType().Name
+            || parent.Children.Count != owner.Items.Count)
+        {
+            return null;
+        }
+
+        int index = owner.IndexFromContainer(container);
+        return index >= 0 && index < parent.Children.Count ? parent.Children[index] : null;
     }
 
     private ResizeGesture? _resizeGesture;
@@ -1086,12 +1146,12 @@ public sealed class AxamlPreviewControl : ContentControl
             IsEnabled = false,
             IsChecked = ParseBoolean(node, "IsChecked"),
         };
-        if (node.Properties.TryGetValue("OffContent", out string? offContent))
+        if (node.RenderProperties.TryGetValue("OffContent", out string? offContent))
         {
             toggleSwitch.OffContent = offContent;
         }
 
-        if (node.Properties.TryGetValue("OnContent", out string? onContent))
+        if (node.RenderProperties.TryGetValue("OnContent", out string? onContent))
         {
             toggleSwitch.OnContent = onContent;
         }
@@ -1877,7 +1937,7 @@ public sealed class AxamlPreviewControl : ContentControl
                 return contentText;
             }
 
-            if (child.Properties.TryGetValue("Content", out string? content)
+            if (child.RenderProperties.TryGetValue("Content", out string? content)
                 && !content.TrimStart().StartsWith('{'))
             {
                 return content;
@@ -1903,7 +1963,7 @@ public sealed class AxamlPreviewControl : ContentControl
 
     private static string? GetProperty(AxamlPreviewNode node, string name)
     {
-        return node.Properties.TryGetValue(name, out string? value) ? value : null;
+        return node.RenderProperties.TryGetValue(name, out string? value) ? value : null;
     }
 
     private sealed record ResizeGesture(AxamlPreviewNode Node, Point StartPosition, double Width, double Height);

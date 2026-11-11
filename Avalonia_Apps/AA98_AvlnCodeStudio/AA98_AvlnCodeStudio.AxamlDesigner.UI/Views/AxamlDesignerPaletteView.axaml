@@ -46,6 +46,34 @@
                         Command="{Binding MoveGridColumnLaterCommand}" />
               </UniformGrid>
             </StackPanel>
+            <StackPanel Spacing="4" IsVisible="{Binding IsSelectedGrid}">
+              <TextBlock Text="Grid definitions" FontWeight="SemiBold" />
+              <UniformGrid Columns="2">
+                <Button Content="Add Auto row" AutomationProperties.Name="Add an Auto Grid row"
+                        Command="{Binding AddGridRowDefinitionCommand}" />
+                <Button Content="Add Auto column" AutomationProperties.Name="Add an Auto Grid column"
+                        Command="{Binding AddGridColumnDefinitionCommand}" />
+                <Button Content="Remove last row" AutomationProperties.Name="Remove unused final Grid row"
+                        Command="{Binding RemoveGridRowDefinitionCommand}" />
+                <Button Content="Remove last column" AutomationProperties.Name="Remove unused final Grid column"
+                        Command="{Binding RemoveGridColumnDefinitionCommand}" />
+              </UniformGrid>
+              <StackPanel Spacing="4" IsVisible="{Binding HasGridTrackOptions}">
+                <TextBlock Text="Resize explicit track" FontWeight="SemiBold" />
+                <ComboBox ItemsSource="{Binding GridTrackOptions}"
+                          SelectedItem="{Binding SelectedGridTrackOption, Mode=TwoWay}"
+                          AutomationProperties.Name="Grid track to resize" />
+                <TextBox Text="{Binding GridTrackSizeValue, Mode=TwoWay}"
+                         PlaceholderText="Auto, *, 2* or 120"
+                         AutomationProperties.Name="Grid track size" />
+                <TextBlock Text="{Binding GridTrackSizeValidationError}"
+                           IsVisible="{Binding HasGridTrackSizeValidationError}"
+                           TextWrapping="Wrap" />
+                <Button Content="Set track size"
+                        AutomationProperties.Name="Set selected Grid track size"
+                        Command="{Binding ApplyGridTrackSizeCommand}" />
+              </StackPanel>
+            </StackPanel>
             <TextBlock Text="{Binding StructureAvailabilityText}" TextWrapping="Wrap" />
             <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap" />
           </StackPanel>

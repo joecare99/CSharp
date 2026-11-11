@@ -24,8 +24,4 @@
     <ProjectReference Include="..\..\Libraries\Property.Editor\Property.Editor.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Model\AA98_AvlnCodeStudio.Model.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageVersion Update="Avalonia" Version="12.1.5" />
-    <PackageVersion Update="Avalonia.Controls.ColorPicker" Version="12.1.5" />
-  </ItemGroup>
 </Project>
