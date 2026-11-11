@@ -2,8 +2,10 @@
   <Import Project="..\..\AA98_AvlnCodeStudio.props" />
   <PropertyGroup>
     <UpDir>..\$(UpDir)</UpDir>
-    <BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-    <BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath Condition="'$(HostArtifactRoot)' != ''">$(HostArtifactRoot)\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath Condition="'$(HostArtifactRoot)' != ''">$(HostArtifactRoot)\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath Condition="'$(HostArtifactRoot)' == ''">$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath Condition="'$(HostArtifactRoot)' == ''">$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
