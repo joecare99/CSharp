@@ -33,9 +33,18 @@ compose the content incrementally; document Undo/Redo protects each structural
 change. Static TreeView/TreeViewItem hierarchies render literal headers and
 expanded branches in a disabled preview; dynamic item sources and unsupported
 children are rejected.
+Canvas children can be appended with deterministic offset coordinates; direct-child
+Canvas.Left/Canvas.Top literals are validated, edited in the property inspector and
+rendered in the inert preview. Unset positions retain Avalonia's defaults, while
+bindings and unsupported Canvas content are rejected. Direct DockPanel children expose
+a validated `DockPanel.Dock` enum in the inspector, and the preview applies literal
+placements without evaluating bindings.
 Rectangle, Ellipse, Line, Polygon and Polyline can be inserted from the palette
 with Undo/Redo. They render only literal solid-color fills/strokes; line
 endpoints and polygon/polyline point lists are finite and bounded. Brush
 resources and dynamic shape bindings remain outside the editable preview subset.
+Image controls can be inserted from the palette and edit literal source references
+and stretch settings. The preview always uses an inert placeholder; it does not
+load local files, network resources or binding expressions.
 Specialized catalog controls and their supported static ComboBox, ListBox and
 TreeView item types are available from the external palette.

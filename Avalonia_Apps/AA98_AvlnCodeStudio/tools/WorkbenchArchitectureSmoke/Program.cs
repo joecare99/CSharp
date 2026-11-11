@@ -101,6 +101,8 @@ internal static class Program
                 + "<ColorPicker Color=\"#FF123456\" ColorModel=\"Hsva\" IsAlphaEnabled=\"False\" IsColorSpectrumVisible=\"False\" Width=\"112\" />"
                 + "<ColorPicker Color=\"NotAColor\" ColorModel=\"Unknown\" IsAlphaEnabled=\"maybe\" Width=\"113\" />"
                 + "<ColorPicker Color=\"{Binding Accent}\" ColorModel=\"{Binding Model}\" IsAlphaEnabled=\"{Binding AlphaEnabled}\" Width=\"114\" />"
+                + "<Image Source=\"https://example.invalid/never-load.png\" Stretch=\"UniformToFill\" Width=\"129\" Height=\"60\" />"
+                + "<Image Source=\"{Binding Logo}\" Width=\"130\" Height=\"60\" />"
                 + "<TabControl SelectedIndex=\"1\" Width=\"118\"><TabItem Header=\"General\"><TextBlock Text=\"Profile\" /></TabItem><TabItem Header=\"Advanced\" /></TabControl>"
                 + "<TabControl SelectedIndex=\"-2\" Width=\"119\"><TabItem Header=\"Invalid\" /></TabControl>"
                 + "<TabControl SelectedIndex=\"{Binding ActiveTab}\" Width=\"120\"><TabItem Header=\"Bound\" /></TabControl>"
@@ -117,11 +119,12 @@ internal static class Program
                 + "<NumericUpDown Value=\"0\" />"
                 + "<NumericUpDown Value=\"1\" FormatString=\"Q\" ParsingNumberStyle=\"AllowHexSpecifier\" HorizontalAlignment=\"999\" VerticalAlignment=\"999\" HorizontalContentAlignment=\"999\" VerticalContentAlignment=\"999\" />"
                 + "<DockPanel HorizontalSpacing=\"4\" VerticalSpacing=\"6\" LastChildFill=\"False\"><TextBlock Text=\"Docked preview\" /><Button Content=\"Docked button\" DockPanel.Dock=\"Bottom\" /></DockPanel>"
-                + "<DockPanel HorizontalSpacing=\"-1\" VerticalSpacing=\"NaN\" LastChildFill=\"False\" />"
+                + "<DockPanel HorizontalSpacing=\"-1\" VerticalSpacing=\"NaN\" LastChildFill=\"False\"><Button Content=\"Invalid dock\" DockPanel.Dock=\"99\" /></DockPanel>"
                 + "<UniformGrid Rows=\"2\" Columns=\"3\" RowSpacing=\"3\" ColumnSpacing=\"5\"><Button Content=\"Uniform one\" /><Button Content=\"Uniform two\" /></UniformGrid>"
                 + "<UniformGrid Columns=\"4\" RowSpacing=\"NaN\" ColumnSpacing=\"-1\" />"
                 + "<Grid RowSpacing=\"2\" ColumnSpacing=\"4\" ShowGridLines=\"True\" Width=\"99\" />"
                 + "<Grid RowSpacing=\"NaN\" ColumnSpacing=\"-1\" ShowGridLines=\"sometimes\" Width=\"98\" />"
+                + "<Canvas Width=\"140\" Height=\"100\" Background=\"White\"><Button Content=\"Positioned\" Canvas.Left=\"15.5\" Canvas.Top=\"21\" /><TextBlock Text=\"Default position\" /></Canvas>"
                 + "<ScrollViewer HorizontalScrollBarVisibility=\"Hidden\" VerticalScrollBarVisibility=\"Disabled\" Width=\"97\"><TextBlock Text=\"Scroll content\" /></ScrollViewer>"
                 + "<ScrollViewer HorizontalScrollBarVisibility=\"Always\" VerticalScrollBarVisibility=\"None\" Width=\"96\" />"
                 + "<Viewbox StretchDirection=\"UpOnly\" Width=\"93\"><TextBlock Text=\"Scale direction\" /></Viewbox>"
@@ -365,7 +368,7 @@ internal static class Program
 
         string[] paletteControlNames =
         [
-            "AutoCompleteBox", "Calendar", "CalendarDatePicker", "ColorPicker", "DatePicker", "ItemsControl", "ListBox",
+            "AutoCompleteBox", "Calendar", "CalendarDatePicker", "ColorPicker", "DatePicker", "Image", "ItemsControl", "ListBox",
             "TimePicker", "TreeView", "ComboBoxItem", "ListBoxItem", "TreeViewItem",
             "Ellipse", "Line", "Polygon", "Polyline", "Rectangle",
         ];
@@ -602,9 +605,31 @@ internal static class Program
         ]);
         Task<bool> reviewing = host.ReviewWorkspaceFileChangesAsync!(proposal, CancellationToken.None);
         await WaitUntilAsync(() => desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Any(), "standalone review");
+        Click(desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Single(), "Cancel");
+        Check(!await reviewing && host.Markup == saved && File.ReadAllText(path) == saved,
+            "Cancelling the standalone review changed the document.");
+
+        Task<bool> staleReviewing = host.ReviewWorkspaceFileChangesAsync(proposal, CancellationToken.None);
+        await WaitUntilAsync(() => desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Any(), "stale standalone review");
+        File.WriteAllText(path, "External edit");
+        WorkspaceFileChangeReviewDialog staleReview = desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Single();
+        Click(staleReview, "Apply 1 change(s)");
+        await WaitUntilAsync(() => staleReview.GetVisualDescendants().OfType<TextBlock>().Any(text =>
+            text.Text?.Contains("not fully applied", StringComparison.Ordinal) == true), "the standalone review conflict");
+        Click(staleReview, "Cancel");
+        Check(!await staleReviewing && host.Markup == saved && File.ReadAllText(path) == "External edit",
+            "The standalone conflict review overwrote the external edit.");
+
+        File.WriteAllText(path, saved);
+        proposal = host.PrepareWorkspaceChanges(
+        [
+            WorkspaceFileChangeRequest.ReplaceExisting("Host.axaml", saved, proposed, expectedOpenDocumentContent: saved),
+        ]);
+        reviewing = host.ReviewWorkspaceFileChangesAsync(proposal, CancellationToken.None);
+        await WaitUntilAsync(() => desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Any(), "repeated standalone review");
         Click(desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Single(), "Apply 1 change(s)");
         Check(await reviewing && host.Markup == proposed && File.ReadAllText(path) == proposed,
-            "The standalone review did not synchronize the open document.");
+            "The repeated standalone review did not synchronize the open document.");
         Check(host.WorkspaceFileChangeService.Undo() && host.Markup == saved, "Standalone workspace undo failed.");
         Check(host.WorkspaceFileChangeService.Redo() && host.Markup == proposed, "Standalone workspace redo failed.");
 
@@ -694,6 +719,8 @@ internal static class Program
             && root.GetVisualDescendants().OfType<Avalonia.Controls.Calendar>().Any()
             && root.GetVisualDescendants().OfType<AutoCompleteBox>().Any()
             && root.GetVisualDescendants().OfType<ColorPicker>().Any()
+            && root.GetVisualDescendants().OfType<Border>().Any(
+                static candidate => candidate.Tag is AxamlPreviewNode { TypeName: "Image" })
             && root.GetVisualDescendants().OfType<ItemsControl>().Any(
                 static candidate => candidate.GetType() == typeof(ItemsControl) && candidate.Width == 127)
             && root.GetVisualDescendants().OfType<TabControl>().Any()
@@ -701,11 +728,39 @@ internal static class Program
             && root.GetVisualDescendants().OfType<NumericUpDown>().Any()
             && root.GetVisualDescendants().OfType<ProgressBar>().Any()
             && root.GetVisualDescendants().OfType<Slider>().Any()
+            && root.GetVisualDescendants().OfType<Canvas>().Any(
+                static canvas => canvas.Width == 140 && canvas.Height == 100)
             && root.GetVisualDescendants().OfType<WrapPanel>().Count() >= 3
             && root.GetVisualDescendants().OfType<CheckBox>().Any()
             && root.GetVisualDescendants().OfType<RadioButton>().Any()
             && root.GetVisualDescendants().OfType<ToggleSwitch>().Any(),
             "catalogued numeric, progress, and toggle control previews");
+        Canvas canvasPreview = root.GetVisualDescendants().OfType<Canvas>()
+            .Single(static canvas => canvas.Width == 140 && canvas.Height == 100);
+        Check(canvasPreview.Children.Count == 2
+            && Canvas.GetLeft(canvasPreview.Children[0]) == 15.5
+            && Canvas.GetTop(canvasPreview.Children[0]) == 21
+            && double.IsNaN(Canvas.GetLeft(canvasPreview.Children[1]))
+            && double.IsNaN(Canvas.GetTop(canvasPreview.Children[1])),
+            $"Canvas children render at valid literal coordinates and preserve unset framework positions "
+            + $"(count={canvasPreview.Children.Count}, coordinates={string.Join(';', canvasPreview.Children.Select(child => $"{Canvas.GetLeft(child)},{Canvas.GetTop(child)}"))})");
+        Border literalImagePreview = root.GetVisualDescendants().OfType<Border>().Single(
+            static candidate => candidate.Tag is AxamlPreviewNode node
+                && node.TypeName == "Image"
+                && node.Properties.GetValueOrDefault("Width") == "129");
+        Border boundImagePreview = root.GetVisualDescendants().OfType<Border>().Single(
+            static candidate => candidate.Tag is AxamlPreviewNode node
+                && node.TypeName == "Image"
+                && node.Properties.GetValueOrDefault("Width") == "130");
+        Check(!literalImagePreview.GetVisualDescendants().OfType<Avalonia.Controls.Image>().Any()
+            && literalImagePreview.GetVisualDescendants().OfType<TextBlock>().Any(
+                static text => text.Text?.Contains("not loaded", StringComparison.OrdinalIgnoreCase) == true)
+            && literalImagePreview.GetVisualDescendants().OfType<TextBlock>().Any(
+                static text => text.Text?.Contains("https://example.invalid/never-load.png", StringComparison.Ordinal) == true)
+            && !boundImagePreview.GetVisualDescendants().OfType<Avalonia.Controls.Image>().Any()
+            && !boundImagePreview.GetVisualDescendants().OfType<TextBlock>().Any(
+                static text => text.Text?.Contains("{Binding Logo}", StringComparison.Ordinal) == true),
+            "Image previews loaded an external source or exposed an unresolved binding.");
         ComboBox comboBox = root.GetVisualDescendants().OfType<ComboBox>()
             .Single(candidate => candidate.CornerRadius == new CornerRadius(4));
         ComboBox selectedComboBox = root.GetVisualDescendants().OfType<ComboBox>()
@@ -1254,11 +1309,13 @@ internal static class Program
             && invalidWrapPanel.ItemsAlignment == WrapPanelItemsAlignment.Start,
             "The WrapPanel preview applied an invalid layout value.");
         Check(dockPanel.HorizontalSpacing == 4 && dockPanel.VerticalSpacing == 6
-            && !dockPanel.LastChildFill && dockPanel.Children.Count == 2,
-            "The DockPanel preview did not preserve spacing, last-child-fill or children.");
+            && !dockPanel.LastChildFill && dockPanel.Children.Count == 2
+            && DockPanel.GetDock(dockPanel.Children[1]) == Dock.Bottom,
+            "The DockPanel preview did not preserve spacing, last-child-fill, child placement or children.");
         Check(invalidDockPanel.HorizontalSpacing == 0 && invalidDockPanel.VerticalSpacing == 0
-            && !invalidDockPanel.LastChildFill,
-            "The DockPanel preview applied invalid spacing values.");
+            && !invalidDockPanel.LastChildFill && invalidDockPanel.Children.Count == 1
+            && DockPanel.GetDock(invalidDockPanel.Children[0]) == Dock.Left,
+            "The DockPanel preview applied invalid spacing or child placement values.");
         Check(uniformGrid.Rows == 2 && uniformGrid.Columns == 3
             && uniformGrid.RowSpacing == 3 && uniformGrid.ColumnSpacing == 5
             && uniformGrid.Children.Count == 2,
