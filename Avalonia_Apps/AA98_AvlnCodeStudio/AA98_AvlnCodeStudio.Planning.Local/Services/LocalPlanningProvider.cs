@@ -59,16 +59,51 @@ public sealed class LocalPlanningProvider : IPlanningProvider
         ArgumentNullException.ThrowIfNull(request);
         cancellationToken.ThrowIfCancellationRequested();
 
-        string repositoryRootPath = string.IsNullOrWhiteSpace(request.RepositoryRootPath)
-            ? Directory.GetCurrentDirectory()
-            : Path.GetFullPath(request.RepositoryRootPath);
-        string planningRootPath = Path.GetFullPath(Path.Combine(repositoryRootPath, request.PlanningRootPath));
-        Directory.CreateDirectory(planningRootPath);
+        PlanningWriteResult result = new();
+        string repositoryRootPath;
+        try
+        {
+            repositoryRootPath = string.IsNullOrWhiteSpace(request.RepositoryRootPath)
+                ? Directory.GetCurrentDirectory()
+                : Path.GetFullPath(request.RepositoryRootPath);
+            repositoryRootPath = ResolveExistingLinks(repositoryRootPath);
+        }
+        catch (Exception exception) when (IsPathResolutionException(exception))
+        {
+            AddPathDiagnostic(result, request.RepositoryRootPath, $"The repository root could not be resolved safely: {exception.Message}");
+            return result;
+        }
+
+        if (!TryNormalizeRelativePath(request.PlanningRootPath, allowCurrentDirectory: true, out string normalizedPlanningRoot, out string planningRootError)
+            || !TryResolvePathWithinRoot(
+                repositoryRootPath,
+                Path.Combine(repositoryRootPath, normalizedPlanningRoot),
+                out string planningRootPath,
+                out planningRootError))
+        {
+            AddPathDiagnostic(result, request.PlanningRootPath, planningRootError);
+            return result;
+        }
+
+        try
+        {
+            Directory.CreateDirectory(planningRootPath);
+        }
+        catch (Exception exception) when (IsPathResolutionException(exception))
+        {
+            AddPathDiagnostic(result, request.PlanningRootPath, $"The planning root could not be created safely: {exception.Message}");
+            return result;
+        }
+
+        if (!TryResolvePathWithinRoot(repositoryRootPath, planningRootPath, out planningRootPath, out planningRootError))
+        {
+            AddPathDiagnostic(result, request.PlanningRootPath, planningRootError);
+            return result;
+        }
 
         IReadOnlyList<PlanningDocumentTemplate> templates = await GetTemplatesAsync(cancellationToken).ConfigureAwait(false);
         Dictionary<PlanningItemKind, PlanningDocumentTemplate> templatesByKind = templates.ToDictionary(static template => template.Kind);
 
-        PlanningWriteResult result = new();
         foreach (PlanningItem item in request.Items)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -85,12 +120,51 @@ public sealed class LocalPlanningProvider : IPlanningProvider
                 continue;
             }
 
-            string relativeSourcePath = ResolveSourcePath(item, request.PlanningRootPath);
-            string fullSourcePath = Path.GetFullPath(Path.Combine(repositoryRootPath, relativeSourcePath));
+            string requestedSourcePath = ResolveSourcePath(item, normalizedPlanningRoot);
+            if (!TryNormalizeRelativePath(requestedSourcePath, allowCurrentDirectory: false, out string relativeSourcePath, out string sourcePathError))
+            {
+                AddPathDiagnostic(result, item.SourcePath, sourcePathError);
+                continue;
+            }
+
+            if (!TryResolvePathWithinRoot(
+                planningRootPath,
+                Path.Combine(repositoryRootPath, relativeSourcePath),
+                out string fullSourcePath,
+                out sourcePathError))
+            {
+                AddPathDiagnostic(result, item.SourcePath, sourcePathError);
+                continue;
+            }
+
             string? directoryPath = Path.GetDirectoryName(fullSourcePath);
             if (!string.IsNullOrWhiteSpace(directoryPath))
             {
-                Directory.CreateDirectory(directoryPath);
+                if (!TryResolvePathWithinRoot(planningRootPath, directoryPath, out directoryPath, out sourcePathError))
+                {
+                    AddPathDiagnostic(result, item.SourcePath, sourcePathError);
+                    continue;
+                }
+
+                try
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+                catch (Exception exception) when (IsPathResolutionException(exception))
+                {
+                    AddPathDiagnostic(result, item.SourcePath, $"The planning document directory could not be created safely: {exception.Message}");
+                    continue;
+                }
+
+                if (!TryResolvePathWithinRoot(
+                    planningRootPath,
+                    Path.Combine(directoryPath, Path.GetFileName(fullSourcePath)),
+                    out fullSourcePath,
+                    out sourcePathError))
+                {
+                    AddPathDiagnostic(result, item.SourcePath, sourcePathError);
+                    continue;
+                }
             }
 
             if (HasDocumentConflict(request, item, relativeSourcePath, fullSourcePath, out Diagnostic? conflictDiagnostic))
@@ -102,11 +176,166 @@ public sealed class LocalPlanningProvider : IPlanningProvider
             string content = File.Exists(fullSourcePath)
                 ? UpdateExistingDocument(ResolveDocumentText(fullSourcePath, item), item)
                 : RenderTemplate(template.Content, item);
+
+            if (!TryResolvePathWithinRoot(planningRootPath, fullSourcePath, out fullSourcePath, out sourcePathError))
+            {
+                AddPathDiagnostic(result, item.SourcePath, sourcePathError);
+                continue;
+            }
+
             await File.WriteAllTextAsync(fullSourcePath, content, cancellationToken).ConfigureAwait(false);
             result.WrittenSourcePaths.Add(relativeSourcePath);
         }
 
         return result;
+    }
+
+    private static bool TryNormalizeRelativePath(
+        string? path,
+        bool allowCurrentDirectory,
+        out string normalizedPath,
+        out string errorMessage)
+    {
+        normalizedPath = string.Empty;
+        errorMessage = string.Empty;
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            if (allowCurrentDirectory)
+            {
+                normalizedPath = ".";
+                return true;
+            }
+
+            errorMessage = "The planning document path must be a non-empty repository-relative path.";
+            return false;
+        }
+
+        if (Path.IsPathRooted(path)
+            || path.StartsWith("\\\\", StringComparison.Ordinal)
+            || path.StartsWith("//", StringComparison.Ordinal)
+            || (path.Length >= 2 && char.IsAsciiLetter(path[0]) && path[1] == ':'))
+        {
+            errorMessage = "Rooted planning paths are not allowed.";
+            return false;
+        }
+
+        string platformPath = path
+            .Replace('\\', Path.DirectorySeparatorChar)
+            .Replace('/', Path.DirectorySeparatorChar);
+        if (Path.IsPathRooted(platformPath))
+        {
+            errorMessage = "Rooted planning paths are not allowed.";
+            return false;
+        }
+
+        string[] segments = platformPath.Split(
+            [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar],
+            StringSplitOptions.RemoveEmptyEntries);
+        if (segments.Any(static segment => segment == ".."))
+        {
+            errorMessage = "Parent-directory traversal is not allowed in planning paths.";
+            return false;
+        }
+
+        if (!allowCurrentDirectory && (segments.Length == 0 || segments.All(static segment => segment == ".")))
+        {
+            errorMessage = "The planning document path must identify a file inside the planning root.";
+            return false;
+        }
+
+        normalizedPath = segments.Length == 0 ? "." : Path.Combine(segments);
+        return true;
+    }
+
+    private static bool TryResolvePathWithinRoot(
+        string rootPath,
+        string candidatePath,
+        out string resolvedPath,
+        out string errorMessage)
+    {
+        resolvedPath = string.Empty;
+        errorMessage = string.Empty;
+        try
+        {
+            string fullCandidatePath = Path.GetFullPath(candidatePath);
+            if (!IsPathWithin(rootPath, fullCandidatePath))
+            {
+                errorMessage = "The planning path resolves outside the allowed planning root.";
+                return false;
+            }
+
+            resolvedPath = ResolveExistingLinks(fullCandidatePath);
+            if (!IsPathWithin(rootPath, resolvedPath))
+            {
+                errorMessage = "A symbolic link redirects the planning path outside the allowed planning root.";
+                resolvedPath = string.Empty;
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception exception) when (IsPathResolutionException(exception))
+        {
+            errorMessage = $"The planning path could not be resolved safely: {exception.Message}";
+            resolvedPath = string.Empty;
+            return false;
+        }
+    }
+
+    private static string ResolveExistingLinks(string path)
+    {
+        string fullPath = Path.GetFullPath(path);
+        string pathRoot = Path.GetPathRoot(fullPath)
+            ?? throw new IOException("The path has no filesystem root.");
+        string resolvedPath = pathRoot;
+        string[] segments = fullPath[pathRoot.Length..].Split(
+            [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar],
+            StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string segment in segments)
+        {
+            string candidatePath = Path.Combine(resolvedPath, segment);
+            FileSystemInfo pathInfo = Directory.Exists(candidatePath)
+                ? new DirectoryInfo(candidatePath)
+                : new FileInfo(candidatePath);
+            if (pathInfo.LinkTarget is not null)
+            {
+                FileSystemInfo target = pathInfo.ResolveLinkTarget(returnFinalTarget: true)
+                    ?? throw new IOException($"The symbolic link '{candidatePath}' could not be resolved.");
+                resolvedPath = Path.GetFullPath(target.FullName);
+            }
+            else
+            {
+                resolvedPath = candidatePath;
+            }
+        }
+
+        return Path.GetFullPath(resolvedPath);
+    }
+
+    private static bool IsPathWithin(string rootPath, string candidatePath)
+    {
+        string relativePath = Path.GetRelativePath(rootPath, candidatePath);
+        return !Path.IsPathRooted(relativePath)
+            && relativePath != ".."
+            && !relativePath.StartsWith($"..{Path.DirectorySeparatorChar}", StringComparison.Ordinal);
+    }
+
+    private static bool IsPathResolutionException(Exception exception)
+        => exception is ArgumentException
+            or IOException
+            or UnauthorizedAccessException
+            or NotSupportedException;
+
+    private static void AddPathDiagnostic(PlanningWriteResult result, string? sourcePath, string message)
+    {
+        result.Diagnostics.Add(new Diagnostic
+        {
+            Code = "PLW003",
+            Message = message,
+            Severity = DiagnosticSeverity.Error,
+            SourcePath = sourcePath,
+        });
     }
 
     public Task<IReadOnlyList<PlanningDocumentTemplate>> GetTemplatesAsync(CancellationToken cancellationToken = default)
