@@ -99,12 +99,6 @@ internal static class Program
                 () => workbench.GenerateAxamlMvvmCommand.CanExecute(null),
                 "Workbench MVVM generation becoming available");
 
-            Task generating = workbench.GenerateAxamlMvvmCommand.ExecuteAsync(null);
-            WorkspaceFileChangeReviewDialog review = await WaitForReviewAsync(desktop, generating, workbench);
-            Click(review, "Apply 2 change(s)");
-            await generating.WaitAsync(TimeSpan.FromMinutes(2));
-
-            string generatedViewModelPath = Path.Combine(Path.GetDirectoryName(axamlPath)!, "LoginViewViewModel.cs");
             string originalMarkup = """
                 <Window xmlns="https://github.com/avaloniaui"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -125,6 +119,21 @@ internal static class Program
                   </StackPanel>
                 </Window>
                 """;
+            string generatedViewModelPath = Path.Combine(Path.GetDirectoryName(axamlPath)!, "LoginViewViewModel.cs");
+            Task generating = workbench.GenerateAxamlMvvmCommand.ExecuteAsync(null);
+            WorkspaceFileChangeReviewDialog review = await WaitForReviewAsync(desktop, generating, workbench);
+            Click(review, "Cancel");
+            await generating.WaitAsync(TimeSpan.FromMinutes(2));
+            Check(await File.ReadAllTextAsync(axamlPath) == originalMarkup && !File.Exists(generatedViewModelPath),
+                "Cancelling the MVVM review changed the project files.");
+            Check(!workbench.WorkspaceFileChangeService.CanUndo,
+                "Cancelling the MVVM review unexpectedly recorded undo history.");
+
+            generating = workbench.GenerateAxamlMvvmCommand.ExecuteAsync(null);
+            review = await WaitForReviewAsync(desktop, generating, workbench);
+            Click(review, "Apply 2 change(s)");
+            await generating.WaitAsync(TimeSpan.FromMinutes(2));
+
             string generatedMarkup = await File.ReadAllTextAsync(axamlPath);
             string generatedViewModel = await File.ReadAllTextAsync(generatedViewModelPath);
             Check(generatedMarkup.Contains("Text=\"{Binding UserName, Mode=TwoWay}\"", StringComparison.Ordinal),
