@@ -18,6 +18,8 @@ public sealed class AxamlDesignerSession
     private Snapshot? _propertyEditSnapshot;
     private string? _propertyEditName;
     private bool _propertyEditHasChanges;
+    private string? _documentPath;
+    private string? _projectRoot;
 
     public AxamlDesignerSession(AxamlPreviewService? previewService = null)
     {
@@ -43,11 +45,14 @@ public sealed class AxamlDesignerSession
     public bool CanRemoveSelectedControl => TryGetRemovablePosition(out _, out _);
 
     public bool CanMoveSelectedControlEarlier =>
-        TryGetReorderPosition(out _, out int index) && index > 0;
+        TryGetReorderPosition(out AxamlPreviewNode? parent, out int index)
+        && index > 0
+        && CanMoveControlWithinParent(parent!, index, -1);
 
     public bool CanMoveSelectedControlLater =>
         TryGetReorderPosition(out AxamlPreviewNode? parent, out int index)
-        && index < parent!.Children.Count - 1;
+        && index < parent!.Children.Count - 1
+        && CanMoveControlWithinParent(parent, index, 1);
 
     public bool IsSelectedGridChild =>
         TryGetSelectedParent(out AxamlPreviewNode? parent, out _) && parent!.TypeName == "Grid";
@@ -56,6 +61,26 @@ public sealed class AxamlDesignerSession
         TryGetSelectedParent(out AxamlPreviewNode? parent, out _)
         && parent is { IsSupported: true, TypeName: "Grid", HasSafeGridLayout: true }
         && SelectedNode is { IsSupported: true };
+
+    public bool CanAddGridRowDefinition =>
+        SelectedNode is { TypeName: "Grid" } grid
+        && _previewService.CanAddGridDefinition(grid, addRow: true);
+
+    public bool CanAddGridColumnDefinition =>
+        SelectedNode is { TypeName: "Grid" } grid
+        && _previewService.CanAddGridDefinition(grid, addRow: false);
+
+    public bool CanRemoveGridRowDefinition =>
+        SelectedNode is { TypeName: "Grid" } grid
+        && _previewService.CanRemoveGridDefinition(grid, removeRow: true);
+
+    public bool CanRemoveGridColumnDefinition =>
+        SelectedNode is { TypeName: "Grid" } grid
+        && _previewService.CanRemoveGridDefinition(grid, removeRow: false);
+
+    public bool CanSetGridDefinitionSize(bool isRow, int index, string value) =>
+        SelectedNode is { TypeName: "Grid" } grid
+        && _previewService.CanSetGridDefinitionSize(grid, isRow, index, value);
 
     public bool CanMoveSelectedGridControl(int rowChange, int columnChange) =>
         CanEditSelectedGridLayout
@@ -68,6 +93,30 @@ public sealed class AxamlDesignerSession
             .Where(property => _previewService.CanEditProperty(SelectedNode, property))
             .ToArray();
 
+    public void SetResourceContext(string? documentPath, string? projectRoot)
+    {
+        if (_documentPath == documentPath && _projectRoot == projectRoot)
+        {
+            return;
+        }
+
+        if (Root is not null)
+        {
+            string? selectedType = SelectedNode?.TypeName;
+            int selectedOffset = SelectedNode?.SourceStartOffset ?? -1;
+            AxamlPreviewParseResult result = _previewService.ParseForPreview(Markup, documentPath, projectRoot);
+            AxamlPreviewNode root = result.Root
+                ?? throw new XmlException(result.Diagnostic ?? "The AXAML document could not be previewed.");
+            Root = root;
+            PreviewDiagnostic = result.Diagnostic;
+            SelectedNode = selectedType is null ? null : FindNode(root, selectedType, selectedOffset);
+            RefreshSelectedValue();
+        }
+
+        _documentPath = documentPath;
+        _projectRoot = projectRoot;
+    }
+
     public void Load(string markup)
     {
         ArgumentNullException.ThrowIfNull(markup);
@@ -78,7 +127,7 @@ public sealed class AxamlDesignerSession
 
         string? selectedType = SelectedNode?.TypeName;
         int selectedOffset = SelectedNode?.SourceStartOffset ?? -1;
-        AxamlPreviewParseResult result = _previewService.ParseForPreview(markup);
+        AxamlPreviewParseResult result = _previewService.ParseForPreview(markup, _documentPath, _projectRoot);
         AxamlPreviewNode root = result.Root
             ?? throw new XmlException(result.Diagnostic ?? "The AXAML document could not be previewed.");
         Markup = markup;
@@ -189,7 +238,7 @@ public sealed class AxamlDesignerSession
             return false;
         }
 
-        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup, _documentPath, _projectRoot);
         PushHistory(_undoHistory, Capture());
         _redoHistory.Clear();
         Markup = updatedMarkup;
@@ -251,7 +300,7 @@ public sealed class AxamlDesignerSession
             updatedMarkup = _previewService.UpdateAttribute(updatedMarkup, currentNode, propertyName, value);
             if (!string.Equals(updatedMarkup, previousMarkup, StringComparison.Ordinal))
             {
-                AxamlPreviewNode updatedRoot = _previewService.Parse(updatedMarkup);
+                AxamlPreviewNode updatedRoot = _previewService.Parse(updatedMarkup, _documentPath, _projectRoot);
                 currentNode = FindNode(updatedRoot, selectedNode.TypeName, selectedNode.SourceStartOffset)
                     ?? throw new InvalidOperationException("The selected AXAML control could not be located after editing.");
             }
@@ -262,7 +311,7 @@ public sealed class AxamlDesignerSession
             return false;
         }
 
-        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup, _documentPath, _projectRoot);
         if (string.Equals(_propertyEditName, selectedProperty, StringComparison.Ordinal)
             && _propertyEditSnapshot is not null)
         {
@@ -303,7 +352,7 @@ public sealed class AxamlDesignerSession
             return false;
         }
 
-        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup, _documentPath, _projectRoot);
         PushHistory(_undoHistory, Capture());
         _redoHistory.Clear();
         Markup = updatedMarkup;
@@ -336,7 +385,7 @@ public sealed class AxamlDesignerSession
             return false;
         }
 
-        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup, _documentPath, _projectRoot);
         AxamlPreviewNode updatedControl = FindNode(root, selectedControl.TypeName, selectedControl.SourceStartOffset)
             ?? throw new InvalidDataException($"The selected control could not be located after adding its {previewTypeName}.");
         AxamlPreviewNode attachedPreview = updatedControl.Children.SingleOrDefault(child =>
@@ -362,7 +411,7 @@ public sealed class AxamlDesignerSession
         }
 
         string updatedMarkup = _previewService.RemoveChildControl(Markup, parent!, SelectedNode!);
-        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup, _documentPath, _projectRoot);
         AxamlPreviewNode newSelection = FindNode(root, parent!.TypeName, parent.SourceStartOffset)
             ?? throw new InvalidDataException("The parent could not be located after removing the control.");
         EndPropertyEdit();
@@ -384,17 +433,19 @@ public sealed class AxamlDesignerSession
         }
 
         if (!TryGetReorderPosition(out AxamlPreviewNode? parent, out int index)
-            || index + direction < 0 || index + direction >= parent!.Children.Count)
+            || index + direction < 0
+            || index + direction >= parent!.Children.Count
+            || !CanMoveControlWithinParent(parent, index, direction))
         {
             throw new InvalidOperationException(
-                "Select a direct panel child with an adjacent control in that direction.");
+                "Select a direct child with an adjacent control in that direction; the LastChildFill client must remain last.");
         }
 
         AxamlPreviewNode selected = SelectedNode!;
         AxamlPreviewNode sibling = parent.Children[index + direction];
         (string updatedMarkup, int selectedOffset) = _previewService.MoveChildControl(
             Markup, parent, selected, sibling, moveEarlier: direction < 0);
-        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup, _documentPath, _projectRoot);
         AxamlPreviewNode newSelection = FindNode(root, selected.TypeName, selectedOffset)
             ?? throw new InvalidDataException("The selected control could not be located after moving it.");
         EndPropertyEdit();
@@ -425,9 +476,47 @@ public sealed class AxamlDesignerSession
 
         AxamlPreviewNode selected = SelectedNode!;
         string updatedMarkup = _previewService.MoveGridChild(Markup, parent!, selected, rowChange, columnChange);
-        AxamlPreviewNode root = _previewService.Parse(updatedMarkup);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup, _documentPath, _projectRoot);
         AxamlPreviewNode newSelection = FindNode(root, selected.TypeName, selected.SourceStartOffset)
             ?? throw new InvalidDataException("The selected control could not be located after moving it.");
+        EndPropertyEdit();
+        PushHistory(_undoHistory, Capture());
+        _redoHistory.Clear();
+        Markup = updatedMarkup;
+        Root = root;
+        SelectedNode = newSelection;
+        SelectedProperty = EditableProperties.FirstOrDefault();
+        RefreshSelectedValue();
+        return true;
+    }
+
+    public bool AddGridRowDefinition() => AddGridDefinition(addRow: true);
+
+    public bool AddGridColumnDefinition() => AddGridDefinition(addRow: false);
+
+    public bool RemoveGridRowDefinition() => RemoveGridDefinition(removeRow: true);
+
+    public bool RemoveGridColumnDefinition() => RemoveGridDefinition(removeRow: false);
+
+    public bool SetGridDefinitionSize(bool isRow, int index, string value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        AxamlPreviewNode grid = SelectedNode
+            ?? throw new InvalidOperationException("Select a safe Grid before editing a row or column size.");
+        if (!_previewService.CanSetGridDefinitionSize(grid, isRow, index, value))
+        {
+            throw new InvalidOperationException("The selected Grid track or GridLength value is not safe to edit.");
+        }
+
+        string updatedMarkup = _previewService.SetGridDefinitionSize(Markup, grid, isRow, index, value);
+        if (string.Equals(updatedMarkup, Markup, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup, _documentPath, _projectRoot);
+        AxamlPreviewNode newSelection = FindNode(root, grid.TypeName, grid.SourceStartOffset)
+            ?? throw new InvalidDataException("The selected Grid could not be located after editing a definition.");
         EndPropertyEdit();
         PushHistory(_undoHistory, Capture());
         _redoHistory.Clear();
@@ -491,7 +580,7 @@ public sealed class AxamlDesignerSession
 
     private void Restore(Snapshot snapshot)
     {
-        AxamlPreviewNode root = _previewService.Parse(snapshot.Markup);
+        AxamlPreviewNode root = _previewService.Parse(snapshot.Markup, _documentPath, _projectRoot);
         Markup = snapshot.Markup;
         Root = root;
         SelectedNode = snapshot.SelectedType is null
@@ -555,8 +644,7 @@ public sealed class AxamlDesignerSession
             return parent.HasSafeGridLayout;
         }
 
-        return parent.TypeName != "DockPanel"
-            && parent.CanAppendChildren
+        return parent.CanAppendChildren
             && AxamlControlCatalog.TryGet(parent.TypeName, out AxamlControlCapability capability)
             && capability.AllowsAppendingChildren;
     }
@@ -579,6 +667,68 @@ public sealed class AxamlDesignerSession
 
     private bool TryGetReorderPosition(out AxamlPreviewNode? parent, out int index) =>
         TryGetStructurePosition(out parent, out index) && parent!.TypeName != "Grid";
+
+    private static bool CanMoveControlWithinParent(AxamlPreviewNode parent, int index, int direction)
+    {
+        return parent.TypeName != "DockPanel"
+            || !IsDockPanelLastChildFill(parent)
+            || index != parent.Children.Count - 1
+                && index + direction != parent.Children.Count - 1;
+    }
+
+    private bool AddGridDefinition(bool addRow)
+    {
+        AxamlPreviewNode grid = SelectedNode
+            ?? throw new InvalidOperationException("Select a safe Grid before adding a row or column.");
+        if (!_previewService.CanAddGridDefinition(grid, addRow))
+        {
+            throw new InvalidOperationException(
+                "The selected Grid is not safe to expand or the maximum cell count would be exceeded.");
+        }
+
+        string updatedMarkup = _previewService.AddGridDefinition(Markup, grid, addRow);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup, _documentPath, _projectRoot);
+        AxamlPreviewNode newSelection = FindNode(root, grid.TypeName, grid.SourceStartOffset)
+            ?? throw new InvalidDataException("The selected Grid could not be located after adding a definition.");
+        EndPropertyEdit();
+        PushHistory(_undoHistory, Capture());
+        _redoHistory.Clear();
+        Markup = updatedMarkup;
+        Root = root;
+        SelectedNode = newSelection;
+        SelectedProperty = EditableProperties.FirstOrDefault();
+        RefreshSelectedValue();
+        return true;
+    }
+
+    private bool RemoveGridDefinition(bool removeRow)
+    {
+        AxamlPreviewNode grid = SelectedNode
+            ?? throw new InvalidOperationException("Select a safe Grid before removing a row or column.");
+        if (!_previewService.CanRemoveGridDefinition(grid, removeRow))
+        {
+            throw new InvalidOperationException(
+                "The selected Grid has no unused explicit final track to remove.");
+        }
+
+        string updatedMarkup = _previewService.RemoveGridDefinition(Markup, grid, removeRow);
+        AxamlPreviewNode root = _previewService.Parse(updatedMarkup, _documentPath, _projectRoot);
+        AxamlPreviewNode newSelection = FindNode(root, grid.TypeName, grid.SourceStartOffset)
+            ?? throw new InvalidDataException("The selected Grid could not be located after removing a definition.");
+        EndPropertyEdit();
+        PushHistory(_undoHistory, Capture());
+        _redoHistory.Clear();
+        Markup = updatedMarkup;
+        Root = root;
+        SelectedNode = newSelection;
+        SelectedProperty = EditableProperties.FirstOrDefault();
+        RefreshSelectedValue();
+        return true;
+    }
+
+    private static bool IsDockPanelLastChildFill(AxamlPreviewNode parent) =>
+        !parent.Properties.TryGetValue("LastChildFill", out string? value)
+        || !string.Equals(value, "False", StringComparison.OrdinalIgnoreCase);
 
     private bool TryGetSelectedParent(out AxamlPreviewNode? parent, out int index)
     {

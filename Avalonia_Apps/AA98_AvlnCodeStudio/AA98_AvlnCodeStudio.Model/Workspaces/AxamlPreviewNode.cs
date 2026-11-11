@@ -15,6 +15,8 @@ public sealed class AxamlPreviewNode
 
     public int ParentSourceStartOffset { get; init; } = -1;
 
+    public bool ParentHasSafeGridLayout { get; init; }
+
     public string? Text { get; init; }
 
     public bool IsSupported { get; init; }
@@ -45,6 +47,11 @@ public sealed class AxamlPreviewNode
 
     public IReadOnlyDictionary<string, string> Properties { get; init; } =
         new Dictionary<string, string>();
+
+    /// <summary>Inert preview values; source editing always uses Properties.</summary>
+    public IReadOnlyDictionary<string, string>? PreviewProperties { get; init; }
+
+    public IReadOnlyDictionary<string, string> RenderProperties => PreviewProperties ?? Properties;
 
     public IReadOnlyList<AxamlPreviewNode> Children { get; init; } = [];
 

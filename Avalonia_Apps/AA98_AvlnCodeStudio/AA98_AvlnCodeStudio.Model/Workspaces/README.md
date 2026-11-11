@@ -99,17 +99,43 @@ physical keyboard, screen-reader or accessibility acceptance test.
 
 ## AXAML structure editing
 
+The Workbench and standalone designers also select preview elements by clicking their inert
+visuals, or by moving the source-editor caret inside an element. Tree,
+inspector and preview follow the same selection; selecting in the tree or
+preview moves the source caret without focusing the editor. Selection does not
+change markup. The source mapping is available only for valid, unambiguous
+XML; recovery previews and unrepresented markup are not guessed. Invisible or
+unrealized preview items can still be selected in the tree or source.
+
 `AxamlDesignerSession` exposes the safe preview tree and document-local undo
 and redo independently of a host. `RemoveSelectedControl` and
 `MoveSelectedControl` with direction `-1` or `1` operate on direct children of
-simple `StackPanel`, `WrapPanel` and `UniformGrid` elements. These actions do
-not reorder Grid children or edit the root or children of `DockPanel`. For a
-static Grid with supported children and non-overlapping placements,
+simple `StackPanel`, `WrapPanel`, `UniformGrid` and `DockPanel` elements. For a
+DockPanel, child placement attributes must be unique, literal, valid Avalonia
+placements. With `LastChildFill` enabled (including its default), the final
+child is treated as the client and cannot be moved; other adjacent children
+can be reordered without crossing it. With `LastChildFill` disabled, all
+children may be reordered. Safe direct children can be removed in either
+mode. Invalid or ambiguous placement markup blocks these operations. The
+actions do not reorder Grid children. For a static Grid with supported
+children and non-overlapping placements,
 `MoveSelectedGridControl` moves a child by one row or column only when its
 entire span fits in free cells. `RemoveSelectedControl` also accepts children
 of these Grids, even when every cell is occupied. `HasSafeGridLayout` and
 `CanAddGridChild` distinguish a safe full Grid from one with room to insert.
-Grid definition property elements are retained. Dynamic, ambiguous,
+The selected safe Grid can also append an `Auto` row or column. Existing
+attribute lists or definition property elements are extended in place;
+implicit star tracks are made explicit so existing cells retain their layout.
+The final explicit row or column can be removed only when every child's
+placement and span ends before that track; implicit tracks, single-track
+definitions, occupied end tracks and spans crossing the end track are retained.
+The designer can change the size of any explicit row or column track through
+the selected-track editor. It accepts `Auto`, star weights and finite
+non-negative pixel values; dynamic values and implicit tracks are not editable.
+Attribute lists retain their separators, spacing and quotes; property-element
+updates preserve element prefixes and existing attribute quotes.
+Each action preserves source prefixes and is one document-local undo step.
+Expansion stops before the 100,000-cell safety limit. Dynamic, ambiguous,
 out-of-bounds or overlapping placements, unknown direct children and
 ambiguous source/preview hierarchies block edits. The preview is a safe
 subset, not a complete AXAML outline.

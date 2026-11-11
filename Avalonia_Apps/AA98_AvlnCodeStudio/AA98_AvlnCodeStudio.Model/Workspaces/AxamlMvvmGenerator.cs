@@ -18,9 +18,14 @@ public sealed class AxamlMvvmGenerator
     private static readonly XNamespace s_avaloniaNamespace = "https://github.com/avaloniaui";
     private const int MaximumMarkupLength = 1_000_000;
 
+    /// <param name="usePartialProperties">
+    /// Enable only after verifying that the target project supports Toolkit partial properties
+    /// (C# 14 and CommunityToolkit.Mvvm 8.4.1 or later). Otherwise compatible fields are generated.
+    /// </param>
     public IReadOnlyList<WorkspaceFileChangeRequest> Generate(
         string axamlRelativePath,
-        string markup)
+        string markup,
+        bool usePartialProperties = false)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(axamlRelativePath);
         ArgumentNullException.ThrowIfNull(markup);
@@ -476,7 +481,7 @@ public sealed class AxamlMvvmGenerator
             WorkspaceFileChangeRequest.ReplaceExisting(axamlRelativePath, markup, generatedMarkup),
             WorkspaceFileChangeRequest.CreateNew(
                 viewModelPath,
-                GenerateViewModel(viewModelNamespace, viewModelName, properties, commands)),
+                GenerateViewModel(viewModelNamespace, viewModelName, properties, commands, usePartialProperties)),
         ];
     }
 
@@ -563,7 +568,8 @@ public sealed class AxamlMvvmGenerator
         string viewModelNamespace,
         string viewModelName,
         IReadOnlyList<GeneratedProperty> properties,
-        IReadOnlyList<GeneratedCommand> commands)
+        IReadOnlyList<GeneratedCommand> commands,
+        bool usePartialProperties)
     {
         StringBuilder source = new();
         source.AppendLine("using CommunityToolkit.Mvvm.ComponentModel;");
@@ -575,10 +581,18 @@ public sealed class AxamlMvvmGenerator
         source.AppendLine("{");
         foreach (GeneratedProperty property in properties)
         {
-            string fieldName = "_" + char.ToLowerInvariant(property.Name[0]) + property.Name[1..];
             source.AppendLine("    [ObservableProperty]");
-            source.Append("    private ").Append(property.Type).Append(' ').Append(fieldName).Append(" = ")
-                .Append(property.InitialValue).AppendLine(";");
+            if (usePartialProperties)
+            {
+                source.Append("    public partial ").Append(property.Type).Append(' ').Append(property.Name)
+                    .Append(" { get; set; } = ").Append(property.InitialValue).AppendLine(";");
+            }
+            else
+            {
+                string fieldName = "_" + char.ToLowerInvariant(property.Name[0]) + property.Name[1..];
+                source.Append("    private ").Append(property.Type).Append(' ').Append(fieldName).Append(" = ")
+                    .Append(property.InitialValue).AppendLine(";");
+            }
             source.AppendLine();
         }
 
