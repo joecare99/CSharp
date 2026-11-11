@@ -179,6 +179,7 @@ public sealed class AxamlPreviewControl : ContentControl
             "Button" => BuildButton(node),
             "Calendar" => BuildCalendar(node),
             "CalendarDatePicker" => BuildCalendarDatePicker(node),
+            "Canvas" => BuildCanvas(node),
             "CheckBox" => BuildCheckBox(node),
             "ColorPicker" => BuildColorPicker(node),
             "ComboBox" => ApplyTemplatedControlAppearance(new ComboBox
@@ -206,6 +207,7 @@ public sealed class AxamlPreviewControl : ContentControl
                 Header = node.Text ?? "Group",
                 Content = BuildChildren(node),
             }, node),
+            "Image" => BuildImagePreview(node),
             "ItemsControl" => ApplyTemplatedControlAppearance(new ItemsControl
             {
                 ItemsSource = ParseSelectorItems(node),
@@ -436,6 +438,37 @@ public sealed class AxamlPreviewControl : ContentControl
         }
 
         return border;
+    }
+
+    private static Control BuildImagePreview(AxamlPreviewNode node)
+    {
+        StackPanel content = new() { Spacing = 4 };
+        content.Children.Add(new TextBlock
+        {
+            Text = "Image preview is inert; the source is not loaded.",
+            FontWeight = FontWeight.SemiBold,
+            TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+        });
+
+        string? source = ParseOptionalLiteralText(node, "Source");
+        if (source is not null)
+        {
+            content.Children.Add(new TextBlock
+            {
+                Text = $"Source: {source}",
+                TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+            });
+        }
+
+        return new Border
+        {
+            MinWidth = 120,
+            MinHeight = 48,
+            Padding = new Thickness(6),
+            BorderBrush = Brushes.Gray,
+            BorderThickness = new Thickness(1),
+            Child = content,
+        };
     }
 
     private static Shape BuildShape(Shape shape, AxamlPreviewNode node)
@@ -1299,7 +1332,11 @@ public sealed class AxamlPreviewControl : ContentControl
         foreach (AxamlPreviewNode child in node.Children)
         {
             Control control = BuildControl(child);
-            if (Enum.TryParse(GetProperty(child, "DockPanel.Dock"), ignoreCase: true, out Dock dock))
+            string? dockValue = GetProperty(child, "DockPanel.Dock");
+            if (dockValue is not null
+                && Enum.TryParse(dockValue, ignoreCase: true, out Dock dock)
+                && Enum.IsDefined(dock)
+                && AxamlPropertyValueValidator.Validate(child.TypeName, "DockPanel.Dock", dockValue) is null)
             {
                 DockPanel.SetDock(control, dock);
             }
@@ -1365,6 +1402,33 @@ public sealed class AxamlPreviewControl : ContentControl
         }
 
         return grid;
+    }
+
+    private Control BuildCanvas(AxamlPreviewNode node)
+    {
+        Canvas canvas = new();
+        if (ParseSimpleBrush(node, "Background") is { } background)
+        {
+            canvas.Background = background;
+        }
+
+        foreach (AxamlPreviewNode child in node.Children)
+        {
+            Control control = BuildControl(child);
+            if (HasValidLiteralValue(child, "Canvas.Left"))
+            {
+                Canvas.SetLeft(control, ParseDouble(child, "Canvas.Left", 0));
+            }
+
+            if (HasValidLiteralValue(child, "Canvas.Top"))
+            {
+                Canvas.SetTop(control, ParseDouble(child, "Canvas.Top", 0));
+            }
+
+            canvas.Children.Add(control);
+        }
+
+        return canvas;
     }
 
     private Control BuildTextBlock(AxamlPreviewNode node)

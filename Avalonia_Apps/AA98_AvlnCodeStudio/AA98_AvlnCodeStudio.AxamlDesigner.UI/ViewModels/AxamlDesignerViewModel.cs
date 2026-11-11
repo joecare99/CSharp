@@ -713,6 +713,12 @@ public partial class AxamlDesignerViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void AddImage()
+    {
+        AddChildControl("Image");
+    }
+
+    [RelayCommand]
     private void AddLabel()
     {
         AddChildControl("Label");
@@ -789,6 +795,12 @@ public partial class AxamlDesignerViewModel : ObservableObject
     private void AddButton()
     {
         AddChildControl("Button");
+    }
+
+    [RelayCommand]
+    private void AddCanvas()
+    {
+        AddChildControl("Canvas");
     }
 
     [RelayCommand]

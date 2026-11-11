@@ -54,6 +54,7 @@
           <UniformGrid Columns="2" Margin="4">
             <Button Content="TextBlock" Command="{Binding AddTextBlockCommand}" />
             <Button Content="Label" Command="{Binding AddLabelCommand}" />
+            <Button Content="Image" Command="{Binding AddImageCommand}" />
             <Button Content="Button" Command="{Binding AddButtonCommand}" />
             <Button Content="Ellipse" Command="{Binding AddEllipseCommand}" />
             <Button Content="Line" Command="{Binding AddLineCommand}" />
@@ -102,6 +103,7 @@
             <TextBlock Text="Add layout container" FontWeight="SemiBold" />
             <UniformGrid Columns="2">
               <Button Content="Border" Command="{Binding AddBorderCommand}" />
+              <Button Content="Canvas" Command="{Binding AddCanvasCommand}" />
               <Button Content="Content" Command="{Binding AddContentControlCommand}" />
               <Button Content="DockPanel" Command="{Binding AddDockPanelCommand}" />
               <Button Content="Expander" Command="{Binding AddExpanderCommand}" />
