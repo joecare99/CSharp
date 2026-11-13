@@ -8,5 +8,7 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="5.9.0" />
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.11.2" />
     <PackageVersion Include="Microsoft.NET.StringTools" Version="18.11.0" />
+    <PackageVersion Include="Microsoft.TestPlatform.TranslationLayer" Version="18.11.0" />
+    <PackageVersion Include="ICSharpCode.Decompiler" Version="11.2.0.10050" />
   </ItemGroup>
 </Project>
