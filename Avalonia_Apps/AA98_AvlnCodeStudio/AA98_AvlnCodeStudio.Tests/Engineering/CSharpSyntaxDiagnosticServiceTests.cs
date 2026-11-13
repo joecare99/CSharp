@@ -1,5 +1,9 @@
 using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.Model.Workspaces;
+using AA98_AvlnCodeStudio.Base.Testing.Models;
+using AA98_AvlnCodeStudio.Base.Testing.Services;
+using AA98_AvlnCodeStudio.Base.Debugging.Models;
+using AA98_AvlnCodeStudio.Base.Debugging.Services;
 using AppKomponentBaseLib.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -7,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AA98_AvlnCodeStudio.Tests.Engineering;
@@ -867,6 +872,567 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
     }
 
     [TestMethod]
+    public async Task GetQuickInfoAsync_UsesEditedSourceAndReturnsNullForUnknownDocument()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_RoslynQuickInfo_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string sourcePath = Path.Combine(root, "Sample.cs");
+            string otherSourcePath = Path.Combine(root, "Other.cs");
+            await File.WriteAllTextAsync(projectPath,
+                $"<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net{Environment.Version.Major}.0</TargetFramework></PropertyGroup></Project>");
+            await File.WriteAllTextAsync(sourcePath, "public class Sample { }");
+            await File.WriteAllTextAsync(otherSourcePath, "public class Other { public int Value => 1; }");
+            await RunFixtureAsync("restore", projectPath);
+            CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(projectPath);
+            using CSharpSyntaxDiagnosticService service = new();
+            const string edited = """
+                public class Sample
+                {
+                    /// <summary>A useful count.</summary>
+                    public int Count => 42;
+                    public int Read() => Count;
+                }
+                """;
+            int position = edited.LastIndexOf("Count", StringComparison.Ordinal);
+            string? info = await service.GetQuickInfoAsync(edited, sourcePath, position, workspace);
+            Assert.IsNotNull(info);
+            StringAssert.Contains(info, "Sample.Count");
+            StringAssert.Contains(info, "A useful count.");
+            Assert.AreEqual("public class Sample { }", await File.ReadAllTextAsync(sourcePath));
+
+            await service.AnalyzeAsync(edited, sourcePath, workspace);
+            Assert.AreEqual("public class Sample { }", await File.ReadAllTextAsync(sourcePath));
+            await service.GetCompletionsAsync(edited, sourcePath, position, workspace);
+            Assert.AreEqual("public class Sample { }", await File.ReadAllTextAsync(sourcePath));
+            Code.Navigation.CodeLocation? definition = await service.FindDefinitionAsync(edited, sourcePath, position, workspace);
+            Assert.IsNotNull(definition);
+            Assert.AreEqual("public class Sample { }", await File.ReadAllTextAsync(sourcePath));
+
+            const string crossFileSource =
+                "public class Sample { public int Read(Other other) => other.Value; }";
+            const string otherDraft = """
+                public class Other
+                {
+                    public string Value => "";
+                    public int DraftMember => 1;
+                }
+                """;
+            Dictionary<string, string> openDocuments = new()
+            {
+                [sourcePath] = crossFileSource,
+                [otherSourcePath] = otherDraft,
+            };
+            int valuePosition = crossFileSource.LastIndexOf("Value", StringComparison.Ordinal);
+            string? crossFileInfo = await service.GetQuickInfoAsync(
+                crossFileSource, sourcePath, valuePosition, workspace, openDocumentTexts: openDocuments);
+            Assert.IsNotNull(crossFileInfo);
+            StringAssert.Contains(crossFileInfo, "string Other.Value");
+            IReadOnlyList<Diagnostic> crossFileDiagnostics = await service.AnalyzeAsync(
+                crossFileSource, sourcePath, workspace, openDocumentTexts: openDocuments);
+            Assert.IsTrue(crossFileDiagnostics.Any(diagnostic => diagnostic.Code == "CS0029"));
+            Code.Navigation.CodeLocation? crossFileDefinition = await service.FindDefinitionAsync(
+                crossFileSource, sourcePath, valuePosition, workspace, openDocumentTexts: openDocuments);
+            Assert.IsNotNull(crossFileDefinition);
+            Assert.AreEqual(otherSourcePath, crossFileDefinition.Path);
+            Assert.AreEqual(3, crossFileDefinition.Line);
+            Assert.AreEqual("public class Other { public int Value => 1; }", await File.ReadAllTextAsync(otherSourcePath));
+
+            const string signatureSource =
+                "public class Sample { void Run() { System.Console.WriteLine(1); } }";
+            int signaturePosition = signatureSource.IndexOf("WriteLine(", StringComparison.Ordinal)
+                + "WriteLine(".Length;
+            CSharpSignatureHelp? signatureHelp = await service.GetSignatureHelpAsync(
+                signatureSource, sourcePath, signaturePosition, workspace);
+            Assert.IsNotNull(signatureHelp);
+            Assert.IsTrue(signatureHelp.Signatures.Any(signature => signature.Contains("WriteLine(", StringComparison.Ordinal)));
+            Assert.AreEqual(0, signatureHelp.ActiveParameterIndex);
+
+            const string overloadSource =
+                "public class Sample { void Run() { Write(1, \"value\"); } "
+                + "void Write(int number, string text) { } void Write(int number, object value) { } }";
+            int activeParameterPosition = overloadSource.IndexOf("\"value\"", StringComparison.Ordinal) + 3;
+            CSharpSignatureHelp? overloadHelp = await service.GetSignatureHelpAsync(
+                overloadSource, sourcePath, activeParameterPosition, workspace);
+            Assert.IsNotNull(overloadHelp);
+            Assert.AreEqual(2, overloadHelp.Signatures.Count);
+            Assert.AreEqual(1, overloadHelp.ActiveParameterIndex);
+            Assert.AreEqual("text", overloadHelp.ActiveParameterName);
+            StringAssert.Contains(overloadHelp.Signatures[overloadHelp.SelectedSignatureIndex], "string text");
+
+            const string completionSource = "public class Sample { void Run(Other other) { other.Draft; } }";
+            int completionPosition = completionSource.IndexOf("Draft", StringComparison.Ordinal) + "Draft".Length;
+            IReadOnlyList<CSharpCompletionSuggestion> crossFileCompletions = await service.GetCompletionItemsAsync(
+                completionSource, sourcePath, completionPosition, workspace, openDocumentTexts: openDocuments);
+            Assert.IsTrue(crossFileCompletions.Any(item => item.DisplayText == "DraftMember"));
+
+            Assert.IsNull(await service.GetQuickInfoAsync(edited, Path.Combine(root, "Unknown.cs"), position, workspace));
+            Assert.IsNull(await service.GetQuickInfoAsync(edited,
+                Path.Combine(Path.GetDirectoryName(root)!, "Outside.cs"), position, workspace));
+            string otherProjectPath = Path.Combine(root, "Other.csproj");
+            string solutionPath = Path.Combine(root, "Sample.slnx");
+            await File.WriteAllTextAsync(otherProjectPath, "<Project />");
+            await File.WriteAllTextAsync(solutionPath,
+                "<Solution><Project Path=\"Sample.csproj\" /><Project Path=\"Other.csproj\" /></Solution>");
+            Assert.IsNull(await service.GetQuickInfoAsync(edited, sourcePath, position,
+                new CSharpWorkspaceLoader().Load(solutionPath)));
+            Assert.AreEqual(0, (await service.GetCompletionItemsAsync(edited, sourcePath, position,
+                new CSharpWorkspaceLoader().Load(solutionPath))).Count);
+            await Assert.ThrowsExactlyAsync<ArgumentOutOfRangeException>(
+                () => service.GetQuickInfoAsync(edited, sourcePath, edited.Length + 1, workspace));
+            using CancellationTokenSource cancelled = new();
+            cancelled.Cancel();
+            await Assert.ThrowsAsync<OperationCanceledException>(
+                () => service.GetQuickInfoAsync(edited, sourcePath, position, workspace, cancelled.Token));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task FindTestMethodCandidatesAsync_UsesSemanticAttributesAndSelectedConfiguration()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_TestCandidates_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string sourcePath = Path.Combine(root, "Tests.cs");
+            await File.WriteAllTextAsync(projectPath,
+                $"<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net{Environment.Version.Major}.0</TargetFramework></PropertyGroup></Project>");
+            const string source = """
+                namespace Microsoft.VisualStudio.TestTools.UnitTesting
+                {
+                    public class TestMethodAttribute : System.Attribute { }
+                    public class DataTestMethodAttribute : TestMethodAttribute { }
+                }
+                namespace Xunit
+                {
+                    public class FactAttribute : System.Attribute { }
+                    public class TheoryAttribute : FactAttribute { }
+                }
+                namespace NUnit.Framework { public class TestCaseAttribute : System.Attribute { } }
+                namespace Other { public class TestMethodAttribute : System.Attribute { } }
+                namespace Sample
+                {
+                    public class Tests
+                    {
+                        [Microsoft.VisualStudio.TestTools.UnitTesting.DataTestMethod] public void Data() { }
+                        [Xunit.Theory] public void Theory() { }
+                        [NUnit.Framework.TestCase] public void Case() { }
+                        [Other.TestMethod] public void NotATest() { }
+                        [Xunit.Fact] private void NotPublic() { }
+                #if DEBUG
+                        [Xunit.Fact] public void DebugOnly() { }
+                #endif
+                    }
+                }
+                """;
+            await File.WriteAllTextAsync(sourcePath, source);
+            await RunFixtureAsync("restore", projectPath);
+            using CSharpSyntaxDiagnosticService service = new();
+            string framework = $"net{Environment.Version.Major}.0";
+            IReadOnlyList<TestMethodCandidate> debug = await service.FindTestMethodCandidatesAsync(projectPath, "Debug", framework);
+            CollectionAssert.AreEqual(new[]
+            {
+                "Sample.Tests.Case", "Sample.Tests.Data", "Sample.Tests.DebugOnly", "Sample.Tests.Theory",
+            }, debug.Select(candidate => candidate.FullyQualifiedName).ToArray());
+            Assert.IsTrue(debug.All(candidate => candidate.SourcePath == sourcePath && candidate.LineNumber > 0));
+            IReadOnlyList<TestMethodCandidate> release = await service.FindTestMethodCandidatesAsync(projectPath, "Release", framework);
+            CollectionAssert.AreEqual(new[]
+            {
+                "Sample.Tests.Case", "Sample.Tests.Data", "Sample.Tests.Theory",
+            }, release.Select(candidate => candidate.FullyQualifiedName).ToArray());
+            Assert.AreEqual(source, await File.ReadAllTextAsync(sourcePath));
+            using CancellationTokenSource canceled = new();
+            canceled.Cancel();
+            await Assert.ThrowsAsync<OperationCanceledException>(
+                () => service.FindTestMethodCandidatesAsync(projectPath, "Debug", framework, canceled.Token));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task FindTestMethodCandidatesAsync_NUnitCandidateRunsParameterizedCases()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_NUnitCandidates_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string framework = $"net{Environment.Version.Major}.0";
+            await File.WriteAllTextAsync(projectPath,
+                $"""
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <TargetFramework>{framework}</TargetFramework>
+                    <IsTestProject>true</IsTestProject>
+                  </PropertyGroup>
+                  <ItemGroup>
+                    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+                    <PackageReference Include="NUnit" Version="5.0.0" />
+                    <PackageReference Include="NUnit3TestAdapter" Version="6.3.1" />
+                  </ItemGroup>
+                </Project>
+                """);
+            await File.WriteAllTextAsync(Path.Combine(root, "Tests.cs"),
+                """
+                using NUnit.Framework;
+                namespace Sample;
+                public class NUnitTests
+                {
+                    [TestCase(1)]
+                    [TestCase(2)]
+                    public void Values(int value) => Assert.That(value, Is.GreaterThan(0));
+                    [Test] public void Other() => Assert.Fail("Expected case failure.");
+                    [Test, Ignore("Skipped fixture")] public void Skipped() { }
+                }
+                """);
+            await RunFixtureAsync("restore", projectPath);
+            using CSharpSyntaxDiagnosticService service = new();
+            IReadOnlyList<TestMethodCandidate> candidates = await service.FindTestMethodCandidatesAsync(projectPath, "Debug", framework);
+            CollectionAssert.AreEqual(new[] { "Sample.NUnitTests.Other", "Sample.NUnitTests.Skipped", "Sample.NUnitTests.Values" },
+                candidates.Select(candidate => candidate.FullyQualifiedName).ToArray());
+            TestRunSummary result = await new DotNetTestExecutionService().RunTestsAsync(new TestRunRequest
+            {
+                ProjectPath = projectPath,
+                WorkspaceRootPath = root,
+                Configuration = "Debug",
+                TargetFramework = framework,
+                MatchTargetsExactly = true,
+                Targets = { "Sample.NUnitTests.Values" },
+            });
+            Assert.AreEqual(2, result.TotalCount);
+            Assert.AreEqual(2, result.PassedCount);
+            Assert.AreEqual(2, result.Cases.Count);
+            Assert.AreEqual(2, result.Cases.Select(item => item.TestName).Distinct().Count());
+            Assert.IsTrue(result.Cases.All(item => item.Outcome == "Passed"));
+            Assert.IsTrue(result.Cases.All(item => item.TestClassName == "Sample.NUnitTests"));
+            DiscoveredTestCase selected = await VerifyAdapterDiscoveryAsync(root, framework, "Sample.NUnitTests.Values");
+            string? adapter = Environment.GetEnvironmentVariable("AVLN_NETCOREDBG_PATH");
+            if (OperatingSystem.IsWindows() && !string.IsNullOrWhiteSpace(adapter) && File.Exists(adapter))
+            {
+                await VerifyAdapterDebugAsync(new DotNetTestDiscoveryService(), adapter,
+                    Path.Combine(root, "bin", "Debug", framework, "Sample.dll"), root, selected);
+            }
+        }
+        finally
+        {
+            await DeleteAdapterFixtureAsync(root);
+        }
+    }
+
+    [TestMethod]
+    public async Task FindTestMethodCandidatesAsync_XunitCandidateRunsParameterizedCases()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_XunitCandidates_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string framework = $"net{Environment.Version.Major}.0";
+            await File.WriteAllTextAsync(projectPath,
+                $"""
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <TargetFramework>{framework}</TargetFramework>
+                    <OutputType>Exe</OutputType>
+                    <IsTestProject>true</IsTestProject>
+                  </PropertyGroup>
+                  <ItemGroup>
+                    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+                    <PackageReference Include="xunit.v3.mtp-off" Version="3.2.2" />
+                    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1" />
+                  </ItemGroup>
+                </Project>
+                """);
+            await File.WriteAllTextAsync(Path.Combine(root, "Tests.cs"),
+                """
+                using Xunit;
+                namespace Sample;
+                public class XunitTests
+                {
+                    [Theory]
+                    [InlineData(1)]
+                    [InlineData(2)]
+                    public void Values(int value)
+                    {
+                        string marker = System.Environment.GetEnvironmentVariable("AA98_XUNIT_DEBUG_CHILD_MARKER");
+                        if (!string.IsNullOrEmpty(marker))
+                        {
+                            System.IO.File.WriteAllText(marker, System.Environment.ProcessId.ToString());
+                            System.Threading.Thread.Sleep(120000);
+                        }
+                        Assert.True(value > 0);
+                    }
+                    [Fact] public void Other() => Assert.True(false, "Expected case failure.");
+                    [Fact(Skip = "Skipped fixture")] public void Skipped() { }
+                }
+                """);
+            await RunFixtureAsync("restore", projectPath);
+            using CSharpSyntaxDiagnosticService service = new();
+            IReadOnlyList<TestMethodCandidate> candidates = await service.FindTestMethodCandidatesAsync(projectPath, "Debug", framework);
+            CollectionAssert.AreEqual(new[] { "Sample.XunitTests.Other", "Sample.XunitTests.Skipped", "Sample.XunitTests.Values" },
+                candidates.Select(candidate => candidate.FullyQualifiedName).ToArray());
+            TestRunSummary result = await new DotNetTestExecutionService().RunTestsAsync(new TestRunRequest
+            {
+                ProjectPath = projectPath,
+                WorkspaceRootPath = root,
+                Configuration = "Debug",
+                TargetFramework = framework,
+                MatchTargetsExactly = true,
+                Targets = { "Sample.XunitTests.Values" },
+            });
+            Assert.AreEqual(2, result.TotalCount);
+            Assert.AreEqual(2, result.PassedCount);
+            Assert.AreEqual(2, result.Cases.Count);
+            Assert.AreEqual(2, result.Cases.Select(item => item.TestName).Distinct().Count());
+            Assert.IsTrue(result.Cases.All(item => item.Outcome == "Passed"));
+            Assert.IsTrue(result.Cases.All(item => item.TestClassName == "Sample.XunitTests"));
+            DiscoveredTestCase selected = await VerifyAdapterDiscoveryAsync(root, framework, "Sample.XunitTests.Values");
+            string assembly = Path.Combine(root, "bin", "Debug", framework, "Sample.dll");
+            await VerifyChildAttachFailureAsync(assembly, root, selected);
+            string? adapter = Environment.GetEnvironmentVariable("AVLN_NETCOREDBG_PATH");
+            if (OperatingSystem.IsWindows() && !string.IsNullOrWhiteSpace(adapter) && File.Exists(adapter))
+            {
+                await VerifyAdapterDebugAsync(new DotNetTestDiscoveryService(), adapter, assembly, root, selected);
+                await VerifyDebugCancellationStopsAdapterChildAsync(adapter, assembly, root, selected);
+            }
+        }
+        finally
+        {
+            await DeleteAdapterFixtureAsync(root);
+        }
+    }
+
+    private static async Task DeleteAdapterFixtureAsync(string root)
+    {
+        for (int attempt = 0; ; attempt++)
+        {
+            try
+            {
+                if (Directory.Exists(root))
+                {
+                    Directory.Delete(root, recursive: true);
+                }
+                return;
+            }
+            catch (Exception exception) when (attempt < 20 && exception is IOException or UnauthorizedAccessException)
+            {
+                await Task.Delay(250);
+            }
+        }
+    }
+
+    private static async Task<DiscoveredTestCase> VerifyAdapterDiscoveryAsync(string root, string framework, string method)
+    {
+        string output = Path.Combine(root, "bin", "Debug", framework);
+        DotNetTestDiscoveryService service = new();
+        string assembly = Path.Combine(output, "Sample.dll");
+        TestDiscoveryResult discovery = await service.DiscoverAsync(assembly, root);
+        Assert.AreEqual(4, discovery.Cases.Count, string.Join(Environment.NewLine, discovery.Warnings));
+        DiscoveredTestCase[] parameterized = discovery.Cases
+            .Where(item => item.FullyQualifiedName == method
+                || item.FullyQualifiedName.StartsWith(method + "(", StringComparison.Ordinal))
+            .ToArray();
+        Assert.AreEqual(2, parameterized.Length, string.Join(", ", discovery.Cases.Select(item => item.FullyQualifiedName)));
+        Assert.AreEqual(2, parameterized.Select(item => item.Id).Distinct().Count());
+        Assert.IsTrue(parameterized.All(item => !string.IsNullOrWhiteSpace(item.ExecutorUri)));
+        DiscoveredTestCase selected = parameterized.OrderBy(item => item.DisplayName, StringComparer.Ordinal).First();
+        TestRunSummary single = await service.RunCaseAsync(assembly, root, selected);
+        Assert.AreEqual(1, single.TotalCount);
+        Assert.AreEqual(1, single.PassedCount);
+        Assert.AreEqual(selected.Id, single.Cases.Single().TestId);
+        DiscoveredTestCase failing = discovery.Cases.Single(item => item.FullyQualifiedName.EndsWith(".Other", StringComparison.Ordinal));
+        TestRunSummary failed = await service.RunCaseAsync(assembly, root, failing);
+        Assert.AreEqual(1, failed.TotalCount);
+        Assert.AreEqual(1, failed.FailedCount);
+        StringAssert.Contains(failed.Failures.Single().Message, "Expected case failure.");
+        DiscoveredTestCase skipped = discovery.Cases.Single(item => item.FullyQualifiedName.EndsWith(".Skipped", StringComparison.Ordinal));
+        TestRunSummary skippedResult = await service.RunCaseAsync(assembly, root, skipped);
+        Assert.AreEqual(1, skippedResult.TotalCount);
+        Assert.AreEqual(1, skippedResult.SkippedCount);
+        await Assert.ThrowsExactlyAsync<InvalidOperationException>(() =>
+            service.RunCaseAsync(assembly, root, selected with { Id = Guid.NewGuid().ToString() }));
+
+        return selected;
+    }
+
+    private static async Task VerifyChildAttachFailureAsync(string assembly, string root, DiscoveredTestCase selected)
+    {
+        string marker = Path.Combine(root, "failed-debug-child.txt");
+        string? previous = Environment.GetEnvironmentVariable("AA98_XUNIT_DEBUG_CHILD_MARKER");
+        Environment.SetEnvironmentVariable("AA98_XUNIT_DEBUG_CHILD_MARKER", marker);
+        int attaches = 0;
+        int releases = 0;
+        try
+        {
+            InvalidOperationException error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() =>
+                new DotNetTestDiscoveryService().DebugCaseAsync(assembly, root, selected, (_, _) =>
+                {
+                    if (Interlocked.Increment(ref attaches) == 1)
+                    {
+                        return Task.FromResult<IAsyncDisposable>(new CallbackLease(() => Interlocked.Increment(ref releases)));
+                    }
+                    return Task.FromException<IAsyncDisposable>(new InvalidOperationException("Child attach failed deliberately."));
+                }));
+            StringAssert.Contains(error.ToString(), "Child attach failed deliberately.");
+            Assert.AreEqual(2, attaches);
+            Assert.AreEqual(1, releases);
+            Assert.IsFalse(File.Exists(marker), "The child ran the test after its debugger attach failed.");
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("AA98_XUNIT_DEBUG_CHILD_MARKER", previous);
+        }
+    }
+
+    private static async Task VerifyDebugCancellationStopsAdapterChildAsync(
+        string adapter, string assembly, string root, DiscoveredTestCase selected)
+    {
+        string marker = Path.Combine(root, "debug-child.txt");
+        string? previous = Environment.GetEnvironmentVariable("AA98_XUNIT_DEBUG_CHILD_MARKER");
+        Environment.SetEnvironmentVariable("AA98_XUNIT_DEBUG_CHILD_MARKER", marker);
+        NetCoreDbgDebugSessionService debugger = new(adapter);
+        using CancellationTokenSource cancellation = new(TimeSpan.FromSeconds(60));
+        Task<TestRunSummary> run = new DotNetTestDiscoveryService().DebugCaseAsync(assembly, root, selected, async (pid, token) =>
+        {
+            DebugSessionInfo session = await debugger.StartSessionAsync(new DebugLaunchRequest
+            {
+                AttachToExistingProcess = true,
+                ProcessId = pid,
+                WorkingDirectory = root,
+            }, token);
+            return new AdapterDebugLease(debugger, session.SessionId);
+        }, cancellation.Token);
+        Process? child = null;
+        try
+        {
+            int pid;
+            while (!File.Exists(marker) || !int.TryParse(await File.ReadAllTextAsync(marker, cancellation.Token), out pid))
+            {
+                if (run.IsCompleted)
+                {
+                    await run;
+                    Assert.Fail("The adapter case ended before its child process reported execution.");
+                }
+                await Task.Delay(100, cancellation.Token);
+            }
+            child = Process.GetProcessById(pid);
+            await cancellation.CancelAsync().WaitAsync(TimeSpan.FromSeconds(15));
+            await Assert.ThrowsAsync<OperationCanceledException>(() => run.WaitAsync(TimeSpan.FromSeconds(15)));
+            await child.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(15));
+        }
+        finally
+        {
+            await cancellation.CancelAsync().WaitAsync(TimeSpan.FromSeconds(15));
+            try
+            {
+                await run.WaitAsync(TimeSpan.FromSeconds(15));
+            }
+            catch (Exception) when (cancellation.IsCancellationRequested)
+            {
+            }
+            if (child is not null)
+            {
+                if (!child.HasExited)
+                {
+                    child.Kill(entireProcessTree: true);
+                    await child.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(15));
+                }
+                child.Dispose();
+            }
+            Environment.SetEnvironmentVariable("AA98_XUNIT_DEBUG_CHILD_MARKER", previous);
+        }
+    }
+
+    private static async Task VerifyAdapterDebugAsync(
+        DotNetTestDiscoveryService tests, string adapter, string assembly, string root, DiscoveredTestCase selected)
+    {
+        string source = Path.Combine(root, "Tests.cs");
+        int line = Array.FindIndex(File.ReadAllLines(source), text => text.Contains("void Values(", StringComparison.Ordinal)) + 1;
+        Assert.IsTrue(line > 0);
+        NetCoreDbgDebugSessionService debugger = new(adapter);
+        TaskCompletionSource stopped = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        debugger.SessionEventReceived += (_, args) =>
+        {
+            if (args.EventName == "stopped" && args.Reason == "breakpoint")
+            {
+                stopped.TrySetResult();
+            }
+        };
+        DebugSessionInfo? session = null;
+        using CancellationTokenSource cancellation = new(TimeSpan.FromSeconds(60));
+        Task<TestRunSummary> run = tests.DebugCaseAsync(assembly, root, selected, async (pid, token) =>
+        {
+            session = await debugger.StartSessionAsync(new DebugLaunchRequest
+            {
+                AttachToExistingProcess = true,
+                ProcessId = pid,
+                WorkingDirectory = root,
+            }, token);
+            try
+            {
+                await debugger.SetBreakpointsAsync(session.SessionId, source, [line], token);
+                return new AdapterDebugLease(debugger, session.SessionId);
+            }
+            catch
+            {
+                await debugger.StopSessionAsync(session.SessionId);
+                throw;
+            }
+        }, cancellation.Token);
+        try
+        {
+            Task first = await Task.WhenAny(stopped.Task, run).WaitAsync(cancellation.Token);
+            if (ReferenceEquals(first, run))
+            {
+                await run;
+                Assert.Fail("The adapter case completed without reaching its breakpoint.");
+            }
+            await stopped.Task;
+            Assert.IsNotNull(session);
+            Assert.IsTrue((await debugger.GetStackTraceAsync(session.SessionId, cancellation.Token)).Count > 0);
+            await debugger.ContinueSessionAsync(session.SessionId, cancellation.Token);
+            TestRunSummary result = await run.WaitAsync(cancellation.Token);
+            Assert.AreEqual(1, result.PassedCount);
+            Assert.AreEqual(selected.Id, result.Cases.Single().TestId);
+        }
+        finally
+        {
+            await cancellation.CancelAsync().WaitAsync(TimeSpan.FromSeconds(15));
+            try
+            {
+                await run.WaitAsync(TimeSpan.FromSeconds(15));
+            }
+            catch (Exception) when (cancellation.IsCancellationRequested)
+            {
+            }
+        }
+    }
+
+    private sealed class AdapterDebugLease(IDebugSessionService debugger, string sessionId) : IAsyncDisposable
+    {
+        public async ValueTask DisposeAsync() => await debugger.StopSessionAsync(sessionId);
+    }
+
+    private sealed class CallbackLease(Action release) : IAsyncDisposable
+    {
+        public ValueTask DisposeAsync()
+        {
+            release();
+            return ValueTask.CompletedTask;
+        }
+    }
+
+    [TestMethod]
     public async Task GetCompletionsAsync_ProjectWorkspaceProvidesMemberCompletions()
     {
         string root = Path.Combine(Path.GetTempPath(), $"AA98_RoslynCompletion_{Guid.NewGuid():N}");
@@ -911,6 +1477,28 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
                 workspace);
 
             CollectionAssert.Contains(completions.ToArray(), "WriteLine");
+
+            const string middleSource = "public class Sample { void Run() { System.Console.WriteLine(); } }";
+            int middlePosition = middleSource.IndexOf("WriteLine", StringComparison.Ordinal) + "WriteL".Length;
+            IReadOnlyList<CSharpCompletionSuggestion> middleItems = await service.GetCompletionItemsAsync(
+                middleSource, sourcePath, middlePosition, workspace);
+            CSharpCompletionEdit middleEdit = await service.GetCompletionEditAsync(
+                middleItems.First(item => item.DisplayText == "WriteLine"));
+            Assert.AreEqual(middleSource, middleSource.Remove(middleEdit.Start, middleEdit.Length)
+                .Insert(middleEdit.Start, middleEdit.NewText));
+            Assert.AreEqual(middleSource.IndexOf("WriteLine", StringComparison.Ordinal) + "WriteLine".Length, middleEdit.CaretOffset);
+
+            const string escapedSource = "public class Sample { public int @class; void Run() { this.@cl; } }";
+            int escapedPosition = escapedSource.IndexOf("this.@cl", StringComparison.Ordinal) + "this.@cl".Length;
+            IReadOnlyList<CSharpCompletionSuggestion> escapedItems = await service.GetCompletionItemsAsync(
+                escapedSource, sourcePath, escapedPosition, workspace);
+            Assert.IsTrue(escapedItems.Any(item => item.DisplayText.Contains("class", StringComparison.Ordinal)),
+                $"Escaped completion candidates: {string.Join(", ", escapedItems.Select(item => item.DisplayText))}");
+            CSharpCompletionEdit escapedEdit = await service.GetCompletionEditAsync(
+                escapedItems.First(item => item.DisplayText.Contains("class", StringComparison.Ordinal)));
+            StringAssert.Contains(escapedSource.Remove(escapedEdit.Start, escapedEdit.Length)
+                .Insert(escapedEdit.Start, escapedEdit.NewText), "this.@class;");
+            Assert.AreEqual("public class Sample { }", await File.ReadAllTextAsync(sourcePath));
         }
         finally
         {

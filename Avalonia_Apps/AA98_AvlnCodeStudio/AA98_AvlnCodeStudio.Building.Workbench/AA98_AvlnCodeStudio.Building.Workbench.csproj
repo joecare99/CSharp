@@ -11,6 +11,7 @@
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Building\AA98_AvlnCodeStudio.Base.Building.csproj" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Testing\AA98_AvlnCodeStudio.Base.Testing.csproj" />
+	<ProjectReference Include="..\AA98_AvlnCodeStudio.Decompilation\AA98_AvlnCodeStudio.Decompilation.csproj" />
 	<ProjectReference Include="..\..\..\CSharpBible\Data\Workbench.Builder\Workbench.Builder.Core\Workbench.Builder.Core.csproj" />
   </ItemGroup>
 </Project>

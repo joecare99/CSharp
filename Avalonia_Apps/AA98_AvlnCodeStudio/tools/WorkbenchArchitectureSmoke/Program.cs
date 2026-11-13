@@ -1,4 +1,5 @@
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.Controls;
+using AA98_AvlnCodeStudio.Base.Debugging.Models;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.Views;
 using AA98_AvlnCodeStudio.Host.Mcp;
@@ -6,6 +7,7 @@ using AA98_AvlnCodeStudio.Model.Documents;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.UI;
 using AA98_AvlnCodeStudio.UI.Controls;
+using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using AA98_AxamlDesigner.Host.Commands;
 using AA98_AxamlDesigner.Host.ViewModels;
@@ -31,6 +33,7 @@ using Project.Explorer.Avalonia.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -52,15 +55,88 @@ internal static class Program
         s_root = Directory.CreateDirectory(Path.Combine(
             Environment.CurrentDirectory, "AvlnWorkbenchArchitecture-" + Guid.NewGuid().ToString("N"))).FullName;
         bool resourcesOnly = args.Contains("--resources-only", StringComparer.Ordinal);
+        bool quickInfoOnly = args.Contains("--quick-info-only", StringComparer.Ordinal);
+        bool xunitTestMethodOnly = args.Contains("--xunit-test-method-only", StringComparer.Ordinal);
+        bool testMethodOnly = xunitTestMethodOnly || args.Contains("--test-method-only", StringComparer.Ordinal);
         try
         {
             Environment.SetEnvironmentVariable("CONFIG_ROOT", Path.Combine(s_root, "config"));
             Environment.SetEnvironmentVariable("AVLN_CONFIG_GROUP_ROOT", null);
             Environment.SetEnvironmentVariable("AVLN_CONFIG_GROUP_ID", null);
+            Environment.SetEnvironmentVariable("MSBUILDDISABLENODEREUSE", "1");
+            Environment.SetEnvironmentVariable("DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER", "1");
             string fixture = Path.Combine(s_root, "fixture");
             Directory.CreateDirectory(fixture);
             File.WriteAllText(Path.Combine(fixture, "Sample.csproj"),
                 "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+            if (quickInfoOnly || testMethodOnly)
+            {
+                if (quickInfoOnly)
+                {
+                    File.WriteAllText(Path.Combine(fixture, "Quick.cs"), "public class Sample { }");
+                    File.WriteAllText(Path.Combine(fixture, "Other.cs"),
+                        "public class Other { public int Value => 1; }");
+                }
+                else
+                {
+                    File.WriteAllText(Path.Combine(fixture, "Sample.csproj"), xunitTestMethodOnly
+                        ? "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework>"
+                        + "<OutputType>Exe</OutputType><IsTestProject>true</IsTestProject></PropertyGroup><ItemGroup>"
+                        + "<PackageReference Include=\"Microsoft.NET.Test.Sdk\" Version=\"18.11.0\" />"
+                        + "<PackageReference Include=\"xunit.v3.mtp-off\" Version=\"3.2.2\" />"
+                        + "<PackageReference Include=\"xunit.runner.visualstudio\" Version=\"4.0.1\" /></ItemGroup></Project>"
+                        :
+                        "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework>"
+                        + "<IsTestProject>true</IsTestProject></PropertyGroup><ItemGroup>"
+                        + "<PackageReference Include=\"Microsoft.NET.Test.Sdk\" Version=\"18.11.0\" />"
+                        + "<PackageReference Include=\"MSTest\" Version=\"4.5.1\" /></ItemGroup></Project>");
+                    File.WriteAllText(Path.Combine(fixture, "MethodTests.cs"), xunitTestMethodOnly
+                        ? """
+                        using Xunit;
+                        namespace Sample;
+                        public class MethodTests
+                        {
+                            [Fact] public void Passing()
+                            {
+                                int value = 1;
+                                Assert.Equal(1, value);
+                            }
+                            [Fact] public void PassingExtra() { }
+                        }
+                        """
+                        :
+                        """
+                        using Microsoft.VisualStudio.TestTools.UnitTesting;
+                        namespace Sample;
+                        [TestClass] public class MethodTests
+                        {
+                            [TestMethod] public void Passing()
+                            {
+                                int value = 1;
+                                Assert.AreEqual(1, value);
+                            }
+                            [TestMethod] public void PassingExtra() { }
+                        }
+                        """);
+                }
+                ProcessStartInfo restore = new("dotnet")
+                {
+                    WorkingDirectory = fixture,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                };
+                restore.ArgumentList.Add("restore");
+                restore.ArgumentList.Add(Path.Combine(fixture, "Sample.csproj"));
+                restore.ArgumentList.Add("--ignore-failed-sources");
+                restore.Environment.Remove("MSBuildSDKsPath");
+                restore.Environment.Remove("MSBuildExtensionsPath");
+                using Process process = Process.Start(restore) ?? throw new InvalidOperationException("Could not restore the quick info fixture.");
+                Task<string> output = process.StandardOutput.ReadToEndAsync();
+                Task<string> error = process.StandardError.ReadToEndAsync();
+                process.WaitForExit();
+                Check(process.ExitCode == 0, $"Quick info fixture restore failed: {output.Result} {error.Result}");
+            }
             File.WriteAllText(Path.Combine(fixture, "First.axaml"),
                 "<StackPanel><TextBlock Text=\"First\" /></StackPanel>");
             File.WriteAllText(Path.Combine(fixture, "Second.axaml"),
@@ -178,38 +254,66 @@ internal static class Program
                 + "</StackPanel>");
             File.WriteAllText(Path.Combine(fixture, "Sample.cs"), "namespace Sample; public class Example { }");
             File.WriteAllBytes(Path.Combine(fixture, "Image.png"), [0x89, 0x50, 0x4e, 0x47, 0x00]);
-            File.WriteAllBytes(Path.Combine(fixture, "Binary.cs"), [0x41, 0x00, 0x42]);
+            if (!testMethodOnly)
+            {
+                File.WriteAllBytes(Path.Combine(fixture, "Binary.cs"), [0x41, 0x00, 0x42]);
+            }
             File.WriteAllBytes(Path.Combine(fixture, "Fixture.bin"), [0x00, 0xff, 0x42]);
 
             return AppBuilder.Configure<SmokeApplication>()
                 .UsePlatformDetect()
-                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly)))
-                .StartWithClassicDesktopLifetime(resourcesOnly ? [] : args);
+                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly)))
+                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly ? [] : args);
         }
         finally
         {
             SmokeApplication.Services?.Dispose();
-            Directory.Delete(s_root, recursive: true);
+            for (int attempt = 0; ; attempt++)
+            {
+                try
+                {
+                    if (Directory.Exists(s_root))
+                    {
+                        Directory.Delete(s_root, recursive: true);
+                    }
+                    break;
+                }
+                catch (IOException) when (attempt < 50)
+                {
+                    Thread.Sleep(100);
+                }
+            }
         }
     }
 
-    private static async Task RunAsync(string fixture, bool resourcesOnly)
+    private static async Task RunAsync(string fixture, bool resourcesOnly, bool quickInfoOnly, bool testMethodOnly)
     {
         IClassicDesktopStyleApplicationLifetime desktop =
             (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
         int exitCode = 0;
         try
         {
-            if (!resourcesOnly)
+            if (quickInfoOnly)
+            {
+                await VerifyQuickInfoAsync(fixture);
+            }
+            else if (testMethodOnly)
+            {
+                await VerifyExactTestMethodAsync(desktop, fixture);
+            }
+            else if (!resourcesOnly)
             {
                 await VerifyWorkbenchAsync(desktop, fixture);
                 await VerifyStandaloneAsync(desktop, fixture);
             }
-            await VerifyReportedResourcePreviewAsync(desktop);
+            if (!quickInfoOnly && !testMethodOnly)
+            {
+                await VerifyReportedResourcePreviewAsync(desktop);
+            }
             EditorDocumentWorkspace workspace = SmokeApplication.Services!.GetRequiredService<EditorDocumentWorkspace>();
             desktop.MainWindow!.Close();
             Check(workspace.Tabs.Count == 0, "Closing the workbench did not dispose its document tabs.");
-            if (!resourcesOnly)
+            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly)
             {
                 Console.WriteLine("Architecture: navigation, catalog control previews, structure and Grid editing, designer contributions, binary editor, drafts, safe files, standalone review/undo, MCP dispatch and screenshot verified.");
             }
@@ -229,6 +333,337 @@ internal static class Program
         }
 
         desktop.Shutdown(exitCode);
+    }
+
+    private static async Task VerifyExactTestMethodAsync(IClassicDesktopStyleApplicationLifetime desktop, string fixture)
+    {
+        MainWindowViewModel workbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
+        workbench.Workspace = new CSharpWorkspaceLoader().Load(Path.Combine(fixture, "Sample.csproj"));
+        Window window = desktop.MainWindow!;
+        TabItem projectTab = window.GetVisualDescendants().OfType<TabItem>()
+            .First(item => string.Equals(item.Header?.ToString(), workbench.ProjectWorkflowTabText, StringComparison.Ordinal));
+        projectTab.GetVisualAncestors().OfType<TabControl>().First().SelectedItem = projectTab;
+        await WaitUntilAsync(() => window.GetVisualDescendants().OfType<TextBox>()
+            .Any(control => AutomationProperties.GetName(control) == workbench.TestMethodNameText), "test method input");
+        ComboBox projects = window.GetVisualDescendants().OfType<ComboBox>()
+            .Single(control => AutomationProperties.GetName(control) == workbench.ProjectWorkflowProjectText);
+        projects.SelectedItem = workbench.Workspace.Projects[0];
+        await workbench.InspectSelectedProjectCommand.ExecuteAsync(null);
+        Check(workbench.ProjectInspection?.TargetFramework == "net10.0", "Test project inspection failed.");
+        Button discover = FindButton(window, workbench.TestCandidatesCommandText);
+        await WaitUntilAsync(() => ReferenceEquals(discover.Command, workbench.FindTestCandidatesCommand) && discover.IsEnabled,
+            "bound source test discovery");
+        discover.Command!.Execute(discover.CommandParameter);
+        Task discovery = workbench.FindTestCandidatesCommand.ExecutionTask
+            ?? throw new InvalidOperationException("The source discovery command did not start.");
+        await discovery.WaitAsync(TimeSpan.FromSeconds(90));
+        Check(workbench.TestMethodCandidates.Count == 2,
+            $"Expected two source candidates, got {workbench.TestMethodCandidates.Count}: {workbench.ProjectWorkflowStatus}");
+        Button adapterDiscovery = FindButton(window, workbench.DiscoverAdapterTestsCommandText);
+        await WaitUntilAsync(() => ReferenceEquals(adapterDiscovery.Command, workbench.DiscoverAdapterTestsCommand) && adapterDiscovery.IsEnabled,
+            "bound adapter discovery");
+        adapterDiscovery.Command!.Execute(adapterDiscovery.CommandParameter);
+        Task adapterTask = workbench.DiscoverAdapterTestsCommand.ExecutionTask
+            ?? throw new InvalidOperationException("The adapter discovery command did not start.");
+        await adapterTask.WaitAsync(TimeSpan.FromSeconds(90));
+        Check(workbench.DiscoveredTestCases.Count == 2,
+            $"Expected two adapter-discovered cases: {workbench.ProjectWorkflowStatus}");
+        ListBox discoveredCases = window.GetVisualDescendants().OfType<ListBox>()
+            .Single(control => AutomationProperties.GetName(control) == workbench.DiscoveredTestCasesLabelText);
+        Check(ReferenceEquals(discoveredCases.ItemsSource, workbench.DiscoveredTestCases),
+            "Adapter test-case list is not bound.");
+        discoveredCases.SelectedItem = workbench.DiscoveredTestCases.Single(
+            testCase => testCase.FullyQualifiedName == "Sample.MethodTests.Passing");
+        Button runCase = FindButton(window, workbench.RunDiscoveredTestCaseCommandText);
+        await WaitUntilAsync(() => ReferenceEquals(runCase.Command, workbench.RunDiscoveredTestCaseCommand) && runCase.IsEnabled,
+            "bound adapter case execution");
+        runCase.Command!.Execute(runCase.CommandParameter);
+        Task caseTask = workbench.RunDiscoveredTestCaseCommand.ExecutionTask
+            ?? throw new InvalidOperationException("The adapter case command did not start.");
+        await caseTask.WaitAsync(TimeSpan.FromSeconds(90));
+        Check(workbench.ProjectTestResults.Count == 1
+            && workbench.ProjectTestResults[0].Children.Count == 1
+            && workbench.ProjectTestResults[0].Children[0].Label.Contains("Passed", StringComparison.Ordinal),
+            $"Expected exactly one successful adapter case: {workbench.ProjectWorkflowStatus}");
+        string? debugAdapter = Environment.GetEnvironmentVariable("AVLN_NETCOREDBG_PATH");
+        if (!string.IsNullOrWhiteSpace(debugAdapter) && File.Exists(debugAdapter))
+        {
+            string sourcePath = Path.Combine(fixture, "MethodTests.cs");
+            await workbench.EditorWorkspace.OpenOrActivateAsync(sourcePath);
+            Check(workbench.EditorWorkspace.ActiveTab.TextView is EditorTextArea, "Test source editor was not opened.");
+            EditorTextArea editor = (EditorTextArea)workbench.EditorWorkspace.ActiveTab.TextView!;
+            int offset = (editor.Text ?? string.Empty).IndexOf("int value = 1;", StringComparison.Ordinal);
+            Check(offset >= 0, "Test breakpoint source was not found.");
+            editor.SetCaretOffset(offset);
+            Button debug = FindButton(window, workbench.DebugDiscoveredTestCaseCommandText);
+            await WaitUntilAsync(() => ReferenceEquals(debug.Command, workbench.DebugDiscoveredTestCaseCommand) && debug.IsEnabled,
+                "bound adapter case debug action");
+            string originalSource = workbench.Editor.Text;
+            workbench.Editor.Text = originalSource + "\n// unsaved";
+            await workbench.DebugDiscoveredTestCaseCommand.ExecuteAsync(null);
+            Check(!workbench.HasDebugSession && workbench.ProjectWorkflowStatus.Contains("Save the active source file", StringComparison.Ordinal),
+                "Test debugging did not reject an unsaved breakpoint source.");
+            workbench.Editor.Text = originalSource;
+            editor.SetCaretOffset(offset);
+            debug.Command!.Execute(debug.CommandParameter);
+            Task debugTask = workbench.DebugDiscoveredTestCaseCommand.ExecutionTask
+                ?? throw new InvalidOperationException("The adapter case debug command did not start.");
+            await WaitUntilAsync(() => workbench.ActiveDebugSessionState == DebugSessionState.Paused
+                && workbench.DebugStackFrames.Any(frame => frame.SourcePath == sourcePath), "debugged adapter case breakpoint");
+            await workbench.ContinueDebugSessionCommand.ExecuteAsync(null);
+            await debugTask.WaitAsync(TimeSpan.FromSeconds(90));
+            Check(!workbench.HasDebugSession && workbench.ProjectTestResults.Count == 1
+                && workbench.ProjectTestResults[0].Children[0].Label.Contains("Passed", StringComparison.Ordinal),
+                $"Debugged adapter case did not finish cleanly: {workbench.ProjectWorkflowStatus}");
+
+            debug.Command!.Execute(debug.CommandParameter);
+            Task cancelTask = workbench.DebugDiscoveredTestCaseCommand.ExecutionTask
+                ?? throw new InvalidOperationException("The second adapter case debug command did not start.");
+            await WaitUntilAsync(() => workbench.ActiveDebugSessionState == DebugSessionState.Paused,
+                "debugged adapter case before cancellation");
+            await workbench.StopDebugSessionCommand.ExecuteAsync(null);
+            await cancelTask.WaitAsync(TimeSpan.FromSeconds(90));
+            Check(!workbench.HasDebugSession, "Canceling test debugging left a debug session active.");
+
+            debug.Command!.Execute(debug.CommandParameter);
+            Task changedSelectionTask = workbench.DebugDiscoveredTestCaseCommand.ExecutionTask
+                ?? throw new InvalidOperationException("The third adapter case debug command did not start.");
+            await WaitUntilAsync(() => workbench.ActiveDebugSessionState == DebugSessionState.Paused,
+                "debugged adapter case before selection change");
+            discoveredCases.SelectedItem = null;
+            await changedSelectionTask.WaitAsync(TimeSpan.FromSeconds(90));
+            Check(!workbench.HasDebugSession && workbench.ProjectTestResults.Count == 0,
+                "Changing the test selection left a session or stale result.");
+            Console.WriteLine("Adapter case debugging: dirty source protection, caret breakpoint, stack, continue, stop and selection change verified.");
+        }
+        ListBox candidates = window.GetVisualDescendants().OfType<ListBox>()
+            .Single(control => AutomationProperties.GetName(control) == workbench.TestCandidatesLabelText);
+        candidates.SelectedItem = workbench.TestMethodCandidates.Single(
+            candidate => candidate.FullyQualifiedName == "Sample.MethodTests.Passing");
+        TextBox method = window.GetVisualDescendants().OfType<TextBox>()
+            .Single(control => AutomationProperties.GetName(control) == workbench.TestMethodNameText);
+        await WaitUntilAsync(() => method.Text == "Sample.MethodTests.Passing", "selected candidate in method input");
+        await WaitUntilAsync(() => workbench.TestSelectedMethodCommand.CanExecute(null), "enabled exact test action");
+        Button run = FindButton(window, workbench.TestMethodCommandText);
+        await WaitUntilAsync(() => ReferenceEquals(run.Command, workbench.TestSelectedMethodCommand) && run.IsEnabled,
+            "bound and enabled exact test button");
+        run.Command!.Execute(run.CommandParameter);
+        Task runTask = workbench.TestSelectedMethodCommand.ExecutionTask
+            ?? throw new InvalidOperationException("The exact test button did not start its command.");
+        await runTask.WaitAsync(TimeSpan.FromSeconds(90));
+        Check(workbench.ProjectWorkflowStatus.Contains("(1 total)", StringComparison.Ordinal)
+            && workbench.Editor.NotificationText.Contains("1 passed", StringComparison.Ordinal),
+            $"Expected exactly one successful test: {workbench.ProjectWorkflowStatus} {workbench.Editor.NotificationText}");
+        TreeView results = window.GetVisualDescendants().OfType<TreeView>()
+            .Single(control => AutomationProperties.GetName(control) == workbench.ProjectTestResultsLabelText);
+        Check(ReferenceEquals(results.ItemsSource, workbench.ProjectTestResults)
+            && workbench.ProjectTestResults.Count == 1
+            && workbench.ProjectTestResults[0].Children.Count == 1
+            && workbench.ProjectTestResults[0].Children[0].Label.Contains("Passed", StringComparison.Ordinal),
+            "Expected one bound passed test result in the project result tree.");
+        Console.WriteLine("Source test candidates: discovery, selection and one matching test verified.");
+    }
+
+    private static async Task VerifyQuickInfoAsync(string fixture)
+    {
+        MainWindowViewModel workbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
+        workbench.Workspace = new CSharpWorkspaceLoader().Load(Path.Combine(fixture, "Sample.csproj"));
+        string path = Path.Combine(fixture, "Quick.cs");
+        await workbench.EditorWorkspace.OpenOrActivateAsync(path);
+        EditorTabViewModel tab = workbench.ActiveEditorTab;
+        const string edited = "public class Sample { public int Count => 1; public int Read() => Count; }";
+        tab.Editor.Text = edited;
+        EditorTextArea editor = (EditorTextArea)tab.TextView!;
+        editor.SetCaretOffset(edited.LastIndexOf("Count", StringComparison.Ordinal));
+        AvaloniaEdit.TextEditor textEditor = editor.FindControl<AvaloniaEdit.TextEditor>("PART_Editor")!;
+        textEditor.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.F1,
+            KeyModifiers = KeyModifiers.Control | KeyModifiers.Shift,
+        });
+        await WaitUntilAsync(() => workbench.QuickInfoText.Contains("Sample.Count", StringComparison.Ordinal), "quick info at caret");
+        Check(desktopTextExists(workbench.QuickInfoText), "Quick info text is not visible in the workbench.");
+        Check(File.ReadAllText(path) == "public class Sample { }", "Quick info or diagnostics saved an unsaved draft.");
+
+        string otherPath = Path.Combine(fixture, "Other.cs");
+        await workbench.EditorWorkspace.OpenOrActivateAsync(otherPath);
+        EditorTabViewModel otherTab = workbench.ActiveEditorTab;
+        const string otherDraft = """
+            public class Other
+            {
+                public string Value => "";
+            }
+            """;
+        otherTab.Editor.Text = otherDraft;
+        workbench.EditorWorkspace.Activate(tab);
+        const string crossFileSource = "public class Sample { public string Read(Other other) => other.Value; }";
+        tab.Editor.Text = crossFileSource;
+        editor.SetCaretOffset(crossFileSource.LastIndexOf("Value", StringComparison.Ordinal));
+        await workbench.RequestQuickInfoCommand.ExecuteAsync(null);
+        Check(workbench.QuickInfoText.Contains("string Other.Value", StringComparison.Ordinal),
+            "Quick info did not use the other open file's unsaved source.");
+        Check(File.ReadAllText(otherPath) == "public class Other { public int Value => 1; }",
+            "Cross-file quick info saved an unsaved sibling buffer.");
+        const string signatureSource =
+            "public class Sample { void Run() { System.Console.WriteLine(1); } }";
+        tab.Editor.Text = signatureSource;
+        int signaturePosition = signatureSource.IndexOf("WriteLine(", StringComparison.Ordinal)
+            + "WriteLine(".Length;
+        editor.SetCaretOffset(signaturePosition);
+        textEditor.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.Space,
+            KeyModifiers = KeyModifiers.Control | KeyModifiers.Shift,
+        });
+        await WaitUntilAsync(() => workbench.QuickInfoText.Contains("WriteLine(", StringComparison.Ordinal),
+            "C# signature help");
+        Check(workbench.QuickInfoText.Contains("Parameter 1:", StringComparison.Ordinal),
+            "Signature help did not identify the active parameter.");
+
+        tab.Editor.Text = edited;
+        editor.SetCaretOffset(edited.LastIndexOf("Count", StringComparison.Ordinal));
+
+        editor.SetCaretOffset(0);
+        Check(!workbench.HasQuickInfo, "Moving the caret did not dismiss quick info.");
+        editor.SetCaretOffset(edited.LastIndexOf("Count", StringComparison.Ordinal));
+        Task staleRequest = workbench.RequestQuickInfoCommand.ExecuteAsync(null);
+        editor.MoveCaretWithoutFocus(0);
+        await staleRequest;
+        Check(!workbench.HasQuickInfo, "An outdated quick info request was displayed after moving the caret.");
+        await workbench.RequestQuickInfoCommand.ExecuteAsync(null);
+        Check(workbench.HasQuickInfo, "The quick info command did not show a result.");
+        workbench.CloseQuickInfoCommand.Execute(null);
+        Check(!workbench.HasQuickInfo, "Close quick info did not hide the result.");
+        editor.SetCaretOffset(edited.IndexOf("Read", StringComparison.Ordinal));
+        int caretBeforeHover = editor.CaretOffset;
+        int hoverOffset = edited.LastIndexOf("Count", StringComparison.Ordinal);
+        AvaloniaEdit.Rendering.TextView textView = textEditor.TextArea.TextView;
+        await WaitUntilAsync(() => textView.VisualLinesValid && textView.Bounds.Width > 0, "C# editor text layout");
+        Window window = ((IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!).MainWindow!;
+        Pointer pointer = new(25, PointerType.Mouse, true);
+        Point GetWindowPoint(int offset)
+        {
+            AvaloniaEdit.TextViewPosition position = new(textEditor.Document.GetLocation(offset));
+            Point point = textView.GetVisualPosition(position, AvaloniaEdit.Rendering.VisualYPosition.TextMiddle)
+                - textView.ScrollOffset + new Vector(1, 0);
+            return textView.TranslatePoint(point, window)
+                ?? throw new InvalidOperationException("The C# editor has no window coordinates.");
+        }
+        void RaiseHover(int offset, bool stopped = false)
+        {
+            if (stopped)
+            {
+                textEditor.RaiseEvent(new PointerEventArgs(
+                    InputElement.PointerExitedEvent, textEditor, pointer, window, GetWindowPoint(offset), 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.Other), KeyModifiers.None));
+            }
+            else
+            {
+                textView.RaiseEvent(new PointerEventArgs(
+                    InputElement.PointerMovedEvent, textView, pointer, window, GetWindowPoint(offset), 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.Other), KeyModifiers.None));
+            }
+        }
+
+        RaiseHover(hoverOffset);
+        await WaitUntilAsync(() => ToolTip.GetIsOpen(textEditor)
+            && ToolTip.GetTip(textEditor) is TextBlock tip
+            && tip.Text?.Contains("Sample.Count", StringComparison.Ordinal) == true, "C# symbol hover tooltip");
+        Check(editor.CaretOffset == caretBeforeHover && !workbench.HasQuickInfo,
+            "Hover changed the caret or displayed the keyboard quick-info panel.");
+        Check(File.ReadAllText(path) == "public class Sample { }", "Hover saved an unsaved draft.");
+        RaiseHover(hoverOffset, stopped: true);
+        Check(!ToolTip.GetIsOpen(textEditor) && editor.HoverOffset is null, "Hover tooltip did not close on pointer movement.");
+        RaiseHover(hoverOffset);
+        RaiseHover(hoverOffset, stopped: true);
+        await Task.Delay(750);
+        Check(!ToolTip.GetIsOpen(textEditor) && editor.HoverOffset is null, "A stale hover request opened a tooltip.");
+
+        CSharpSyntaxDiagnosticService languageService = SmokeApplication.Services!.GetRequiredService<CSharpSyntaxDiagnosticService>();
+        SemaphoreSlim gate = (SemaphoreSlim)(typeof(CSharpSyntaxDiagnosticService)
+            .GetField("_workspaceGate", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+            .GetValue(languageService) ?? throw new InvalidOperationException("The language service gate is unavailable."));
+        bool hoverRequested = false;
+        CancellationToken hoverToken = default;
+        void CaptureHoverRequest(int _)
+        {
+            CancellationTokenSource cancellation = (CancellationTokenSource)(typeof(MainWindowViewModel)
+                .GetField("_hoverQuickInfoCancellation", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+                .GetValue(workbench) ?? throw new InvalidOperationException("The hover request has no cancellation source."));
+            hoverToken = cancellation.Token;
+            hoverRequested = true;
+        }
+
+        await gate.WaitAsync();
+        editor.HoverQuickInfoRequested += CaptureHoverRequest;
+        try
+        {
+            RaiseHover(hoverOffset);
+            await WaitUntilAsync(() => hoverRequested, "blocked hover request");
+            Check(!ToolTip.GetIsOpen(textEditor), "A blocked hover request showed a tooltip.");
+            RaiseHover(hoverOffset, stopped: true);
+            Check(hoverToken.IsCancellationRequested, "Leaving the editor did not cancel the blocked hover request.");
+        }
+        finally
+        {
+            editor.HoverQuickInfoRequested -= CaptureHoverRequest;
+            gate.Release();
+        }
+        await Task.Delay(250);
+        Check(!ToolTip.GetIsOpen(textEditor) && editor.HoverOffset is null, "A cancelled hover request opened a tooltip.");
+
+        RaiseHover(edited.IndexOf(" Count", StringComparison.Ordinal));
+        Check(editor.HoverOffset is null && !ToolTip.GetIsOpen(textEditor), "Hover over whitespace opened a tooltip.");
+        RaiseHover(hoverOffset);
+        await WaitUntilAsync(() => ToolTip.GetIsOpen(textEditor), "hover before editing");
+        tab.Editor.Text = edited + " ";
+        Check(!ToolTip.GetIsOpen(textEditor) && editor.HoverOffset is null, "Editing did not close the hover tooltip.");
+
+        const string completionSource = "public class Sample { void Run() { System.Console.WriteLien(); } }";
+        tab.Editor.Text = completionSource;
+        int completionOffset = completionSource.IndexOf("WriteLien", StringComparison.Ordinal) + "WriteL".Length;
+        editor.SetCaretOffset(completionOffset);
+        textEditor.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.Space,
+            KeyModifiers = KeyModifiers.Control,
+        });
+        Task completionTask = workbench.RequestCompletionsCommand.ExecutionTask
+            ?? throw new InvalidOperationException("The completion command did not start.");
+        await completionTask;
+        await WaitUntilAsync(() => workbench.CompletionSuggestions.Any(item => item.DisplayText == "WriteLine"),
+            "filtered completion suggestions");
+        ListBox completionList = window.GetVisualDescendants().OfType<ListBox>()
+            .Single(list => ReferenceEquals(list.ItemsSource, workbench.CompletionSuggestions));
+        completionList.SelectedItem = workbench.CompletionSuggestions.First(item => item.DisplayText == "WriteLine");
+        await workbench.ApplySelectedCompletionCommand.ExecuteAsync(null);
+        Check(tab.Editor.Text.Contains("System.Console.WriteLine();", StringComparison.Ordinal)
+            && editor.CaretOffset == completionSource.IndexOf("WriteLien", StringComparison.Ordinal) + "WriteLine".Length,
+            "Completion did not apply the provider edit and caret position.");
+        textEditor.Undo();
+        Check(tab.Editor.Text == completionSource, "Completion was not a single undoable editor change.");
+        editor.SetCaretOffset(completionOffset);
+        await workbench.RequestCompletionsCommand.ExecuteAsync(null);
+        Check(workbench.HasCompletionSuggestions, "Completion suggestions were not available after undo.");
+        editor.MoveCaretWithoutFocus(0);
+        Check(!workbench.HasCompletionSuggestions, "Moving the caret retained stale completion suggestions.");
+        await workbench.ApplySelectedCompletionCommand.ExecuteAsync(null);
+        Check(tab.Editor.Text == completionSource, "A stale completion changed the document.");
+        editor.SetCaretOffset(completionOffset);
+        Task staleCompletion = workbench.RequestCompletionsCommand.ExecuteAsync(null);
+        editor.MoveCaretWithoutFocus(0);
+        await staleCompletion;
+        Check(!workbench.HasCompletionSuggestions, "An outdated completion request displayed suggestions.");
+        Check(workbench.EditorWorkspace.TryClose(tab, discardProtected: true), "Could not discard the quick info fixture.");
+        Check(workbench.EditorWorkspace.TryClose(otherTab, discardProtected: true), "Could not discard the sibling C# fixture.");
+        Console.WriteLine("C# language: quick info, hover, provider completion, undo, stale state and draft preservation verified.");
+
+        static bool desktopTextExists(string text) => Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime
+            && lifetime.MainWindow!.GetVisualDescendants().OfType<TextBlock>()
+                .Any(block => block.IsEffectivelyVisible && block.Text == text);
     }
 
     private static async Task VerifyReportedResourcePreviewAsync(IClassicDesktopStyleApplicationLifetime desktop)

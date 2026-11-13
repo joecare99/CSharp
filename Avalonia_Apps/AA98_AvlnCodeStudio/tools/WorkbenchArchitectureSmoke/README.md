@@ -10,6 +10,24 @@ For the resource/focus check only, pass `-- --resources-only`. If the read-only
 AA05 calculator sample exists at its development path, this checks its visible
 button caption, local margin/padding and source focus in both real hosts.
 
+For the C# quick-info check only, pass `-- --quick-info-only`. It restores a
+temporary SDK project and verifies the keyboard event, visible information,
+pointer-movement hover, unsaved-file protection and dismissal in a real Workbench
+window. It also checks filtered completion, provider edits, undo and stale
+suggestion rejection, plus cancellation while a hover request waits for the
+language service. A second open C# tab supplies unsaved source to quick info.
+It also verifies the Ctrl+Shift+Space signature-help command and active parameter.
+Pointer and keyboard input are simulated.
+
+For the source test-candidate check only, pass `-- --test-method-only`. It
+restores a temporary MSTest project, discovers source candidates and adapter
+cases, executes one selected adapter case and one source method through the
+Workbench project controls. It also checks that the result tree is bound and
+contains the reported passing case.
+Pass `-- --xunit-test-method-only` to run the same workflow with xUnit v3,
+including its additional test-process attach. Setting `AVLN_NETCOREDBG_PATH`
+also exercises debugger breakpoints, continue, stop and selection changes.
+
 The test uses temporary synthetic files and opens the real Workbench and
 standalone designer windows. It checks editor previews, pinned tabs, external
 palette and properties, draft recovery, safe handling of unsupported files,

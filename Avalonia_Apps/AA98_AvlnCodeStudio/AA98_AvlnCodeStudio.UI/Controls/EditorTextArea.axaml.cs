@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Threading;
 using AvaloniaEdit;
 using AvaloniaEdit.Highlighting;
 using Code.Navigation;
@@ -18,6 +20,7 @@ public partial class EditorTextArea : UserControl
         AvaloniaProperty.Register<EditorTextArea, string?>(nameof(Text), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
     private readonly TextEditor? _editor;
+    private readonly DispatcherTimer _hoverTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
     private bool _isUpdatingFromEditor;
     private bool _isUpdatingFromProperty;
 
@@ -35,6 +38,13 @@ public partial class EditorTextArea : UserControl
             _editor.TextChanged += OnEditorTextChanged;
             _editor.KeyDown += OnEditorKeyDown;
             _editor.TextArea.Caret.PositionChanged += OnCaretPositionChanged;
+            _editor.AddHandler(InputElement.PointerMovedEvent, OnPointerMoved, RoutingStrategies.Tunnel, true);
+            _editor.PointerExited += OnPointerExited;
+            _editor.AddHandler(InputElement.PointerPressedEvent, OnPointerPressed, RoutingStrategies.Tunnel, true);
+            _editor.TextArea.TextView.ScrollOffsetChanged += (_, _) => DismissHoverQuickInfo();
+            _hoverTimer.Tick += OnHoverTimerTick;
+            ToolTip.SetServiceEnabled(_editor, false);
+            ToolTip.SetPlacement(_editor, PlacementMode.Pointer);
         }
     }
 
@@ -42,9 +52,19 @@ public partial class EditorTextArea : UserControl
 
     public event EventHandler? GoToDefinitionRequested;
 
+    public event EventHandler? QuickInfoRequested;
+
+    public event EventHandler? SignatureHelpRequested;
+
     public event EventHandler? CaretPositionChanged;
 
+    public event Action<int>? HoverQuickInfoRequested;
+
+    public event EventHandler? HoverQuickInfoDismissed;
+
     public int CaretOffset => _editor?.CaretOffset ?? 0;
+
+    public int? HoverOffset { get; private set; }
 
     /// <summary>
     /// Gets or sets the editor text.
@@ -94,6 +114,18 @@ public partial class EditorTextArea : UserControl
         }
     }
 
+    public void ApplyTextChange(int start, int length, string text, int caretOffset)
+    {
+        if (_editor?.Document is not { } document)
+        {
+            throw new InvalidOperationException("The Avalonia editor document is unavailable.");
+        }
+
+        document.Replace(start, length, text);
+        _editor.CaretOffset = caretOffset;
+        _editor.Focus(NavigationMethod.Unspecified);
+    }
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -107,6 +139,7 @@ public partial class EditorTextArea : UserControl
             }
 
             _isUpdatingFromProperty = true;
+            DismissHoverQuickInfo();
             _editor.Text = newText;
             _isUpdatingFromProperty = false;
         }
@@ -124,6 +157,7 @@ public partial class EditorTextArea : UserControl
             return;
         }
 
+        DismissHoverQuickInfo();
         _isUpdatingFromEditor = true;
         Text = _editor.Text;
         _isUpdatingFromEditor = false;
@@ -134,16 +168,108 @@ public partial class EditorTextArea : UserControl
     {
         if (!_isUpdatingFromProperty)
         {
+            DismissHoverQuickInfo();
             CaretPositionChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
+    public void ShowHoverQuickInfo(string text)
+    {
+        if (_editor is null || HoverOffset is null || string.IsNullOrWhiteSpace(text))
+        {
+            return;
+        }
+
+        ToolTip.SetTip(_editor, new TextBlock { Text = text, TextWrapping = Avalonia.Media.TextWrapping.Wrap, MaxWidth = 500 });
+        ToolTip.SetIsOpen(_editor, true);
+    }
+
+    public void DismissHoverQuickInfo()
+    {
+        _hoverTimer.Stop();
+        if (_editor is not null)
+        {
+            ToolTip.SetIsOpen(_editor, false);
+            ToolTip.SetTip(_editor, null);
+        }
+        if (HoverOffset is not null)
+        {
+            HoverOffset = null;
+            HoverQuickInfoDismissed?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    private void OnPointerMoved(object? sender, PointerEventArgs e)
+    {
+        DismissHoverQuickInfo();
+        if (_editor?.Document is not { } document || e.Pointer.Type != PointerType.Mouse)
+        {
+            return;
+        }
+
+        var view = _editor.TextArea.TextView;
+        Point point = e.GetPosition(view);
+        if (!new Rect(view.Bounds.Size).Contains(point))
+        {
+            return;
+        }
+        TextViewPosition? position = view.GetPositionFloor(point + view.ScrollOffset);
+        if (position is null || position.Value.Line < 1 || position.Value.Line > document.LineCount)
+        {
+            return;
+        }
+        var line = document.GetLineByNumber(position.Value.Line);
+        int column = position.Value.Column;
+        if (column < 1 || column > line.Length)
+        {
+            return;
+        }
+        int offset = line.Offset + column - 1;
+        if (char.IsWhiteSpace(document.GetCharAt(offset)))
+        {
+            return;
+        }
+
+        HoverOffset = offset;
+        _hoverTimer.Start();
+    }
+
+    private void OnHoverTimerTick(object? sender, EventArgs e)
+    {
+        _hoverTimer.Stop();
+        if (HoverOffset is int offset)
+        {
+            HoverQuickInfoRequested?.Invoke(offset);
+        }
+    }
+
+    private void OnPointerExited(object? sender, PointerEventArgs e) => DismissHoverQuickInfo();
+
+    private void OnPointerPressed(object? sender, PointerPressedEventArgs e) => DismissHoverQuickInfo();
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        DismissHoverQuickInfo();
+        base.OnDetachedFromVisualTree(e);
+    }
+
     private void OnEditorKeyDown(object? sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        DismissHoverQuickInfo();
+        if (e.Key == Key.Space && e.KeyModifiers == (KeyModifiers.Control | KeyModifiers.Shift))
+        {
+            e.Handled = true;
+            SignatureHelpRequested?.Invoke(this, EventArgs.Empty);
+        }
+        else if (e.Key == Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Control))
         {
             e.Handled = true;
             CompletionRequested?.Invoke(this, EventArgs.Empty);
+        }
+        else if (e.Key == Key.F1 && e.KeyModifiers == (KeyModifiers.Control | KeyModifiers.Shift))
+        {
+            e.Handled = true;
+            QuickInfoRequested?.Invoke(this, EventArgs.Empty);
         }
         else if (e.Key == Key.F12)
         {

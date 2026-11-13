@@ -1,6 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.QuickInfo;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
@@ -9,8 +10,10 @@ using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Build.Locator;
 using AA98_AvlnCodeStudio.Model.Workspaces;
+using AA98_AvlnCodeStudio.Base.Testing.Models;
 using Code.Navigation;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -53,7 +56,8 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         string source,
         string? filePath,
         CSharpWorkspace? workspace,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IReadOnlyDictionary<string, string>? openDocumentTexts = null)
     {
         if (string.IsNullOrWhiteSpace(filePath) || workspace is null)
         {
@@ -82,23 +86,15 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             ProjectContext context = await GetProjectContextAsync(projectDescriptor.ProjectPath, cancellationToken)
                 .ConfigureAwait(false);
             Microsoft.CodeAnalysis.Project? project = context.Workspace.CurrentSolution.GetProject(context.ProjectId);
-            Document? document = project?.Documents.FirstOrDefault(candidate =>
-                string.Equals(candidate.FilePath, normalizedFilePath, StringComparison.OrdinalIgnoreCase));
+            Document? document = project is null
+                ? null
+                : CreateDocumentSnapshot(project, normalizedFilePath, source, openDocumentTexts);
             if (document is null)
             {
                 return Analyze(source, filePath, cancellationToken);
             }
 
-            Solution updatedSolution = context.Workspace.CurrentSolution.WithDocumentText(
-                document.Id,
-                SourceText.From(source));
-            if (!context.Workspace.TryApplyChanges(updatedSolution))
-            {
-                throw new InvalidOperationException($"Could not update Roslyn document '{normalizedFilePath}'.");
-            }
-
-            Microsoft.CodeAnalysis.Project updatedProject = context.Workspace.CurrentSolution.GetProject(context.ProjectId)
-                ?? throw new InvalidOperationException($"Roslyn project '{projectDescriptor.ProjectPath}' is no longer available.");
+            Microsoft.CodeAnalysis.Project updatedProject = document.Project;
             Compilation compilation = await updatedProject.GetCompilationAsync(cancellationToken)
                 .ConfigureAwait(false)
                 ?? throw new InvalidOperationException(
@@ -129,6 +125,21 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         CSharpWorkspace workspace,
         CancellationToken cancellationToken = default)
     {
+        return (await GetCompletionItemsAsync(source, filePath, position, workspace, cancellationToken).ConfigureAwait(false))
+            .Select(static item => item.DisplayText)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+    }
+
+    public async Task<IReadOnlyList<CSharpCompletionSuggestion>> GetCompletionItemsAsync(
+        string source,
+        string filePath,
+        int position,
+        CSharpWorkspace workspace,
+        CancellationToken cancellationToken = default,
+        IReadOnlyDictionary<string, string>? openDocumentTexts = null)
+    {
+        ArgumentNullException.ThrowIfNull(source);
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
         ArgumentNullException.ThrowIfNull(workspace);
         if (position < 0 || position > source.Length)
@@ -137,7 +148,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         }
 
         string normalizedFilePath = Path.GetFullPath(filePath);
-        CSharpWorkspaceProject? projectDescriptor = workspace.Projects
+        var candidates = workspace.Projects
             .Select(project => new
             {
                 Project = project,
@@ -145,9 +156,9 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             })
             .Where(candidate => IsWithinDirectory(normalizedFilePath, candidate.Directory))
             .OrderByDescending(candidate => candidate.Directory.Length)
-            .Select(candidate => candidate.Project)
-            .FirstOrDefault();
-        if (projectDescriptor is null)
+            .ToArray();
+        if (candidates.Length == 0
+            || candidates.Length > 1 && candidates[0].Directory.Length == candidates[1].Directory.Length)
         {
             return [];
         }
@@ -155,37 +166,35 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            ProjectContext context = await GetProjectContextAsync(projectDescriptor.ProjectPath, cancellationToken)
+            ProjectContext context = await GetProjectContextAsync(candidates[0].Project.ProjectPath, cancellationToken)
                 .ConfigureAwait(false);
             Microsoft.CodeAnalysis.Project? project = context.Workspace.CurrentSolution.GetProject(context.ProjectId);
-            Document? document = project?.Documents.FirstOrDefault(candidate =>
-                string.Equals(candidate.FilePath, normalizedFilePath, StringComparison.OrdinalIgnoreCase));
+            Document? document = project is null
+                ? null
+                : CreateDocumentSnapshot(project, normalizedFilePath, source, openDocumentTexts);
             if (document is null)
             {
                 return [];
             }
 
-            Solution updatedSolution = context.Workspace.CurrentSolution.WithDocumentText(
-                document.Id,
-                SourceText.From(source));
-            if (!context.Workspace.TryApplyChanges(updatedSolution))
-            {
-                throw new InvalidOperationException($"Could not update Roslyn document '{normalizedFilePath}'.");
-            }
-
-            Document updatedDocument = context.Workspace.CurrentSolution.GetDocument(document.Id)
-                ?? throw new InvalidOperationException($"Roslyn document '{normalizedFilePath}' is no longer available.");
+            Document updatedDocument = document;
             CompletionService completionService = CompletionService.GetService(updatedDocument)
                 ?? throw new InvalidOperationException("The C# completion service is unavailable.");
             CompletionList? completionList = await completionService.GetCompletionsAsync(
                 updatedDocument,
                 position,
                 cancellationToken: cancellationToken).ConfigureAwait(false);
-            return completionList?.Items
-                .Select(static item => item.DisplayText)
-                .Where(static item => !string.IsNullOrWhiteSpace(item))
-                .Distinct(StringComparer.Ordinal)
-                .ToArray() ?? [];
+            if (completionList is null)
+            {
+                return [];
+            }
+            int filterStart = completionList.Span.Start;
+            string filter = filterStart <= position ? source[filterStart..position] : string.Empty;
+            var items = completionService.FilterItems(updatedDocument, completionList.ItemsList.ToImmutableArray(), filter);
+            return items
+                .Where(static item => !string.IsNullOrWhiteSpace(item.DisplayText))
+                .Select(item => new CSharpCompletionSuggestion(updatedDocument, completionService, item))
+                .ToArray();
         }
         finally
         {
@@ -193,12 +202,31 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         }
     }
 
+    public async Task<CSharpCompletionEdit> GetCompletionEditAsync(
+        CSharpCompletionSuggestion suggestion,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(suggestion);
+        CompletionChange change = await suggestion.Service.GetChangeAsync(
+            suggestion.Document, suggestion.Item, cancellationToken: cancellationToken).ConfigureAwait(false);
+        SourceText source = await suggestion.Document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+        SourceText updated = source.WithChanges(change.TextChange);
+        int caret = change.NewPosition ?? change.TextChange.Span.Start + (change.TextChange.NewText?.Length ?? 0);
+        if (caret < 0 || caret > updated.Length)
+        {
+            throw new InvalidOperationException("The completion provider returned an invalid caret position.");
+        }
+        return new CSharpCompletionEdit(
+            change.TextChange.Span.Start, change.TextChange.Span.Length, change.TextChange.NewText ?? string.Empty, caret);
+    }
+
     public async Task<CodeLocation?> FindDefinitionAsync(
         string source,
         string filePath,
         int position,
         CSharpWorkspace workspace,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IReadOnlyDictionary<string, string>? openDocumentTexts = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
         ArgumentNullException.ThrowIfNull(workspace);
@@ -228,25 +256,17 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         {
             ProjectContext context = await GetProjectContextAsync(projectDescriptor.ProjectPath, cancellationToken)
                 .ConfigureAwait(false);
-            Document? document = context.Workspace.CurrentSolution
-                .GetProject(context.ProjectId)?
-                .Documents.FirstOrDefault(candidate =>
-                    string.Equals(candidate.FilePath, normalizedFilePath, StringComparison.OrdinalIgnoreCase));
+            Microsoft.CodeAnalysis.Project? project =
+                context.Workspace.CurrentSolution.GetProject(context.ProjectId);
+            Document? document = project is null
+                ? null
+                : CreateDocumentSnapshot(project, normalizedFilePath, source, openDocumentTexts);
             if (document is null)
             {
                 return null;
             }
 
-            Solution updatedSolution = context.Workspace.CurrentSolution.WithDocumentText(
-                document.Id,
-                SourceText.From(source));
-            if (!context.Workspace.TryApplyChanges(updatedSolution))
-            {
-                throw new InvalidOperationException($"Could not update Roslyn document '{normalizedFilePath}'.");
-            }
-
-            Document updatedDocument = context.Workspace.CurrentSolution.GetDocument(document.Id)
-                ?? throw new InvalidOperationException($"Roslyn document '{normalizedFilePath}' is no longer available.");
+            Document updatedDocument = document;
             SemanticModel semanticModel = await updatedDocument.GetSemanticModelAsync(cancellationToken)
                 .ConfigureAwait(false)
                 ?? throw new InvalidOperationException($"Could not create a semantic model for '{normalizedFilePath}'.");
@@ -262,7 +282,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
 
             ISymbol? sourceDefinition = await SymbolFinder.FindSourceDefinitionAsync(
                 symbol,
-                context.Workspace.CurrentSolution,
+                updatedDocument.Project.Solution,
                 cancellationToken).ConfigureAwait(false);
             Location? definitionLocation = sourceDefinition?.Locations
                 .FirstOrDefault(static location => location.IsInSource
@@ -282,6 +302,304 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         {
             _workspaceGate.Release();
         }
+    }
+
+    public async Task<string?> GetQuickInfoAsync(
+        string source,
+        string filePath,
+        int position,
+        CSharpWorkspace workspace,
+        CancellationToken cancellationToken = default,
+        IReadOnlyDictionary<string, string>? openDocumentTexts = null)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+        ArgumentNullException.ThrowIfNull(workspace);
+        if (position < 0 || position > source.Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(position));
+        }
+
+        string normalizedFilePath = Path.GetFullPath(filePath);
+        var candidates = workspace.Projects
+            .Select(project => new { Project = project, Directory = Path.GetDirectoryName(project.ProjectPath)! })
+            .Where(candidate => IsWithinDirectory(normalizedFilePath, candidate.Directory))
+            .OrderByDescending(candidate => candidate.Directory.Length)
+            .ToArray();
+        if (candidates.Length == 0
+            || candidates.Length > 1 && candidates[0].Directory.Length == candidates[1].Directory.Length)
+        {
+            return null;
+        }
+
+        await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            ProjectContext context = await GetProjectContextAsync(candidates[0].Project.ProjectPath, cancellationToken)
+                .ConfigureAwait(false);
+            Microsoft.CodeAnalysis.Project? project =
+                context.Workspace.CurrentSolution.GetProject(context.ProjectId);
+            Document? document = project is null
+                ? null
+                : CreateDocumentSnapshot(project, normalizedFilePath, source, openDocumentTexts);
+            if (document is null)
+            {
+                return null;
+            }
+
+            Document updatedDocument = document;
+            QuickInfoService? service = QuickInfoService.GetService(updatedDocument);
+            QuickInfoItem? item = service is null
+                ? null
+                : await service.GetQuickInfoAsync(updatedDocument, position, cancellationToken).ConfigureAwait(false);
+            string[] sections = item?.Sections
+                .Select(section => string.Concat(section.TaggedParts.Select(part => part.Text)))
+                .Where(text => !string.IsNullOrWhiteSpace(text))
+                .ToArray() ?? [];
+            return sections.Length == 0 ? null : string.Join(Environment.NewLine, sections);
+        }
+        finally
+        {
+            _workspaceGate.Release();
+        }
+    }
+
+    public async Task<CSharpSignatureHelp?> GetSignatureHelpAsync(
+        string source,
+        string filePath,
+        int position,
+        CSharpWorkspace workspace,
+        CancellationToken cancellationToken = default,
+        IReadOnlyDictionary<string, string>? openDocumentTexts = null)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+        ArgumentNullException.ThrowIfNull(workspace);
+        if (position < 0 || position > source.Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(position));
+        }
+
+        string normalizedFilePath = Path.GetFullPath(filePath);
+        var candidates = workspace.Projects
+            .Select(project => new { Project = project, Directory = Path.GetDirectoryName(project.ProjectPath)! })
+            .Where(candidate => IsWithinDirectory(normalizedFilePath, candidate.Directory))
+            .OrderByDescending(candidate => candidate.Directory.Length)
+            .ToArray();
+        if (candidates.Length == 0
+            || candidates.Length > 1 && candidates[0].Directory.Length == candidates[1].Directory.Length)
+        {
+            return null;
+        }
+
+        await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            ProjectContext context = await GetProjectContextAsync(candidates[0].Project.ProjectPath, cancellationToken)
+                .ConfigureAwait(false);
+            Microsoft.CodeAnalysis.Project? project =
+                context.Workspace.CurrentSolution.GetProject(context.ProjectId);
+            Document? document = project is null
+                ? null
+                : CreateDocumentSnapshot(project, normalizedFilePath, source, openDocumentTexts);
+            if (document is null)
+            {
+                return null;
+            }
+
+            SyntaxNode? root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            if (root is null)
+            {
+                return null;
+            }
+
+            ArgumentListSyntax? argumentList = root.DescendantNodes()
+                .OfType<ArgumentListSyntax>()
+                .Where(node => node.OpenParenToken.SpanStart <= position
+                    && (node.CloseParenToken.IsMissing || position <= node.CloseParenToken.SpanStart))
+                .OrderBy(node => node.Span.Length)
+                .FirstOrDefault();
+            if (argumentList is null)
+            {
+                return null;
+            }
+
+            SemanticModel? semanticModel = await document.GetSemanticModelAsync(cancellationToken)
+                .ConfigureAwait(false);
+            if (semanticModel is null)
+            {
+                return null;
+            }
+            InvocationExpressionSyntax? invocation = argumentList.Parent as InvocationExpressionSyntax;
+            ObjectCreationExpressionSyntax? creation = argumentList.Parent as ObjectCreationExpressionSyntax;
+            ImplicitObjectCreationExpressionSyntax? implicitCreation =
+                argumentList.Parent as ImplicitObjectCreationExpressionSyntax;
+            ConstructorInitializerSyntax? constructorInitializer = argumentList.Parent as ConstructorInitializerSyntax;
+            IMethodSymbol? selectedMethod = invocation is not null
+                ? semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol as IMethodSymbol
+                : creation is not null
+                    ? semanticModel.GetSymbolInfo(creation, cancellationToken).Symbol as IMethodSymbol
+                    : implicitCreation is not null
+                        ? semanticModel.GetSymbolInfo(implicitCreation, cancellationToken).Symbol as IMethodSymbol
+                        : constructorInitializer is not null
+                            ? semanticModel.GetSymbolInfo(constructorInitializer, cancellationToken).Symbol as IMethodSymbol
+                            : null;
+            if (selectedMethod is null)
+            {
+                return null;
+            }
+
+            var methods = selectedMethod.ContainingType.GetMembers(selectedMethod.Name)
+                .OfType<IMethodSymbol>()
+                .Where(method => method.MethodKind == selectedMethod.MethodKind)
+                .Concat(new[] { selectedMethod })
+                .Distinct<IMethodSymbol>(SymbolEqualityComparer.Default)
+                .ToArray();
+            if (methods.Length == 0)
+            {
+                return null;
+            }
+
+            int selectedIndex = Array.FindIndex(methods, method =>
+                SymbolEqualityComparer.Default.Equals(method, selectedMethod));
+            int activeArgumentIndex = argumentList.Arguments.GetSeparators()
+                .Count(separator => separator.SpanStart < position);
+            ArgumentSyntax? activeArgument = argumentList.Arguments
+                .FirstOrDefault(argument => argument.SpanStart <= position && position <= argument.Span.End);
+            int activeParameterIndex = activeArgument?.NameColon is { } nameColon
+                ? Array.FindIndex(selectedMethod.Parameters.ToArray(),
+                    parameter => string.Equals(parameter.Name, nameColon.Name.Identifier.ValueText, StringComparison.Ordinal))
+                : Math.Clamp(activeArgumentIndex, 0, Math.Max(0, selectedMethod.Parameters.Length - 1));
+            string? activeParameterName = activeParameterIndex >= 0
+                && activeParameterIndex < selectedMethod.Parameters.Length
+                    ? selectedMethod.Parameters[activeParameterIndex].Name
+                    : null;
+            return new CSharpSignatureHelp(
+                methods.Select(FormatSignature).ToArray(),
+                selectedIndex,
+                activeParameterIndex,
+                activeParameterName);
+        }
+        finally
+        {
+            _workspaceGate.Release();
+        }
+    }
+
+    private static string FormatSignature(IMethodSymbol method)
+    {
+        string prefix = method.MethodKind == MethodKind.Constructor
+            ? method.ContainingType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+            : $"{method.ContainingType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}.{method.Name}";
+        string parameters = string.Join(", ", method.Parameters.Select(parameter =>
+        {
+            string modifier = parameter.RefKind switch
+            {
+                RefKind.Ref => "ref ",
+                RefKind.Out => "out ",
+                RefKind.In => "in ",
+                _ => string.Empty,
+            };
+            string optional = parameter.IsOptional && parameter.HasExplicitDefaultValue
+                ? $" = {Convert.ToString(parameter.ExplicitDefaultValue, System.Globalization.CultureInfo.InvariantCulture) ?? "null"}"
+                : string.Empty;
+            return $"{modifier}{parameter.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)} {parameter.Name}{optional}";
+        }));
+        return $"{prefix}({parameters})";
+    }
+
+    public async Task<IReadOnlyList<TestMethodCandidate>> FindTestMethodCandidatesAsync(
+        string projectPath,
+        string configuration,
+        string targetFramework,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(configuration);
+        ArgumentException.ThrowIfNullOrWhiteSpace(targetFramework);
+        await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            RegisterMsBuildLocator();
+            HostServices hostServices = CreateHostServices();
+            using MSBuildWorkspace workspace = MSBuildWorkspace.Create(new Dictionary<string, string>
+            {
+                ["Configuration"] = configuration,
+                ["TargetFramework"] = targetFramework,
+            }, hostServices);
+            Microsoft.CodeAnalysis.Project project = await workspace.OpenProjectAsync(
+                Path.GetFullPath(projectPath), cancellationToken: cancellationToken).ConfigureAwait(false);
+            WorkspaceDiagnostic? failure = workspace.Diagnostics.FirstOrDefault(
+                diagnostic => diagnostic.Kind == WorkspaceDiagnosticKind.Failure);
+            if (failure is not null)
+            {
+                throw new InvalidOperationException($"Project loading failed: {failure.Message}");
+            }
+            Compilation compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidOperationException("The selected project could not be compiled for test discovery.");
+            List<TestMethodCandidate> candidates = [];
+            foreach (Document document in project.Documents)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                if (string.IsNullOrWhiteSpace(document.FilePath))
+                {
+                    continue;
+                }
+
+                SyntaxTree? tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+                if (tree is null || !compilation.ContainsSyntaxTree(tree))
+                {
+                    continue;
+                }
+
+                SemanticModel model = compilation.GetSemanticModel(tree);
+                SyntaxNode root = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+                foreach (MethodDeclarationSyntax declaration in root.DescendantNodes().OfType<MethodDeclarationSyntax>())
+                {
+                    if (model.GetDeclaredSymbol(declaration, cancellationToken) is not IMethodSymbol method
+                        || method.DeclaredAccessibility != Accessibility.Public
+                        || method.IsAbstract || method.IsStatic || method.IsGenericMethod
+                        || method.ContainingType.IsAbstract || method.ContainingType.IsGenericType
+                        || method.ContainingType.ContainingType is not null
+                        || !method.GetAttributes().Any(IsSupportedTestAttribute))
+                    {
+                        continue;
+                    }
+
+                    string name = method.ContainingType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)
+                        + "." + method.Name;
+                    FileLinePositionSpan span = declaration.Identifier.GetLocation().GetLineSpan();
+                    candidates.Add(new TestMethodCandidate(name, document.FilePath!, span.StartLinePosition.Line + 1));
+                }
+            }
+
+            return candidates.OrderBy(candidate => candidate.FullyQualifiedName, StringComparer.Ordinal)
+                .ThenBy(candidate => candidate.SourcePath, StringComparer.Ordinal)
+                .ThenBy(candidate => candidate.LineNumber)
+                .ToArray();
+        }
+        finally
+        {
+            _workspaceGate.Release();
+        }
+    }
+
+    private static bool IsSupportedTestAttribute(AttributeData attribute)
+    {
+        for (INamedTypeSymbol? type = attribute.AttributeClass; type is not null; type = type.BaseType)
+        {
+            if (type.TypeKind != TypeKind.Error
+                && (type.ToDisplayString() is "Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute"
+                or "Xunit.FactAttribute"
+                or "NUnit.Framework.TestAttribute"
+                or "NUnit.Framework.TestCaseAttribute"
+                or "NUnit.Framework.TestCaseSourceAttribute"))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public async Task<AxamlMvvmSemanticResolution> AnalyzeAxamlMvvmAsync(
@@ -1390,12 +1708,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         }
 
         RegisterMsBuildLocator();
-        Assembly csharpWorkspaceAssembly = Assembly.Load("Microsoft.CodeAnalysis.CSharp.Workspaces");
-        Assembly csharpFeaturesAssembly = Assembly.Load("Microsoft.CodeAnalysis.CSharp.Features");
-        HostServices hostServices = MefHostServices.Create(
-            MefHostServices.DefaultAssemblies
-                .Append(csharpWorkspaceAssembly)
-                .Append(csharpFeaturesAssembly));
+        HostServices hostServices = CreateHostServices();
         MSBuildWorkspace workspace = MSBuildWorkspace.Create(hostServices);
         try
         {
@@ -1410,6 +1723,53 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             workspace.Dispose();
             throw;
         }
+    }
+
+    private static Document? CreateDocumentSnapshot(
+        Microsoft.CodeAnalysis.Project project,
+        string activeFilePath,
+        string activeSource,
+        IReadOnlyDictionary<string, string>? openDocumentTexts)
+    {
+        Dictionary<string, string> texts = new(WorkspacePathIdentity.Comparer);
+        if (openDocumentTexts is not null)
+        {
+            foreach ((string path, string text) in openDocumentTexts)
+            {
+                string normalizedPath = WorkspacePathIdentity.Normalize(path);
+                if (texts.TryGetValue(normalizedPath, out string? previous)
+                    && !string.Equals(previous, text, StringComparison.Ordinal))
+                {
+                    throw new InvalidDataException($"More than one open editor buffer maps to '{normalizedPath}'.");
+                }
+
+                texts[normalizedPath] = text;
+            }
+        }
+
+        texts[WorkspacePathIdentity.Normalize(activeFilePath)] = activeSource;
+        Solution solution = project.Solution;
+        foreach (Document candidate in project.Documents)
+        {
+            if (candidate.FilePath is { } path
+                && texts.TryGetValue(WorkspacePathIdentity.Normalize(path), out string? text))
+            {
+                solution = solution.WithDocumentText(candidate.Id, SourceText.From(text));
+            }
+        }
+
+        return solution.GetProject(project.Id)?.Documents.FirstOrDefault(candidate =>
+            candidate.FilePath is not null
+            && WorkspacePathIdentity.AreEqual(candidate.FilePath, activeFilePath));
+    }
+
+    private static HostServices CreateHostServices()
+    {
+        Assembly csharpWorkspaceAssembly = Assembly.Load("Microsoft.CodeAnalysis.CSharp.Workspaces");
+        Assembly csharpFeaturesAssembly = Assembly.Load("Microsoft.CodeAnalysis.CSharp.Features");
+        return MefHostServices.Create(MefHostServices.DefaultAssemblies
+            .Append(csharpWorkspaceAssembly)
+            .Append(csharpFeaturesAssembly));
     }
 
     private static void RegisterMsBuildLocator()
@@ -1467,3 +1827,32 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
 
     private sealed record ProjectContext(MSBuildWorkspace Workspace, ProjectId ProjectId);
 }
+
+public sealed class CSharpCompletionSuggestion
+{
+    internal CSharpCompletionSuggestion(Document document, CompletionService service, CompletionItem item)
+    {
+        Document = document;
+        Service = service;
+        Item = item;
+    }
+
+    internal Document Document { get; }
+    internal CompletionService Service { get; }
+    internal CompletionItem Item { get; }
+    public string DisplayText => Item.DisplayText;
+
+    public override string ToString()
+    {
+        string label = Item.DisplayTextPrefix + Item.DisplayText + Item.DisplayTextSuffix;
+        return string.IsNullOrWhiteSpace(Item.InlineDescription) ? label : $"{label} ({Item.InlineDescription})";
+    }
+}
+
+public sealed record CSharpCompletionEdit(int Start, int Length, string NewText, int CaretOffset);
+
+public sealed record CSharpSignatureHelp(
+    IReadOnlyList<string> Signatures,
+    int SelectedSignatureIndex,
+    int ActiveParameterIndex,
+    string? ActiveParameterName);

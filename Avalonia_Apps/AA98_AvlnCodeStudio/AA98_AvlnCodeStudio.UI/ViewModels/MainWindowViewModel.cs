@@ -76,6 +76,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private readonly List<Diagnostic> _testDiagnostics = [];
         private readonly Dictionary<string, HashSet<int>> _debugBreakpoints = new(
             OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+        private readonly Dictionary<EditorViewModel, EditorTabViewModel> _observedBackgroundEditors = [];
         private List<Diagnostic> _languageDiagnostics = [];
         private CancellationTokenSource? _languageAnalysisCancellation;
         private CancellationTokenSource? _axamlBindingAnalysisCancellation;
@@ -139,7 +140,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             WorkbenchSettingsRuntimeActivator? settingsRuntimeActivator = null,
             CredentialProviderCatalog? credentialProviderCatalog = null,
             IProjectTargetResolver? projectTargetResolver = null,
-            IProjectRuntimeBuilder? projectRuntimeBuilder = null)
+            IProjectRuntimeBuilder? projectRuntimeBuilder = null,
+            ITestDiscoveryService? testDiscoveryService = null,
+            ITestCaseExecutionService? testCaseExecutionService = null)
         {
             _editorWorkspace = editorWorkspace ?? new EditorDocumentWorkspace(editorComponent);
             _workspaceLoader = workspaceLoader ?? new CSharpWorkspaceLoader();
@@ -160,6 +163,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _debugSessionService = debugSessionService ?? new NullDebugSessionService();
             _projectTargetResolver = projectTargetResolver ?? new DotNetProjectTargetResolver();
             _projectRuntimeBuilder = projectRuntimeBuilder ?? new DotNetProjectRuntimeBuilder();
+            _testDiscoveryService = testDiscoveryService ?? new DotNetTestDiscoveryService();
+            _testCaseExecutionService = testCaseExecutionService ?? new DotNetTestDiscoveryService();
             _aiChatService = aiChatService;
             _aiSettings = aiSettings;
             _codeStudioSettings = codeStudioSettings;
@@ -187,6 +192,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _observedEditor.PropertyChanged += OnActiveEditorPropertyChanged;
             ObserveActiveTab();
             ObserveActiveEditorControl();
+            ObserveBackgroundLanguageDocuments();
             CompletionSuggestions.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasCompletionSuggestions));
             PlanningExplorer = planningExplorer;
             DiagnosticCollection = diagnosticCollection ?? throw new ArgumentNullException(nameof(diagnosticCollection));
@@ -387,11 +393,17 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public string GoToDefinitionCommandText => UiStrings.GoToDefinitionCommandText;
 
+        public string QuickInfoCommandText => UiStrings.QuickInfoCommandText;
+
+        public string SignatureHelpCommandText => UiStrings.SignatureHelpCommandText;
+
+        public string CloseQuickInfoText => UiStrings.CloseQuickInfoText;
+
         public string RunTestsCommandText => _testExecutionService is NullTestExecutionService
             ? UiStrings.RunTestsUnavailableText
             : UiStrings.RunTestsCommandText;
 
-        public ObservableCollection<string> CompletionSuggestions { get; } = [];
+        public ObservableCollection<Services.CSharpCompletionSuggestion> CompletionSuggestions { get; } = [];
 
         public ObservableCollection<AIChatMessageViewModel> AIChatMessages { get; } = [];
 
@@ -439,9 +451,26 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public ObservableCollection<DebugVariable> DebugVariables { get; } = [];
 
-        public string? SelectedCompletion { get; set; }
+        public Services.CSharpCompletionSuggestion? SelectedCompletion { get; set; }
 
         public bool HasCompletionSuggestions => CompletionSuggestions.Count > 0;
+
+        private CompletionSnapshot? _completionSnapshot;
+        private int _completionRequestVersion;
+
+        private sealed record CompletionSnapshot(
+            CSharpWorkspace Workspace, EditorTabViewModel Tab, Controls.EditorTextArea Control,
+            string FilePath, string Source, int Position, IReadOnlyDictionary<string, string> OpenDocuments);
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasQuickInfo))]
+        private string _quickInfoText = string.Empty;
+
+        private int _quickInfoRequestVersion;
+        private int _signatureHelpRequestVersion;
+        private CancellationTokenSource? _hoverQuickInfoCancellation;
+
+        public bool HasQuickInfo => !string.IsNullOrEmpty(QuickInfoText);
 
         public bool HasDebugSession => _activeDebugSessionId is not null;
 
@@ -489,23 +518,47 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         [RelayCommand]
         private async Task RequestCompletionsAsync(CancellationToken cancellationToken)
         {
+            ClearCompletions();
+            int requestVersion = _completionRequestVersion;
             string? filePath = Editor.CurrentFilePath;
-            if (Workspace is null
+            CSharpWorkspace? workspace = Workspace;
+            Controls.EditorTextArea? editorControl = _observedEditorTextArea;
+            if (workspace is null
                 || string.IsNullOrWhiteSpace(filePath)
-                || _observedEditorTextArea is null)
+                || !string.Equals(Path.GetExtension(filePath), ".cs", StringComparison.OrdinalIgnoreCase)
+                || editorControl is null)
             {
-                CompletionSuggestions.Clear();
                 return;
             }
 
-            IReadOnlyList<string> suggestions = await _csharpSyntaxDiagnosticService.GetCompletionsAsync(
-                Editor.Text,
-                filePath,
-                _observedEditorTextArea.CaretOffset,
-                Workspace,
-                cancellationToken);
-            CompletionSuggestions.Clear();
-            foreach (string suggestion in suggestions.Take(50))
+            IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
+            CompletionSnapshot snapshot = new(
+                workspace, ActiveEditorTab, editorControl, filePath, Editor.Text, editorControl.CaretOffset,
+                openDocuments);
+            IReadOnlyList<Services.CSharpCompletionSuggestion> suggestions;
+            try
+            {
+                suggestions = await _csharpSyntaxDiagnosticService.GetCompletionItemsAsync(
+                    snapshot.Source, filePath, snapshot.Position, workspace, cancellationToken, openDocuments);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+            catch (Exception exception)
+            {
+                if (requestVersion == _completionRequestVersion && IsCurrentCompletionSnapshot(snapshot))
+                {
+                    Editor.NotificationText = exception.Message;
+                }
+                return;
+            }
+            if (requestVersion != _completionRequestVersion || !IsCurrentCompletionSnapshot(snapshot))
+            {
+                return;
+            }
+            _completionSnapshot = snapshot;
+            foreach (Services.CSharpCompletionSuggestion suggestion in suggestions.Take(50))
             {
                 CompletionSuggestions.Add(suggestion);
             }
@@ -519,30 +572,298 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         }
 
         [RelayCommand]
-        private void ApplySelectedCompletion()
+        private async Task ApplySelectedCompletionAsync(CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(SelectedCompletion) || _observedEditorTextArea is null)
+            Services.CSharpCompletionSuggestion? selected = SelectedCompletion;
+            CompletionSnapshot? snapshot = _completionSnapshot;
+            int requestVersion = _completionRequestVersion;
+            if (selected is null || snapshot is null || !CompletionSuggestions.Contains(selected)
+                || !IsCurrentCompletionSnapshot(snapshot))
+            {
+                ClearCompletions();
+                return;
+            }
+
+            Services.CSharpCompletionEdit edit;
+            try
+            {
+                edit = await _csharpSyntaxDiagnosticService.GetCompletionEditAsync(selected, cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+            catch (Exception exception)
+            {
+                if (requestVersion == _completionRequestVersion && IsCurrentCompletionSnapshot(snapshot))
+                {
+                    Editor.NotificationText = exception.Message;
+                }
+                return;
+            }
+            if (requestVersion != _completionRequestVersion || !IsCurrentCompletionSnapshot(snapshot)
+                || !ReferenceEquals(selected, SelectedCompletion))
+            {
+                return;
+            }
+            snapshot.Control.ApplyTextChange(edit.Start, edit.Length, edit.NewText, edit.CaretOffset);
+            ClearCompletions();
+        }
+
+        private bool IsCurrentCompletionSnapshot(CompletionSnapshot snapshot)
+            => ReferenceEquals(snapshot.Workspace, Workspace)
+                && ReferenceEquals(snapshot.Tab, ActiveEditorTab)
+                && ReferenceEquals(snapshot.Control, _observedEditorTextArea)
+                && snapshot.Position == snapshot.Control.CaretOffset
+                && string.Equals(snapshot.Source, Editor.Text, StringComparison.Ordinal)
+                && string.Equals(snapshot.FilePath, Editor.CurrentFilePath, StringComparison.Ordinal)
+                && AreOpenCSharpDocumentSnapshotsEqual(snapshot.OpenDocuments, CaptureOpenCSharpDocuments());
+
+        private IReadOnlyDictionary<string, string> CaptureOpenCSharpDocuments()
+        {
+            Dictionary<string, string> documents = new(WorkspacePathIdentity.Comparer);
+            HashSet<string> ambiguousPaths = new(WorkspacePathIdentity.Comparer);
+            foreach (EditorTabViewModel tab in _editorWorkspace.Tabs)
+            {
+                string? path = tab.FilePath;
+                if (!tab.HasTextEditor
+                    || tab.IsDiagnostic
+                    || string.IsNullOrWhiteSpace(path)
+                    || !string.Equals(Path.GetExtension(path), ".cs", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                string normalizedPath = WorkspacePathIdentity.Normalize(path);
+                if (ambiguousPaths.Contains(normalizedPath))
+                {
+                    continue;
+                }
+
+                string source = tab.Editor.Text;
+                if (documents.TryGetValue(normalizedPath, out string? previous)
+                    && !string.Equals(previous, source, StringComparison.Ordinal))
+                {
+                    documents.Remove(normalizedPath);
+                    ambiguousPaths.Add(normalizedPath);
+                    continue;
+                }
+
+                documents[normalizedPath] = source;
+            }
+
+            return documents;
+        }
+
+        private static bool AreOpenCSharpDocumentSnapshotsEqual(
+            IReadOnlyDictionary<string, string> expected,
+            IReadOnlyDictionary<string, string> current)
+        {
+            if (expected.Count != current.Count)
+            {
+                return false;
+            }
+
+            return expected.All(pair =>
+                current.TryGetValue(pair.Key, out string? text)
+                && string.Equals(pair.Value, text, StringComparison.Ordinal));
+        }
+
+        private void ClearCompletions()
+        {
+            _completionRequestVersion++;
+            _completionSnapshot = null;
+            CompletionSuggestions.Clear();
+            SelectedCompletion = null;
+            OnPropertyChanged(nameof(SelectedCompletion));
+        }
+
+        [RelayCommand]
+        private async Task RequestQuickInfoAsync(CancellationToken cancellationToken)
+        {
+            CloseQuickInfo();
+            int requestVersion = _quickInfoRequestVersion;
+            string? filePath = Editor.CurrentFilePath;
+            CSharpWorkspace? workspace = Workspace;
+            Controls.EditorTextArea? editorControl = _observedEditorTextArea;
+            EditorTabViewModel tab = ActiveEditorTab;
+            if (workspace is null || editorControl is null || string.IsNullOrWhiteSpace(filePath)
+                || !string.Equals(Path.GetExtension(filePath), ".cs", StringComparison.OrdinalIgnoreCase))
+            {
+                QuickInfoText = UiStrings.QuickInfoEmptyText;
+                return;
+            }
+
+            string source = Editor.Text;
+            IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
+            int position = editorControl.CaretOffset;
+            string? info;
+            try
+            {
+                info = await _csharpSyntaxDiagnosticService.GetQuickInfoAsync(
+                    source, filePath, position, workspace, cancellationToken, openDocuments);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+            catch (Exception exception)
+            {
+                if (requestVersion == _quickInfoRequestVersion && ReferenceEquals(tab, ActiveEditorTab))
+                {
+                    Editor.NotificationText = exception.Message;
+                }
+                return;
+            }
+
+            if (requestVersion == _quickInfoRequestVersion
+                && ReferenceEquals(workspace, Workspace)
+                && ReferenceEquals(tab, ActiveEditorTab)
+                && ReferenceEquals(editorControl, _observedEditorTextArea)
+                && position == editorControl.CaretOffset
+                && string.Equals(source, Editor.Text, StringComparison.Ordinal)
+                && string.Equals(filePath, Editor.CurrentFilePath, StringComparison.Ordinal)
+                && AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments()))
+            {
+                QuickInfoText = info ?? UiStrings.QuickInfoEmptyText;
+            }
+        }
+
+        [RelayCommand]
+        private async Task RequestSignatureHelpAsync(CancellationToken cancellationToken)
+        {
+            CloseQuickInfo();
+            int requestVersion = _signatureHelpRequestVersion;
+            string? filePath = Editor.CurrentFilePath;
+            CSharpWorkspace? workspace = Workspace;
+            Controls.EditorTextArea? editorControl = _observedEditorTextArea;
+            EditorTabViewModel tab = ActiveEditorTab;
+            if (workspace is null || editorControl is null || string.IsNullOrWhiteSpace(filePath)
+                || !string.Equals(Path.GetExtension(filePath), ".cs", StringComparison.OrdinalIgnoreCase))
+            {
+                QuickInfoText = UiStrings.QuickInfoEmptyText;
+                return;
+            }
+
+            string source = Editor.Text;
+            int position = editorControl.CaretOffset;
+            IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
+            Services.CSharpSignatureHelp? signatureHelp;
+            try
+            {
+                signatureHelp = await _csharpSyntaxDiagnosticService.GetSignatureHelpAsync(
+                    source, filePath, position, workspace, cancellationToken, openDocuments);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+            catch (Exception exception)
+            {
+                if (requestVersion == _signatureHelpRequestVersion && ReferenceEquals(tab, ActiveEditorTab))
+                {
+                    Editor.NotificationText = exception.Message;
+                }
+                return;
+            }
+
+            if (requestVersion != _signatureHelpRequestVersion
+                || !ReferenceEquals(workspace, Workspace)
+                || !ReferenceEquals(tab, ActiveEditorTab)
+                || !ReferenceEquals(editorControl, _observedEditorTextArea)
+                || position != editorControl.CaretOffset
+                || !string.Equals(source, Editor.Text, StringComparison.Ordinal)
+                || !string.Equals(filePath, Editor.CurrentFilePath, StringComparison.Ordinal)
+                || !AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments()))
+            {
+                return;
+            }
+
+            if (signatureHelp is null)
+            {
+                QuickInfoText = UiStrings.QuickInfoEmptyText;
+                return;
+            }
+
+            string[] signatures = signatureHelp.Signatures
+                .Select((signature, index) => $"{(index == signatureHelp.SelectedSignatureIndex ? "› " : "  ")}{signature}")
+                .ToArray();
+            string parameter = signatureHelp.ActiveParameterName is { Length: > 0 } name
+                ? $"{Environment.NewLine}Parameter {signatureHelp.ActiveParameterIndex + 1}: {name}"
+                : string.Empty;
+            QuickInfoText = string.Join(Environment.NewLine, signatures) + parameter;
+        }
+
+        [RelayCommand]
+        private void CloseQuickInfo()
+        {
+            _quickInfoRequestVersion++;
+            _signatureHelpRequestVersion++;
+            QuickInfoText = string.Empty;
+            ClearCompletions();
+            CancelHoverQuickInfo();
+            _observedEditorTextArea?.DismissHoverQuickInfo();
+        }
+
+        private async void OnHoverQuickInfoRequested(int position)
+        {
+            CancelHoverQuickInfo();
+            Controls.EditorTextArea? editorControl = _observedEditorTextArea;
+            CSharpWorkspace? workspace = Workspace;
+            string? filePath = Editor.CurrentFilePath;
+            EditorTabViewModel tab = ActiveEditorTab;
+            if (workspace is null || editorControl is null || string.IsNullOrWhiteSpace(filePath)
+                || !string.Equals(Path.GetExtension(filePath), ".cs", StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
 
             string source = Editor.Text;
-            int caretOffset = Math.Clamp(_observedEditorTextArea.CaretOffset, 0, source.Length);
-            int replacementStart = caretOffset;
-            while (replacementStart > 0 && IsIdentifierCharacter(source[replacementStart - 1]))
+            IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
+            CancellationTokenSource cancellation = new();
+            _hoverQuickInfoCancellation = cancellation;
+            try
             {
-                replacementStart--;
+                string? info = await _csharpSyntaxDiagnosticService.GetQuickInfoAsync(
+                    source, filePath, position, workspace, cancellation.Token, openDocuments);
+                if (!cancellation.IsCancellationRequested
+                    && ReferenceEquals(cancellation, _hoverQuickInfoCancellation)
+                    && ReferenceEquals(workspace, Workspace)
+                    && ReferenceEquals(tab, ActiveEditorTab)
+                    && ReferenceEquals(editorControl, _observedEditorTextArea)
+                    && editorControl.HoverOffset == position
+                    && string.Equals(source, Editor.Text, StringComparison.Ordinal)
+                    && string.Equals(filePath, Editor.CurrentFilePath, StringComparison.Ordinal)
+                    && AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments())
+                    && !string.IsNullOrWhiteSpace(info))
+                {
+                    editorControl.ShowHoverQuickInfo(info);
+                }
             }
+            catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+            {
+            }
+            catch (Exception)
+            {
+                // Hover is opportunistic; the explicit quick-info command reports errors.
+            }
+            finally
+            {
+                if (ReferenceEquals(cancellation, _hoverQuickInfoCancellation))
+                {
+                    _hoverQuickInfoCancellation = null;
+                }
+                cancellation.Dispose();
+            }
+        }
 
-            string updatedSource = string.Concat(
-                source[..replacementStart],
-                SelectedCompletion,
-                source[caretOffset..]);
-            Editor.Text = updatedSource;
-            _observedEditorTextArea.SetCaretOffset(replacementStart + SelectedCompletion.Length);
-            CompletionSuggestions.Clear();
-            SelectedCompletion = null;
-            OnPropertyChanged(nameof(SelectedCompletion));
+        private void OnHoverQuickInfoDismissed(object? sender, EventArgs e) => CancelHoverQuickInfo();
+
+        private void CancelHoverQuickInfo()
+        {
+            CancellationTokenSource? cancellation = _hoverQuickInfoCancellation;
+            _hoverQuickInfoCancellation = null;
+            cancellation?.Cancel();
         }
 
         [RelayCommand]
@@ -556,12 +877,30 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 return;
             }
 
+            CSharpWorkspace workspace = Workspace;
+            EditorTabViewModel sourceTab = ActiveEditorTab;
+            Controls.EditorTextArea editorControl = _observedEditorTextArea;
+            string source = Editor.Text;
+            int position = editorControl.CaretOffset;
+            IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
             Code.Navigation.CodeLocation? location = await _csharpSyntaxDiagnosticService.FindDefinitionAsync(
-                Editor.Text,
+                source,
                 filePath,
-                _observedEditorTextArea.CaretOffset,
-                Workspace,
-                cancellationToken);
+                position,
+                workspace,
+                cancellationToken,
+                openDocuments);
+            if (!ReferenceEquals(workspace, Workspace)
+                || !ReferenceEquals(sourceTab, ActiveEditorTab)
+                || !ReferenceEquals(editorControl, _observedEditorTextArea)
+                || position != editorControl.CaretOffset
+                || !string.Equals(source, Editor.Text, StringComparison.Ordinal)
+                || !string.Equals(filePath, Editor.CurrentFilePath, StringComparison.Ordinal)
+                || !AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments()))
+            {
+                return;
+            }
+
             if (location is null)
             {
                 Editor.NotificationText = "No source definition was found at the current position.";
@@ -2337,6 +2676,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         partial void OnWorkspaceChanged(CSharpWorkspace? value)
         {
+            CloseQuickInfo();
             ResetProjectWorkflow();
             if (AiChatBusy)
             {
@@ -2750,6 +3090,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             OnPropertyChanged(nameof(HasDebugSession));
             StartDebugSessionCommand.NotifyCanExecuteChanged();
             DebugSelectedProjectCommand.NotifyCanExecuteChanged();
+            DebugDiscoveredTestCaseCommand.NotifyCanExecuteChanged();
             StopDebugSessionCommand.NotifyCanExecuteChanged();
             NotifyDebugControlCommands();
             Editor.StatusText = session.State == DebugSessionState.Paused
@@ -2766,6 +3107,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         {
             string sessionId = _activeDebugSessionId
                 ?? throw new InvalidOperationException("There is no active debug session.");
+            if (string.Equals(_debuggedTestSessionId, sessionId, StringComparison.Ordinal))
+            {
+                DebugDiscoveredTestCaseCommand.Cancel();
+                Editor.StatusText = "Test debugging cancellation requested.";
+                return;
+            }
             try
             {
                 await _debugSessionService.StopSessionAsync(sessionId, cancellationToken);
@@ -2773,18 +3120,28 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
             finally
             {
-                _activeDebugSessionId = null;
-                ActiveDebugSessionState = null;
-                _debugBreakpoints.Clear();
-                DebugStackFrames.Clear();
-                DebugVariables.Clear();
-                SelectedDebugStackFrame = null;
-                OnPropertyChanged(nameof(HasDebugSession));
-                StartDebugSessionCommand.NotifyCanExecuteChanged();
-                DebugSelectedProjectCommand.NotifyCanExecuteChanged();
-                StopDebugSessionCommand.NotifyCanExecuteChanged();
-                NotifyDebugControlCommands();
+                ClearActiveDebugSession(sessionId);
             }
+        }
+
+        private void ClearActiveDebugSession(string sessionId)
+        {
+            if (!string.Equals(_activeDebugSessionId, sessionId, StringComparison.Ordinal))
+            {
+                return;
+            }
+            _activeDebugSessionId = null;
+            ActiveDebugSessionState = null;
+            _debugBreakpoints.Clear();
+            DebugStackFrames.Clear();
+            DebugVariables.Clear();
+            SelectedDebugStackFrame = null;
+            OnPropertyChanged(nameof(HasDebugSession));
+            StartDebugSessionCommand.NotifyCanExecuteChanged();
+            DebugSelectedProjectCommand.NotifyCanExecuteChanged();
+            DebugDiscoveredTestCaseCommand.NotifyCanExecuteChanged();
+            StopDebugSessionCommand.NotifyCanExecuteChanged();
+            NotifyDebugControlCommands();
         }
 
         [RelayCommand(CanExecute = nameof(CanContinueDebugSession))]
@@ -3113,6 +3470,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 return;
             }
 
+            CloseQuickInfo();
             if (_observedEditor is not null)
             {
                 _observedEditor.PropertyChanged -= OnActiveEditorPropertyChanged;
@@ -3120,6 +3478,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             _observedEditor = _editorWorkspace.ActiveTab.Editor;
             _observedEditor.PropertyChanged += OnActiveEditorPropertyChanged;
+            ObserveBackgroundLanguageDocuments();
             if (_selectedPropertyTab is not null && !ReferenceEquals(_selectedPropertyTab, _editorWorkspace.ActiveTab))
             {
                 ClearEditorPropertySelection();
@@ -3134,6 +3493,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             OnPropertyChanged(nameof(HasAxamlPreview));
             OnPropertyChanged(nameof(CanEditActiveDocument));
             ToggleBreakpointCommand.NotifyCanExecuteChanged();
+            DebugDiscoveredTestCaseCommand.NotifyCanExecuteChanged();
             QueueLanguageAnalysis();
             RefreshAxamlPreview();
         }
@@ -3152,6 +3512,41 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _observedTab.EditorSelectionChanged += OnEditorSelectionChanged;
             _observedTab.PropertyChanged += OnActiveTabPropertyChanged;
             ObserveActiveDesigner();
+        }
+
+        private void ObserveBackgroundLanguageDocuments()
+        {
+            foreach (EditorViewModel editor in _observedBackgroundEditors.Keys.ToArray())
+            {
+                editor.PropertyChanged -= OnBackgroundEditorPropertyChanged;
+            }
+            _observedBackgroundEditors.Clear();
+
+            foreach (EditorTabViewModel tab in _editorWorkspace.Tabs)
+            {
+                if (ReferenceEquals(tab, _editorWorkspace.ActiveTab) || !tab.HasTextEditor || tab.IsDiagnostic)
+                {
+                    continue;
+                }
+
+                _observedBackgroundEditors.Add(tab.Editor, tab);
+                tab.Editor.PropertyChanged += OnBackgroundEditorPropertyChanged;
+            }
+        }
+
+        private void OnBackgroundEditorPropertyChanged(
+            object? sender,
+            System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName is not (nameof(EditorViewModel.Text) or nameof(EditorViewModel.CurrentFilePath))
+                || sender is not EditorViewModel editor
+                || !_observedBackgroundEditors.ContainsKey(editor))
+            {
+                return;
+            }
+
+            CloseQuickInfo();
+            QueueLanguageAnalysis();
         }
 
         private void OnActiveTabPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -3246,6 +3641,13 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         private void OnEditorTabClosed(EditorTabViewModel tab)
         {
+            if (_observedBackgroundEditors.Remove(tab.Editor))
+            {
+                tab.Editor.PropertyChanged -= OnBackgroundEditorPropertyChanged;
+                CloseQuickInfo();
+                QueueLanguageAnalysis();
+            }
+
             if (ReferenceEquals(_selectedPropertyTab, tab))
             {
                 ClearEditorPropertySelection();
@@ -3357,6 +3759,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             {
                 _observedEditorTextArea.CompletionRequested -= OnCompletionRequested;
                 _observedEditorTextArea.GoToDefinitionRequested -= OnGoToDefinitionRequested;
+                _observedEditorTextArea.QuickInfoRequested -= OnQuickInfoRequested;
+                _observedEditorTextArea.SignatureHelpRequested -= OnSignatureHelpRequested;
+                _observedEditorTextArea.CaretPositionChanged -= OnQuickInfoCaretChanged;
+                _observedEditorTextArea.HoverQuickInfoRequested -= OnHoverQuickInfoRequested;
+                _observedEditorTextArea.HoverQuickInfoDismissed -= OnHoverQuickInfoDismissed;
+                _observedEditorTextArea.DismissHoverQuickInfo();
             }
 
             _observedEditorTextArea = _editorWorkspace.ActiveTab.TextView as Controls.EditorTextArea;
@@ -3364,6 +3772,11 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             {
                 _observedEditorTextArea.CompletionRequested += OnCompletionRequested;
                 _observedEditorTextArea.GoToDefinitionRequested += OnGoToDefinitionRequested;
+                _observedEditorTextArea.QuickInfoRequested += OnQuickInfoRequested;
+                _observedEditorTextArea.SignatureHelpRequested += OnSignatureHelpRequested;
+                _observedEditorTextArea.CaretPositionChanged += OnQuickInfoCaretChanged;
+                _observedEditorTextArea.HoverQuickInfoRequested += OnHoverQuickInfoRequested;
+                _observedEditorTextArea.HoverQuickInfoDismissed += OnHoverQuickInfoDismissed;
             }
         }
 
@@ -3377,9 +3790,19 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             GoToDefinitionCommand.Execute(null);
         }
 
-        private static bool IsIdentifierCharacter(char character)
+        private void OnQuickInfoRequested(object? sender, EventArgs e)
         {
-            return char.IsLetterOrDigit(character) || character == '_';
+            RequestQuickInfoCommand.Execute(null);
+        }
+
+        private void OnSignatureHelpRequested(object? sender, EventArgs e)
+        {
+            RequestSignatureHelpCommand.Execute(null);
+        }
+
+        private void OnQuickInfoCaretChanged(object? sender, EventArgs e)
+        {
+            CloseQuickInfo();
         }
 
         private void OnActiveEditorPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -3391,9 +3814,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             if (e.PropertyName is nameof(EditorViewModel.Text) or nameof(EditorViewModel.CurrentFilePath))
             {
+                CloseQuickInfo();
                 if (e.PropertyName == nameof(EditorViewModel.CurrentFilePath))
                 {
+                    ObserveBackgroundLanguageDocuments();
                     ToggleBreakpointCommand.NotifyCanExecuteChanged();
+                    DebugDiscoveredTestCaseCommand.NotifyCanExecuteChanged();
                     ObserveActiveDesigner();
                 }
 
@@ -3696,15 +4122,23 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
 
             string source = Editor.Text;
+            IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
             await Task.Delay(TimeSpan.FromMilliseconds(300), cancellationToken);
+            if (!AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments()))
+            {
+                return;
+            }
+
             List<Diagnostic> diagnostics = (await _csharpSyntaxDiagnosticService.AnalyzeAsync(
                 source,
                 filePath,
                 Workspace,
-                cancellationToken)).ToList();
+                cancellationToken,
+                openDocuments)).ToList();
             cancellationToken.ThrowIfCancellationRequested();
             if (!string.Equals(filePath, Editor.CurrentFilePath, StringComparison.OrdinalIgnoreCase)
-                || !string.Equals(source, Editor.Text, StringComparison.Ordinal))
+                || !string.Equals(source, Editor.Text, StringComparison.Ordinal)
+                || !AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments()))
             {
                 return;
             }

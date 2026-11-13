@@ -317,6 +317,11 @@ public sealed class ProjectWorkflowViewModelTests
                     new TestRunFailure { TestName = "Inside", Message = "failed", SourcePath = source, LineNumber = 7 },
                     new TestRunFailure { TestName = "Outside", Message = "failed", SourcePath = outside, LineNumber = 9 },
                 },
+                Cases =
+                {
+                    new TestCaseResult("Case(1)", "Passed", null, "Example.Tests", "Example.Tests.Case(1)", "1", "a"),
+                    new TestCaseResult("Case(2)", "Failed", null, "Example.Tests", "Example.Tests.Case(2)", "2", "b"),
+                },
             }));
         vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
         vm.WorkflowConfiguration = "Release";
@@ -334,6 +339,163 @@ public sealed class ProjectWorkflowViewModelTests
         Assert.IsNull(vm.DiagnosticCollection.Items[1].SourcePath);
         Assert.IsNull(vm.DiagnosticCollection.Items[1].LineNumber);
         StringAssert.Contains(vm.ProjectWorkflowStatus, "Project tests");
+        Assert.AreEqual("Example.Tests", vm.ProjectTestResults.Single().Label);
+        CollectionAssert.AreEqual(new[] { "Passed: Case(1)", "Failed: Case(2)" },
+            vm.ProjectTestResults.Single().Children.Select(item => item.Label).ToArray());
+        vm.SelectedWorkflowProject = vm.Workspace.Projects[0];
+        Assert.AreEqual(0, vm.ProjectTestResults.Count);
+    }
+
+    [TestMethod]
+    public async Task FindTestCandidates_DiscardsRequestWhenProjectChanges()
+    {
+        using Fixture fixture = await Fixture.CreateAsync();
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        TaskCompletionSource<bool> entered = NewCompletion<bool>();
+        TaskCompletionSource<ProjectTargetInspection> completed = NewCompletion<ProjectTargetInspection>();
+        fixture.Resolver.InspectAsync(Arg.Any<ProjectWorkflowContext>(), Arg.Any<CancellationToken>())
+            .Returns(_ =>
+            {
+                entered.TrySetResult(true);
+                return completed.Task;
+            });
+        ProjectTargetInspection previous = vm.ProjectInspection!;
+        Task operation = vm.FindTestCandidatesCommand.ExecuteAsync(null);
+        await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        vm.SelectedWorkflowProject = vm.Workspace.Projects[1];
+        completed.SetResult(previous);
+        await operation;
+        Assert.AreEqual(0, vm.TestMethodCandidates.Count);
+        Assert.IsNull(vm.ProjectInspection);
+    }
+
+    [TestMethod]
+    public async Task DiscoverAdapterTests_UsesBuiltProjectAndDiscardsStaleResults()
+    {
+        using Fixture fixture = await Fixture.CreateAsync();
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        TaskCompletionSource<bool> entered = NewCompletion<bool>();
+        TaskCompletionSource<TestDiscoveryResult> completed = NewCompletion<TestDiscoveryResult>();
+        fixture.Discovery.DiscoverAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(_ =>
+            {
+                entered.TrySetResult(true);
+                return completed.Task;
+            });
+        Task operation = vm.DiscoverAdapterTestsCommand.ExecuteAsync(null);
+        await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        await fixture.RuntimeBuilder.Received(1).BuildAsync(
+            Arg.Is<BuilderBuildRequest>(request => request.ProjectPath == fixture.SecondProject
+                && request.Configuration == "Debug" && request.TargetFramework == "net8.0"),
+            Arg.Any<CancellationToken>());
+        _ = fixture.Discovery.Received(1).DiscoverAsync(
+            Arg.Is<string>(path => path == vm.ProjectInspection!.TargetPath),
+            Path.GetDirectoryName(fixture.SecondProject)!,
+            Arg.Any<CancellationToken>());
+        vm.SelectedWorkflowProject = vm.Workspace.Projects[0];
+        completed.SetResult(new TestDiscoveryResult(
+            [new DiscoveredTestCase("id", "executor", "source", "Example.Test", "Old case", null, null)], []));
+        await operation;
+        Assert.AreEqual(0, vm.DiscoveredTestCases.Count);
+        Assert.IsNull(vm.ProjectInspection);
+    }
+
+    [TestMethod]
+    public async Task DiscoverAdapterTests_ShowsCasesAndWarnings()
+    {
+        using Fixture fixture = await Fixture.CreateAsync();
+        MainWindowViewModel vm = fixture.ViewModel;
+        fixture.Discovery.DiscoverAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(new TestDiscoveryResult(
+                [new DiscoveredTestCase("id", "executor", "source", "Example.Test(1)", "Test(1)", null, null)],
+                ["Adapter warning"])));
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        await vm.DiscoverAdapterTestsCommand.ExecuteAsync(null);
+        Assert.AreEqual("Test(1)", vm.DiscoveredTestCases.Single().DisplayName);
+        StringAssert.Contains(vm.ProjectWorkflowStatus, "Adapter warning");
+        vm.SelectedWorkflowProject = vm.Workspace.Projects[0];
+        Assert.AreEqual(0, vm.DiscoveredTestCases.Count);
+    }
+
+    [TestMethod]
+    public async Task RunDiscoveredTestCase_UsesSelectionAndDiscardsChangedSelection()
+    {
+        using Fixture fixture = await Fixture.CreateAsync();
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        DiscoveredTestCase first = new("id1", "executor", "assembly", "Example.First", "First", null, null);
+        DiscoveredTestCase second = new("id2", "executor", "assembly", "Example.Second", "Second", null, null);
+        vm.DiscoveredTestCases.Add(first);
+        vm.DiscoveredTestCases.Add(second);
+        vm.SelectedDiscoveredTestCase = first;
+        TaskCompletionSource<bool> entered = NewCompletion<bool>();
+        TaskCompletionSource<TestRunSummary> completed = NewCompletion<TestRunSummary>();
+        fixture.CaseExecution.RunCaseAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DiscoveredTestCase>(), Arg.Any<CancellationToken>())
+            .Returns(_ =>
+            {
+                entered.TrySetResult(true);
+                return completed.Task;
+            });
+        Task operation = vm.RunDiscoveredTestCaseCommand.ExecuteAsync(null);
+        await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        _ = fixture.CaseExecution.Received(1).RunCaseAsync(
+            vm.ProjectInspection!.TargetPath!, Path.GetDirectoryName(fixture.SecondProject)!, first, Arg.Any<CancellationToken>());
+        vm.SelectedDiscoveredTestCase = second;
+        completed.SetResult(new TestRunSummary
+        {
+            Cases = { new TestCaseResult("First", "Passed", null, null, "Example.First", "id1", null) },
+        });
+        await operation;
+        Assert.AreEqual(0, vm.ProjectTestResults.Count);
+    }
+
+    [TestMethod]
+    public async Task TestSelectedMethod_UsesExactFilterAndInvalidatesLateResult()
+    {
+        using Fixture fixture = await Fixture.CreateAsync();
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        Assert.IsFalse(vm.TestSelectedMethodCommand.CanExecute(null));
+        vm.WorkflowTestMethod = "  Example.Tests.Passing  ";
+        Assert.IsTrue(vm.TestSelectedMethodCommand.CanExecute(null));
+
+        TaskCompletionSource<bool> entered = NewCompletion<bool>();
+        TaskCompletionSource<TestRunSummary> completed = NewCompletion<TestRunSummary>();
+        fixture.Tests.RunTestsAsync(Arg.Any<TestRunRequest>(), Arg.Any<CancellationToken>())
+            .Returns(_ =>
+            {
+                entered.TrySetResult(true);
+                return completed.Task;
+            });
+        Task operation = vm.TestSelectedMethodCommand.ExecuteAsync(null);
+        await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        await fixture.Tests.Received(1).RunTestsAsync(
+            Arg.Is<TestRunRequest>(request => request.ProjectPath == fixture.SecondProject
+                && request.MatchTargetsExactly
+                && request.Targets.Count == 1
+                && request.Targets[0] == "Example.Tests.Passing"
+                && request.TargetFramework == "net8.0"),
+            Arg.Any<CancellationToken>());
+        vm.WorkflowTestMethod = "Example.Tests.Other";
+        completed.SetResult(new TestRunSummary
+        {
+            FailedCount = 1,
+            Failures = { new TestRunFailure { TestName = "Stale", Message = "stale" } },
+            Cases = { new TestCaseResult("Stale", "Failed", null, "Example", "Example.Stale", "1", "a") },
+        });
+        await operation;
+        Assert.IsFalse(vm.DiagnosticCollection.Items.Any(item => item.Message.Contains("Stale", StringComparison.Ordinal)));
+        Assert.AreEqual(0, vm.ProjectTestResults.Count);
+        vm.SelectedWorkflowProject = vm.Workspace.Projects[0];
+        Assert.AreEqual(string.Empty, vm.WorkflowTestMethod);
+        Assert.IsFalse(vm.TestSelectedMethodCommand.CanExecute(null));
     }
 
     [TestMethod]
@@ -606,6 +768,8 @@ public sealed class ProjectWorkflowViewModelTests
             Debugger.StartSessionAsync(Arg.Any<DebugLaunchRequest>(), Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult(new DebugSessionInfo { SessionId = "session", State = DebugSessionState.Running }));
             RuntimeBuilder = Substitute.For<IProjectRuntimeBuilder>();
+            Discovery = Substitute.For<ITestDiscoveryService>();
+            CaseExecution = Substitute.For<ITestCaseExecutionService>();
 
             EditorWorkflow workflow = new(new FileEditorDocument(), new DesignEditorFileDialogService(), new DesignTextDocumentStorageService());
             ViewModel = new MainWindowViewModel(
@@ -620,7 +784,9 @@ public sealed class ProjectWorkflowViewModelTests
                 testExecutionService: Tests,
                 debugSessionService: Debugger,
                 projectTargetResolver: Resolver,
-                projectRuntimeBuilder: RuntimeBuilder);
+                projectRuntimeBuilder: RuntimeBuilder,
+                testDiscoveryService: Discovery,
+                testCaseExecutionService: CaseExecution);
         }
 
         public string Root { get; }
@@ -633,6 +799,8 @@ public sealed class ProjectWorkflowViewModelTests
         public ITestExecutionService Tests { get; }
         public IDebugSessionService Debugger { get; }
         public IProjectRuntimeBuilder RuntimeBuilder { get; }
+        public ITestDiscoveryService Discovery { get; }
+        public ITestCaseExecutionService CaseExecution { get; }
         public MainWindowViewModel ViewModel { get; }
 
         public static async Task<Fixture> CreateAsync()

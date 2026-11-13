@@ -36,4 +36,14 @@ public sealed class TestRunSummary
     /// Gets the structured failures reported by the test run.
     /// </summary>
     public IList<TestRunFailure> Failures { get; } = new List<TestRunFailure>();
+
+    /// <summary>
+    /// Gets individual results reported by the provider, if available.
+    /// </summary>
+    public IList<TestCaseResult> Cases { get; } = new List<TestCaseResult>();
+
+    /// <summary>
+    /// Gets provider messages reported during the run.
+    /// </summary>
+    public IList<string> Messages { get; } = new List<string>();
 }

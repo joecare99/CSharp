@@ -1,6 +1,7 @@
 using AA98_AvlnCodeStudio.Base.Building.Services;
 using AA98_AvlnCodeStudio.Base.Testing.DependencyInjection;
 using AA98_AvlnCodeStudio.Building.Workbench.Services;
+using AA98_AvlnCodeStudio.Decompilation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Workbench.Builder.Core.Abstractions;
@@ -32,6 +33,8 @@ public static class WorkbenchBuilderServiceCollectionExtensions
         services.AddSingleton<IProjectCompilationService, ProjectCompilationService>();
         services.AddSingleton<IProjectInspectionService, ProjectInspectionService>();
         services.AddCodeStudioTesting();
+        services.AddSingleton<IAssemblyDecompilationService>(
+            _ => new AssemblyDecompilationService(AssemblyDecompilationService.GetDefaultArtifactRoot()));
         services.AddSingleton<ICodeStudioBuilderService, WorkbenchCodeStudioBuilderService>();
         return services;
     }

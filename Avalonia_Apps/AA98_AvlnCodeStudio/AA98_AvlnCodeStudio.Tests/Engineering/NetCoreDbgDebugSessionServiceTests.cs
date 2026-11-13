@@ -79,7 +79,7 @@ public sealed class NetCoreDbgDebugSessionServiceTests
             DebugSessionEventArgs stopped = await stoppedEvent.Task.WaitAsync(TimeSpan.FromSeconds(5));
             Assert.AreEqual(DebugSessionState.Paused, stopped.State);
             Assert.AreEqual("breakpoint", stopped.Reason);
-            Assert.AreEqual(1, stopped.ThreadId);
+            Assert.AreEqual(2, stopped.ThreadId);
             await service.StepSessionAsync(session.SessionId, DebugStepKind.Into);
             await service.StepSessionAsync(session.SessionId, DebugStepKind.Over);
             await service.StepSessionAsync(session.SessionId, DebugStepKind.Out);
@@ -163,6 +163,101 @@ public sealed class NetCoreDbgDebugSessionServiceTests
     }
 
     [TestMethod]
+    [TestCategory("Integration")]
+    public async Task AttachSession_StopsAtBreakpointAndDetachesWithoutKillingTarget()
+    {
+        string? adapterPath = Environment.GetEnvironmentVariable("AVLN_NETCOREDBG_PATH");
+        if (!OperatingSystem.IsWindows() || string.IsNullOrWhiteSpace(adapterPath) || !File.Exists(adapterPath))
+        {
+            Assert.Inconclusive("Set AVLN_NETCOREDBG_PATH on Windows to run the real attach integration test.");
+        }
+
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_NetCoreDbgRealAttach_{Guid.NewGuid():N}");
+        string outputDirectory = Path.Combine(root, "output");
+        Directory.CreateDirectory(root);
+        Process? debuggee = null;
+        var service = new NetCoreDbgDebugSessionService(adapterPath);
+        DebugSessionInfo? session = null;
+        try
+        {
+            string projectPath = Path.Combine(root, "Debuggee.csproj");
+            string sourcePath = Path.Combine(root, "Program.cs");
+            File.WriteAllText(projectPath,
+                $"""
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <OutputType>Exe</OutputType>
+                    <TargetFramework>net{Environment.Version.Major}.0</TargetFramework>
+                    <ImplicitUsings>enable</ImplicitUsings>
+                  </PropertyGroup>
+                </Project>
+                """);
+            File.WriteAllText(sourcePath,
+                "Console.WriteLine(\"ready\");\nConsole.ReadLine();\nConsole.WriteLine(\"breakpoint\");\nConsole.ReadLine();\n");
+            await BuildFakeAdapterAsync(projectPath, outputDirectory);
+            debuggee = Process.Start(new ProcessStartInfo(Path.Combine(outputDirectory, "Debuggee.exe"))
+            {
+                WorkingDirectory = root,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            }) ?? throw new InvalidOperationException("The debuggee could not be started.");
+            Assert.AreEqual("ready", await debuggee.StandardOutput.ReadLineAsync().WaitAsync(TimeSpan.FromSeconds(10)));
+
+            TaskCompletionSource<DebugSessionEventArgs> stopped = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            service.SessionEventReceived += (_, args) =>
+            {
+                if (args.EventName == "stopped" && args.Reason == "breakpoint")
+                {
+                    stopped.TrySetResult(args);
+                }
+            };
+            using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(30));
+            session = await service.StartSessionAsync(new DebugLaunchRequest
+            {
+                AttachToExistingProcess = true,
+                ProcessId = debuggee.Id,
+                WorkingDirectory = root,
+            }, timeout.Token);
+            await service.SetBreakpointsAsync(session.SessionId, sourcePath, [3], timeout.Token);
+            await debuggee.StandardInput.WriteLineAsync("go");
+            await stopped.Task.WaitAsync(timeout.Token);
+            Assert.IsTrue((await service.GetStackTraceAsync(session.SessionId, timeout.Token)).Count > 0);
+            await service.StopSessionAsync(session.SessionId, timeout.Token);
+            session = null;
+            Assert.IsFalse(debuggee.HasExited, "Detaching must not terminate the attached process.");
+            await debuggee.StandardInput.WriteLineAsync("exit");
+            await debuggee.WaitForExitAsync(timeout.Token);
+            Assert.AreEqual(0, debuggee.ExitCode);
+        }
+        finally
+        {
+            try
+            {
+                if (session is not null)
+                {
+                    await service.StopSessionAsync(session.SessionId);
+                }
+            }
+            finally
+            {
+                if (debuggee is not null)
+                {
+                    if (!debuggee.HasExited)
+                    {
+                        debuggee.Kill();
+                        await debuggee.WaitForExitAsync();
+                    }
+                    debuggee.Dispose();
+                }
+                Directory.Delete(root, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
     public async Task StartSession_RejectsMissingTargetsBeforeStartingAdapter()
     {
         var service = new NetCoreDbgDebugSessionService("missing-debug-adapter");
@@ -175,15 +270,93 @@ public sealed class NetCoreDbgDebugSessionServiceTests
     }
 
     [TestMethod]
-    public async Task StartSession_ReportsUnsupportedAttachRequests()
+    public async Task StartSession_RejectsAttachWithoutPositiveProcessId()
     {
         var service = new NetCoreDbgDebugSessionService("missing-debug-adapter");
 
-        await Assert.ThrowsExactlyAsync<NotSupportedException>(() =>
+        await Assert.ThrowsExactlyAsync<ArgumentException>(() =>
             service.StartSessionAsync(new DebugLaunchRequest
             {
                 AttachToExistingProcess = true,
             }));
+    }
+
+    [TestMethod]
+    public async Task StartSession_RejectsLaunchOptionsForAttach()
+    {
+        var service = new NetCoreDbgDebugSessionService("missing-debug-adapter");
+        await Assert.ThrowsExactlyAsync<ArgumentException>(() =>
+            service.StartSessionAsync(new DebugLaunchRequest
+            {
+                AttachToExistingProcess = true,
+                ProcessId = Environment.ProcessId,
+                StopAtEntry = true,
+            }));
+        DebugLaunchRequest withArguments = new()
+        {
+            AttachToExistingProcess = true,
+            ProcessId = Environment.ProcessId,
+        };
+        withArguments.Arguments.Add("ignored");
+        await Assert.ThrowsExactlyAsync<ArgumentException>(() => service.StartSessionAsync(withArguments));
+    }
+
+    [TestMethod]
+    public async Task StartAndStopSession_AttachesAndDetachesWithoutTerminatingDebuggee()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_NetCoreDbgAttach_{Guid.NewGuid():N}");
+        string outputDirectory = Path.Combine(root, "output");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "FakeAdapter.csproj");
+            File.WriteAllText(projectPath,
+                $"""
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <OutputType>Exe</OutputType>
+                    <TargetFramework>net{Environment.Version.Major}.0</TargetFramework>
+                    <ImplicitUsings>enable</ImplicitUsings>
+                    <Nullable>enable</Nullable>
+                  </PropertyGroup>
+                </Project>
+                """);
+            File.WriteAllText(Path.Combine(root, "Program.cs"), FakeAdapterSource);
+            await BuildFakeAdapterAsync(projectPath, outputDirectory);
+
+            string adapterPath = Path.Combine(outputDirectory, OperatingSystem.IsWindows() ? "FakeAdapter.exe" : "FakeAdapter");
+            var service = new NetCoreDbgDebugSessionService(adapterPath);
+            DebugSessionInfo session = await service.StartSessionAsync(new DebugLaunchRequest
+            {
+                AttachToExistingProcess = true,
+                ProcessId = Environment.ProcessId,
+            });
+
+            Assert.AreEqual($"Process {Environment.ProcessId}", session.DisplayName);
+            await service.SetBreakpointsAsync(session.SessionId, Path.Combine(root, "test.cs"), [1]);
+            await service.StopSessionAsync(session.SessionId);
+
+            using CancellationTokenSource cancellation = new();
+            Task<DebugSessionInfo> canceledStart = service.StartSessionAsync(new DebugLaunchRequest
+            {
+                AttachToExistingProcess = true,
+                ProcessId = 1234567890,
+                WorkingDirectory = root,
+            }, cancellation.Token);
+            DateTime deadline = DateTime.UtcNow.AddSeconds(10);
+            while (!File.Exists(Path.Combine(root, "adapter-attach-started")) && DateTime.UtcNow < deadline)
+            {
+                await Task.Delay(50);
+            }
+            bool attachStarted = File.Exists(Path.Combine(root, "adapter-attach-started"));
+            cancellation.Cancel();
+            await Assert.ThrowsAsync<OperationCanceledException>(() => canceledStart);
+            Assert.IsTrue(attachStarted, "The fake adapter did not receive attach.");
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
     }
 
     [TestMethod]
@@ -235,6 +408,7 @@ public sealed class NetCoreDbgDebugSessionServiceTests
         Stream input = Console.OpenStandardInput();
         Stream output = Console.OpenStandardOutput();
         int responseSequence = 0;
+        bool attached = false;
 
         while (true)
         {
@@ -264,7 +438,7 @@ public sealed class NetCoreDbgDebugSessionServiceTests
             {
                 "continue" => new { threadId = 1, allThreadsContinued = true },
                 "configurationDone" => new { reason = "entry", threadId = 1, allThreadsStopped = true },
-                "pause" => new { reason = "breakpoint", threadId = 1, allThreadsStopped = true },
+                "pause" => new { reason = "breakpoint", threadId = 2, allThreadsStopped = true },
                 _ => null,
             };
             if (eventBody is not null)
@@ -295,11 +469,35 @@ public sealed class NetCoreDbgDebugSessionServiceTests
                 {
                     throw new FileNotFoundException("The launch request did not contain an existing program.", program);
                 }
-
                 if (!root.GetProperty("arguments").GetProperty("stopAtEntry").GetBoolean())
                 {
                     throw new InvalidOperationException("The launch request did not stop at entry.");
                 }
+            }
+            else if (command == "attach")
+            {
+                JsonElement arguments = root.GetProperty("arguments");
+                if (arguments.GetProperty("processId").GetInt32() <= 0 || arguments.TryGetProperty("program", out _))
+                {
+                    throw new InvalidOperationException("The attach request must contain a positive processId and no program.");
+                }
+
+                attached = true;
+                if (arguments.GetProperty("processId").GetInt32() == 1234567890)
+                {
+                    Console.Error.WriteLine("Adapter startup diagnostic");
+                    File.WriteAllText("adapter-attach-started", "started");
+                    await Task.Delay(TimeSpan.FromSeconds(30));
+                }
+            }
+            else if (command == "disconnect" && root.GetProperty("arguments").GetProperty("terminateDebuggee").GetBoolean() == attached)
+            {
+                throw new InvalidOperationException("Disconnect must terminate launches but detach from attached processes.");
+            }
+            else if (command is "next" or "stepIn" or "stepOut" or "stackTrace"
+                && root.GetProperty("arguments").GetProperty("threadId").GetInt32() != 2)
+            {
+                throw new InvalidOperationException("Inspection and stepping must target the stopped thread.");
             }
 
             int requestSequence = root.GetProperty("seq").GetInt32();
