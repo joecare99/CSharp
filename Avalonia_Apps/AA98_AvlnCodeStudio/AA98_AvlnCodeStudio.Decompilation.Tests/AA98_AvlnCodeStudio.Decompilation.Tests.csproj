@@ -1,0 +1,27 @@
+<Project>
+  <Import Project="..\AA98_AvlnCodeStudio.props" />
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;DesktopOnly</Configurations>
+  </PropertyGroup>
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '9.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net9.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="MSTest" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Decompilation\AA98_AvlnCodeStudio.Decompilation.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Building.Workbench\AA98_AvlnCodeStudio.Building.Workbench.csproj" />
+  </ItemGroup>
+</Project>
