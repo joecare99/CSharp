@@ -42,24 +42,27 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
         ArgumentNullException.ThrowIfNull(request);
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (request.AttachToExistingProcess)
+        if (request.AttachToExistingProcess && request.ProcessId is not > 0)
         {
-            throw new NotSupportedException("Attaching to an existing process is not supported by this launch request.");
+            throw new ArgumentException("A positive process identifier is required for attach.", nameof(request));
         }
-
-        if (string.IsNullOrWhiteSpace(request.Target))
+        if (request.AttachToExistingProcess && (request.StopAtEntry || request.Arguments.Count > 0))
+        {
+            throw new ArgumentException("Attach requests cannot supply launch arguments or stop at entry.", nameof(request));
+        }
+        if (!request.AttachToExistingProcess && string.IsNullOrWhiteSpace(request.Target))
         {
             throw new ArgumentException("A .NET application DLL is required as the debug target.", nameof(request));
         }
 
-        string targetPath = Path.GetFullPath(request.Target);
-        if (!File.Exists(targetPath))
+        string? targetPath = request.AttachToExistingProcess ? null : Path.GetFullPath(request.Target!);
+        if (targetPath is not null && !File.Exists(targetPath))
         {
             throw new FileNotFoundException("The .NET debug target does not exist.", targetPath);
         }
 
         string workingDirectory = string.IsNullOrWhiteSpace(request.WorkingDirectory)
-            ? Path.GetDirectoryName(targetPath)!
+            ? targetPath is null ? AppContext.BaseDirectory : Path.GetDirectoryName(targetPath)!
             : Path.GetFullPath(request.WorkingDirectory);
         if (!Directory.Exists(workingDirectory))
         {
@@ -95,7 +98,7 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
 
         string sessionId = Guid.NewGuid().ToString("N");
         DapConnection connection = new(process.StandardInput.BaseStream, process.StandardOutput.BaseStream);
-        DebugSession session = new(sessionId, process, connection);
+        DebugSession session = new(sessionId, process, connection, request.AttachToExistingProcess);
         connection.EventReceived += message => OnAdapterEvent(session, message);
         Task<string> standardErrorTask = process.StandardError.ReadToEndAsync();
         try
@@ -113,18 +116,31 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
                 supportsConfigurationDoneRequest = true,
             }, cancellationToken).ConfigureAwait(false);
 
-            await connection.SendRequestAsync("launch", new
+            if (request.AttachToExistingProcess)
             {
-                type = "coreclr",
-                request = "launch",
-                name = Path.GetFileNameWithoutExtension(targetPath),
-                program = targetPath,
-                cwd = workingDirectory,
-                args = request.Arguments.ToArray(),
-                stopAtEntry = request.StopAtEntry,
-                noDebug = false,
-                console = "internalConsole",
-            }, cancellationToken).ConfigureAwait(false);
+                await connection.SendRequestAsync("attach", new
+                {
+                    type = "coreclr",
+                    request = "attach",
+                    name = $"Process {request.ProcessId}",
+                    processId = request.ProcessId,
+                }, cancellationToken).ConfigureAwait(false);
+            }
+            else
+            {
+                await connection.SendRequestAsync("launch", new
+                {
+                    type = "coreclr",
+                    request = "launch",
+                    name = Path.GetFileNameWithoutExtension(targetPath),
+                    program = targetPath,
+                    cwd = workingDirectory,
+                    args = request.Arguments.ToArray(),
+                    stopAtEntry = request.StopAtEntry,
+                    noDebug = false,
+                    console = "internalConsole",
+                }, cancellationToken).ConfigureAwait(false);
+            }
 
             await connection.SendRequestAsync("configurationDone", new { }, cancellationToken).ConfigureAwait(false);
             if (request.StopAtEntry)
@@ -147,7 +163,7 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
             return new DebugSessionInfo
             {
                 SessionId = sessionId,
-                DisplayName = Path.GetFileName(targetPath),
+                DisplayName = targetPath is null ? $"Process {request.ProcessId}" : Path.GetFileName(targetPath),
                 State = session.State,
             };
         }
@@ -162,7 +178,7 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
             await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
             process.Dispose();
             string standardError = (await standardErrorTask.ConfigureAwait(false)).Trim();
-            if (!string.IsNullOrWhiteSpace(standardError))
+            if (exception is not OperationCanceledException && !string.IsNullOrWhiteSpace(standardError))
             {
                 throw new InvalidOperationException(
                     $"{exception.Message}{Environment.NewLine}{standardError}",
@@ -192,7 +208,7 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
             {
                 await session.Connection.SendRequestAsync("disconnect", new
                 {
-                    terminateDebuggee = true,
+                    terminateDebuggee = !session.AttachedToExistingProcess,
                     restart = false,
                 }, cancellationToken).ConfigureAwait(false);
 
@@ -251,7 +267,7 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
     public async Task ContinueSessionAsync(string sessionId, CancellationToken cancellationToken = default)
     {
         DebugSession session = GetSession(sessionId);
-        int threadId = await GetThreadIdAsync(session.Connection, cancellationToken).ConfigureAwait(false);
+        int threadId = await GetThreadIdAsync(session, cancellationToken).ConfigureAwait(false);
         await session.Connection.SendRequestAsync("continue", new
         {
             threadId,
@@ -263,7 +279,7 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
     public async Task PauseSessionAsync(string sessionId, CancellationToken cancellationToken = default)
     {
         DebugSession session = GetSession(sessionId);
-        int threadId = await GetThreadIdAsync(session.Connection, cancellationToken).ConfigureAwait(false);
+        int threadId = await GetThreadIdAsync(session, cancellationToken).ConfigureAwait(false);
         await session.Connection.SendRequestAsync("pause", new { threadId }, cancellationToken).ConfigureAwait(false);
     }
 
@@ -282,7 +298,7 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
         };
 
         DebugSession session = GetSession(sessionId);
-        int threadId = await GetThreadIdAsync(session.Connection, cancellationToken).ConfigureAwait(false);
+        int threadId = await GetThreadIdAsync(session, cancellationToken).ConfigureAwait(false);
         await session.Connection.SendRequestAsync(command, new
         {
             threadId,
@@ -297,7 +313,7 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
         CancellationToken cancellationToken = default)
     {
         DebugSession session = GetSession(sessionId);
-        int threadId = await GetThreadIdAsync(session.Connection, cancellationToken).ConfigureAwait(false);
+        int threadId = await GetThreadIdAsync(session, cancellationToken).ConfigureAwait(false);
         JsonElement body = await session.Connection.SendRequestAsync("stackTrace", new
         {
             threadId,
@@ -429,6 +445,15 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
             "terminated" or "exited" => DebugSessionState.Stopped,
             _ => null,
         };
+        int eventThreadId = ReadOptionalInt32(body, "threadId");
+        if (eventName == "stopped")
+        {
+            Volatile.Write(ref session.StoppedThreadId, eventThreadId);
+        }
+        else if (eventName is "continued" or "terminated" or "exited")
+        {
+            Volatile.Write(ref session.StoppedThreadId, 0);
+        }
         if (state is not null)
         {
             session.State = state.Value;
@@ -446,8 +471,8 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
             State = state,
             Reason = ReadOptionalString(body, "reason"),
             Description = ReadOptionalString(body, "description"),
-            ThreadId = ReadOptionalInt32(body, "threadId") is int threadId && threadId > 0
-                ? threadId
+            ThreadId = eventThreadId > 0
+                ? eventThreadId
                 : null,
             Output = ReadOptionalString(body, "output"),
         });
@@ -481,9 +506,15 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
         return session;
     }
 
-    private static async Task<int> GetThreadIdAsync(DapConnection connection, CancellationToken cancellationToken)
+    private static async Task<int> GetThreadIdAsync(DebugSession session, CancellationToken cancellationToken)
     {
-        JsonElement body = await connection.SendRequestAsync("threads", new { }, cancellationToken)
+        int stoppedThreadId = Volatile.Read(ref session.StoppedThreadId);
+        if (stoppedThreadId > 0)
+        {
+            return stoppedThreadId;
+        }
+
+        JsonElement body = await session.Connection.SendRequestAsync("threads", new { }, cancellationToken)
             .ConfigureAwait(false);
         if (!body.TryGetProperty("threads", out JsonElement threads)
             || threads.ValueKind != JsonValueKind.Array
@@ -497,13 +528,17 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
         return parsedThreadId;
     }
 
-    private sealed class DebugSession(string sessionId, Process process, DapConnection connection)
+    private sealed class DebugSession(string sessionId, Process process, DapConnection connection, bool attachedToExistingProcess)
     {
         public string SessionId { get; } = sessionId;
 
         public Process Process { get; } = process;
 
         public DapConnection Connection { get; } = connection;
+
+        public bool AttachedToExistingProcess { get; } = attachedToExistingProcess;
+
+        public int StoppedThreadId;
 
         public TaskCompletionSource InitialStop { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 

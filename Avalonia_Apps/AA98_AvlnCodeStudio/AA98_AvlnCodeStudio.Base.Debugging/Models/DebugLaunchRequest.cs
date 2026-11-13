@@ -28,6 +28,11 @@ public sealed class DebugLaunchRequest
     public bool AttachToExistingProcess { get; set; }
 
     /// <summary>
+    /// Gets or sets the process identifier for an attach request.
+    /// </summary>
+    public int? ProcessId { get; set; }
+
+    /// <summary>
     /// Gets or sets whether the target should pause before executing its entry point.
     /// </summary>
     public bool StopAtEntry { get; set; }
