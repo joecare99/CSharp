@@ -43,6 +43,7 @@ public sealed class DotNetTestExecutionService : ITestExecutionService
             throw new DirectoryNotFoundException($"The test workspace directory '{workingDirectory}' does not exist.");
         }
 
+        string filter = CreateTestFilter(request);
         string resultsDirectory = Path.Combine(Path.GetTempPath(), $"AA98_TestResults_{Guid.NewGuid():N}");
         Directory.CreateDirectory(resultsDirectory);
         try
@@ -75,7 +76,6 @@ public sealed class DotNetTestExecutionService : ITestExecutionService
                 startInfo.ArgumentList.Add(request.TargetFramework);
             }
 
-            string filter = CreateTestFilter(request);
             if (filter.Length > 0)
             {
                 startInfo.ArgumentList.Add("--filter");
@@ -149,9 +149,15 @@ public sealed class DotNetTestExecutionService : ITestExecutionService
             .Where(static target => !string.IsNullOrWhiteSpace(target))
             .Select(static target => target.Trim())
             .ToArray();
-        return targets.Length == 0
-            ? string.Empty
-            : string.Join("|", targets.Select(target => $"FullyQualifiedName~{EscapeFilterValue(target)}"));
+        if (targets.Length == 0)
+        {
+            return request.MatchTargetsExactly
+                ? throw new ArgumentException("At least one exact test target is required.", nameof(request))
+                : string.Empty;
+        }
+
+        string comparison = request.MatchTargetsExactly ? "=" : "~";
+        return string.Join("|", targets.Select(target => $"FullyQualifiedName{comparison}{EscapeFilterValue(target)}"));
     }
 
     private static void ClearInheritedMsBuildEnvironment(ProcessStartInfo startInfo)
@@ -178,6 +184,39 @@ public sealed class DotNetTestExecutionService : ITestExecutionService
         XElement[] results = document.Descendants()
             .Where(static element => element.Name.LocalName == "UnitTestResult")
             .ToArray();
+        var definitions = document.Descendants()
+            .Where(static element => element.Name.LocalName == "UnitTest" && element.Attribute("id") is not null)
+            .GroupBy(static element => (string)element.Attribute("id")!, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(static group => group.Key, static group => group.First(), StringComparer.OrdinalIgnoreCase);
+        foreach (XElement result in results)
+        {
+            string? testId = (string?)result.Attribute("testId");
+            string? className = null;
+            string? qualifiedTestName = null;
+            if (testId is not null && definitions.TryGetValue(testId, out XElement? definition))
+            {
+                XElement? method = definition.Elements().FirstOrDefault(static element => element.Name.LocalName == "TestMethod");
+                className = ((string?)method?.Attribute("className"))?.Split(',')[0].Trim();
+                string? methodName = (string?)method?.Attribute("name");
+                if (!string.IsNullOrWhiteSpace(className) && !string.IsNullOrWhiteSpace(methodName))
+                {
+                    qualifiedTestName = className + "." + methodName;
+                }
+            }
+
+            string? durationText = (string?)result.Attribute("duration");
+            TimeSpan? duration = TimeSpan.TryParse(durationText, CultureInfo.InvariantCulture, out TimeSpan parsed)
+                ? parsed
+                : null;
+            summary.Cases.Add(new TestCaseResult(
+                (string?)result.Attribute("testName") ?? string.Empty,
+                (string?)result.Attribute("outcome") ?? string.Empty,
+                duration,
+                className,
+                qualifiedTestName,
+                testId,
+                (string?)result.Attribute("executionId")));
+        }
         AddTrxFailures(summary, results);
 
         XElement? counters = document.Descendants().FirstOrDefault(static element => element.Name.LocalName == "Counters");

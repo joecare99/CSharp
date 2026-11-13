@@ -33,6 +33,11 @@ public sealed class TestRunRequest
     public IList<string> Targets { get; } = new List<string>();
 
     /// <summary>
+    /// Gets or sets whether targets must match the fully qualified test name exactly.
+    /// </summary>
+    public bool MatchTargetsExactly { get; set; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether code coverage should be collected.
     /// </summary>
     public bool CollectCoverage { get; set; }

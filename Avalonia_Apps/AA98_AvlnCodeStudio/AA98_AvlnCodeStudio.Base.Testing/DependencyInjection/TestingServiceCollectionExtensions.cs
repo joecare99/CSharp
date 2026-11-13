@@ -33,6 +33,9 @@ public static class TestingServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddSingleton<ITestExecutionService, TTestExecutionService>();
+        services.AddSingleton<DotNetTestDiscoveryService>();
+        services.AddSingleton<ITestDiscoveryService>(provider => provider.GetRequiredService<DotNetTestDiscoveryService>());
+        services.AddSingleton<ITestCaseExecutionService>(provider => provider.GetRequiredService<DotNetTestDiscoveryService>());
         return services;
     }
 }
