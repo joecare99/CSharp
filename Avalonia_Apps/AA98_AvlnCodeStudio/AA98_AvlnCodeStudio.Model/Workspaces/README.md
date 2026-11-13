@@ -1,4 +1,33 @@
-# Project launch settings inspection
+# C# quick info
+
+The Workbench's Edit menu and Ctrl+Shift+F1 show Roslyn quick info for the
+active C# document at the caret. Resting the mouse over a C# symbol also shows
+the information at the pointer without moving the caret. The hover is dismissed
+by pointer movement, scrolling, editing, or a workspace/tab change. The caret
+display is dismissed by editing, moving the caret, switching workspace/tab, or
+the close button. Requests use an immutable snapshot of open C# editor buffers,
+including unsaved text in related files in the selected project, without saving
+them or changing the shared Roslyn workspace. Conflicting open buffer paths are
+omitted. A unique closest workspace project containing the active document must
+be available. Ambiguous or unlisted documents return no result.
+Only the currently loaded Roslyn project configuration is queried, not all target
+frameworks. Project loading uses MSBuild and should only be used with trusted
+projects. Hover is mouse-only; the caret command remains available to keyboard users.
+
+The Edit menu and Ctrl+Space request Roslyn completion suggestions at the caret.
+The list is filtered by the current prefix and shows at most 50 suggestions.
+Applying one uses the provider's text change and caret position as one undoable
+editor change. Moving the caret, editing, or switching the tab or workspace
+invalidates outstanding suggestions and requests. Completion uses the same
+open-buffer snapshot and unique-project restriction described above; it does not
+provide an automatic completion popup or an interactive snippet session.
+
+The Edit menu and Ctrl+Shift+Space request Roslyn signature help for the active
+argument list. The panel marks the selected overload and reports the active
+parameter. It uses the same open-buffer snapshot, project restriction and stale
+result checks as quick info and completion.
+
+## Project launch settings inspection
 
 `ProjectLaunchSettingsReader` is a UI-independent reader for the
 `Properties\launchSettings.json` belonging to a selected C# project. The
@@ -66,6 +95,69 @@ launch-profile argument or environment values are applied. Inspection and tests 
 current Workbench builder runs synchronously, so a cancellation or selection
 change prevents subsequent launch but may have to wait for an ongoing build to
 finish.
+
+The same tab can find source-level test method candidates using Roslyn for the
+selected project, configuration and framework. It recognizes common MSTest,
+xUnit and NUnit attributes semantically, including derived attributes; it
+does not enumerate adapter-discovered cases, inherited methods, nested/generic
+fixtures, static methods, or unsaved editor buffers. A candidate is a hint, not
+proof that a test adapter will discover or run it. Loading a project requires
+trusted MSBuild evaluation and restored dependencies.
+
+The separate **Build and Discover VSTest Cases** action builds the selected
+project without restoring packages, finds the VSTest runner in the SDK selected
+for that project and loads adapter DLLs copied next to its target assembly.
+It lists adapter-reported cases, including parameterized cases and their
+adapter-defined IDs, independently of source candidates and run results.
+Case IDs and qualified names are adapter-specific and are not assumed to be
+stable or valid filters. **Run Selected Adapter Case** rebuilds the project,
+rediscovers the selected case, and executes the original adapter test object
+only when its identity matches exactly one current case. It refuses missing or
+ambiguous matches, reports a failure if the adapter returns a different number
+of results, and retains adapter error messages. The **Debug Selected Case at
+Editor Caret** action attaches NetCoreDbg to processes reported by VSTest and
+sets one breakpoint at the caret in the active saved C# file before the selected
+case starts. For successive attach requests, the previous session is detached
+before the next process is attached; simultaneous multi-process debugging is not
+supported. The file must still match its saved text after the build. Whether the
+breakpoint can bind or is reached depends on debug symbols and executed code;
+the test can finish without stopping. Stop, project changes and test selection
+changes cancel the debug run, stop its reported hosts and their child processes,
+and detach the debugger. Process termination is best-effort and can fail due to
+operating-system permissions or races.
+Only runners that launch the host and request debugger attach are supported.
+Adapters outside the output directory and Microsoft.Testing.Platform-only projects
+are not supported. Discovery can execute adapter code; build, discovery and
+execution must only be used with trusted projects. Cancellation asks VSTest to
+cancel, but a stalled adapter or startup can delay completion.
+
+An explicitly entered or selected fully qualified test method can be run with
+an exact VSTest `FullyQualifiedName` filter. Depending on the adapter, a
+parameterized method may have multiple matching cases; a missing name yields
+no tests, not a whole-project run. Debugging is available for adapter-discovered
+cases, not directly from the method-name field.
+The Project tab shows individual results reported by the last selected-project
+test run, grouped by the test class when TRX provides it. This result tree is
+not test discovery: it does not list tests omitted from the run. Test and execution IDs
+are runner-reported run metadata, not guaranteed stable identities. Qualified
+names may include parameter values and are not necessarily valid test filters.
+The reusable `TestRunRequest` retains its
+original substring behavior unless `MatchTargetsExactly` is enabled; exact mode
+requires at least one nonblank target. Running tests executes project code and
+must only be done for trusted projects.
+
+## Debugger component attach
+
+The independent `NetCoreDbgDebugSessionService` can attach to an existing .NET
+process using `DebugLaunchRequest.AttachToExistingProcess` and a positive
+`ProcessId`. Launch arguments and `StopAtEntry` are not valid for attach. The
+caller must have permission to debug the target and the .NET runtime must be
+available in it. Stopping an attached session requests a detach rather than
+termination of the target; a launched session still requests termination.
+Stack and stepping operations use the thread reported by the last stopped event.
+The host must provide NetCoreDbg on PATH or via `AVLN_NETCOREDBG_PATH`.
+This is also used by the Workbench's test-case debugging action; there is no
+general-purpose Workbench attach command.
 
 ## Reviewed workspace changes
 
