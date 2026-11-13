@@ -72,6 +72,18 @@
   <data name="GoToDefinitionCommandText" xml:space="preserve">
     <value>Go to definition (F12)</value>
   </data>
+  <data name="QuickInfoCommandText" xml:space="preserve">
+    <value>C# quick info (Ctrl+Shift+F1)</value>
+  </data>
+  <data name="SignatureHelpCommandText" xml:space="preserve">
+    <value>C# signature help (Ctrl+Shift+Space)</value>
+  </data>
+  <data name="QuickInfoEmptyText" xml:space="preserve">
+    <value>No C# information is available at the current position.</value>
+  </data>
+  <data name="CloseQuickInfoText" xml:space="preserve">
+    <value>Close quick info</value>
+  </data>
   <data name="RunTestsCommandText" xml:space="preserve">
     <value>Run Workspace Tests</value>
   </data>
@@ -119,6 +131,33 @@
   </data>
   <data name="TestSelectedProjectCommandText" xml:space="preserve">
     <value>Test Selected Project</value>
+  </data>
+  <data name="TestMethodNameText" xml:space="preserve">
+    <value>Fully qualified test method name</value>
+  </data>
+  <data name="TestMethodCommandText" xml:space="preserve">
+    <value>Run Exact Test Method</value>
+  </data>
+  <data name="TestCandidatesCommandText" xml:space="preserve">
+    <value>Find Source Test Candidates</value>
+  </data>
+  <data name="TestCandidatesLabelText" xml:space="preserve">
+    <value>Source candidates (not adapter-discovered cases)</value>
+  </data>
+  <data name="DiscoverAdapterTestsCommandText" xml:space="preserve">
+    <value>Build and Discover VSTest Cases</value>
+  </data>
+  <data name="DiscoveredTestCasesLabelText" xml:space="preserve">
+    <value>Adapter-discovered cases</value>
+  </data>
+  <data name="RunDiscoveredTestCaseCommandText" xml:space="preserve">
+    <value>Run Selected Adapter Case</value>
+  </data>
+  <data name="DebugDiscoveredTestCaseCommandText" xml:space="preserve">
+    <value>Debug Selected Case at Editor Caret</value>
+  </data>
+  <data name="ProjectTestResultsLabelText" xml:space="preserve">
+    <value>Results from last project test run</value>
   </data>
   <data name="DebugSelectedProjectCommandText" xml:space="preserve">
     <value>Build and Debug Selected Project</value>

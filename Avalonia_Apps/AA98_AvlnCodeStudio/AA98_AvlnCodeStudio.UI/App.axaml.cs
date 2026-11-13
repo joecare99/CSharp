@@ -302,7 +302,9 @@ namespace AA98_AvlnCodeStudio.UI
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.WorkspaceFileChangeService>(),
                 serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Model.Workspaces.AxamlMvvmGenerator>(),
                 serviceProvider.GetRequiredService<Configuration.WorkbenchSettingsRuntimeActivator>(),
-                serviceProvider.GetRequiredService<CredentialProviderCatalog>()));
+                serviceProvider.GetRequiredService<CredentialProviderCatalog>(),
+                testDiscoveryService: serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Testing.Services.ITestDiscoveryService>(),
+                testCaseExecutionService: serviceProvider.GetRequiredService<AA98_AvlnCodeStudio.Base.Testing.Services.ITestCaseExecutionService>()));
             services.AddSingleton<MainWindow>(serviceProvider =>
                 new MainWindow(
                     serviceProvider.GetRequiredService<MainWindowViewModel>(),

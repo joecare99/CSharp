@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using AA98_AvlnCodeStudio.Base.Building.Models;
 using AA98_AvlnCodeStudio.Base.Building.Services;
 using AA98_AvlnCodeStudio.Base.Debugging.Models;
@@ -23,11 +24,17 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
     {
         private readonly IProjectTargetResolver _projectTargetResolver;
         private readonly IProjectRuntimeBuilder _projectRuntimeBuilder;
+        private readonly ITestDiscoveryService _testDiscoveryService;
+        private readonly ITestCaseExecutionService _testCaseExecutionService;
         private long _projectWorkflowRevision;
         private bool _updatingProjectInspection;
         private bool _projectActionInProgress;
+        private string? _debuggedTestSessionId;
 
         public ObservableCollection<string> WorkflowFrameworks { get; } = [];
+        public ObservableCollection<TestMethodCandidate> TestMethodCandidates { get; } = [];
+        public ObservableCollection<DiscoveredTestCase> DiscoveredTestCases { get; } = [];
+        public ObservableCollection<TestResultNode> ProjectTestResults { get; } = [];
 
         public string ProjectWorkflowTabText => UiStrings.ProjectWorkflowTabText;
         public string ProjectWorkflowProjectText => UiStrings.ProjectWorkflowProjectText;
@@ -37,6 +44,15 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         public string InspectProjectCommandText => UiStrings.InspectProjectCommandText;
         public string BuildSelectedProjectCommandText => UiStrings.BuildSelectedProjectCommandText;
         public string TestSelectedProjectCommandText => UiStrings.TestSelectedProjectCommandText;
+        public string TestMethodNameText => UiStrings.TestMethodNameText;
+        public string TestMethodCommandText => UiStrings.TestMethodCommandText;
+        public string TestCandidatesCommandText => UiStrings.TestCandidatesCommandText;
+        public string TestCandidatesLabelText => UiStrings.TestCandidatesLabelText;
+        public string DiscoverAdapterTestsCommandText => UiStrings.DiscoverAdapterTestsCommandText;
+        public string DiscoveredTestCasesLabelText => UiStrings.DiscoveredTestCasesLabelText;
+        public string RunDiscoveredTestCaseCommandText => UiStrings.RunDiscoveredTestCaseCommandText;
+        public string DebugDiscoveredTestCaseCommandText => UiStrings.DebugDiscoveredTestCaseCommandText;
+        public string ProjectTestResultsLabelText => UiStrings.ProjectTestResultsLabelText;
         public string DebugSelectedProjectCommandText => UiStrings.DebugSelectedProjectCommandText;
         public string CancelProjectWorkflowCommandText => UiStrings.CancelProjectWorkflowCommandText;
 
@@ -50,8 +66,25 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private string? _selectedWorkflowFramework;
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(TestSelectedMethodCommand))]
+        private string _workflowTestMethod = string.Empty;
+
+        [ObservableProperty]
+        private TestMethodCandidate? _selectedTestMethodCandidate;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RunDiscoveredTestCaseCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DebugDiscoveredTestCaseCommand))]
+        private DiscoveredTestCase? _selectedDiscoveredTestCase;
+
+        [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(BuildSelectedProjectCommand))]
         [NotifyCanExecuteChangedFor(nameof(TestSelectedProjectCommand))]
+        [NotifyCanExecuteChangedFor(nameof(TestSelectedMethodCommand))]
+        [NotifyCanExecuteChangedFor(nameof(FindTestCandidatesCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DiscoverAdapterTestsCommand))]
+        [NotifyCanExecuteChangedFor(nameof(RunDiscoveredTestCaseCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DebugDiscoveredTestCaseCommand))]
         [NotifyCanExecuteChangedFor(nameof(DebugSelectedProjectCommand))]
         private ProjectTargetInspection? _projectInspection;
 
@@ -62,6 +95,11 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         [NotifyCanExecuteChangedFor(nameof(InspectSelectedProjectCommand))]
         [NotifyCanExecuteChangedFor(nameof(BuildSelectedProjectCommand))]
         [NotifyCanExecuteChangedFor(nameof(TestSelectedProjectCommand))]
+        [NotifyCanExecuteChangedFor(nameof(TestSelectedMethodCommand))]
+        [NotifyCanExecuteChangedFor(nameof(FindTestCandidatesCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DiscoverAdapterTestsCommand))]
+        [NotifyCanExecuteChangedFor(nameof(RunDiscoveredTestCaseCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DebugDiscoveredTestCaseCommand))]
         [NotifyCanExecuteChangedFor(nameof(DebugSelectedProjectCommand))]
         [NotifyCanExecuteChangedFor(nameof(BuildWorkspaceCommand))]
         [NotifyCanExecuteChangedFor(nameof(RunWorkspaceTestsCommand))]
@@ -70,7 +108,32 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         partial void OnSelectedWorkflowProjectChanged(CSharpWorkspaceProject? value)
         {
+            WorkflowTestMethod = string.Empty;
             InvalidateProjectInspection(clearFrameworks: true);
+        }
+
+        partial void OnWorkflowTestMethodChanged(string value)
+        {
+            TestSelectedMethodCommand.Cancel();
+            if (SelectedTestMethodCandidate is not null
+                && !string.Equals(value, SelectedTestMethodCandidate.FullyQualifiedName, StringComparison.Ordinal))
+            {
+                SelectedTestMethodCandidate = null;
+            }
+        }
+
+        partial void OnSelectedTestMethodCandidateChanged(TestMethodCandidate? value)
+        {
+            if (value is not null)
+            {
+                WorkflowTestMethod = value.FullyQualifiedName;
+            }
+        }
+
+        partial void OnSelectedDiscoveredTestCaseChanged(DiscoveredTestCase? value)
+        {
+            RunDiscoveredTestCaseCommand.Cancel();
+            DebugDiscoveredTestCaseCommand.Cancel();
         }
 
         partial void OnWorkflowConfigurationChanged(string value)
@@ -114,8 +177,18 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             InspectSelectedProjectCommand.Cancel();
             BuildSelectedProjectCommand.Cancel();
             TestSelectedProjectCommand.Cancel();
+            TestSelectedMethodCommand.Cancel();
+            FindTestCandidatesCommand.Cancel();
+            DiscoverAdapterTestsCommand.Cancel();
+            RunDiscoveredTestCaseCommand.Cancel();
+            DebugDiscoveredTestCaseCommand.Cancel();
             DebugSelectedProjectCommand.Cancel();
             ProjectInspection = null;
+            SelectedTestMethodCandidate = null;
+            TestMethodCandidates.Clear();
+            SelectedDiscoveredTestCase = null;
+            DiscoveredTestCases.Clear();
+            ProjectTestResults.Clear();
             if (clearFrameworks)
             {
                 _updatingProjectInspection = true;
@@ -227,7 +300,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanTestSelectedProject))]
-        private async Task TestSelectedProjectAsync(CancellationToken cancellationToken)
+        private async Task FindTestCandidatesAsync(CancellationToken cancellationToken)
         {
             if (!CanTestSelectedProject())
             {
@@ -242,18 +315,283 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             {
                 ProjectWorkflowContext context = CreateWorkflowContext(workspace);
                 await VerifyProjectInspectionAsync(approved, context, workspace, revision, cancellationToken);
-                ProjectWorkflowStatus = $"Testing project: {context.Project.Name}...";
-                TestRunSummary summary = await _testExecutionService.RunTestsAsync(new TestRunRequest
+                ProjectWorkflowStatus = "Finding source test candidates...";
+                var candidates = await _csharpSyntaxDiagnosticService.FindTestMethodCandidatesAsync(
+                    context.Project.ProjectPath, context.Configuration, approved.TargetFramework!, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                ThrowIfProjectSelectionChanged(workspace, revision);
+                SelectedTestMethodCandidate = null;
+                TestMethodCandidates.Clear();
+                foreach (TestMethodCandidate candidate in candidates)
+                {
+                    TestMethodCandidates.Add(candidate);
+                }
+                ProjectWorkflowStatus = $"Found {candidates.Count} source test candidates; adapter discovery may differ.";
+            }
+            catch (OperationCanceledException)
+            {
+                ReportProjectCancellation(workspace, revision);
+            }
+            catch (Exception exception) when (IsProjectWorkflowException(exception))
+            {
+                ReportProjectFailure(workspace, revision, "Source test discovery", exception);
+            }
+            finally
+            {
+                SetProjectActionBusy(false);
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanTestSelectedProject))]
+        private async Task DiscoverAdapterTestsAsync(CancellationToken cancellationToken)
+        {
+            if (!CanTestSelectedProject())
+            {
+                return;
+            }
+
+            ProjectTargetInspection approved = ProjectInspection!;
+            CSharpWorkspace workspace = Workspace!;
+            long revision = Interlocked.Read(ref _projectWorkflowRevision);
+            SetProjectActionBusy(true);
+            try
+            {
+                ProjectWorkflowContext context = CreateWorkflowContext(workspace);
+                SelectedDiscoveredTestCase = null;
+                DiscoveredTestCases.Clear();
+                string assemblyPath = await PrepareTestAssemblyAsync(approved, context, workspace, revision, cancellationToken);
+                ProjectWorkflowStatus = "Discovering test cases with VSTest adapters...";
+                TestDiscoveryResult discovery = await _testDiscoveryService.DiscoverAsync(
+                    assemblyPath, Path.GetDirectoryName(context.Project.ProjectPath)!, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                ThrowIfProjectSelectionChanged(workspace, revision);
+                foreach (DiscoveredTestCase testCase in discovery.Cases)
+                {
+                    DiscoveredTestCases.Add(testCase);
+                }
+                ProjectWorkflowStatus = $"VSTest discovered {discovery.Cases.Count} cases."
+                    + (discovery.Warnings.Count == 0 ? string.Empty : Environment.NewLine + string.Join(Environment.NewLine, discovery.Warnings));
+            }
+            catch (OperationCanceledException)
+            {
+                ReportProjectCancellation(workspace, revision);
+            }
+            catch (Exception exception) when (IsProjectWorkflowException(exception))
+            {
+                ReportProjectFailure(workspace, revision, "Adapter test discovery", exception);
+            }
+            finally
+            {
+                SetProjectActionBusy(false);
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanDebugDiscoveredTestCase))]
+        private async Task DebugDiscoveredTestCaseAsync(CancellationToken cancellationToken)
+        {
+            if (!CanDebugDiscoveredTestCase())
+            {
+                return;
+            }
+
+            DiscoveredTestCase selected = SelectedDiscoveredTestCase!;
+            ProjectTargetInspection approved = ProjectInspection!;
+            CSharpWorkspace workspace = Workspace!;
+            long revision = Interlocked.Read(ref _projectWorkflowRevision);
+            EditorViewModel editor = Editor;
+            string sourcePath = Path.GetFullPath(editor.CurrentFilePath!);
+            string sourceText = editor.Text ?? string.Empty;
+            int line = GetLineNumber(sourceText, _observedEditorTextArea!.CaretOffset);
+            SetProjectActionBusy(true);
+            try
+            {
+                if (editor.IsDirty || !string.Equals(File.ReadAllText(sourcePath), sourceText, StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException("Save the active source file before debugging at its caret.");
+                }
+                ProjectWorkflowContext context = CreateWorkflowContext(workspace);
+                ProjectTestResults.Clear();
+                string assemblyPath = await PrepareTestAssemblyAsync(approved, context, workspace, revision, cancellationToken);
+                ProjectWorkflowStatus = $"Debugging adapter case: {selected.DisplayName}...";
+                var debugService = (ITestCaseDebugExecutionService)_testCaseExecutionService;
+                TestRunSummary summary = await debugService.DebugCaseAsync(
+                    assemblyPath, Path.GetDirectoryName(context.Project.ProjectPath)!, selected,
+                    async (pid, token) =>
+                    {
+                        if (!string.Equals(File.ReadAllText(sourcePath), sourceText, StringComparison.Ordinal))
+                        {
+                            throw new InvalidOperationException("The breakpoint source changed after the test build.");
+                        }
+                        DebugSessionInfo session = await _debugSessionService.StartSessionAsync(new DebugLaunchRequest
+                        {
+                            AttachToExistingProcess = true,
+                            ProcessId = pid,
+                            WorkingDirectory = Path.GetDirectoryName(context.Project.ProjectPath),
+                        }, token);
+                        try
+                        {
+                            await _debugSessionService.SetBreakpointsAsync(session.SessionId, sourcePath, [line], token);
+                            await Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                token.ThrowIfCancellationRequested();
+                                ThrowIfProjectSelectionChanged(workspace, revision);
+                                if (editor.IsDirty || !string.Equals(editor.Text, sourceText, StringComparison.Ordinal))
+                                {
+                                    throw new InvalidOperationException("The breakpoint source changed after the test build.");
+                                }
+                                AdoptDebugSession(session, sourcePath);
+                                _debuggedTestSessionId = session.SessionId;
+                                _debugBreakpoints[sourcePath] = [line];
+                            });
+                            return new TestDebugSessionLease(this, session.SessionId);
+                        }
+                        catch
+                        {
+                            await _debugSessionService.StopSessionAsync(session.SessionId, CancellationToken.None);
+                            throw;
+                        }
+                    }, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                ThrowIfProjectSelectionChanged(workspace, revision);
+                await ApplyTestDiagnosticsAsync(summary, workspace, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                ThrowIfProjectSelectionChanged(workspace, revision);
+                UpdateProjectTestResults(summary);
+                ProjectWorkflowStatus = $"Debugged adapter case ({selected.DisplayName}): {summary.Outcome}."
+                    + (summary.Messages.Count == 0 ? string.Empty : Environment.NewLine + string.Join(Environment.NewLine, summary.Messages));
+                Editor.StatusText = ProjectWorkflowStatus;
+            }
+            catch (OperationCanceledException)
+            {
+                ReportProjectCancellation(workspace, revision);
+            }
+            catch (Exception exception) when (IsProjectWorkflowException(exception))
+            {
+                ReportProjectFailure(workspace, revision, "Adapter case debugging", exception);
+            }
+            finally
+            {
+                SetProjectActionBusy(false);
+            }
+        }
+
+        private sealed class TestDebugSessionLease(MainWindowViewModel owner, string sessionId) : IAsyncDisposable
+        {
+            public async ValueTask DisposeAsync()
+            {
+                try
+                {
+                    await owner._debugSessionService.StopSessionAsync(sessionId, CancellationToken.None);
+                }
+                finally
+                {
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        if (string.Equals(owner._debuggedTestSessionId, sessionId, StringComparison.Ordinal))
+                        {
+                            owner._debuggedTestSessionId = null;
+                            owner.ClearActiveDebugSession(sessionId);
+                        }
+                    });
+                }
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanRunDiscoveredTestCase))]
+        private async Task RunDiscoveredTestCaseAsync(CancellationToken cancellationToken)
+        {
+            if (!CanRunDiscoveredTestCase())
+            {
+                return;
+            }
+
+            DiscoveredTestCase selected = SelectedDiscoveredTestCase!;
+            ProjectTargetInspection approved = ProjectInspection!;
+            CSharpWorkspace workspace = Workspace!;
+            long revision = Interlocked.Read(ref _projectWorkflowRevision);
+            SetProjectActionBusy(true);
+            try
+            {
+                ProjectWorkflowContext context = CreateWorkflowContext(workspace);
+                ProjectTestResults.Clear();
+                string assemblyPath = await PrepareTestAssemblyAsync(approved, context, workspace, revision, cancellationToken);
+                ProjectWorkflowStatus = $"Running adapter case: {selected.DisplayName}...";
+                TestRunSummary summary = await _testCaseExecutionService.RunCaseAsync(
+                    assemblyPath, Path.GetDirectoryName(context.Project.ProjectPath)!, selected, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                ThrowIfProjectSelectionChanged(workspace, revision);
+                await ApplyTestDiagnosticsAsync(summary, workspace, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                ThrowIfProjectSelectionChanged(workspace, revision);
+                UpdateProjectTestResults(summary);
+                ProjectWorkflowStatus = $"Adapter case ({selected.DisplayName}): {summary.Outcome}."
+                    + (summary.Messages.Count == 0 ? string.Empty : Environment.NewLine + string.Join(Environment.NewLine, summary.Messages));
+                Editor.StatusText = ProjectWorkflowStatus;
+            }
+            catch (OperationCanceledException)
+            {
+                ReportProjectCancellation(workspace, revision);
+            }
+            catch (Exception exception) when (IsProjectWorkflowException(exception))
+            {
+                ReportProjectFailure(workspace, revision, "Adapter case execution", exception);
+            }
+            finally
+            {
+                SetProjectActionBusy(false);
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanTestSelectedProject))]
+        private async Task TestSelectedProjectAsync(CancellationToken cancellationToken)
+        {
+            await RunSelectedProjectTestsAsync(null, cancellationToken);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanTestSelectedMethod))]
+        private async Task TestSelectedMethodAsync(CancellationToken cancellationToken)
+        {
+            await RunSelectedProjectTestsAsync(WorkflowTestMethod.Trim(), cancellationToken);
+        }
+
+        private async Task RunSelectedProjectTestsAsync(string? testMethod, CancellationToken cancellationToken)
+        {
+            if (!CanTestSelectedProject() || testMethod is not null && string.IsNullOrWhiteSpace(testMethod))
+            {
+                return;
+            }
+
+            ProjectTargetInspection approved = ProjectInspection!;
+            CSharpWorkspace workspace = Workspace!;
+            long revision = Interlocked.Read(ref _projectWorkflowRevision);
+            SetProjectActionBusy(true);
+            try
+            {
+                ProjectWorkflowContext context = CreateWorkflowContext(workspace);
+                await VerifyProjectInspectionAsync(approved, context, workspace, revision, cancellationToken);
+                ProjectWorkflowStatus = testMethod is null
+                    ? $"Testing project: {context.Project.Name}..."
+                    : $"Testing method: {testMethod}...";
+                ProjectTestResults.Clear();
+                TestRunRequest request = new()
                 {
                     WorkspaceRootPath = workspace.RootPath,
                     ProjectPath = context.Project.ProjectPath,
                     Configuration = context.Configuration,
                     TargetFramework = approved.TargetFramework,
-                }, cancellationToken);
+                    MatchTargetsExactly = testMethod is not null,
+                };
+                if (testMethod is not null)
+                {
+                    request.Targets.Add(testMethod);
+                }
+                TestRunSummary summary = await _testExecutionService.RunTestsAsync(request, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 ThrowIfProjectSelectionChanged(workspace, revision);
                 await ApplyTestDiagnosticsAsync(summary, workspace, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
                 ThrowIfProjectSelectionChanged(workspace, revision);
+                UpdateProjectTestResults(summary);
                 ProjectWorkflowStatus = $"Project tests ({context.Project.Name}): {summary.Outcome} ({summary.TotalCount} total).";
                 Editor.StatusText = ProjectWorkflowStatus;
                 Editor.NotificationText =
@@ -346,6 +684,11 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             InspectSelectedProjectCommand.Cancel();
             BuildSelectedProjectCommand.Cancel();
             TestSelectedProjectCommand.Cancel();
+            TestSelectedMethodCommand.Cancel();
+            FindTestCandidatesCommand.Cancel();
+            DiscoverAdapterTestsCommand.Cancel();
+            RunDiscoveredTestCaseCommand.Cancel();
+            DebugDiscoveredTestCaseCommand.Cancel();
             DebugSelectedProjectCommand.Cancel();
             ProjectWorkflowStatus = "Cancellation requested. An in-progress builder may need to finish first.";
         }
@@ -370,6 +713,67 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             return !ProjectWorkflowBusy
                 && _testExecutionService is not NullTestExecutionService
                 && ProjectInspection?.TargetFramework is not null;
+        }
+
+        private bool CanTestSelectedMethod()
+        {
+            return CanTestSelectedProject() && !string.IsNullOrWhiteSpace(WorkflowTestMethod);
+        }
+
+        private bool CanRunDiscoveredTestCase()
+        {
+            return CanTestSelectedProject()
+                && SelectedDiscoveredTestCase is not null
+                && DiscoveredTestCases.Contains(SelectedDiscoveredTestCase);
+        }
+
+        private bool CanDebugDiscoveredTestCase()
+        {
+            return CanRunDiscoveredTestCase()
+                && _testCaseExecutionService is ITestCaseDebugExecutionService
+                && _debugSessionService is not NullDebugSessionService
+                && _activeDebugSessionId is null
+                && _observedEditorTextArea is not null
+                && !string.IsNullOrWhiteSpace(Editor.CurrentFilePath)
+                && string.Equals(Path.GetExtension(Editor.CurrentFilePath), ".cs", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void UpdateProjectTestResults(TestRunSummary summary)
+        {
+            foreach (var group in summary.Cases.GroupBy(
+                static result => result.TestClassName ?? result.QualifiedTestName ?? result.TestName, StringComparer.Ordinal))
+            {
+                ProjectTestResults.Add(new TestResultNode(group.Key, group
+                    .Select(static result => new TestResultNode($"{result.Outcome}: {result.TestName}", []))
+                    .ToArray()));
+            }
+        }
+
+        private async Task<string> PrepareTestAssemblyAsync(
+            ProjectTargetInspection approved,
+            ProjectWorkflowContext context,
+            CSharpWorkspace workspace,
+            long revision,
+            CancellationToken cancellationToken)
+        {
+            await VerifyProjectInspectionAsync(approved, context, workspace, revision, cancellationToken);
+            if (string.IsNullOrWhiteSpace(approved.TargetPath))
+            {
+                throw new InvalidOperationException("The selected project has no target assembly path.");
+            }
+
+            ProjectWorkflowStatus = $"Building test project: {context.Project.Name}...";
+            await _projectRuntimeBuilder.BuildAsync(new BuilderBuildRequest
+            {
+                WorkspaceRootPath = workspace.RootPath,
+                ProjectPath = context.Project.ProjectPath,
+                Configuration = context.Configuration,
+                TargetFramework = approved.TargetFramework,
+            }, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfProjectSelectionChanged(workspace, revision);
+            await VerifyProjectInspectionAsync(approved, context, workspace, revision, cancellationToken);
+            return approved.TargetPath;
         }
 
         private bool CanDebugSelectedProject()

@@ -56,6 +56,14 @@ public static class UiStrings
 
     public static string GoToDefinitionCommandText => GetString(nameof(GoToDefinitionCommandText));
 
+    public static string QuickInfoCommandText => GetString(nameof(QuickInfoCommandText));
+
+    public static string SignatureHelpCommandText => GetString(nameof(SignatureHelpCommandText));
+
+    public static string QuickInfoEmptyText => GetString(nameof(QuickInfoEmptyText));
+
+    public static string CloseQuickInfoText => GetString(nameof(CloseQuickInfoText));
+
     public static string RunTestsCommandText => GetString(nameof(RunTestsCommandText));
 
     public static string RunTestsUnavailableText => GetString(nameof(RunTestsUnavailableText));
@@ -87,6 +95,24 @@ public static class UiStrings
     public static string BuildSelectedProjectCommandText => GetString(nameof(BuildSelectedProjectCommandText));
 
     public static string TestSelectedProjectCommandText => GetString(nameof(TestSelectedProjectCommandText));
+
+    public static string TestMethodNameText => GetString(nameof(TestMethodNameText));
+
+    public static string TestMethodCommandText => GetString(nameof(TestMethodCommandText));
+
+    public static string TestCandidatesCommandText => GetString(nameof(TestCandidatesCommandText));
+
+    public static string TestCandidatesLabelText => GetString(nameof(TestCandidatesLabelText));
+
+    public static string DiscoverAdapterTestsCommandText => GetString(nameof(DiscoverAdapterTestsCommandText));
+
+    public static string DiscoveredTestCasesLabelText => GetString(nameof(DiscoveredTestCasesLabelText));
+
+    public static string RunDiscoveredTestCaseCommandText => GetString(nameof(RunDiscoveredTestCaseCommandText));
+
+    public static string DebugDiscoveredTestCaseCommandText => GetString(nameof(DebugDiscoveredTestCaseCommandText));
+
+    public static string ProjectTestResultsLabelText => GetString(nameof(ProjectTestResultsLabelText));
 
     public static string DebugSelectedProjectCommandText => GetString(nameof(DebugSelectedProjectCommandText));
 

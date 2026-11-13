@@ -8,6 +8,7 @@
         xmlns:debugging="using:AA98_AvlnCodeStudio.Base.Debugging.Models"
         xmlns:propertyEditor="using:Property.Editor.Avalonia.Views"
         xmlns:workspaces="using:AA98_AvlnCodeStudio.Model.Workspaces"
+        xmlns:testing="using:AA98_AvlnCodeStudio.Base.Testing.Models"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="AA98_AvlnCodeStudio.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -90,6 +91,8 @@
                         <Separator />
                         <MenuItem Header="{Binding CompleteCommandText}" Command="{Binding RequestCompletionsCommand}" />
                         <MenuItem Header="{Binding GoToDefinitionCommandText}" Command="{Binding GoToDefinitionCommand}" />
+                        <MenuItem Header="{Binding QuickInfoCommandText}" Command="{Binding RequestQuickInfoCommand}" />
+                        <MenuItem Header="{Binding SignatureHelpCommandText}" Command="{Binding RequestSignatureHelpCommand}" />
                         <Separator />
                         <MenuItem Header="{Binding GenerateAxamlMvvmCommandText}" Command="{Binding GenerateAxamlMvvmCommand}" />
                     </MenuItem>
@@ -198,6 +201,50 @@
                             <Button Content="{Binding InspectProjectCommandText}" Command="{Binding InspectSelectedProjectCommand}" />
                             <Button Content="{Binding BuildSelectedProjectCommandText}" Command="{Binding BuildSelectedProjectCommand}" />
                             <Button Content="{Binding TestSelectedProjectCommandText}" Command="{Binding TestSelectedProjectCommand}" />
+                            <Button Content="{Binding TestCandidatesCommandText}" Command="{Binding FindTestCandidatesCommand}" />
+                            <TextBlock Text="{Binding TestCandidatesLabelText}" TextWrapping="Wrap" />
+                            <ListBox ItemsSource="{Binding TestMethodCandidates}"
+                                     SelectedItem="{Binding SelectedTestMethodCandidate, Mode=TwoWay}"
+                                     MaxHeight="140"
+                                     AutomationProperties.Name="{Binding TestCandidatesLabelText}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="testing:TestMethodCandidate">
+                                        <TextBlock Text="{Binding FullyQualifiedName}" TextWrapping="Wrap" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <Button Content="{Binding DiscoverAdapterTestsCommandText}" Command="{Binding DiscoverAdapterTestsCommand}" />
+                            <TextBlock Text="{Binding DiscoveredTestCasesLabelText}" TextWrapping="Wrap" />
+                            <ListBox ItemsSource="{Binding DiscoveredTestCases}"
+                                     SelectedItem="{Binding SelectedDiscoveredTestCase, Mode=TwoWay}"
+                                     MaxHeight="160"
+                                     AutomationProperties.Name="{Binding DiscoveredTestCasesLabelText}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="testing:DiscoveredTestCase">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding DisplayName}" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding FullyQualifiedName}" Opacity="0.7" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <Button Content="{Binding RunDiscoveredTestCaseCommandText}" Command="{Binding RunDiscoveredTestCaseCommand}" />
+                            <Button Content="{Binding DebugDiscoveredTestCaseCommandText}" Command="{Binding DebugDiscoveredTestCaseCommand}" />
+                            <TextBlock Text="{Binding TestMethodNameText}" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding WorkflowTestMethod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding !ProjectWorkflowBusy}"
+                                     AutomationProperties.Name="{Binding TestMethodNameText}" />
+                            <Button Content="{Binding TestMethodCommandText}" Command="{Binding TestSelectedMethodCommand}" />
+                            <TextBlock Text="{Binding ProjectTestResultsLabelText}" FontWeight="SemiBold" />
+                            <TreeView ItemsSource="{Binding ProjectTestResults}"
+                                      MaxHeight="180"
+                                      AutomationProperties.Name="{Binding ProjectTestResultsLabelText}">
+                                <TreeView.ItemTemplate>
+                                    <TreeDataTemplate x:DataType="vm:TestResultNode" ItemsSource="{Binding Children}">
+                                        <TextBlock Text="{Binding Label}" TextWrapping="Wrap" />
+                                    </TreeDataTemplate>
+                                </TreeView.ItemTemplate>
+                            </TreeView>
                             <Button Content="{Binding DebugSelectedProjectCommandText}" Command="{Binding DebugSelectedProjectCommand}" />
                             <Button Content="{Binding CancelProjectWorkflowCommandText}" Command="{Binding CancelProjectWorkflowCommand}" />
                             <TextBlock Text="{Binding ProjectWorkflowStatus}" TextWrapping="Wrap" />
@@ -411,6 +458,21 @@
                             Content="{Binding ApplyCompletionCommandText}"
                             Command="{Binding ApplySelectedCompletionCommand}" />
                 </StackPanel>
+                <Border DockPanel.Dock="Top"
+                        Margin="0,0,0,8"
+                        Padding="8"
+                        BorderBrush="{DynamicResource ThemeControlMidBrush}"
+                        BorderThickness="1"
+                        IsVisible="{Binding HasQuickInfo}">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <ScrollViewer MaxHeight="160" VerticalScrollBarVisibility="Auto">
+                            <TextBlock Text="{Binding QuickInfoText}" TextWrapping="Wrap" />
+                        </ScrollViewer>
+                        <Button Grid.Column="1" VerticalAlignment="Top"
+                                Content="{Binding CloseQuickInfoText}"
+                                Command="{Binding CloseQuickInfoCommand}" />
+                    </Grid>
+                </Border>
                 <Expander DockPanel.Dock="Bottom"
                           Margin="0,8,0,0"
                           Header="Debug details"
