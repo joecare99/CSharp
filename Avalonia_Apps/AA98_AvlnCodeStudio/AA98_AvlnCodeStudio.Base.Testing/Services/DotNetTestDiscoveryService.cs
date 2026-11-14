@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AA98_AvlnCodeStudio.Base.Testing.Models;
@@ -65,10 +64,8 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
             throw new FileNotFoundException("The built test assembly does not exist.", assemblyPath);
         }
 
-        string outputDirectory = Path.GetDirectoryName(assemblyPath)!;
-        string[] adapters = Directory.GetFiles(outputDirectory, "*.dll")
-            .Where(static path => path.EndsWith("TestAdapter.dll", StringComparison.OrdinalIgnoreCase))
-            .ToArray();
+        string[] adapters = await VSTestAdapterResolver.ResolveAsync(
+            assemblyPath, projectDirectory, cancellationToken).ConfigureAwait(false);
         if (adapters.Length == 0)
         {
             throw new InvalidOperationException("No VSTest adapter was found beside the built test assembly.");
