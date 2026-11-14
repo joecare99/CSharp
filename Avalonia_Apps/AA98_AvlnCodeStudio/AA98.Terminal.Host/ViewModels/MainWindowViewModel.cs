@@ -33,7 +33,7 @@ public partial class MainWindowViewModel : ViewModelBase, IAsyncDisposable
             WindowWidth = 120,
             WindowHeight = 40,
         };
-        SessionDescription = "No active terminal session.";
+        SessionDescription = "Line-oriented runner | No active session.";
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ public partial class MainWindowViewModel : ViewModelBase, IAsyncDisposable
         }
 
         Console.Clear();
-        Console.Title = "AA98 Terminal Host";
+        Console.Title = "AA98 Command Runner";
         _terminalSession = await _terminalSessionService.StartSessionAsync(new TerminalSessionStartRequest(), CancellationToken.None);
         _terminalSession.OutputReceived += OnOutputReceived;
         _terminalSession.OutputPartialReceived += OnOutputPartialReceived;
@@ -76,8 +76,8 @@ public partial class MainWindowViewModel : ViewModelBase, IAsyncDisposable
         _interactiveInputBuffer.Clear();
         InputText = string.Empty;
         IsRunning = true;
-        SessionDescription = $"Running shell: {_terminalSession.Shell.DisplayName ?? _terminalSession.Shell.ExecutablePath ?? "unknown"}";
-        Console.WriteLine("Started terminal session.", ConsoleColor.Gray, ConsoleColor.Black);
+        SessionDescription = $"Line-oriented runner | Shell: {_terminalSession.Shell.DisplayName ?? _terminalSession.Shell.ExecutablePath ?? "unknown"}";
+        Console.WriteLine("Started line-oriented command session.", ConsoleColor.Gray, ConsoleColor.Black);
     }
 
     /// <summary>
@@ -180,7 +180,7 @@ public partial class MainWindowViewModel : ViewModelBase, IAsyncDisposable
         }
 
         await _terminalSession.StopAsync(CancellationToken.None);
-        Console.WriteLine("Stopping terminal session.", ConsoleColor.Yellow, ConsoleColor.Black);
+        Console.WriteLine("Stopping command session.", ConsoleColor.Yellow, ConsoleColor.Black);
     }
 
     /// <inheritdoc/>
@@ -194,7 +194,7 @@ public partial class MainWindowViewModel : ViewModelBase, IAsyncDisposable
 
         _interactiveInputBuffer.Clear();
         InputText = string.Empty;
-        SessionDescription = "No active terminal session.";
+        SessionDescription = "Line-oriented runner | No active session.";
     }
 
     private bool CanStart() => !IsRunning;
@@ -228,9 +228,9 @@ public partial class MainWindowViewModel : ViewModelBase, IAsyncDisposable
     {
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
-            Console.WriteLine($"Terminal session exited with code {exitCode}.", ConsoleColor.Yellow, ConsoleColor.Black);
+            Console.WriteLine($"Command session exited with code {exitCode}.", ConsoleColor.Yellow, ConsoleColor.Black);
             IsRunning = false;
-            SessionDescription = "No active terminal session.";
+            SessionDescription = "Line-oriented runner | No active session.";
 
             if (_terminalSession is not null)
             {

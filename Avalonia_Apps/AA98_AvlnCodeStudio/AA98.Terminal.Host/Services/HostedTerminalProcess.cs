@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace AA98.Terminal.Host.Services;
 
 /// <summary>
-/// Wraps a running process and forwards redirected streams as terminal events.
+/// Wraps a running redirected process; it does not allocate or emulate a pseudo-terminal.
 /// </summary>
 public sealed class HostedTerminalProcess : IHostedTerminalProcess
 {
