@@ -204,6 +204,12 @@
   <data name="DebugTargetPlaceholderText" xml:space="preserve">
     <value>Path to debug target DLL</value>
   </data>
+  <data name="AttachToProcessCommandText" xml:space="preserve">
+    <value>Attach to Process</value>
+  </data>
+  <data name="ProcessIdPlaceholderText" xml:space="preserve">
+    <value>Process ID (PID)</value>
+  </data>
   <data name="NoWorkspaceOpenText" xml:space="preserve">
     <value>No C# workspace open</value>
   </data>

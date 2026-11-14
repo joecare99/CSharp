@@ -106,6 +106,7 @@
                     </MenuItem>
                     <MenuItem Header="_Debug">
                         <MenuItem Header="{Binding StartDebuggingCommandText}" Command="{Binding StartDebugSessionCommand}" />
+                        <MenuItem Header="{Binding AttachToProcessCommandText}" Command="{Binding AttachToDebugProcessCommand}" />
                         <MenuItem Header="{Binding DebugSelectedProjectCommandText}" Command="{Binding DebugSelectedProjectCommand}" />
                         <MenuItem Header="{Binding StopDebuggingCommandText}" Command="{Binding StopDebugSessionCommand}" />
                         <MenuItem Header="{Binding ToggleBreakpointCommandText}" Command="{Binding ToggleBreakpointCommand}" />
@@ -397,6 +398,10 @@
                                      Text="{Binding DebugTargetPath, Mode=TwoWay}" />
                             <Button Content="{Binding StartDebuggingCommandText}"
                                     Command="{Binding StartDebugSessionCommand}" />
+                            <TextBox PlaceholderText="{Binding ProcessIdPlaceholderText}"
+                                     Text="{Binding AttachProcessId, Mode=TwoWay}" />
+                            <Button Content="{Binding AttachToProcessCommandText}"
+                                    Command="{Binding AttachToDebugProcessCommand}" />
                             <Button Content="{Binding StopDebuggingCommandText}"
                                     Command="{Binding StopDebugSessionCommand}" />
                             <Button Content="{Binding ToggleBreakpointCommandText}"

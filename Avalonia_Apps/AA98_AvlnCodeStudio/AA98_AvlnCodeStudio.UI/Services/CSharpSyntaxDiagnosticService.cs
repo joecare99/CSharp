@@ -32,6 +32,7 @@ namespace AA98_AvlnCodeStudio.UI.Services;
 public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
 {
     private readonly Dictionary<string, ProjectContext> _projectContexts = new(System.StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string[]> _projectTargetFrameworks = new(System.StringComparer.OrdinalIgnoreCase);
     private readonly SemaphoreSlim _workspaceGate = new(1, 1);
     private static readonly object MsBuildLocatorLock = new();
     private static bool _msBuildLocatorRegistered;
@@ -57,7 +58,8 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         string? filePath,
         CSharpWorkspace? workspace,
         CancellationToken cancellationToken = default,
-        IReadOnlyDictionary<string, string>? openDocumentTexts = null)
+        IReadOnlyDictionary<string, string>? openDocumentTexts = null,
+        string? targetFramework = null)
     {
         if (string.IsNullOrWhiteSpace(filePath) || workspace is null)
         {
@@ -65,7 +67,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         }
 
         string normalizedFilePath = Path.GetFullPath(filePath);
-        CSharpWorkspaceProject? projectDescriptor = workspace.Projects
+        var candidates = workspace.Projects
             .Select(project => new
             {
                 Project = project,
@@ -73,17 +75,22 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             })
             .Where(candidate => IsWithinDirectory(normalizedFilePath, candidate.Directory))
             .OrderByDescending(candidate => candidate.Directory.Length)
-            .Select(candidate => candidate.Project)
-            .FirstOrDefault();
-        if (projectDescriptor is null)
+            .ToArray();
+        if (candidates.Length == 0)
         {
             return Analyze(source, filePath, cancellationToken);
         }
+        if (candidates.Length > 1 && candidates[0].Directory.Length == candidates[1].Directory.Length)
+        {
+            throw new InvalidOperationException(
+                $"The active file '{normalizedFilePath}' belongs to multiple workspace projects; select a project explicitly.");
+        }
+        CSharpWorkspaceProject projectDescriptor = candidates[0].Project;
 
         await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            ProjectContext context = await GetProjectContextAsync(projectDescriptor.ProjectPath, cancellationToken)
+            ProjectContext context = await GetProjectContextAsync(projectDescriptor.ProjectPath, cancellationToken, targetFramework)
                 .ConfigureAwait(false);
             Microsoft.CodeAnalysis.Project? project = context.Workspace.CurrentSolution.GetProject(context.ProjectId);
             Document? document = project is null
@@ -123,9 +130,11 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         string filePath,
         int position,
         CSharpWorkspace workspace,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        string? targetFramework = null)
     {
-        return (await GetCompletionItemsAsync(source, filePath, position, workspace, cancellationToken).ConfigureAwait(false))
+        return (await GetCompletionItemsAsync(
+            source, filePath, position, workspace, cancellationToken, targetFramework: targetFramework).ConfigureAwait(false))
             .Select(static item => item.DisplayText)
             .Distinct(StringComparer.Ordinal)
             .ToArray();
@@ -137,7 +146,8 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         int position,
         CSharpWorkspace workspace,
         CancellationToken cancellationToken = default,
-        IReadOnlyDictionary<string, string>? openDocumentTexts = null)
+        IReadOnlyDictionary<string, string>? openDocumentTexts = null,
+        string? targetFramework = null)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
@@ -166,7 +176,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            ProjectContext context = await GetProjectContextAsync(candidates[0].Project.ProjectPath, cancellationToken)
+            ProjectContext context = await GetProjectContextAsync(candidates[0].Project.ProjectPath, cancellationToken, targetFramework)
                 .ConfigureAwait(false);
             Microsoft.CodeAnalysis.Project? project = context.Workspace.CurrentSolution.GetProject(context.ProjectId);
             Document? document = project is null
@@ -226,7 +236,8 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         int position,
         CSharpWorkspace workspace,
         CancellationToken cancellationToken = default,
-        IReadOnlyDictionary<string, string>? openDocumentTexts = null)
+        IReadOnlyDictionary<string, string>? openDocumentTexts = null,
+        string? targetFramework = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
         ArgumentNullException.ThrowIfNull(workspace);
@@ -254,7 +265,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            ProjectContext context = await GetProjectContextAsync(projectDescriptor.ProjectPath, cancellationToken)
+            ProjectContext context = await GetProjectContextAsync(projectDescriptor.ProjectPath, cancellationToken, targetFramework)
                 .ConfigureAwait(false);
             Microsoft.CodeAnalysis.Project? project =
                 context.Workspace.CurrentSolution.GetProject(context.ProjectId);
@@ -310,7 +321,8 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         int position,
         CSharpWorkspace workspace,
         CancellationToken cancellationToken = default,
-        IReadOnlyDictionary<string, string>? openDocumentTexts = null)
+        IReadOnlyDictionary<string, string>? openDocumentTexts = null,
+        string? targetFramework = null)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
@@ -335,7 +347,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            ProjectContext context = await GetProjectContextAsync(candidates[0].Project.ProjectPath, cancellationToken)
+            ProjectContext context = await GetProjectContextAsync(candidates[0].Project.ProjectPath, cancellationToken, targetFramework)
                 .ConfigureAwait(false);
             Microsoft.CodeAnalysis.Project? project =
                 context.Workspace.CurrentSolution.GetProject(context.ProjectId);
@@ -370,7 +382,8 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         int position,
         CSharpWorkspace workspace,
         CancellationToken cancellationToken = default,
-        IReadOnlyDictionary<string, string>? openDocumentTexts = null)
+        IReadOnlyDictionary<string, string>? openDocumentTexts = null,
+        string? targetFramework = null)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
@@ -395,7 +408,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            ProjectContext context = await GetProjectContextAsync(candidates[0].Project.ProjectPath, cancellationToken)
+            ProjectContext context = await GetProjectContextAsync(candidates[0].Project.ProjectPath, cancellationToken, targetFramework)
                 .ConfigureAwait(false);
             Microsoft.CodeAnalysis.Project? project =
                 context.Workspace.CurrentSolution.GetProject(context.ProjectId);
@@ -816,6 +829,12 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
+            RegisterMsBuildLocator();
+            if (GetProjectTargetFrameworks(projectPath).Length > 1)
+            {
+                return false;
+            }
+
             ProjectContext context = await GetProjectContextAsync(projectPath, cancellationToken)
                 .ConfigureAwait(false);
             Microsoft.CodeAnalysis.Project project = context.Workspace.CurrentSolution.GetProject(context.ProjectId)
@@ -1115,10 +1134,15 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            if (_projectContexts.Remove(normalizedProjectPath, out ProjectContext? context))
+            string contextPrefix = normalizedProjectPath + "\0";
+            foreach (string key in _projectContexts.Keys
+                         .Where(key => key.StartsWith(contextPrefix, StringComparison.OrdinalIgnoreCase))
+                         .ToArray())
             {
-                context.Workspace.Dispose();
+                _projectContexts.Remove(key, out ProjectContext? context);
+                context?.Workspace.Dispose();
             }
+            _projectTargetFrameworks.Remove(normalizedProjectPath);
         }
         finally
         {
@@ -1699,23 +1723,46 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             viewType);
     }
 
-    private async Task<ProjectContext> GetProjectContextAsync(string projectPath, CancellationToken cancellationToken)
+    private async Task<ProjectContext> GetProjectContextAsync(
+        string projectPath,
+        CancellationToken cancellationToken,
+        string? targetFramework = null)
     {
         string normalizedProjectPath = Path.GetFullPath(projectPath);
-        if (_projectContexts.TryGetValue(normalizedProjectPath, out ProjectContext? existing))
+        RegisterMsBuildLocator();
+        string[] targetFrameworks = GetProjectTargetFrameworks(normalizedProjectPath);
+        string normalizedFramework = string.IsNullOrWhiteSpace(targetFramework) ? string.Empty : targetFramework.Trim();
+        if (targetFrameworks.Length > 1 && normalizedFramework.Length == 0)
+        {
+            throw new InvalidOperationException(
+                $"Project '{normalizedProjectPath}' targets multiple frameworks "
+                + $"({string.Join(", ", targetFrameworks)}); select a target framework before using C# language services.");
+        }
+        if (normalizedFramework.Length > 0
+            && targetFrameworks.Length > 0
+            && !targetFrameworks.Contains(normalizedFramework, StringComparer.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"Target framework '{normalizedFramework}' is not declared by project '{normalizedProjectPath}'.");
+        }
+
+        string contextKey = normalizedProjectPath + "\0" + normalizedFramework;
+        if (_projectContexts.TryGetValue(contextKey, out ProjectContext? existing))
         {
             return existing;
         }
 
-        RegisterMsBuildLocator();
         HostServices hostServices = CreateHostServices();
-        MSBuildWorkspace workspace = MSBuildWorkspace.Create(hostServices);
+        Dictionary<string, string> globalProperties = normalizedFramework.Length == 0
+            ? new(StringComparer.OrdinalIgnoreCase)
+            : new(StringComparer.OrdinalIgnoreCase) { ["TargetFramework"] = normalizedFramework };
+        MSBuildWorkspace workspace = MSBuildWorkspace.Create(globalProperties, hostServices);
         try
         {
             Microsoft.CodeAnalysis.Project project = await workspace.OpenProjectAsync(normalizedProjectPath, cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
             ProjectContext context = new(workspace, project.Id);
-            _projectContexts.Add(normalizedProjectPath, context);
+            _projectContexts.Add(contextKey, context);
             return context;
         }
         catch
@@ -1723,6 +1770,34 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             workspace.Dispose();
             throw;
         }
+    }
+
+    private static string[] GetTargetFrameworks(string projectPath)
+    {
+        using Microsoft.Build.Evaluation.ProjectCollection collection = new();
+        Microsoft.Build.Evaluation.Project project = collection.LoadProject(projectPath);
+        string[] frameworks = project.GetPropertyValue("TargetFrameworks")
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (frameworks.Length > 0)
+        {
+            return frameworks;
+        }
+
+        string framework = project.GetPropertyValue("TargetFramework");
+        return string.IsNullOrWhiteSpace(framework) ? [] : [framework.Trim()];
+    }
+
+    private string[] GetProjectTargetFrameworks(string projectPath)
+    {
+        string normalizedProjectPath = Path.GetFullPath(projectPath);
+        if (_projectTargetFrameworks.TryGetValue(normalizedProjectPath, out string[]? frameworks))
+        {
+            return frameworks;
+        }
+
+        frameworks = GetTargetFrameworks(normalizedProjectPath);
+        _projectTargetFrameworks.Add(normalizedProjectPath, frameworks);
+        return frameworks;
     }
 
     private static Document? CreateDocumentSnapshot(
@@ -1749,12 +1824,68 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
 
         texts[WorkspacePathIdentity.Normalize(activeFilePath)] = activeSource;
         Solution solution = project.Solution;
-        foreach (Document candidate in project.Documents)
+        HashSet<ProjectId> reachableProjectIds = new() { project.Id };
+        Queue<ProjectId> projectsToVisit = new();
+        projectsToVisit.Enqueue(project.Id);
+        while (projectsToVisit.TryDequeue(out ProjectId? projectId))
         {
-            if (candidate.FilePath is { } path
-                && texts.TryGetValue(WorkspacePathIdentity.Normalize(path), out string? text))
+            Microsoft.CodeAnalysis.Project? currentProject = solution.GetProject(projectId);
+            if (currentProject is null)
             {
-                solution = solution.WithDocumentText(candidate.Id, SourceText.From(text));
+                continue;
+            }
+
+            foreach (ProjectReference reference in currentProject.ProjectReferences)
+            {
+                if (reachableProjectIds.Add(reference.ProjectId))
+                {
+                    projectsToVisit.Enqueue(reference.ProjectId);
+                }
+            }
+        }
+
+        Dictionary<string, List<Document>> documentsByPath = new(WorkspacePathIdentity.Comparer);
+        foreach (ProjectId projectId in reachableProjectIds)
+        {
+            Microsoft.CodeAnalysis.Project? relatedProject = solution.GetProject(projectId);
+            if (relatedProject is null)
+            {
+                continue;
+            }
+
+            foreach (Document candidate in relatedProject.Documents)
+            {
+                if (candidate.FilePath is not { } path)
+                {
+                    continue;
+                }
+
+                string normalizedPath = WorkspacePathIdentity.Normalize(path);
+                if (!documentsByPath.TryGetValue(normalizedPath, out List<Document>? documents))
+                {
+                    documents = [];
+                    documentsByPath.Add(normalizedPath, documents);
+                }
+
+                documents.Add(candidate);
+            }
+        }
+
+        foreach ((string path, string text) in texts)
+        {
+            if (documentsByPath.TryGetValue(path, out List<Document>? candidates)
+                && candidates.Count == 1)
+            {
+                solution = solution.WithDocumentText(candidates[0].Id, SourceText.From(text));
+            }
+            else if (WorkspacePathIdentity.AreEqual(path, activeFilePath)
+                && documentsByPath.TryGetValue(path, out candidates))
+            {
+                Document? activeDocument = candidates.FirstOrDefault(candidate => candidate.Project.Id == project.Id);
+                if (activeDocument is not null)
+                {
+                    solution = solution.WithDocumentText(activeDocument.Id, SourceText.From(text));
+                }
             }
         }
 
@@ -1803,6 +1934,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         }
 
         _projectContexts.Clear();
+        _projectTargetFrameworks.Clear();
         _workspaceGate.Dispose();
     }
 
