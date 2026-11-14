@@ -6,7 +6,7 @@ using AA98_AvlnCodeStudio.Base.OS.Models;
 namespace AA98_AvlnCodeStudio.Base.OS.Services;
 
 /// <summary>
-/// Represents a started terminal session.
+/// Represents a started line-oriented shell session. This contract does not promise pseudo-terminal semantics.
 /// </summary>
 public interface ITerminalSession : IAsyncDisposable
 {
@@ -51,7 +51,7 @@ public interface ITerminalSession : IAsyncDisposable
     event EventHandler<int>? Exited;
 
     /// <summary>
-    /// Writes input to the session.
+    /// Writes one complete input line to the session, including the provider's line terminator.
     /// </summary>
     /// <param name="text">The input text to write.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
