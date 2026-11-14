@@ -10,9 +10,17 @@ including unsaved text in related files in the selected project, without saving
 them or changing the shared Roslyn workspace. Conflicting open buffer paths are
 omitted. A unique closest workspace project containing the active document must
 be available. Ambiguous or unlisted documents return no result.
-Only the currently loaded Roslyn project configuration is queried, not all target
-frameworks. Project loading uses MSBuild and should only be used with trusted
-projects. Hover is mouse-only; the caret command remains available to keyboard users.
+Unsaved buffers from referenced projects are included only when MSBuild loads
+those projects into the selected project's transitive project-reference graph
+and each source path identifies one document in that graph. Linked or duplicate
+source paths and projects outside that graph are not overlaid.
+Language operations share one immutable snapshot for the active project and
+target framework. In the Project workflow, select and inspect a target framework
+to use it for language services; a multi-target project without an explicit
+selection is rejected rather than silently analyzed against a default target.
+Single-target projects retain their existing behavior. Project loading uses
+MSBuild and should only be used with trusted projects. Hover is mouse-only; the
+caret command remains available to keyboard users.
 
 The Edit menu and Ctrl+Space request Roslyn completion suggestions at the caret.
 The list is filtered by the current prefix and shows at most 50 suggestions.
