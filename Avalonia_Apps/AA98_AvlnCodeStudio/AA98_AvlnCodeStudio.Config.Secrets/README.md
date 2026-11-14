@@ -2,6 +2,12 @@
 
 `AA98_AvlnCodeStudio.Config.Secrets` defines UI-neutral contracts for selecting and using credential backends independently of ordinary configuration stores.
 
+### Dependency and runtime review
+
+The Linux Secret Service backend uses `Ace4896.DBus.Services.Secrets` 1.6.0 (MIT); the inspected restore resolves `Tmds.DBus.Protocol` 0.92.0, which includes the fix for [GHSA-xrw6-gwf8-vvr9](https://github.com/tmds/Tmds.DBus/security/advisories/GHSA-xrw6-gwf8-vvr9). No published advisory for `Ace4896.DBus.Services.Secrets` 1.6.0 was listed in the GitHub NuGet advisory query at review time; this was not a complete audit of every transitive dependency. Windows credential storage uses the OS Credential Manager API; the encrypted file vault uses .NET AES-GCM and PBKDF2.
+
+The project conditionally targets `net8.0`, `net9.0` and `net10.0` depending on the installed SDK. As of November 13, 2026, .NET 8 and .NET 9 are out of support (since November 10, 2026); deploy this component on a supported runtime such as .NET 10. The older target frameworks remain for compatibility/build coverage and do not imply that those runtimes continue receiving security updates. See Microsoft's [.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy).
+
 `CredentialId` contains only stable service/name/scope identifiers. `ICredentialProvider` exposes availability, retrieval, storage, and deletion without coupling consumers to a platform or a vault format. A retrieved `CredentialSecret` is owned by the caller and must be disposed. A secret passed to `SetAsync` is borrowed for that call only; providers must not retain the instance.
 
 `CredentialSecret` keeps its own mutable character buffer and clears it on disposal. This does not erase caller-owned buffers, immutable strings created by integrations, copies made by providers, OS caches, swap, or crash dumps. Callers should avoid converting secrets to strings and should keep their lifetime short. `ToString()` is always redacted.
