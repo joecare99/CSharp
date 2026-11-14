@@ -9,7 +9,7 @@
         d:DesignHeight="720"
         x:Class="AA98.Terminal.Host.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="AA98 Terminal Host">
+        Title="AA98 Command Runner">
   <Window.Styles>
     <Style Selector="Button">
       <Setter Property="FontSize" Value="12" />
@@ -31,10 +31,10 @@
           ColumnDefinitions="*,Auto,Auto,Auto"
           ColumnSpacing="6">
       <TextBox Grid.Column="0"
-               PlaceholderText="Command input"
+               PlaceholderText="Command line"
                Text="{Binding InputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
       <Button Grid.Column="1"
-              Content="Send"
+              Content="Run line"
               Command="{Binding SendInputCommand}" />
       <Button Grid.Column="2"
               Content="Start"
@@ -46,9 +46,17 @@
 
     <TextBlock DockPanel.Dock="Top"
                Margin="12,12,12,8"
-               Text="AA98 Terminal Host"
+               Text="AA98 Command Runner"
                FontSize="16"
                FontWeight="SemiBold" />
+
+    <Border DockPanel.Dock="Top"
+            Margin="12,0,12,8"
+            Padding="8,6"
+            Background="#332B19">
+      <TextBlock Text="Line-oriented mode, no PTY: press Enter in the console or choose Run line to submit a complete command line. Interactive prompts, job control, terminal modes, and full-screen programs are not supported."
+                 TextWrapping="Wrap" />
+    </Border>
 
     <Border Margin="12,0,12,0"
             Background="Black"

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace AA98.Terminal.Host.Services;
 
 /// <summary>
-/// Starts redirected shell processes for the terminal micro host.
+/// Starts redirected shell processes for the line-oriented command runner.
 /// </summary>
 public sealed class HostedTerminalProcessFactory : IHostedTerminalProcessFactory
 {

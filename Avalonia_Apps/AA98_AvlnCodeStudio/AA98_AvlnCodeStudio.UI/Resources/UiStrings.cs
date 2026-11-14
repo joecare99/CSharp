@@ -120,6 +120,10 @@ public static class UiStrings
 
     public static string StartDebuggingCommandText => GetString(nameof(StartDebuggingCommandText));
 
+    public static string AttachToProcessCommandText => GetString(nameof(AttachToProcessCommandText));
+
+    public static string ProcessIdPlaceholderText => GetString(nameof(ProcessIdPlaceholderText));
+
     public static string StopDebuggingCommandText => GetString(nameof(StopDebuggingCommandText));
 
     public static string ToggleBreakpointCommandText => GetString(nameof(ToggleBreakpointCommandText));

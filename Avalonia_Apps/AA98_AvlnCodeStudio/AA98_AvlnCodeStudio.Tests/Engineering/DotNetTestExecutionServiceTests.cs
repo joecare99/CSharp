@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -150,6 +151,60 @@ public sealed class DotNetTestExecutionServiceTests
         finally
         {
             Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task AdapterResolver_IncludesExplicitAdaptersOutsideAssemblyOutput()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_ExternalAdapters_{Guid.NewGuid():N}");
+        string output = Path.Combine(root, "bin", "Debug", "net10.0");
+        string externalAdapters = Path.Combine(root, "TestAdapters");
+        Directory.CreateDirectory(output);
+        Directory.CreateDirectory(externalAdapters);
+        try
+        {
+            string adjacentAdapter = Path.Combine(output, "Local.TestAdapter.dll");
+            string externalAdapter = Path.Combine(externalAdapters, "External.TestAdapter.dll");
+            await File.WriteAllBytesAsync(adjacentAdapter, []);
+            await File.WriteAllBytesAsync(externalAdapter, []);
+            await File.WriteAllTextAsync(Path.Combine(root, "vstest-adapters.json"),
+                """{"adapterPaths":["TestAdapters/External.TestAdapter.dll"]}""");
+
+            string[] adapters = await VSTestAdapterResolver.ResolveAsync(
+                Path.Combine(output, "Sample.Tests.dll"), root, CancellationToken.None);
+
+            CollectionAssert.AreEquivalent(new[] { adjacentAdapter, externalAdapter }, adapters);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task AdapterResolver_RejectsAbsoluteAndOutOfScopeConfiguredPaths()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_InvalidAdapters_{Guid.NewGuid():N}");
+        string outside = Path.Combine(Path.GetDirectoryName(root)!, $"AA98_Outside_{Guid.NewGuid():N}.TestAdapter.dll");
+        Directory.CreateDirectory(root);
+        await File.WriteAllBytesAsync(outside, []);
+        try
+        {
+            foreach (string configuredPath in new[] { outside, Path.Combine("..", Path.GetFileName(outside)) })
+            {
+                await File.WriteAllTextAsync(Path.Combine(root, "vstest-adapters.json"),
+                    JsonSerializer.Serialize(new { adapterPaths = new[] { configuredPath } }));
+
+                await Assert.ThrowsExactlyAsync<InvalidDataException>(() =>
+                    VSTestAdapterResolver.ResolveAsync(
+                        Path.Combine(root, "bin", "Sample.Tests.dll"), root, CancellationToken.None));
+            }
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+            File.Delete(outside);
         }
     }
 }

@@ -16,6 +16,7 @@ using AppKomponentBaseLib.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -274,6 +275,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         [NotifyCanExecuteChangedFor(nameof(BuildWorkspaceCommand))]
         [NotifyCanExecuteChangedFor(nameof(RunWorkspaceTestsCommand))]
         [NotifyCanExecuteChangedFor(nameof(StartDebugSessionCommand))]
+        [NotifyCanExecuteChangedFor(nameof(AttachToDebugProcessCommand))]
         [NotifyCanExecuteChangedFor(nameof(AddPackageCommand))]
         [NotifyCanExecuteChangedFor(nameof(RemovePackageCommand))]
         [NotifyCanExecuteChangedFor(nameof(UpdateSvnWorkspaceCommand))]
@@ -282,6 +284,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartDebugSessionCommand))]
         private string _debugTargetPath = string.Empty;
+
+        [ObservableProperty]
+        private string _attachProcessId = string.Empty;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(LoadDebugVariablesCommand))]
@@ -460,7 +465,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         private sealed record CompletionSnapshot(
             CSharpWorkspace Workspace, EditorTabViewModel Tab, Controls.EditorTextArea Control,
-            string FilePath, string Source, int Position, IReadOnlyDictionary<string, string> OpenDocuments);
+            string FilePath, string Source, int Position, IReadOnlyDictionary<string, string> OpenDocuments,
+            string? TargetFramework);
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HasQuickInfo))]
@@ -532,14 +538,16 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
 
             IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
+            string? targetFramework = GetLanguageTargetFramework(filePath, workspace);
             CompletionSnapshot snapshot = new(
                 workspace, ActiveEditorTab, editorControl, filePath, Editor.Text, editorControl.CaretOffset,
-                openDocuments);
+                openDocuments, targetFramework);
             IReadOnlyList<Services.CSharpCompletionSuggestion> suggestions;
             try
             {
                 suggestions = await _csharpSyntaxDiagnosticService.GetCompletionItemsAsync(
-                    snapshot.Source, filePath, snapshot.Position, workspace, cancellationToken, openDocuments);
+                    snapshot.Source, filePath, snapshot.Position, workspace, cancellationToken, openDocuments,
+                    targetFramework);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -617,6 +625,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 && snapshot.Position == snapshot.Control.CaretOffset
                 && string.Equals(snapshot.Source, Editor.Text, StringComparison.Ordinal)
                 && string.Equals(snapshot.FilePath, Editor.CurrentFilePath, StringComparison.Ordinal)
+                && string.Equals(snapshot.TargetFramework,
+                    GetLanguageTargetFramework(snapshot.FilePath, snapshot.Workspace), StringComparison.OrdinalIgnoreCase)
                 && AreOpenCSharpDocumentSnapshotsEqual(snapshot.OpenDocuments, CaptureOpenCSharpDocuments());
 
         private IReadOnlyDictionary<string, string> CaptureOpenCSharpDocuments()
@@ -653,6 +663,30 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
 
             return documents;
+        }
+
+        private string? GetLanguageTargetFramework(string filePath, CSharpWorkspace workspace)
+        {
+            string normalizedPath = Path.GetFullPath(filePath);
+            CSharpWorkspaceProject[] candidates = workspace.Projects
+                .Where(project => IsPathWithinDirectory(
+                    normalizedPath,
+                    Path.GetDirectoryName(project.ProjectPath)!))
+                .OrderByDescending(project => Path.GetDirectoryName(project.ProjectPath)!.Length)
+                .ToArray();
+            if (candidates.Length == 0
+                || candidates.Length > 1
+                    && Path.GetDirectoryName(candidates[0].ProjectPath)!.Length
+                    == Path.GetDirectoryName(candidates[1].ProjectPath)!.Length
+                || SelectedWorkflowProject is null
+                || !WorkspacePathIdentity.AreEqual(
+                    candidates[0].ProjectPath,
+                    SelectedWorkflowProject.ProjectPath))
+            {
+                return null;
+            }
+
+            return SelectedWorkflowFramework;
         }
 
         private static bool AreOpenCSharpDocumentSnapshotsEqual(
@@ -696,12 +730,13 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             string source = Editor.Text;
             IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
+            string? targetFramework = GetLanguageTargetFramework(filePath, workspace);
             int position = editorControl.CaretOffset;
             string? info;
             try
             {
                 info = await _csharpSyntaxDiagnosticService.GetQuickInfoAsync(
-                    source, filePath, position, workspace, cancellationToken, openDocuments);
+                    source, filePath, position, workspace, cancellationToken, openDocuments, targetFramework);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -723,6 +758,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 && position == editorControl.CaretOffset
                 && string.Equals(source, Editor.Text, StringComparison.Ordinal)
                 && string.Equals(filePath, Editor.CurrentFilePath, StringComparison.Ordinal)
+                && string.Equals(targetFramework, GetLanguageTargetFramework(filePath, workspace), StringComparison.OrdinalIgnoreCase)
                 && AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments()))
             {
                 QuickInfoText = info ?? UiStrings.QuickInfoEmptyText;
@@ -748,11 +784,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             string source = Editor.Text;
             int position = editorControl.CaretOffset;
             IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
+            string? targetFramework = GetLanguageTargetFramework(filePath, workspace);
             Services.CSharpSignatureHelp? signatureHelp;
             try
             {
                 signatureHelp = await _csharpSyntaxDiagnosticService.GetSignatureHelpAsync(
-                    source, filePath, position, workspace, cancellationToken, openDocuments);
+                    source, filePath, position, workspace, cancellationToken, openDocuments, targetFramework);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -774,6 +811,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 || position != editorControl.CaretOffset
                 || !string.Equals(source, Editor.Text, StringComparison.Ordinal)
                 || !string.Equals(filePath, Editor.CurrentFilePath, StringComparison.Ordinal)
+                || !string.Equals(targetFramework, GetLanguageTargetFramework(filePath, workspace), StringComparison.OrdinalIgnoreCase)
                 || !AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments()))
             {
                 return;
@@ -820,12 +858,13 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             string source = Editor.Text;
             IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
+            string? targetFramework = GetLanguageTargetFramework(filePath, workspace);
             CancellationTokenSource cancellation = new();
             _hoverQuickInfoCancellation = cancellation;
             try
             {
                 string? info = await _csharpSyntaxDiagnosticService.GetQuickInfoAsync(
-                    source, filePath, position, workspace, cancellation.Token, openDocuments);
+                    source, filePath, position, workspace, cancellation.Token, openDocuments, targetFramework);
                 if (!cancellation.IsCancellationRequested
                     && ReferenceEquals(cancellation, _hoverQuickInfoCancellation)
                     && ReferenceEquals(workspace, Workspace)
@@ -834,6 +873,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                     && editorControl.HoverOffset == position
                     && string.Equals(source, Editor.Text, StringComparison.Ordinal)
                     && string.Equals(filePath, Editor.CurrentFilePath, StringComparison.Ordinal)
+                    && string.Equals(targetFramework, GetLanguageTargetFramework(filePath, workspace), StringComparison.OrdinalIgnoreCase)
                     && AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments())
                     && !string.IsNullOrWhiteSpace(info))
                 {
@@ -883,19 +923,22 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             string source = Editor.Text;
             int position = editorControl.CaretOffset;
             IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
+            string? targetFramework = GetLanguageTargetFramework(filePath, workspace);
             Code.Navigation.CodeLocation? location = await _csharpSyntaxDiagnosticService.FindDefinitionAsync(
                 source,
                 filePath,
                 position,
                 workspace,
                 cancellationToken,
-                openDocuments);
+                openDocuments,
+                targetFramework);
             if (!ReferenceEquals(workspace, Workspace)
                 || !ReferenceEquals(sourceTab, ActiveEditorTab)
                 || !ReferenceEquals(editorControl, _observedEditorTextArea)
                 || position != editorControl.CaretOffset
                 || !string.Equals(source, Editor.Text, StringComparison.Ordinal)
                 || !string.Equals(filePath, Editor.CurrentFilePath, StringComparison.Ordinal)
+                || !string.Equals(targetFramework, GetLanguageTargetFramework(filePath, workspace), StringComparison.OrdinalIgnoreCase)
                 || !AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments()))
             {
                 return;
@@ -969,6 +1012,10 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             : UiStrings.BuildWorkspaceCommandText;
 
         public string StartDebuggingCommandText => UiStrings.StartDebuggingCommandText;
+
+        public string AttachToProcessCommandText => UiStrings.AttachToProcessCommandText;
+
+        public string ProcessIdPlaceholderText => UiStrings.ProcessIdPlaceholderText;
 
         public string StopDebuggingCommandText => UiStrings.StopDebuggingCommandText;
 
@@ -3054,12 +3101,68 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
         }
 
-        private async Task StartAndAdoptDebugSessionAsync(
+        [RelayCommand(CanExecute = nameof(CanAttachToDebugProcess))]
+        private async Task AttachToDebugProcessAsync(CancellationToken cancellationToken)
+        {
+            if (!int.TryParse(AttachProcessId, NumberStyles.Integer, CultureInfo.InvariantCulture, out int processId)
+                || processId <= 0)
+            {
+                Editor.StatusText = "Attach failed: enter a positive process ID.";
+                Editor.NotificationText = "The process ID must be a positive whole number.";
+                return;
+            }
+
+            CSharpWorkspace? workspace = Workspace;
+            CSharpWorkspaceProject? selectedProject = SelectedWorkflowProject;
+            bool IsCurrentContext() => ReferenceEquals(workspace, Workspace)
+                && ReferenceEquals(selectedProject, SelectedWorkflowProject);
+
+            ProjectWorkflowBusy = true;
+            Editor.StatusText = $"Attaching to process {processId}...";
+            Editor.NotificationText = string.Empty;
+            try
+            {
+                bool adopted = await StartAndAdoptDebugSessionAsync(new DebugLaunchRequest
+                {
+                    AttachToExistingProcess = true,
+                    ProcessId = processId,
+                }, IsCurrentContext, cancellationToken);
+                if (!adopted && ReferenceEquals(workspace, Workspace))
+                {
+                    Editor.StatusText = cancellationToken.IsCancellationRequested
+                        ? "Attach canceled."
+                        : "Attach canceled because the debugger context changed.";
+                }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested || !IsCurrentContext())
+            {
+                if (ReferenceEquals(workspace, Workspace))
+                {
+                    Editor.StatusText = "Attach canceled.";
+                }
+            }
+            catch (Exception exception) when (IsProjectWorkflowException(exception))
+            {
+                if (IsCurrentContext())
+                {
+                    Editor.StatusText = $"Attach failed for process {processId}.";
+                    Editor.NotificationText = exception.Message;
+                }
+            }
+            finally
+            {
+                ProjectWorkflowBusy = false;
+            }
+        }
+
+        private async Task<bool> StartAndAdoptDebugSessionAsync(
             DebugLaunchRequest request,
             Func<bool> isCurrent,
             CancellationToken cancellationToken)
         {
             DebugSessionInfo session = await _debugSessionService.StartSessionAsync(request, cancellationToken);
+            string? targetName = request.Target
+                ?? (request.ProcessId is int processId ? $"Process {processId}" : null);
             if (cancellationToken.IsCancellationRequested || !isCurrent())
             {
                 try
@@ -3068,15 +3171,17 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 }
                 catch (Exception exception) when (IsProjectWorkflowException(exception))
                 {
-                    AdoptDebugSession(session, request.Target);
+                    AdoptDebugSession(session, targetName);
                     Editor.StatusText = "Could not stop a debug session after its context changed.";
                     Editor.NotificationText = exception.Message;
+                    return true;
                 }
 
-                return;
+                return false;
             }
 
-            AdoptDebugSession(session, request.Target);
+            AdoptDebugSession(session, targetName);
+            return true;
         }
 
         private void AdoptDebugSession(DebugSessionInfo session, string? targetPath)
@@ -3089,6 +3194,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             SelectedDebugStackFrame = null;
             OnPropertyChanged(nameof(HasDebugSession));
             StartDebugSessionCommand.NotifyCanExecuteChanged();
+            AttachToDebugProcessCommand.NotifyCanExecuteChanged();
             DebugSelectedProjectCommand.NotifyCanExecuteChanged();
             DebugDiscoveredTestCaseCommand.NotifyCanExecuteChanged();
             StopDebugSessionCommand.NotifyCanExecuteChanged();
@@ -3138,6 +3244,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             SelectedDebugStackFrame = null;
             OnPropertyChanged(nameof(HasDebugSession));
             StartDebugSessionCommand.NotifyCanExecuteChanged();
+            AttachToDebugProcessCommand.NotifyCanExecuteChanged();
             DebugSelectedProjectCommand.NotifyCanExecuteChanged();
             DebugDiscoveredTestCaseCommand.NotifyCanExecuteChanged();
             StopDebugSessionCommand.NotifyCanExecuteChanged();
@@ -3246,6 +3353,13 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 ? DebugTargetPath
                 : Path.Combine(Workspace.RootPath, DebugTargetPath);
             return File.Exists(targetPath);
+        }
+
+        private bool CanAttachToDebugProcess()
+        {
+            return _debugSessionService is not NullDebugSessionService
+                && !ProjectWorkflowBusy
+                && _activeDebugSessionId is null;
         }
 
         private bool CanStopDebugSession()
@@ -4123,8 +4237,17 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             string source = Editor.Text;
             IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
+            string? targetFramework = Workspace is { } workspace
+                ? GetLanguageTargetFramework(filePath, workspace)
+                : null;
             await Task.Delay(TimeSpan.FromMilliseconds(300), cancellationToken);
-            if (!AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments()))
+            if (!AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments())
+                || !string.Equals(
+                    targetFramework,
+                    Workspace is { } currentWorkspace
+                        ? GetLanguageTargetFramework(filePath, currentWorkspace)
+                        : null,
+                    StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
@@ -4134,10 +4257,17 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 filePath,
                 Workspace,
                 cancellationToken,
-                openDocuments)).ToList();
+                openDocuments,
+                targetFramework)).ToList();
             cancellationToken.ThrowIfCancellationRequested();
             if (!string.Equals(filePath, Editor.CurrentFilePath, StringComparison.OrdinalIgnoreCase)
                 || !string.Equals(source, Editor.Text, StringComparison.Ordinal)
+                || !string.Equals(
+                    targetFramework,
+                    Workspace is { } finalWorkspace
+                        ? GetLanguageTargetFramework(filePath, finalWorkspace)
+                        : null,
+                    StringComparison.OrdinalIgnoreCase)
                 || !AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments()))
             {
                 return;

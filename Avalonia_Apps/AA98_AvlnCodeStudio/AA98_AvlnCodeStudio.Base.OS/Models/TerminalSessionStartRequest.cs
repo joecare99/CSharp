@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace AA98_AvlnCodeStudio.Base.OS.Models;
 
 /// <summary>
-/// Represents a provider-neutral request to start a terminal session.
+/// Represents a provider-neutral request to start a line-oriented shell session.
 /// </summary>
 public sealed class TerminalSessionStartRequest
 {

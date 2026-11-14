@@ -203,7 +203,9 @@ public partial class MainWindowViewModel : ViewModelBase
         if (File.Exists(selectedPath))
         {
             string extension = Path.GetExtension(selectedPath);
-            if (string.Equals(extension, ".shproj", StringComparison.OrdinalIgnoreCase) ||
+            if ((string.Equals(extension, ".csproj", StringComparison.OrdinalIgnoreCase) &&
+                    File.Exists(Path.ChangeExtension(selectedPath, ".projitems"))) ||
+                string.Equals(extension, ".shproj", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(extension, ".projitems", StringComparison.OrdinalIgnoreCase))
             {
                 selectedPath = Path.GetDirectoryName(selectedPath) ?? selectedPath;

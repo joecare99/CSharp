@@ -28,11 +28,13 @@ Build output and intermediate paths are shared outside the checkout. The project
 
 ### Local planning scaffold generates a Visual Studio-only shared project
 
-**Location:** `AA98_AvlnCodeStudio.Planning.Local/Services/LocalPlanningProjectScaffolder.cs:54-60`, `:73-88`
+**Location:** `AA98_AvlnCodeStudio.Planning.Local/Services/LocalPlanningProjectScaffolder.cs`
 
 The scaffold writes `.shproj` and `.projitems` files with Visual Studio CodeSharing imports under `MSBuildExtensionsPath32`. These targets are not part of a normal Linux .NET SDK installation, so the generated planning project is not a portable Linux/WSL project even though the main app targets those platforms.
 
 **Recommendation:** Generate an SDK-style project format supported by the .NET SDK on both operating systems, or clearly label this feature as Windows/Visual Studio-specific and keep it out of the Linux-supported workflow. Include an automated Linux SDK evaluation/build test for the generated output.
+
+**Verification status:** The local scaffold emits an SDK-style `net8.0` `.csproj` and a portable `.projitems` import that preserves recursive Markdown inclusion while excluding `bin`, `obj`, and `.vs`; the planning view recognizes generated `.csproj` files paired with `.projitems` without reclassifying ordinary C# projects. Focused evaluation/build tests pass on Windows with .NET SDK 11.0.100 and WSL Ubuntu 26.04 with user-local .NET SDK 10.0.404; the Linux fixture was evaluated and built as `net10.0`. The planning host also builds on Windows. Test execution used a temporary compile exclusion for an unrelated existing expression-tree compiler error in `ProjectWorkflowViewModelTests.cs` and suppressed an existing NU1605 restore downgrade; neither issue was changed. The broader findings tracking remains unchanged.
 
 ### Embedded terminal is pipe-backed, not a terminal emulator session
 
@@ -42,6 +44,8 @@ The shell is started with redirected stdin/stdout/stderr and input is sent one l
 
 **Recommendation:** Use ConPTY on Windows and a Unix PTY on Linux/WSL behind a platform-neutral terminal-session abstraction. If the feature is intentionally a command runner rather than a terminal, describe it as line-oriented and disable/avoid presenting unsupported interactive behaviors.
 
+**Status after follow-up:** Kept intentionally as a line-oriented command runner rather than adding PTY support. The shared `ITerminalSession` contract documents complete-line input; the standalone window title, input labels, persistent mode notice, session status, and `AA98.Terminal.Host/README.md` identify the missing PTY and unsupported interactive scenarios. Process behavior is unchanged. `AA98.Terminal.Host.Tests` passes 10/10 on Windows/net10 and isolated WSL Ubuntu 26.04/net10; the warning notice is not a claim of terminal-emulator support.
+
 ### Git process can deadlock and may survive cancellation
 
 **Location:** `AA98_AvlnCodeStudio.Versioning.Git/Services/GitCommandRunner.cs:34-37`
@@ -50,13 +54,23 @@ The implementation reads all stdout before reading stderr. If Git fills the stde
 
 **Recommendation:** Drain stdout and stderr concurrently, await both drains and process exit, and on cancellation kill the process tree and wait for termination in a `finally` path. Test large output on both streams and cancellation while Git is running.
 
+**Status after follow-up:** Addressed in `GitCommandRunner`. Standard output and standard error are read concurrently; process exit and both drains are awaited. Exceptional or cancellation exits terminate the live process tree and reap the root process in `finally`, while normal exit codes and captured output remain unchanged. `GitCommandRunnerTests` passes 2/2 on Windows/net10, including output exceeding pipe capacity on both streams and cancellation with a child-process check.
+
 ### Build toolchain dependencies are noisy and show compatibility risk
 
 **Location:** `AA98_AvlnCodeStudio/Directory.Packages.props:10`, `Libraries/BaseLib/Models/FileProxy.cs:14-15`; affected project references appear in the .NET 10 build output.
 
-The .NET 10 restore/build emitted `NU1701` for `Microsoft.Build 18.11.0` and `Microsoft.IO.Redist 6.1.0` because they restored against .NET Framework assets. It also emitted package support warnings for `Microsoft.NET.StringTools 18.11.0` on `net10.0`. These warnings span the Workbench, builder, designer, and test projects and mean a passing local build is not evidence that these combinations are supported. Separately, CA1416 flagged a Windows ACL call that is reachable on all platforms.
+The .NET 10 restore/build emitted `NU1701` for `Microsoft.Build 18.12.2` and `Microsoft.IO.Redist 6.1.0` because they restored against .NET Framework assets. These warnings span the Workbench, builder, designer, and test projects and mean a passing local build is not evidence that these combinations are supported. Separately, CA1416 flagged a Windows ACL call that is reachable on all platforms. Focused Linux acceptance initially failed with `NU1605`: `Microsoft.Build.Framework 18.12.2` requires `Microsoft.NET.StringTools (=18.12.2)`, while central resolution selected 18.11.0. The central pin is now 18.12.2; the combined Windows/net10 C# language and project workflow suites pass 44/44 without suppressing NU1605. Linux VSTest acceptance passes 6/6 and RAD Axaml acceptance passes 341 with 3 skips; both used isolated roots and no NU1605 suppression. The RAD run required an empty `RestoreFallbackFolders` override to avoid stale Windows restore assets referencing the Visual Studio fallback folder. Focused net8/net9 builds compiled but their test hosts did not complete: SDK 11 crashed with a `System.Text.Json` `MissingMethodException`, and an SDK 10 retry timed out during VSTest protocol negotiation; those runtimes are not validated by these runs.
 
 **Recommendation:** Align Microsoft.Build, StringTools, Roslyn, and SDK versions with officially supported .NET 10 assets; verify runtime asset selection on Windows and Linux. Guard the ACL call with `OperatingSystem.IsWindows()` or move it behind a platform-specific implementation with a non-Windows behavior. Treat warning reduction as a tracked quality gate.
+
+### Credential library still advertises end-of-support target frameworks
+
+**Location:** `AA98_AvlnCodeStudio.Config.Secrets/AA98_AvlnCodeStudio.Config.Secrets.csproj:4-18`
+
+The credential project conditionally targets .NET 8, 9 and 10. Microsoft ended support for .NET 8 and .NET 9 on November 10, 2026; retaining those target frameworks can be useful for compatibility testing, but it does not make deployment on those runtimes supported or serviced. The Linux backend's direct dependency, `Ace4896.DBus.Services.Secrets` 1.6.0, is MIT-licensed; the inspected restore resolves `Tmds.DBus.Protocol` 0.92.0, which includes the fix for GHSA-xrw6-gwf8-vvr9. No published advisory for the direct package was listed in the checked GitHub NuGet advisory query; this was not a complete transitive dependency audit.
+
+**Recommendation:** Decide whether to remove net8/net9 from the supported target matrix or retain them strictly for compatibility builds while requiring a supported runtime (currently .NET 10) for deployment. Keep dependency/advisory checks scoped and repeat them when updating the package.
 
 ## Low priority
 

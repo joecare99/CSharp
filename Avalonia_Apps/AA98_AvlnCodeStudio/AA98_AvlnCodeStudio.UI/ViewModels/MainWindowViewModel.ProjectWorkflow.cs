@@ -104,10 +104,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         [NotifyCanExecuteChangedFor(nameof(BuildWorkspaceCommand))]
         [NotifyCanExecuteChangedFor(nameof(RunWorkspaceTestsCommand))]
         [NotifyCanExecuteChangedFor(nameof(StartDebugSessionCommand))]
+        [NotifyCanExecuteChangedFor(nameof(AttachToDebugProcessCommand))]
         private bool _projectWorkflowBusy;
 
         partial void OnSelectedWorkflowProjectChanged(CSharpWorkspaceProject? value)
         {
+            AttachToDebugProcessCommand.Cancel();
             WorkflowTestMethod = string.Empty;
             InvalidateProjectInspection(clearFrameworks: true);
         }
@@ -144,6 +146,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         partial void OnSelectedWorkflowFrameworkChanged(string? value)
         {
             InvalidateProjectInspection(clearFrameworks: false);
+            CloseQuickInfo();
         }
 
         private void ResetProjectWorkflow()
@@ -163,6 +166,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             BuildWorkspaceCommand.Cancel();
             RunWorkspaceTestsCommand.Cancel();
             StartDebugSessionCommand.Cancel();
+            AttachToDebugProcessCommand.Cancel();
             InspectSelectedProjectCommand.NotifyCanExecuteChanged();
         }
 

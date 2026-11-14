@@ -5,7 +5,7 @@ using System.Text;
 namespace AA98_AvlnCodeStudio.Planning.Local.Services;
 
 /// <summary>
-/// Creates a local DevOps planning shared project and default planning folder structure.
+/// Creates a portable local DevOps planning project and its default folder structure.
 /// </summary>
 public sealed class LocalPlanningProjectScaffolder : ILocalPlanningProjectScaffolder
 {
@@ -20,12 +20,12 @@ public sealed class LocalPlanningProjectScaffolder : ILocalPlanningProjectScaffo
         Directory.CreateDirectory(normalizedRootPath);
 
         string projectName = ResolveProjectName(normalizedRootPath);
-        string projectFilePath = Path.Combine(normalizedRootPath, $"{projectName}.shproj");
+        string projectFilePath = Path.Combine(normalizedRootPath, $"{projectName}.csproj");
         string projectItemsPath = Path.Combine(normalizedRootPath, $"{projectName}.projitems");
 
         CreatePlanningFolders(normalizedRootPath);
-        EnsureProjectItemsFile(projectItemsPath, projectName);
-        EnsureSharedProjectFile(projectFilePath, projectName);
+        EnsureProjectItemsFile(projectItemsPath);
+        EnsureProjectFile(projectFilePath, projectName);
 
         return new LocalPlanningProjectScaffoldResult(true, $"Planning project '{projectName}' is ready at '{normalizedRootPath}'.", normalizedRootPath, projectFilePath, projectItemsPath);
     }
@@ -38,50 +38,37 @@ public sealed class LocalPlanningProjectScaffolder : ILocalPlanningProjectScaffo
         Directory.CreateDirectory(Path.Combine(rootPath, "Tasks"));
     }
 
-    private static void EnsureSharedProjectFile(string projectFilePath, string projectName)
+    private static void EnsureProjectFile(string projectFilePath, string projectName)
     {
         if (File.Exists(projectFilePath))
         {
             return;
         }
 
-        string projectGuid = Guid.NewGuid().ToString().ToUpperInvariant();
-        string content = $"<Project>{Environment.NewLine}" +
-            $"  <PropertyGroup Label=\"Globals\">{Environment.NewLine}" +
-            $"    <ProjectGuid>{projectGuid}</ProjectGuid>{Environment.NewLine}" +
-            $"    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>{Environment.NewLine}" +
+        string content = $"<Project Sdk=\"Microsoft.NET.Sdk\">{Environment.NewLine}" +
+            $"  <PropertyGroup>{Environment.NewLine}" +
+            $"    <TargetFramework>net8.0</TargetFramework>{Environment.NewLine}" +
+            $"    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>{Environment.NewLine}" +
+            $"    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>{Environment.NewLine}" +
+            $"    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>{Environment.NewLine}" +
             $"  </PropertyGroup>{Environment.NewLine}" +
-            $"  <Import Project=\"$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props\" Condition=\"Exists('$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props')\" />{Environment.NewLine}" +
-            $"  <Import Project=\"$(MSBuildExtensionsPath32)\\Microsoft\\VisualStudio\\v$(VisualStudioVersion)\\CodeSharing\\Microsoft.CodeSharing.Common.Default.props\" />{Environment.NewLine}" +
-            $"  <Import Project=\"$(MSBuildExtensionsPath32)\\Microsoft\\VisualStudio\\v$(VisualStudioVersion)\\CodeSharing\\Microsoft.CodeSharing.Common.props\" />{Environment.NewLine}" +
-            $"  <PropertyGroup />{Environment.NewLine}" +
             $"  <Import Project=\"{projectName}.projitems\" Label=\"Shared\" />{Environment.NewLine}" +
-            $"  <Import Project=\"$(MSBuildExtensionsPath32)\\Microsoft\\VisualStudio\\v$(VisualStudioVersion)\\CodeSharing\\Microsoft.CodeSharing.CSharp.targets\" />{Environment.NewLine}" +
             $"</Project>{Environment.NewLine}";
 
         File.WriteAllText(projectFilePath, content, Encoding.UTF8);
     }
 
-    private static void EnsureProjectItemsFile(string projectItemsPath, string projectName)
+    private static void EnsureProjectItemsFile(string projectItemsPath)
     {
         if (File.Exists(projectItemsPath))
         {
             return;
         }
 
-        string sharedGuid = Guid.NewGuid().ToString().ToUpperInvariant();
         string content = $"<?xml version=\"1.0\" encoding=\"utf-8\"?>{Environment.NewLine}" +
-            $"<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">{Environment.NewLine}" +
-            $"  <PropertyGroup>{Environment.NewLine}" +
-            $"    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>{Environment.NewLine}" +
-            $"    <HasSharedItems>true</HasSharedItems>{Environment.NewLine}" +
-            $"    <SharedGUID>{sharedGuid}</SharedGUID>{Environment.NewLine}" +
-            $"  </PropertyGroup>{Environment.NewLine}" +
-            $"  <PropertyGroup Label=\"Configuration\">{Environment.NewLine}" +
-            $"    <Import_RootNamespace>{projectName}</Import_RootNamespace>{Environment.NewLine}" +
-            $"  </PropertyGroup>{Environment.NewLine}" +
+            $"<Project>{Environment.NewLine}" +
             $"  <ItemGroup>{Environment.NewLine}" +
-            $"    <None Include=\"$(MSBuildThisFileDirectory)**\\*.md\" Exclude=\"$(MSBuildThisFileDirectory)bin\\**;$(MSBuildThisFileDirectory)obj\\**;$(MSBuildThisFileDirectory).vs\\**\" />{Environment.NewLine}" +
+            $"    <None Include=\"$(MSBuildThisFileDirectory)**/*.md\" Exclude=\"$(MSBuildThisFileDirectory)bin/**;$(MSBuildThisFileDirectory)obj/**;$(MSBuildThisFileDirectory).vs/**\" />{Environment.NewLine}" +
             $"  </ItemGroup>{Environment.NewLine}" +
             $"</Project>{Environment.NewLine}";
 

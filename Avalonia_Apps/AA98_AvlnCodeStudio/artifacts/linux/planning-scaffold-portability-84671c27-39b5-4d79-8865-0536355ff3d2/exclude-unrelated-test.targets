@@ -1,0 +1,5 @@
+<Project>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'AA98_AvlnCodeStudio.Tests'">
+    <Compile Remove="Engineering\ProjectWorkflowViewModelTests.cs" />
+  </ItemGroup>
+</Project>

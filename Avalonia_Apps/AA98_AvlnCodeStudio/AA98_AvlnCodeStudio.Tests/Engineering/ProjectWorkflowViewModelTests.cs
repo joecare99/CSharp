@@ -125,6 +125,79 @@ public sealed class ProjectWorkflowViewModelTests
     }
 
     [TestMethod]
+    public async Task AttachToDebugProcess_UsesTheEnteredPositiveProcessId()
+    {
+        using Fixture fixture = await Fixture.CreateAsync();
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.AttachProcessId = " 4242 ";
+
+        Assert.IsTrue(vm.AttachToDebugProcessCommand.CanExecute(null));
+        await vm.AttachToDebugProcessCommand.ExecuteAsync(null);
+
+        await fixture.Debugger.Received(1).StartSessionAsync(
+            Arg.Is<DebugLaunchRequest>(request =>
+                request.AttachToExistingProcess
+                && request.ProcessId == 4242
+                && request.Target == null
+                && !request.StopAtEntry
+                && request.Arguments.Count == 0),
+            Arg.Any<CancellationToken>());
+        Assert.IsTrue(vm.HasDebugSession);
+        Assert.IsFalse(vm.AttachToDebugProcessCommand.CanExecute(null));
+        StringAssert.Contains(vm.Editor.StatusText, "Process 4242");
+    }
+
+    [TestMethod]
+    [DataRow("")]
+    [DataRow("0")]
+    [DataRow("-1")]
+    [DataRow("12x")]
+    [DataRow("999999999999999999999")]
+    public async Task AttachToDebugProcess_RejectsInvalidProcessIds(string processId)
+    {
+        using Fixture fixture = await Fixture.CreateAsync();
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.AttachProcessId = processId;
+
+        Assert.IsTrue(vm.AttachToDebugProcessCommand.CanExecute(null));
+        await vm.AttachToDebugProcessCommand.ExecuteAsync(null);
+
+        await fixture.Debugger.DidNotReceive().StartSessionAsync(
+            Arg.Any<DebugLaunchRequest>(),
+            Arg.Any<CancellationToken>());
+        Assert.IsFalse(vm.HasDebugSession);
+        StringAssert.Contains(vm.Editor.StatusText, "positive process ID");
+        StringAssert.Contains(vm.Editor.NotificationText, "positive whole number");
+    }
+
+    [TestMethod]
+    public async Task AttachToDebugProcess_SelectionChangeCancelsAndDetachesLateSession()
+    {
+        using Fixture fixture = await Fixture.CreateAsync();
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
+        vm.AttachProcessId = "4242";
+        TaskCompletionSource<bool> entered = NewCompletion<bool>();
+        TaskCompletionSource<DebugSessionInfo> completed = NewCompletion<DebugSessionInfo>();
+        fixture.Debugger.StartSessionAsync(Arg.Any<DebugLaunchRequest>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                entered.TrySetResult(true);
+                return completed.Task;
+            });
+
+        Task operation = vm.AttachToDebugProcessCommand.ExecuteAsync(null);
+        await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        vm.SelectedWorkflowProject = vm.Workspace.Projects[1];
+        completed.SetResult(new DebugSessionInfo { SessionId = "late-attach", State = DebugSessionState.Running });
+        await operation;
+
+        await fixture.Debugger.Received(1).StopSessionAsync("late-attach", Arg.Any<CancellationToken>());
+        Assert.IsFalse(vm.HasDebugSession);
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
+    }
+
+    [TestMethod]
     [DataRow("build-failed")]
     [DataRow("wrong-artifact")]
     [DataRow("missing-runtime")]
