@@ -11,4 +11,7 @@
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
 	<ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Versioning\AA98_AvlnCodeStudio.Base.Versioning.csproj" />
   </ItemGroup>
+  <ItemGroup>
+	<InternalsVisibleTo Include="AA98_AvlnCodeStudio.Tests" />
+  </ItemGroup>
 </Project>
