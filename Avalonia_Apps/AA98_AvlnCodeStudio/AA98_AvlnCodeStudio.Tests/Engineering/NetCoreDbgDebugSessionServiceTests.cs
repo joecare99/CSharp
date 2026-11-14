@@ -167,9 +167,11 @@ public sealed class NetCoreDbgDebugSessionServiceTests
     public async Task AttachSession_StopsAtBreakpointAndDetachesWithoutKillingTarget()
     {
         string? adapterPath = Environment.GetEnvironmentVariable("AVLN_NETCOREDBG_PATH");
-        if (!OperatingSystem.IsWindows() || string.IsNullOrWhiteSpace(adapterPath) || !File.Exists(adapterPath))
+        if ((!OperatingSystem.IsWindows() && !OperatingSystem.IsLinux())
+            || string.IsNullOrWhiteSpace(adapterPath)
+            || !File.Exists(adapterPath))
         {
-            Assert.Inconclusive("Set AVLN_NETCOREDBG_PATH on Windows to run the real attach integration test.");
+            Assert.Inconclusive("Set AVLN_NETCOREDBG_PATH on Windows or Linux to run the real attach integration test.");
         }
 
         string root = Path.Combine(Path.GetTempPath(), $"AA98_NetCoreDbgRealAttach_{Guid.NewGuid():N}");
@@ -195,7 +197,8 @@ public sealed class NetCoreDbgDebugSessionServiceTests
             File.WriteAllText(sourcePath,
                 "Console.WriteLine(\"ready\");\nConsole.ReadLine();\nConsole.WriteLine(\"breakpoint\");\nConsole.ReadLine();\n");
             await BuildFakeAdapterAsync(projectPath, outputDirectory);
-            debuggee = Process.Start(new ProcessStartInfo(Path.Combine(outputDirectory, "Debuggee.exe"))
+            string debuggeePath = Path.Combine(outputDirectory, OperatingSystem.IsWindows() ? "Debuggee.exe" : "Debuggee");
+            debuggee = Process.Start(new ProcessStartInfo(debuggeePath)
             {
                 WorkingDirectory = root,
                 RedirectStandardInput = true,

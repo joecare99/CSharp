@@ -895,6 +895,7 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
                     public int Count => 42;
                     public int Read() => Count;
                 }
+
                 """;
             int position = edited.LastIndexOf("Count", StringComparison.Ordinal);
             string? info = await service.GetQuickInfoAsync(edited, sourcePath, position, workspace);
@@ -976,10 +977,13 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
             await File.WriteAllTextAsync(otherProjectPath, "<Project />");
             await File.WriteAllTextAsync(solutionPath,
                 "<Solution><Project Path=\"Sample.csproj\" /><Project Path=\"Other.csproj\" /></Solution>");
+            CSharpWorkspace ambiguousWorkspace = new CSharpWorkspaceLoader().Load(solutionPath);
             Assert.IsNull(await service.GetQuickInfoAsync(edited, sourcePath, position,
-                new CSharpWorkspaceLoader().Load(solutionPath)));
+                ambiguousWorkspace));
             Assert.AreEqual(0, (await service.GetCompletionItemsAsync(edited, sourcePath, position,
-                new CSharpWorkspaceLoader().Load(solutionPath))).Count);
+                ambiguousWorkspace)).Count);
+            await Assert.ThrowsExactlyAsync<InvalidOperationException>(() =>
+                service.AnalyzeAsync(edited, sourcePath, ambiguousWorkspace));
             await Assert.ThrowsExactlyAsync<ArgumentOutOfRangeException>(
                 () => service.GetQuickInfoAsync(edited, sourcePath, edited.Length + 1, workspace));
             using CancellationTokenSource cancelled = new();
@@ -991,6 +995,167 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
         {
             Directory.Delete(root, recursive: true);
         }
+    }
+
+    [TestMethod]
+    public async Task LanguageOperations_UseExplicitTargetFrameworkAcrossSharedSnapshot()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_RoslynTargetFramework_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string apiPath = Path.Combine(root, "TargetApi.cs");
+            string consumerPath = Path.Combine(root, "Consumer.cs");
+            const string projectText = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+                    <ImplicitUsings>disable</ImplicitUsings>
+                    <Nullable>enable</Nullable>
+                  </PropertyGroup>
+                </Project>
+                """;
+            const string apiSource = """
+                #if NET9_0
+                public static class TargetApi { public static string OnlyNine(string value) => value; }
+                #else
+                public static class TargetApi { public static string OnlyTen(int value) => value.ToString(); }
+                #endif
+                """;
+            const string consumerSource = """
+                public class Consumer
+                {
+                    public string Read() => TargetApi.OnlyNine("value");
+                    public void Call() => TargetApi.OnlyNine("");
+                    public void Complete() => TargetApi.
+                }
+                """;
+            await File.WriteAllTextAsync(projectPath, projectText);
+            await File.WriteAllTextAsync(apiPath, apiSource);
+            await File.WriteAllTextAsync(consumerPath, "public class SavedConsumer { }");
+            await RunFixtureAsync("restore", projectPath);
+            CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(projectPath);
+            using CSharpSyntaxDiagnosticService service = new();
+            IReadOnlyDictionary<string, string> openDocuments = new Dictionary<string, string>
+            {
+                [consumerPath] = consumerSource,
+            };
+
+            await Assert.ThrowsExactlyAsync<InvalidOperationException>(() =>
+                service.AnalyzeAsync(consumerSource, consumerPath, workspace, openDocumentTexts: openDocuments));
+
+            var net9Diagnostics = await service.AnalyzeAsync(
+                consumerSource, consumerPath, workspace, openDocumentTexts: openDocuments, targetFramework: "net9.0");
+            var net10Diagnostics = await service.AnalyzeAsync(
+                consumerSource, consumerPath, workspace, openDocumentTexts: openDocuments, targetFramework: "net10.0");
+            Assert.IsFalse(net9Diagnostics.Any(diagnostic => diagnostic.Code == "CS0117"));
+            Assert.IsTrue(net10Diagnostics.Any(diagnostic => diagnostic.Code == "CS0117"));
+
+            int quickInfoPosition = consumerSource.IndexOf("OnlyNine", StringComparison.Ordinal);
+            string? net9QuickInfo = await service.GetQuickInfoAsync(
+                consumerSource, consumerPath, quickInfoPosition, workspace,
+                openDocumentTexts: openDocuments, targetFramework: "net9.0");
+            string? net10QuickInfo = await service.GetQuickInfoAsync(
+                consumerSource, consumerPath, quickInfoPosition, workspace,
+                openDocumentTexts: openDocuments, targetFramework: "net10.0");
+            StringAssert.Contains(net9QuickInfo, "OnlyNine");
+            Assert.IsNull(net10QuickInfo);
+
+            const string completionSource = "public class Consumer { void Complete() { TargetApi.Only } }";
+            int completionPosition = completionSource.IndexOf("Only", StringComparison.Ordinal) + "Only".Length;
+            IReadOnlyList<string> net9Completions = await service.GetCompletionsAsync(
+                completionSource, consumerPath, completionPosition, workspace, targetFramework: "net9.0");
+            IReadOnlyList<string> net10Completions = await service.GetCompletionsAsync(
+                completionSource, consumerPath, completionPosition, workspace, targetFramework: "net10.0");
+            CollectionAssert.Contains(net9Completions.ToArray(), "OnlyNine");
+            CollectionAssert.Contains(net10Completions.ToArray(), "OnlyTen");
+            CollectionAssert.DoesNotContain(net10Completions.ToArray(), "OnlyNine");
+
+            int definitionPosition = consumerSource.IndexOf("OnlyNine", StringComparison.Ordinal);
+            Code.Navigation.CodeLocation? net9Definition = await service.FindDefinitionAsync(
+                consumerSource, consumerPath, definitionPosition, workspace,
+                openDocumentTexts: openDocuments, targetFramework: "net9.0");
+            Code.Navigation.CodeLocation? net10Definition = await service.FindDefinitionAsync(
+                consumerSource, consumerPath, definitionPosition, workspace,
+                openDocumentTexts: openDocuments, targetFramework: "net10.0");
+            Assert.AreEqual(apiPath, net9Definition?.Path);
+            Assert.IsNull(net10Definition);
+
+            int callPosition = consumerSource.IndexOf("OnlyNine(", StringComparison.Ordinal)
+                + "OnlyNine(".Length;
+            CSharpSignatureHelp? net9Signature = await service.GetSignatureHelpAsync(
+                consumerSource, consumerPath, callPosition, workspace,
+                openDocumentTexts: openDocuments, targetFramework: "net9.0");
+            CSharpSignatureHelp? net10Signature = await service.GetSignatureHelpAsync(
+                consumerSource, consumerPath, callPosition, workspace,
+                openDocumentTexts: openDocuments, targetFramework: "net10.0");
+            Assert.IsNotNull(net9Signature);
+            Assert.IsTrue(net9Signature.Signatures.Any(signature => signature.Contains("OnlyNine", StringComparison.Ordinal)));
+            Assert.IsTrue(net10Signature is null
+                || net10Signature.Signatures.All(signature => !signature.Contains("OnlyNine", StringComparison.Ordinal)));
+
+            Assert.AreEqual(projectText, await File.ReadAllTextAsync(projectPath));
+            Assert.AreEqual(apiSource, await File.ReadAllTextAsync(apiPath));
+            Assert.AreEqual("public class SavedConsumer { }", await File.ReadAllTextAsync(consumerPath));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task GetQuickInfoAsync_UsesUnsavedSourceFromReferencedProject()
+    {
+        string fixtureRoot = Path.Combine(AppContext.BaseDirectory, "Fixtures", "LanguageReferenceOverlay");
+        string consumerProjectPath = Path.Combine(fixtureRoot, "Consumer", "Consumer.csproj");
+        string consumerSourcePath = Path.Combine(fixtureRoot, "Consumer", "Consumer.cs");
+        string referencedSourcePath = Path.Combine(fixtureRoot, "Library", "Library.cs");
+        string originalReferencedSource = await File.ReadAllTextAsync(referencedSourcePath);
+        await RunFixtureAsync("restore", consumerProjectPath);
+
+        CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(consumerProjectPath);
+        const string consumerDraft = """
+            public class Consumer
+            {
+                public int Read() => new ReferenceLibrary.LibraryType().DraftMember;
+            }
+            """;
+        const string referencedDraft = """
+            namespace ReferenceLibrary;
+
+            public sealed class LibraryType
+            {
+                /// <summary>A member that exists only in the open editor buffer.</summary>
+                public int DraftMember => 42;
+            }
+            """;
+        Dictionary<string, string> openDocuments = new()
+        {
+            [consumerSourcePath] = consumerDraft,
+            [referencedSourcePath] = referencedDraft,
+        };
+        using CSharpSyntaxDiagnosticService service = new();
+
+        int position = consumerDraft.IndexOf("DraftMember", StringComparison.Ordinal);
+        string? quickInfo = await service.GetQuickInfoAsync(
+            consumerDraft,
+            consumerSourcePath,
+            position,
+            workspace,
+            openDocumentTexts: openDocuments);
+        IReadOnlyList<Diagnostic> diagnostics = await service.AnalyzeAsync(
+            consumerDraft,
+            consumerSourcePath,
+            workspace,
+            openDocumentTexts: openDocuments);
+
+        Assert.IsNotNull(quickInfo);
+        StringAssert.Contains(quickInfo, "LibraryType.DraftMember");
+        StringAssert.Contains(quickInfo, "A member that exists only in the open editor buffer.");
+        Assert.IsFalse(diagnostics.Any(diagnostic => diagnostic.Code == "CS1061"));
+        Assert.AreEqual(originalReferencedSource, await File.ReadAllTextAsync(referencedSourcePath));
     }
 
     [TestMethod]

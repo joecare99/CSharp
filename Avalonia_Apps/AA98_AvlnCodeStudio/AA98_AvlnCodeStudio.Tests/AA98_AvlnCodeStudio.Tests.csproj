@@ -15,6 +15,12 @@
     <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Fixtures\LanguageReferenceOverlay\**\*.cs" />
+    <Content Include="Fixtures\LanguageReferenceOverlay\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="MSTest" />
