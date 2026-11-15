@@ -156,7 +156,7 @@ public sealed class VSTestDiscoveryService
                 throw new InvalidOperationException("The selected adapter case is missing or ambiguous after rediscovery.");
             }
 
-            RunHandler runHandler = new();
+            RunHandler runHandler = new(matching[0]);
             Volatile.Write(ref runningCase, 1);
             cancellationToken.ThrowIfCancellationRequested();
             if (launcher is null)
@@ -421,7 +421,7 @@ public sealed class VSTestDiscoveryService
         }
     }
 
-    private sealed class RunHandler : ITestRunEventsHandler
+    internal sealed class RunHandler(TestCase selectedCase) : ITestRunEventsHandler
     {
         private readonly object _gate = new();
         private readonly List<TestResult> _results = [];
@@ -485,6 +485,10 @@ public sealed class VSTestDiscoveryService
                 }
 
                 TestResult result = _results[0];
+                if (result.TestCase.Id != selectedCase.Id)
+                {
+                    throw new InvalidOperationException("VSTest returned a result for a different adapter case.");
+                }
                 TestRunSummary summary = new() { TotalCount = 1 };
                 foreach (string error in _errors)
                 {

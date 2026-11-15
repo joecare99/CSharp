@@ -310,6 +310,14 @@ public sealed class AxamlPreviewControl : ContentControl
             }, node),
             "Rectangle" => BuildShape(new Rectangle(), node),
             "RadioButton" => BuildRadioButton(node),
+            "ToggleButton" => ApplyTemplatedControlAppearance(new ToggleButton
+            {
+                Content = node.Text ?? "ToggleButton",
+                CommandParameter = ParseOptionalLiteralText(node, "CommandParameter"),
+                IsThreeState = ParseBoolean(node, "IsThreeState") ?? false,
+                IsEnabled = false,
+                IsChecked = ParseBoolean(node, "IsChecked") ?? false,
+            }, node),
             "ScrollViewer" => BuildScrollViewer(node),
             "Separator" => new Separator(),
             "Slider" => ApplyTemplatedControlAppearance(new Slider

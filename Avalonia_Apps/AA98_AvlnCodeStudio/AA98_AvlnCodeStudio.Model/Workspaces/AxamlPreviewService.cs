@@ -2156,7 +2156,7 @@ public sealed class AxamlPreviewService
         return typeName switch
         {
             "TextBlock" or "TextBox" => "Text",
-            "Button" or "CheckBox" or "RadioButton" or "Label" or "ToggleSwitch" => "Content",
+            "Button" or "CheckBox" or "RadioButton" or "Label" or "ToggleButton" or "ToggleSwitch" => "Content",
             "MenuItem" or "TabItem" or "TreeViewItem" => "Header",
             _ => null,
         };
@@ -3124,7 +3124,7 @@ public sealed class AxamlPreviewService
         string? textProperty = typeName switch
         {
             "TextBlock" or "TextBox" => "Text",
-            "Button" or "CheckBox" or "RadioButton" or "Label" or "ToggleSwitch" => "Content",
+            "Button" or "CheckBox" or "RadioButton" or "Label" or "ToggleButton" or "ToggleSwitch" => "Content",
             "ComboBoxItem" or "ListBoxItem" => "Content",
             "Expander" or "GroupBox" or "MenuItem" or "TabItem" or "TreeViewItem" => "Header",
             _ => null,

@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup Condition="'$(HostArtifactRoot)' != ''">
+    <BaseOutputPath Condition="'$(BaseOutputPath)' == ''">$(HostArtifactRoot)\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">$(HostArtifactRoot)\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(MSBuildProjectDirectory)\obj\**;$(MSBuildProjectDirectory)\bin\**</DefaultItemExcludes>
+  </PropertyGroup>
+</Project>

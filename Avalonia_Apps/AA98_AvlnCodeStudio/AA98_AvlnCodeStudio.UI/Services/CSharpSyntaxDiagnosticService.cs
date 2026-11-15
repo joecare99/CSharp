@@ -31,8 +31,8 @@ namespace AA98_AvlnCodeStudio.UI.Services;
 /// </summary>
 public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
 {
-    private readonly Dictionary<string, ProjectContext> _projectContexts = new(System.StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, string[]> _projectTargetFrameworks = new(System.StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<ProjectContextKey, ProjectContext> _projectContexts = new();
+    private readonly Dictionary<string, string[]> _projectTargetFrameworks = new(WorkspacePathIdentity.Comparer);
     private readonly SemaphoreSlim _workspaceGate = new(1, 1);
     private static readonly object MsBuildLocatorLock = new();
     private static bool _msBuildLocatorRegistered;
@@ -1134,9 +1134,12 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            string contextPrefix = normalizedProjectPath + "\0";
-            foreach (string key in _projectContexts.Keys
-                         .Where(key => key.StartsWith(contextPrefix, StringComparison.OrdinalIgnoreCase))
+            foreach (ProjectContextKey key in _projectContexts
+                         .Where(entry => WorkspacePathIdentity.Comparer.Equals(entry.Key.ProjectPath, normalizedProjectPath)
+                             || entry.Value.Workspace.CurrentSolution.Projects.Any(project =>
+                                 project.FilePath is not null
+                                 && WorkspacePathIdentity.AreEqual(project.FilePath, normalizedProjectPath)))
+                         .Select(entry => entry.Key)
                          .ToArray())
             {
                 _projectContexts.Remove(key, out ProjectContext? context);
@@ -1746,7 +1749,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                 $"Target framework '{normalizedFramework}' is not declared by project '{normalizedProjectPath}'.");
         }
 
-        string contextKey = normalizedProjectPath + "\0" + normalizedFramework;
+        ProjectContextKey contextKey = new(normalizedProjectPath, normalizedFramework);
         if (_projectContexts.TryGetValue(contextKey, out ProjectContext? existing))
         {
             return existing;
@@ -1955,6 +1958,17 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             LineNumber = source.Location.IsInSource ? lineSpan.StartLinePosition.Line + 1 : null,
             ColumnNumber = source.Location.IsInSource ? lineSpan.StartLinePosition.Character + 1 : null,
         };
+    }
+
+    private readonly record struct ProjectContextKey(string ProjectPath, string TargetFramework)
+    {
+        public bool Equals(ProjectContextKey other) =>
+            WorkspacePathIdentity.Comparer.Equals(ProjectPath, other.ProjectPath)
+            && StringComparer.OrdinalIgnoreCase.Equals(TargetFramework, other.TargetFramework);
+
+        public override int GetHashCode() => HashCode.Combine(
+            WorkspacePathIdentity.Comparer.GetHashCode(ProjectPath),
+            StringComparer.OrdinalIgnoreCase.GetHashCode(TargetFramework));
     }
 
     private sealed record ProjectContext(MSBuildWorkspace Workspace, ProjectId ProjectId);

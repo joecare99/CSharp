@@ -26,6 +26,8 @@ Build output and intermediate paths are shared outside the checkout. The project
 
 **Status after follow-up:** Addressed with host-specific defaults under the shared workspace's `artifacts/windows` and `artifacts/linux` roots, plus checked-in PowerShell and Bash wrappers that pass `HostArtifactRoot` before MSBuild evaluation. The application, shared library references, smoke projects, and external Workbench.Builder project resolve into host-separated paths. Windows and WSL wrapper runs of `LocalPlanningProviderTests` both pass 9/9; property evaluation confirms distinct roots. No existing build artifacts were removed.
 
+**External-project follow-up:** A later Linux build exposed that `HostArtifactRoot` alone did not isolate `Avln_CommonDialogs.Avalonia`, which could reuse Windows restore assets. Both wrappers now inject early isolation props without replacing normal directory imports. Full solution graph checks and a restore/build of that external project passed on Windows and WSL with separate custom roots; the original shared assets were unchanged. Direct `dotnet` invocations that only set `HostArtifactRoot`, explicit intermediate-path overrides and projects bypassing `Microsoft.Common.props` remain outside this wrapper guarantee.
+
 ### Local planning scaffold generates a Visual Studio-only shared project
 
 **Location:** `AA98_AvlnCodeStudio.Planning.Local/Services/LocalPlanningProjectScaffolder.cs`
@@ -54,7 +56,7 @@ The implementation reads all stdout before reading stderr. If Git fills the stde
 
 **Recommendation:** Drain stdout and stderr concurrently, await both drains and process exit, and on cancellation kill the process tree and wait for termination in a `finally` path. Test large output on both streams and cancellation while Git is running.
 
-**Status after follow-up:** Addressed in `GitCommandRunner`. Standard output and standard error are read concurrently; process exit and both drains are awaited. Exceptional or cancellation exits terminate the live process tree and reap the root process in `finally`, while normal exit codes and captured output remain unchanged. `GitCommandRunnerTests` passes 2/2 on Windows/net10, including output exceeding pipe capacity on both streams and cancellation with a child-process check.
+**Status after follow-up:** Addressed in `GitCommandRunner`. Standard output and standard error are read concurrently; process exit and both drains are awaited. Exceptional or cancellation exits terminate the live process tree and reap the root process in `finally`, while normal exit codes and captured output remain unchanged. `GitCommandRunnerTests` passes 2/2 on both Windows/net10 and isolated WSL Ubuntu 26.04/net10, including output exceeding pipe capacity on both streams and cancellation with a child-process check. These tests cover the test-owned process tree, not every possible OS/process race.
 
 ### Build toolchain dependencies are noisy and show compatibility risk
 
@@ -63,6 +65,8 @@ The implementation reads all stdout before reading stderr. If Git fills the stde
 The .NET 10 restore/build emitted `NU1701` for `Microsoft.Build 18.12.2` and `Microsoft.IO.Redist 6.1.0` because they restored against .NET Framework assets. These warnings span the Workbench, builder, designer, and test projects and mean a passing local build is not evidence that these combinations are supported. Separately, CA1416 flagged a Windows ACL call that is reachable on all platforms. Focused Linux acceptance initially failed with `NU1605`: `Microsoft.Build.Framework 18.12.2` requires `Microsoft.NET.StringTools (=18.12.2)`, while central resolution selected 18.11.0. The central pin is now 18.12.2; the combined Windows/net10 C# language and project workflow suites pass 44/44 without suppressing NU1605. Linux VSTest acceptance passes 6/6 and RAD Axaml acceptance passes 341 with 3 skips; both used isolated roots and no NU1605 suppression. The RAD run required an empty `RestoreFallbackFolders` override to avoid stale Windows restore assets referencing the Visual Studio fallback folder. Focused net8/net9 builds compiled but their test hosts did not complete: SDK 11 crashed with a `System.Text.Json` `MissingMethodException`, and an SDK 10 retry timed out during VSTest protocol negotiation; those runtimes are not validated by these runs.
 
 **Recommendation:** Align Microsoft.Build, StringTools, Roslyn, and SDK versions with officially supported .NET 10 assets; verify runtime asset selection on Windows and Linux. Guard the ACL call with `OperatingSystem.IsWindows()` or move it behind a platform-specific implementation with a non-Windows behavior. Treat warning reduction as a tracked quality gate.
+
+**Testhost follow-up:** A focused investigation reproduced the SDK 11/VSTest 18.12 protocol crash on net8 and net9 with `System.Text.Json` 11.0.0, and the SDK 10/VSTest 18.7 negotiation timeout on net9. Experiments replacing output assemblies permitted individual tests to run but did not represent the restored dependency graph and are not an accepted fix. A compatible package graph and clean runs for both frameworks remain open; the unsupported-runtime caveat remains unchanged.
 
 ### Credential library still advertises end-of-support target frameworks
 
@@ -82,6 +86,8 @@ The main window sets a fixed minimum of 900 x 600 logical pixels. Compact screen
 
 **Recommendation:** Reduce the minimum size, make workspace panes collapse/scroll at smaller sizes, and verify at small logical resolutions and high DPI on both platforms.
 
+**Status after follow-up:** The minimum is now 720 x 500 logical pixels and the toolbar scrolls horizontally when needed. The existing View menu can collapse the workspace sidebar to make editor space; this is a manual choice. Programmatic desktop smokes on Windows and WSLg/net10 exercised the compact layout, pane visibility, editor, diagnostics and restoration at full size. Physical high-DPI, keyboard and screen-reader acceptance remains open.
+
 ### Avalonia MVVM template pins an older package version
 
 **Location:** `AA98_AvlnCodeStudio.Model/ProjectTemplates/avalonia-mvvm.json:5-6`, `Packages.props:10-18`
@@ -89,6 +95,8 @@ The main window sets a fixed minimum of 900 x 600 logical pixels. Compact screen
 The generated Avalonia project template pins core packages to Avalonia 12.1.4, while central solution package versions are 12.1.5. Newly generated apps can therefore start behind the version used by the tool itself.
 
 **Recommendation:** Keep template package versions synchronized with the supported central version or generate a central package management file so the versions have one source of truth. Add a template validation smoke that restores/builds its output.
+
+**Status after follow-up:** The MVVM template now uses Avalonia 12.1.6, matching the central package version. A regression checks alignment, and the generated projects for net8/net9/net10 were built with separated MVVM sources and external build artifacts. The initial focused test run reported an unspecified failure with quiet output; the repeated focused run passed.
 
 ## Verification record
 

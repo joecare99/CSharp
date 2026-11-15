@@ -19,6 +19,7 @@ public sealed class AxamlMvvmGeneratorTests
                 <AutoCompleteBox x:Name="CityAutoCompleteBox" Text="Paris" />
                 <TextBox x:Name="UserNameTextBox" Text="initial" />
                 <CheckBox x:Name="RememberMeCheckBox" IsChecked="True" CommandParameter="remember-me" />
+                <ToggleButton x:Name="PinnedToggleButton" IsChecked="True" />
                 <ToggleSwitch x:Name="NotificationsToggleSwitch" IsChecked="False" />
                 <RadioButton x:Name="PersonalRadioButton" IsChecked="True" />
                 <NumericUpDown x:Name="QuantityNumericUpDown" Value="12.5" />
@@ -56,6 +57,8 @@ public sealed class AxamlMvvmGeneratorTests
         StringAssert.Contains(changes[0].ProposedContent, "Text=\"{Binding City, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "{Binding UserName, Mode=TwoWay}");
         StringAssert.Contains(changes[0].ProposedContent, "IsChecked=\"{Binding RememberMe, Mode=TwoWay}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "IsChecked=\"{Binding Pinned, Mode=TwoWay}\"");
+        StringAssert.Contains(changes[0].ProposedContent, "Command=\"{Binding PinnedToggleButtonCommand}\"");
         StringAssert.Contains(changes[0].ProposedContent, "IsChecked=\"{Binding Notifications, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "IsChecked=\"{Binding Personal, Mode=TwoWay}\"");
         StringAssert.Contains(changes[0].ProposedContent, "Command=\"{Binding RememberMeCheckBoxCommand}\"");
@@ -80,6 +83,7 @@ public sealed class AxamlMvvmGeneratorTests
         StringAssert.Contains(changes[1].ProposedContent, "public partial string? City { get; set; } = \"Paris\";");
         StringAssert.Contains(changes[1].ProposedContent, "public partial string UserName { get; set; } = \"initial\";");
         StringAssert.Contains(changes[1].ProposedContent, "public partial bool? RememberMe { get; set; } = true;");
+        StringAssert.Contains(changes[1].ProposedContent, "public partial bool? Pinned { get; set; } = true;");
         StringAssert.Contains(changes[1].ProposedContent, "public partial bool? Notifications { get; set; } = false;");
         StringAssert.Contains(changes[1].ProposedContent, "public partial bool? Personal { get; set; } = true;");
         StringAssert.Contains(changes[1].ProposedContent, "public partial decimal? Quantity { get; set; } = 12.5m;");

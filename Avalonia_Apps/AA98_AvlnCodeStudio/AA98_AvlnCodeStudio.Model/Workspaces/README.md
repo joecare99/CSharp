@@ -22,6 +22,11 @@ Single-target projects retain their existing behavior. Project loading uses
 MSBuild and should only be used with trusted projects. Hover is mouse-only; the
 caret command remains available to keyboard users.
 
+After project metadata changes, call `RefreshProjectContextAsync` with the
+changed project path. It drops cached contexts for that project and loaded
+referencing projects; subsequent language requests rebuild them. Cache identity
+uses the platform's path comparison and case-insensitive target-framework names.
+
 The Edit menu and Ctrl+Space request Roslyn completion suggestions at the caret.
 The list is filtered by the current prefix and shows at most 50 suggestions.
 Applying one uses the provider's text change and caret position as one undoable
@@ -122,7 +127,8 @@ stable or valid filters. **Run Selected Adapter Case** rebuilds the project,
 rediscovers the selected case, and executes the original adapter test object
 only when its identity matches exactly one current case. It refuses missing or
 ambiguous matches, reports a failure if the adapter returns a different number
-of results, and retains adapter error messages. The **Debug Selected Case at
+of results or a result with a different case ID, and retains adapter error messages.
+The **Debug Selected Case at
 Editor Caret** action attaches NetCoreDbg to processes reported by VSTest and
 sets one breakpoint at the caret in the active saved C# file before the selected
 case starts. For successive attach requests, the previous session is detached

@@ -4,6 +4,10 @@ The preview never loads project assemblies, XAML at runtime, bindings, converter
 view models, resource getters or external URLs. Source attributes remain unchanged;
 resolved values are display-only and cannot make an expression editable.
 
+The shared standalone and Workbench palette includes ToggleButton. Its literal
+content and Boolean state are previewed inertly; bindings and commands are not
+executed. Insertion and literal property edits use the designer's undo history.
+
 When the caller supplies the document path and its project directory, an
 `{x:Static prefix:Type.Key}` expression can display an untyped string from
 `Type.resx`. The prefix must map to `clr-namespace:` or `using:` beneath the

@@ -147,6 +147,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         {
             InvalidateProjectInspection(clearFrameworks: false);
             CloseQuickInfo();
+            QueueLanguageAnalysis();
         }
 
         private void ResetProjectWorkflow()

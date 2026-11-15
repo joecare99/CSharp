@@ -1,0 +1,16 @@
+<Project>
+  <Target Name="VerifyIsolation">
+    <PropertyGroup>
+      <_IsolationRoot>$([MSBuild]::NormalizeDirectory('$(HostArtifactRoot)'))</_IsolationRoot>
+      <_IsolationBase>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(BaseIntermediateOutputPath)'))</_IsolationBase>
+      <_IsolationExtensions>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectExtensionsPath)'))</_IsolationExtensions>
+      <_IsolationInitial>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(_InitialBaseIntermediateOutputPath)'))</_IsolationInitial>
+      <_IsolationInitialExtensions>$([MSBuild]::NormalizeDirectory('$(_InitialMSBuildProjectExtensionsPath)'))</_IsolationInitialExtensions>
+    </PropertyGroup>
+    <Error Condition="'$(HostArtifactRoot)' == '' or !$([System.String]::Copy('$(_IsolationBase)').StartsWith('$(_IsolationRoot)'))"
+           Text="$(MSBuildProjectFullPath): intermediate path is outside HostArtifactRoot: $(_IsolationBase)" />
+    <Error Condition="'$(_IsolationBase)' != '$(_IsolationExtensions)' or '$(_IsolationBase)' != '$(_IsolationInitial)' or '$(_IsolationBase)' != '$(_IsolationInitialExtensions)'"
+           Text="$(MSBuildProjectFullPath): intermediate paths were not established early: $(_IsolationBase), $(_IsolationExtensions), $(_IsolationInitial), $(_IsolationInitialExtensions)" />
+    <Message Importance="High" Text="Verified isolated paths: $(MSBuildProjectFullPath) => $(_IsolationExtensions)" />
+  </Target>
+</Project>

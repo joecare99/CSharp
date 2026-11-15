@@ -925,6 +925,12 @@ public partial class AxamlDesignerViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void AddToggleButton()
+    {
+        AddChildControl("ToggleButton");
+    }
+
+    [RelayCommand]
     private void AddBorder()
     {
         AddChildControl("Border");

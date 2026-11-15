@@ -49,13 +49,33 @@ For WSL/Linux, use the same wrapper and commands, for example:
 bash tools/build/dotnet-isolated.sh test ./AA98_AvlnCodeStudio.slnx --framework net10.0
 ```
 
-The wrapper sets the absolute `HostArtifactRoot` as a global MSBuild property
-before evaluation, including for all project references. Defaults are
-`artifacts/windows` and `artifacts/linux` beneath the shared workspace parent,
-so `bin`/`obj` are not shared across hosts. Both wrappers accept the normal
-`dotnet` command-line arguments; use `-p:HostArtifactRoot=<absolute-path>` with
-a direct `dotnet` invocation to select a custom root. Existing `UpDir`-based
-artifact-root overrides remain available.
+The wrappers set `HostArtifactRoot` and inject `tools/build/IsolatedArtifacts.props`
+through `CustomAfterDirectoryBuildProps`, before MSBuild chooses its project
+extensions path. This preserves normal directory and project imports, fills in
+missing output paths for references that do not import the shared solution
+props, and excludes existing project-local `obj` and `bin` from SDK default
+items. Defaults are `artifacts/windows` and `artifacts/linux` beneath the
+shared workspace parent. Pass `-p:HostArtifactRoot=<absolute-path>` to either
+wrapper to select another root; use distinct roots for concurrent builds.
+`CustomAfterDirectoryBuildProps` is reserved by the wrappers. A direct
+`dotnet` invocation with only `HostArtifactRoot` does **not** isolate projects
+that do not consume that property. Explicit custom intermediate/extensions
+paths or projects that bypass `Microsoft.Common.props` require separate review.
+
+To check the evaluated intermediate and early extension paths across the actual
+solution graph, including referenced external projects, run:
+
+```powershell
+$root = Join-Path (Get-Location) 'artifacts\verify-isolation-windows'
+$verify = Join-Path (Get-Location) 'tools\build\VerifyIsolation.targets'
+.\tools\build\dotnet-isolated.ps1 msbuild .\AA98_AvlnCodeStudio.slnx -graphBuild -t:VerifyIsolation "-p:HostArtifactRoot=$root" "-p:CustomAfterMicrosoftCommonTargets=$verify" "-p:CustomAfterMicrosoftCommonCrossTargetingTargets=$verify"
+```
+
+```bash
+root="$PWD/artifacts/verify-isolation-linux"
+verify="$PWD/tools/build/VerifyIsolation.targets"
+bash tools/build/dotnet-isolated.sh msbuild AA98_AvlnCodeStudio.slnx -graphBuild -t:VerifyIsolation "-p:HostArtifactRoot=$root" "-p:CustomAfterMicrosoftCommonTargets=$verify" "-p:CustomAfterMicrosoftCommonCrossTargetingTargets=$verify"
+```
 
 ## Interactive desktop smokes
 
@@ -67,6 +87,19 @@ zero process exit code:
 .\tools\build\dotnet-isolated.ps1 run --project tools\WorkbenchMvvmSmoke\WorkbenchMvvmSmoke.csproj
 .\tools\build\dotnet-isolated.ps1 run --project tools\ProjectSettingsReviewSmoke\ProjectSettingsReviewSmoke.csproj
 ```
+
+For the focused compact-layout check, use a unique artifact root:
+
+```powershell
+$root = Join-Path (Get-Location) 'artifacts\compact-workbench-smoke'
+.\tools\build\dotnet-isolated.ps1 run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj "-p:HostArtifactRoot=$root" -- --compact-only
+```
+
+The check exercises a 720 × 500 logical-pixel client area, the workspace
+sidebar toggle, editor, properties, diagnostics and toolbar overflow. At this
+size, hide the workspace sidebar using the View menu to give the editor more
+space. This programmatic desktop check is not physical high-DPI, keyboard,
+screen-reader or Linux acceptance.
 
 These cover integrated designer and project-settings workflows using temporary
 fixtures. The architecture smoke also opens the standalone designer host. See

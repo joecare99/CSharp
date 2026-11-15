@@ -3,6 +3,7 @@ using AA98_AvlnCodeStudio.AxamlDesigner.UI.Controls;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.LogicalTree;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -15,6 +16,25 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 [TestClass]
 public sealed class AxamlPreviewResourcesTests
 {
+    [TestMethod]
+    public void ToggleButtonPreview_DisplaysLiteralStateWithoutExecutingBindings()
+    {
+        AxamlPreviewNode root = new AxamlPreviewService().Parse(
+            "<StackPanel><ToggleButton Content='Pin' IsChecked='True' IsThreeState='True' Command='{Binding PinCommand}' /></StackPanel>");
+        AxamlPreviewControl preview = new() { PreviewNode = root };
+        ToggleButton button = preview.GetLogicalDescendants().OfType<ToggleButton>().Single();
+        Assert.AreEqual("Pin", button.Content);
+        Assert.AreEqual(true, button.IsChecked);
+        Assert.IsTrue(button.IsThreeState);
+        Assert.IsFalse(button.IsEnabled);
+        Assert.IsNull(button.Command);
+
+        root = new AxamlPreviewService().Parse("<StackPanel><ToggleButton /></StackPanel>");
+        preview = new AxamlPreviewControl { PreviewNode = root };
+        button = preview.GetLogicalDescendants().OfType<ToggleButton>().Single();
+        Assert.AreEqual(false, button.IsChecked);
+    }
+
     [TestMethod]
     public void LocalStylesAndResources_AreInertScopedAndDoNotChangeSourceProperties()
     {
