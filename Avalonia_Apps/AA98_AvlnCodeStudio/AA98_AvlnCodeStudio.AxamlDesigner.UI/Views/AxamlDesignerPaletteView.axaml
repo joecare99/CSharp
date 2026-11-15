@@ -103,6 +103,7 @@
             <Button Content="Numeric" Command="{Binding AddNumericUpDownCommand}" />
             <Button Content="RadioButton" Command="{Binding AddRadioButtonCommand}" />
             <Button Content="Slider" Command="{Binding AddSliderCommand}" />
+            <Button Content="ToggleButton" Command="{Binding AddToggleButtonCommand}" />
             <Button Content="Toggle" Command="{Binding AddToggleSwitchCommand}" />
           </UniformGrid>
         </Expander>
