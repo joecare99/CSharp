@@ -1106,6 +1106,268 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
     }
 
     [TestMethod]
+    public async Task RefreshProjectContextAsync_RefreshesReferencingFrameworkSnapshots()
+    {
+        string root = Path.Combine(AppContext.BaseDirectory, $"LanguageRefresh_{Guid.NewGuid():N}");
+        string consumerDirectory = Path.Combine(root, "Consumer");
+        string libraryDirectory = Path.Combine(root, "Library");
+        Directory.CreateDirectory(consumerDirectory);
+        Directory.CreateDirectory(libraryDirectory);
+        try
+        {
+            string consumerProject = Path.Combine(consumerDirectory, "Consumer.csproj");
+            string libraryProject = Path.Combine(libraryDirectory, "Library.csproj");
+            string consumerPath = Path.Combine(consumerDirectory, "Consumer.cs");
+            string libraryPath = Path.Combine(libraryDirectory, "Library.cs");
+            const string projectBefore = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFrameworks>net9.0;net10.0</TargetFrameworks><DefineConstants>BEFORE</DefineConstants></PropertyGroup>
+                </Project>
+                """;
+            const string librarySource = """
+                public class Library
+                {
+                #if BEFORE
+                    public int Value => 1;
+                #else
+                    public string Value => "";
+                #endif
+                }
+                """;
+            const string consumerSaved = "public class SavedConsumer { }";
+            const string consumerDraft = "public class Consumer { public int Read() => new Library().Value; }";
+            await File.WriteAllTextAsync(libraryProject, projectBefore);
+            await File.WriteAllTextAsync(libraryPath, librarySource);
+            await File.WriteAllTextAsync(consumerPath, consumerSaved);
+            await File.WriteAllTextAsync(consumerProject, """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFrameworks>net9.0;net10.0</TargetFrameworks></PropertyGroup>
+                  <ItemGroup><ProjectReference Include="..\Library\Library.csproj" /></ItemGroup>
+                </Project>
+                """);
+            await RunFixtureAsync("restore", consumerProject);
+            CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(consumerProject);
+            using CSharpSyntaxDiagnosticService service = new();
+            int position = consumerDraft.IndexOf("Value", StringComparison.Ordinal);
+            foreach (string framework in new[] { "net9.0", "net10.0" })
+            {
+                string? before = await service.GetQuickInfoAsync(
+                    consumerDraft, consumerPath, position, workspace, targetFramework: framework);
+                StringAssert.Contains(before, "int Library.Value");
+            }
+
+            await File.WriteAllTextAsync(libraryProject, projectBefore.Replace("BEFORE", "AFTER", StringComparison.Ordinal));
+            using CancellationTokenSource cancelled = new();
+            cancelled.Cancel();
+            await Assert.ThrowsAsync<OperationCanceledException>(() =>
+                service.RefreshProjectContextAsync(libraryProject, cancelled.Token));
+            await service.RefreshProjectContextAsync(Path.Combine(root, "Unrelated.csproj"));
+            string? unchanged = await service.GetQuickInfoAsync(
+                consumerDraft, consumerPath, position, workspace, targetFramework: "net10.0");
+            StringAssert.Contains(unchanged, "int Library.Value");
+
+            await service.RefreshProjectContextAsync(
+                OperatingSystem.IsWindows() ? libraryProject.ToUpperInvariant() : libraryProject);
+            foreach (string framework in new[] { "net9.0", "net10.0" })
+            {
+                string? after = await service.GetQuickInfoAsync(
+                    consumerDraft, consumerPath, position, workspace, targetFramework: framework);
+                StringAssert.Contains(after, "string Library.Value");
+                var diagnostics = await service.AnalyzeAsync(
+                    consumerDraft, consumerPath, workspace, targetFramework: framework);
+                Assert.IsTrue(diagnostics.Any(diagnostic => diagnostic.Code == "CS0029"));
+            }
+
+            const string libraryDraft = "public class Library { public bool Value => true; }";
+            string? overlaid = await service.GetQuickInfoAsync(
+                consumerDraft, consumerPath, position, workspace,
+                openDocumentTexts: new Dictionary<string, string> { [libraryPath] = libraryDraft },
+                targetFramework: "net10.0");
+            StringAssert.Contains(overlaid, "bool Library.Value");
+            await File.WriteAllTextAsync(libraryProject, projectBefore);
+            await service.RefreshProjectContextAsync(consumerProject);
+            string? refreshedConsumer = await service.GetQuickInfoAsync(
+                consumerDraft, consumerPath, position, workspace, targetFramework: "net10.0");
+            StringAssert.Contains(refreshedConsumer, "int Library.Value");
+            Assert.AreEqual(consumerSaved, await File.ReadAllTextAsync(consumerPath));
+            Assert.AreEqual(librarySource, await File.ReadAllTextAsync(libraryPath));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task RefreshProjectContextAsync_UsesPlatformPathIdentityForCaseAliases()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Assert.Inconclusive("This test exercises Linux path identity.");
+        }
+
+        string root = Path.Combine(AppContext.BaseDirectory, $"LanguagePathAlias_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string otherProjectPath = Path.Combine(root, "sample.csproj");
+            string sourcePath = Path.Combine(root, "Sample.cs");
+            const string projectBefore = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFrameworks>net9.0;net10.0</TargetFrameworks><DefineConstants>BEFORE</DefineConstants></PropertyGroup>
+                </Project>
+                """;
+            const string projectAfter = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+                </Project>
+                """;
+            const string source = """
+                public class Sample {
+                #if BEFORE
+                    public int Value => 1;
+                #else
+                    public string Value => "";
+                #endif
+                    public object Read() => Value;
+                }
+                """;
+            await File.WriteAllTextAsync(projectPath, projectBefore);
+            await File.WriteAllTextAsync(sourcePath, source);
+            if (!File.Exists(otherProjectPath))
+            {
+                Assert.Inconclusive("The alias scenario requires a case-insensitive filesystem.");
+            }
+
+            await RunFixtureAsync("restore", projectPath);
+            CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(projectPath);
+            using CSharpSyntaxDiagnosticService service = new();
+            int position = source.LastIndexOf("Value", StringComparison.Ordinal);
+            string? before = await service.GetQuickInfoAsync(
+                source, sourcePath, position, workspace, targetFramework: "net10.0");
+            StringAssert.Contains(before, "int Sample.Value");
+            await File.WriteAllTextAsync(projectPath, projectAfter);
+            await service.RefreshProjectContextAsync(otherProjectPath);
+            string? unchanged = await service.GetQuickInfoAsync(
+                source, sourcePath, position, workspace, targetFramework: "NET10.0");
+            StringAssert.Contains(unchanged, "int Sample.Value");
+
+            await RunFixtureAsync("restore", otherProjectPath);
+            CSharpWorkspace otherWorkspace = new CSharpWorkspaceLoader().Load(otherProjectPath);
+            string? other = await service.GetQuickInfoAsync(source, sourcePath, position, otherWorkspace);
+            StringAssert.Contains(other, "string Sample.Value");
+            string? otherExplicit = await service.GetQuickInfoAsync(
+                source, sourcePath, position, otherWorkspace, targetFramework: "net10.0");
+            StringAssert.Contains(otherExplicit, "string Sample.Value");
+            unchanged = await service.GetQuickInfoAsync(
+                source, sourcePath, position, workspace, targetFramework: "net10.0");
+            StringAssert.Contains(unchanged, "int Sample.Value");
+            await service.RefreshProjectContextAsync(projectPath);
+            string? refreshed = await service.GetQuickInfoAsync(source, sourcePath, position, workspace);
+            StringAssert.Contains(refreshed, "string Sample.Value");
+            otherExplicit = await service.GetQuickInfoAsync(
+                source, sourcePath, position, otherWorkspace, targetFramework: "net10.0");
+            StringAssert.Contains(otherExplicit, "string Sample.Value");
+            Assert.AreEqual(source, await File.ReadAllTextAsync(sourcePath));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task RefreshProjectContextAsync_DistinguishesCaseSensitiveProjectPaths()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Assert.Inconclusive("This test requires case-sensitive project paths.");
+        }
+
+        string root = Path.Combine(AppContext.BaseDirectory, $"LanguagePathIdentity_{Guid.NewGuid():N}");
+        string upperDirectory = Path.Combine(root, "Project");
+        string lowerDirectory = Path.Combine(root, "project");
+        Directory.CreateDirectory(upperDirectory);
+        try
+        {
+            if (Directory.Exists(lowerDirectory))
+            {
+                Assert.Inconclusive("The test directory is on a case-insensitive filesystem.");
+            }
+
+            Directory.CreateDirectory(lowerDirectory);
+            string upperProject = Path.Combine(upperDirectory, "Sample.csproj");
+            string lowerProject = Path.Combine(lowerDirectory, "Sample.csproj");
+            string upperSource = Path.Combine(upperDirectory, "Sample.cs");
+            string lowerSource = Path.Combine(lowerDirectory, "Sample.cs");
+            const string upperProjectText = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFrameworks>net9.0;net10.0</TargetFrameworks><DefineConstants>BEFORE</DefineConstants></PropertyGroup>
+                </Project>
+                """;
+            const string lowerProjectText = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+                </Project>
+                """;
+            const string upperText = """
+                public class Sample {
+                #if BEFORE
+                    public int Value => 1;
+                #else
+                    public string Value => "";
+                #endif
+                    public object Read() => Value;
+                }
+                """;
+            const string lowerText = "public class Sample { public bool Value => true; public object Read() => Value; }";
+            await File.WriteAllTextAsync(upperProject, upperProjectText);
+            await File.WriteAllTextAsync(lowerProject, lowerProjectText);
+            await File.WriteAllTextAsync(upperSource, upperText);
+            await File.WriteAllTextAsync(lowerSource, lowerText);
+            await RunFixtureAsync("restore", upperProject);
+            await RunFixtureAsync("restore", lowerProject);
+            CSharpWorkspace upperWorkspace = new CSharpWorkspaceLoader().Load(upperProject);
+            CSharpWorkspace lowerWorkspace = new CSharpWorkspaceLoader().Load(lowerProject);
+            using CSharpSyntaxDiagnosticService service = new();
+            int upperPosition = upperText.LastIndexOf("Value", StringComparison.Ordinal);
+            int lowerPosition = lowerText.LastIndexOf("Value", StringComparison.Ordinal);
+            foreach (string framework in new[] { "net9.0", "net10.0" })
+            {
+                string? before = await service.GetQuickInfoAsync(
+                    upperText, upperSource, upperPosition, upperWorkspace, targetFramework: framework);
+                StringAssert.Contains(before, "int Sample.Value");
+            }
+
+            await File.WriteAllTextAsync(upperProject, upperProjectText.Replace("BEFORE", "AFTER", StringComparison.Ordinal));
+            await service.RefreshProjectContextAsync(lowerProject);
+            string? unchanged = await service.GetQuickInfoAsync(
+                upperText, upperSource, upperPosition, upperWorkspace, targetFramework: "net10.0");
+            StringAssert.Contains(unchanged, "int Sample.Value");
+
+            string? lower = await service.GetQuickInfoAsync(lowerText, lowerSource, lowerPosition, lowerWorkspace);
+            StringAssert.Contains(lower, "bool Sample.Value");
+            await service.RefreshProjectContextAsync(upperProject);
+            foreach (string framework in new[] { "net9.0", "net10.0", "NET10.0" })
+            {
+                string? refreshed = await service.GetQuickInfoAsync(
+                    upperText, upperSource, upperPosition, upperWorkspace, targetFramework: framework);
+                StringAssert.Contains(refreshed, "string Sample.Value");
+            }
+
+            lower = await service.GetQuickInfoAsync(lowerText, lowerSource, lowerPosition, lowerWorkspace);
+            StringAssert.Contains(lower, "bool Sample.Value");
+            Assert.AreEqual(upperText, await File.ReadAllTextAsync(upperSource));
+            Assert.AreEqual(lowerText, await File.ReadAllTextAsync(lowerSource));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task GetQuickInfoAsync_UsesUnsavedSourceFromReferencedProject()
     {
         string fixtureRoot = Path.Combine(AppContext.BaseDirectory, "Fixtures", "LanguageReferenceOverlay");

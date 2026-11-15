@@ -909,6 +909,20 @@ public sealed class AxamlPreviewServiceTests
     }
 
     [TestMethod]
+    public void ToggleButton_ValidatesLiteralStateAndKeepsBindingsReadOnly()
+    {
+        AxamlPreviewService service = new();
+        AxamlPreviewNode button = service.Parse("<ToggleButton Content='Pin' IsThreeState='True' />");
+        Assert.AreEqual("Pin", button.Text);
+        Assert.AreEqual("False", AxamlPropertyValueValidator.Describe(button, "IsChecked").Value);
+        Assert.IsNull(AxamlPropertyValueValidator.Validate("ToggleButton", "IsThreeState", "False"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ToggleButton", "IsThreeState", ""));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("ToggleButton", "IsChecked", "maybe"));
+        button = service.Parse("<ToggleButton IsThreeState='{Binding SupportsIndeterminate}' />");
+        Assert.IsTrue(AxamlPropertyValueValidator.Describe(button, "IsThreeState").IsReadOnly);
+    }
+
+    [TestMethod]
     public void Parse_ExposesFiniteProgressBarValueAsNumericProperty()
     {
         AxamlPropertyDescriptor value = AxamlPropertyValueValidator.Describe(

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace AA98_AvlnCodeStudio.Tests.Engineering;
 
@@ -234,6 +235,26 @@ public sealed class CSharpProjectTemplateServiceTests
     }
 
     [TestMethod]
+    public void CreateAvaloniaMvvmProject_UsesCentrallySupportedAvaloniaVersions()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string projectPath = new CSharpProjectTemplateService().CreateProject(
+                "avalonia-mvvm", Path.Combine(root, "MvvmSample.csproj"), "net10.0");
+            string centralPackagesPath = GetCentralPackagesPath();
+            var centralVersions = XDocument.Load(centralPackagesPath).Descendants("PackageVersion")
+                .ToDictionary(element => (string)element.Attribute("Include")!, element => (string)element.Attribute("Version")!);
+            var references = XDocument.Load(projectPath).Descendants("PackageReference")
+                .ToDictionary(element => (string)element.Attribute("Include")!, element => (string)element.Attribute("Version")!);
+
+            foreach (string package in new[] { "Avalonia", "Avalonia.Desktop", "Avalonia.Themes.Fluent", "Avalonia.Fonts.Inter" })
+            {
+                Assert.AreEqual(centralVersions[package], references[package], package);
+            }
+        });
+    }
+
+    [TestMethod]
     public async Task CreateAvaloniaMvvmProject_WritesCompiledBindingsAndBuilds()
     {
         await WithTemporaryDirectoryAsync(async root =>
@@ -412,6 +433,11 @@ public sealed class CSharpProjectTemplateServiceTests
         Directory.CreateDirectory(root);
         File.WriteAllText(Path.Combine(root, "Directory.Packages.props"), "<Project />");
         return root;
+    }
+
+    private static string GetCentralPackagesPath([CallerFilePath] string sourceFilePath = "")
+    {
+        return Path.GetFullPath(Path.Combine(Path.GetDirectoryName(sourceFilePath)!, "..", "..", "..", "Packages.props"));
     }
 
     private static async Task BuildProjectAsync(string projectPath)

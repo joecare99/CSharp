@@ -390,6 +390,47 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task ToggleButton_PaletteAndPropertiesPreserveSourceAndUndoRedo()
+    {
+        const string original = "<av:StackPanel xmlns:av='https://github.com/avaloniaui'><!--keep--></av:StackPanel>";
+        AxamlDesignerViewModel viewModel = new();
+        string? markup = null;
+        viewModel.MarkupChanged += (_, e) => markup = e.Markup;
+        viewModel.LoadMarkup(original);
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        viewModel.AddToggleButtonCommand.Execute(null);
+        string inserted = markup!;
+        StringAssert.Contains(inserted, "<!--keep-->");
+        StringAssert.Contains(inserted, "<av:ToggleButton />");
+
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(original, markup);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual(inserted, markup);
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children.Single();
+        var isChecked = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "IsChecked");
+        Assert.IsFalse(isChecked.TrySetValue("sometimes"));
+        Assert.IsTrue(isChecked.TrySetValue("True"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("True", viewModel.SelectedNode!.Properties["IsChecked"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(inserted, markup);
+        viewModel.RedoCommand.Execute(null);
+        StringAssert.Contains(markup, "IsChecked=\"True\"");
+
+        viewModel.LoadMarkup("<ToggleButton IsChecked='{Binding Busy}' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        isChecked = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "IsChecked");
+        Assert.IsFalse(isChecked.TrySetValue("False"));
+
+        viewModel.LoadMarkup("<Border><TextBlock /></Border>");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        viewModel.AddToggleButtonCommand.Execute(null);
+        Assert.AreEqual("TextBlock", viewModel.PreviewRoot!.Children.Single().TypeName);
+        Assert.IsFalse(viewModel.CanUndo);
+    }
+
+    [TestMethod]
     public async Task ProgressBarIndeterminate_RequiresBooleanAndSupportsUndoRedo()
     {
         AxamlDesignerViewModel viewModel = new();

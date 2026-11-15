@@ -18,22 +18,30 @@ public sealed class GitCommandRunnerTests
     [Timeout(30000)]
     public async Task RunAsync_DrainsLargeStandardOutputAndStandardErrorConcurrently()
     {
-        EnsureWindows();
+        EnsureSupportedPlatform();
         string testDirectory = CreateTestDirectory();
         try
         {
-            string scriptPath = Path.Combine(testDirectory, "large-output.ps1");
-            string script = """
+            bool windows = OperatingSystem.IsWindows();
+            string scriptPath = Path.Combine(testDirectory, windows ? "large-output.ps1" : "large-output.sh");
+            string script = windows ? """
                 for ($i = 0; $i -lt 12000; $i++) {
                     [Console]::Out.WriteLine('stdout-payload-' + $i.ToString('D6') + '-0123456789012345678901234567890123456789012345678901234567890123456789')
                     [Console]::Error.WriteLine('stderr-payload-' + $i.ToString('D6') + '-0123456789012345678901234567890123456789012345678901234567890123456789')
                 }
+                """ : """
+                i=0
+                while [ "$i" -lt 12000 ]; do
+                    printf 'stdout-payload-%06d-0123456789012345678901234567890123456789012345678901234567890123456789\n' "$i"
+                    printf 'stderr-payload-%06d-0123456789012345678901234567890123456789012345678901234567890123456789\n' "$i" >&2
+                    i=$((i + 1))
+                done
                 """;
-            await File.WriteAllTextAsync(scriptPath, script).ConfigureAwait(false);
+            await File.WriteAllTextAsync(scriptPath, windows ? script : script.Replace("\r\n", "\n")).ConfigureAwait(false);
 
             using CancellationTokenSource timeout = new(TimeSpan.FromSeconds(20));
-            GitCommandResult result = await new GitCommandRunner(GetPowerShellPath())
-                .RunAsync(testDirectory, BuildPowerShellArguments(scriptPath), timeout.Token)
+            GitCommandResult result = await new GitCommandRunner(GetShellPath())
+                .RunAsync(testDirectory, BuildShellArguments(scriptPath), timeout.Token)
                 .ConfigureAwait(false);
 
             Assert.AreEqual(0, result.ExitCode);
@@ -52,7 +60,7 @@ public sealed class GitCommandRunnerTests
     [Timeout(30000)]
     public async Task RunAsync_CancellationTerminatesChildProcessTreeAndReapsParent()
     {
-        EnsureWindows();
+        EnsureSupportedPlatform();
         string testDirectory = CreateTestDirectory();
         string readyPath = Path.Combine(testDirectory, "parent-ready.txt");
         string childStartedPath = Path.Combine(testDirectory, "child-started.txt");
@@ -61,19 +69,24 @@ public sealed class GitCommandRunnerTests
         Task<GitCommandResult>? runTask = null;
         try
         {
-            string childScriptPath = Path.Combine(testDirectory, "child.ps1");
-            string parentScriptPath = Path.Combine(testDirectory, "parent.ps1");
+            bool windows = OperatingSystem.IsWindows();
+            string childScriptPath = Path.Combine(testDirectory, windows ? "child.ps1" : "child.sh");
+            string parentScriptPath = Path.Combine(testDirectory, windows ? "parent.ps1" : "parent.sh");
             await File.WriteAllTextAsync(
                 childScriptPath,
-                $"[IO.File]::WriteAllText('{childStartedPath}', 'started'){Environment.NewLine}Start-Sleep -Seconds 6{Environment.NewLine}[IO.File]::WriteAllText('{childCompletedPath}', 'completed'){Environment.NewLine}")
+                windows
+                    ? $"[IO.File]::WriteAllText('{childStartedPath}', 'started'){Environment.NewLine}Start-Sleep -Seconds 6{Environment.NewLine}[IO.File]::WriteAllText('{childCompletedPath}', 'completed'){Environment.NewLine}"
+                    : "printf started > child-started.txt\nsleep 6\nprintf completed > child-completed.txt\n")
                 .ConfigureAwait(false);
             await File.WriteAllTextAsync(
                 parentScriptPath,
-                $"$startInfo = [System.Diagnostics.ProcessStartInfo]::new(){Environment.NewLine}$startInfo.FileName = '{GetPowerShellPath()}'{Environment.NewLine}$startInfo.Arguments = '{BuildPowerShellArguments(childScriptPath)}'{Environment.NewLine}$startInfo.UseShellExecute = $false{Environment.NewLine}$startInfo.CreateNoWindow = $true{Environment.NewLine}[System.Diagnostics.Process]::Start($startInfo) | Out-Null{Environment.NewLine}[IO.File]::WriteAllText('{readyPath}', 'ready'){Environment.NewLine}while ($true) {{ Start-Sleep -Seconds 1 }}{Environment.NewLine}")
+                windows
+                    ? $"$startInfo = [System.Diagnostics.ProcessStartInfo]::new(){Environment.NewLine}$startInfo.FileName = '{GetShellPath()}'{Environment.NewLine}$startInfo.Arguments = '{BuildShellArguments(childScriptPath)}'{Environment.NewLine}$startInfo.UseShellExecute = $false{Environment.NewLine}$startInfo.CreateNoWindow = $true{Environment.NewLine}[System.Diagnostics.Process]::Start($startInfo) | Out-Null{Environment.NewLine}[IO.File]::WriteAllText('{readyPath}', 'ready'){Environment.NewLine}while ($true) {{ Start-Sleep -Seconds 1 }}{Environment.NewLine}"
+                    : "/bin/sh child.sh &\nprintf ready > parent-ready.txt\nwhile :; do sleep 1; done\n")
                 .ConfigureAwait(false);
 
-            runTask = new GitCommandRunner(GetPowerShellPath())
-                .RunAsync(testDirectory, BuildPowerShellArguments(parentScriptPath), cancellation.Token);
+            runTask = new GitCommandRunner(GetShellPath())
+                .RunAsync(testDirectory, BuildShellArguments(parentScriptPath), cancellation.Token);
 
             await WaitForFileAsync(readyPath, TimeSpan.FromSeconds(10)).ConfigureAwait(false);
             await WaitForFileAsync(childStartedPath, TimeSpan.FromSeconds(10)).ConfigureAwait(false);
@@ -129,20 +142,22 @@ public sealed class GitCommandRunnerTests
         }
     }
 
-    private static string GetPowerShellPath() => Path.Combine(
+    private static string GetShellPath() => OperatingSystem.IsWindows() ? Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.Windows),
         "System32",
         "WindowsPowerShell",
         "v1.0",
-        "powershell.exe");
+        "powershell.exe") : "/bin/sh";
 
-    private static string BuildPowerShellArguments(string scriptPath) => $"-NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\"";
+    private static string BuildShellArguments(string scriptPath) => OperatingSystem.IsWindows()
+        ? $"-NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\""
+        : $"\"{scriptPath}\"";
 
-    private static void EnsureWindows()
+    private static void EnsureSupportedPlatform()
     {
-        if (!OperatingSystem.IsWindows())
+        if (!OperatingSystem.IsWindows() && !OperatingSystem.IsLinux())
         {
-            Assert.Inconclusive("The process fixture currently targets Windows.");
+            Assert.Inconclusive("The process fixture targets Windows and Linux.");
         }
     }
 
