@@ -149,8 +149,8 @@ public static class AxamlPropertyValueValidator
                 "AcceptsReturn" when node.TypeName == "TextBox" => "False",
                 "AcceptsTab" when node.TypeName == "TextBox" => "False",
                 "MaxLength" when node.TypeName == "TextBox" => "0",
-                "IsChecked" when node.TypeName is "CheckBox" or "RadioButton" or "ToggleSwitch" => "False",
-                "IsThreeState" when node.TypeName is "CheckBox" or "ToggleSwitch" => "False",
+                "IsChecked" when node.TypeName is "CheckBox" or "RadioButton" or "ToggleButton" or "ToggleSwitch" => "False",
+                "IsThreeState" when node.TypeName is "CheckBox" or "ToggleButton" or "ToggleSwitch" => "False",
                 "FontWeight" => "Normal",
                 "FontStyle" when node.TypeName is "TextBlock" or "TextBox" => "Normal",
                 "Stretch" => "Uniform",
@@ -213,7 +213,7 @@ public static class AxamlPropertyValueValidator
 
         if (value.Length == 0
             && propertyName == "IsChecked"
-            && controlType is "CheckBox" or "RadioButton" or "ToggleSwitch" or "MenuItem")
+            && controlType is "CheckBox" or "RadioButton" or "ToggleButton" or "ToggleSwitch" or "MenuItem")
         {
             return "Choose True or False.";
         }
@@ -229,7 +229,7 @@ public static class AxamlPropertyValueValidator
         }
 
         if (value.Length == 0
-            && controlType is "CheckBox" or "ToggleSwitch"
+            && controlType is "CheckBox" or "ToggleButton" or "ToggleSwitch"
             && propertyName == "IsThreeState")
         {
             return "Choose True or False.";

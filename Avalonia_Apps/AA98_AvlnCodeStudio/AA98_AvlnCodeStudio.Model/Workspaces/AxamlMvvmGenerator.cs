@@ -160,7 +160,7 @@ public sealed class AxamlMvvmGenerator
                     "string",
                     ToCSharpStringLiteral(text)));
             }
-            else if (element.Name.LocalName is "CheckBox" or "ToggleSwitch" or "RadioButton")
+            else if (element.Name.LocalName is "CheckBox" or "ToggleButton" or "ToggleSwitch" or "RadioButton")
             {
                 XAttribute? isCheckedAttribute = element.Attribute("IsChecked");
                 string? initialValue = isCheckedAttribute?.Value;
@@ -441,7 +441,7 @@ public sealed class AxamlMvvmGenerator
                 string baseCommandName = NormalizeIdentifier(
                     TrimSuffix(controlName, element.Name.LocalName),
                     "Action");
-                bool isToggleControl = element.Name.LocalName is "CheckBox" or "RadioButton" or "ToggleSwitch";
+                bool isToggleControl = element.Name.LocalName is "CheckBox" or "RadioButton" or "ToggleButton" or "ToggleSwitch";
                 string commandName = isToggleControl && memberNames.Contains(baseCommandName)
                     ? NormalizeIdentifier(controlName, "Action")
                     : baseCommandName;
