@@ -15,8 +15,8 @@
         Icon="/Assets/avalonia-logo.ico"
         Width="1200"
         Height="800"
-        MinWidth="900"
-        MinHeight="600"
+        MinWidth="720"
+        MinHeight="500"
         Background="#252526"
         Title="{Binding WindowTitle}">
 
@@ -74,8 +74,9 @@
                             <MenuItem Header="{Binding ReloadProjectTemplatesCommandText}" Command="{Binding ReloadProjectTemplatesCommand}" />
                         </MenuItem>
                     </MenuItem>
-                    <MenuItem Header="_View">
-                        <MenuItem Header="{Binding WorkspaceSidebarMenuText}"
+                    <MenuItem x:Name="ViewMenu" Header="_View">
+                        <MenuItem x:Name="WorkspaceSidebarMenuItem"
+                                  Header="{Binding WorkspaceSidebarMenuText}"
                                   ToggleType="CheckBox"
                                   IsChecked="{Binding IsWorkspacePaneVisible, Mode=TwoWay}" />
                         <Separator />
@@ -118,48 +119,52 @@
                     </MenuItem>
                 </Menu>
 
-                <StackPanel Orientation="Horizontal" Spacing="6">
-                    <Button Command="{Binding OpenWorkspaceCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/workspace-open.png" Width="16" Height="16" />
-                            <TextBlock Text="{Binding OpenWorkspaceCommandText}" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <Button Command="{Binding NewDocumentCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/document-new.png" Width="16" Height="16" />
-                            <TextBlock Text="{Binding NewCommandText}" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <Button Command="{Binding OpenDocumentCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/document-open.png" Width="16" Height="16" />
-                            <TextBlock Text="{Binding OpenCommandText}" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <Button Command="{Binding ActiveEditorTab.SaveCommand}" IsEnabled="{Binding CanEditActiveDocument}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/save.png" Width="16" Height="16" />
-                            <TextBlock Text="{Binding SaveCommandText}" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <Button Command="{Binding BuildWorkspaceCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/build.png" Width="16" Height="16" />
-                            <TextBlock Text="{Binding BuildWorkspaceCommandText}" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <Button Command="{Binding RunWorkspaceTestsCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Image Source="/Assets/Icons/test.png" Width="16" Height="16" />
-                            <TextBlock Text="{Binding RunTestsCommandText}" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
+                <ScrollViewer x:Name="WorkbenchToolbarScroll"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <Button Command="{Binding OpenWorkspaceCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Image Source="/Assets/Icons/workspace-open.png" Width="16" Height="16" />
+                                <TextBlock Text="{Binding OpenWorkspaceCommandText}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding NewDocumentCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Image Source="/Assets/Icons/document-new.png" Width="16" Height="16" />
+                                <TextBlock Text="{Binding NewCommandText}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding OpenDocumentCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Image Source="/Assets/Icons/document-open.png" Width="16" Height="16" />
+                                <TextBlock Text="{Binding OpenCommandText}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding ActiveEditorTab.SaveCommand}" IsEnabled="{Binding CanEditActiveDocument}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Image Source="/Assets/Icons/save.png" Width="16" Height="16" />
+                                <TextBlock Text="{Binding SaveCommandText}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding BuildWorkspaceCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Image Source="/Assets/Icons/build.png" Width="16" Height="16" />
+                                <TextBlock Text="{Binding BuildWorkspaceCommandText}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding RunWorkspaceTestsCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Image Source="/Assets/Icons/test.png" Width="16" Height="16" />
+                                <TextBlock Text="{Binding RunTestsCommandText}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </ScrollViewer>
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="1"
+        <Border x:Name="WorkspacePane" Grid.Row="1"
                 Grid.Column="0"
                 Margin="0,0,8,0"
                 Padding="6"
@@ -168,7 +173,7 @@
                 BorderBrush="{DynamicResource ThemeControlMidBrush}"
                 BorderThickness="1"
                 CornerRadius="4">
-            <TabControl>
+            <TabControl x:Name="WorkspaceTabs">
                 <TabItem Header="Solution">
                     <Grid RowDefinitions="Auto,*" RowSpacing="6">
                         <StackPanel Spacing="2">
@@ -423,7 +428,7 @@
 
         <GridSplitter Grid.Row="1" Grid.Column="1" Width="8" ResizeDirection="Columns"
                       IsVisible="{Binding IsWorkspacePaneVisible}" />
-        <Border Grid.Row="1"
+        <Border x:Name="EditorPane" Grid.Row="1"
                 Grid.Column="2"
                 Padding="8"
                 MinHeight="0"
@@ -543,7 +548,7 @@
         </Border>
 
         <GridSplitter Grid.Row="1" Grid.Column="3" Width="8" ResizeDirection="Columns" />
-        <Border Grid.Row="1" Grid.Column="4" Padding="6" MinHeight="0"
+        <Border x:Name="PropertiesPane" Grid.Row="1" Grid.Column="4" Padding="6" MinHeight="0"
                 BorderBrush="{DynamicResource ThemeControlMidBrush}" BorderThickness="1" CornerRadius="4">
             <DockPanel>
                 <TextBlock DockPanel.Dock="Top" Text="{Binding PropertySelectionCaption}"
@@ -573,7 +578,7 @@
               Grid.ColumnSpan="5"
               Margin="0,8,0,0"
               MaxHeight="220">
-            <Expander
+            <Expander x:Name="DiagnosticsExpander"
                       Header="Diagnostics"
                       MaxHeight="220">
                 <diagnostics:DiagnosticListView DataContext="{Binding DiagnosticCollection}" />
