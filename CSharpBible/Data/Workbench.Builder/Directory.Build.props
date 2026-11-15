@@ -1,10 +1,18 @@
 <!-- Directory.Build.props -->
 <Project>
 	<Import Project="..\Data_net.props"/>
+	<PropertyGroup Condition="'$(HostArtifactRoot)' == '' and '$(OS)' == 'Windows_NT'">
+		<HostArtifactRoot>$(MSBuildThisFileDirectory)..\..\..\artifacts\windows</HostArtifactRoot>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(HostArtifactRoot)' == '' and '$(OS)' != 'Windows_NT'">
+		<HostArtifactRoot>$(MSBuildThisFileDirectory)..\..\..\artifacts\linux</HostArtifactRoot>
+	</PropertyGroup>
 	<PropertyGroup>
 		<UpDir>..\$(UpDir)</UpDir>
-		<BaseOutputPath>..\$(BaseOutputPath)</BaseOutputPath>
-		<BaseIntermediateOutputPath>..\$(BaseIntermediateOutputPath)</BaseIntermediateOutputPath>
+		<BaseOutputPath Condition="'$(HostArtifactRoot)' != ''">$(HostArtifactRoot)\bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<BaseIntermediateOutputPath Condition="'$(HostArtifactRoot)' != ''">$(HostArtifactRoot)\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<BaseOutputPath Condition="'$(HostArtifactRoot)' == ''">..\$(BaseOutputPath)</BaseOutputPath>
+		<BaseIntermediateOutputPath Condition="'$(HostArtifactRoot)' == ''">..\$(BaseIntermediateOutputPath)</BaseIntermediateOutputPath>
 
 		<!-- Optional: Konfigurationsebene (Debug/Release) anhängen -->
 		<BaseIntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</BaseIntermediateOutputPath>
