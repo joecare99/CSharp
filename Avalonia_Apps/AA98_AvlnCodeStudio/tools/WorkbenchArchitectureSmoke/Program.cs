@@ -56,6 +56,7 @@ internal static class Program
             Environment.CurrentDirectory, "AvlnWorkbenchArchitecture-" + Guid.NewGuid().ToString("N"))).FullName;
         bool resourcesOnly = args.Contains("--resources-only", StringComparer.Ordinal);
         bool quickInfoOnly = args.Contains("--quick-info-only", StringComparer.Ordinal);
+        bool compactOnly = args.Contains("--compact-only", StringComparer.Ordinal);
         bool xunitTestMethodOnly = args.Contains("--xunit-test-method-only", StringComparer.Ordinal);
         bool testMethodOnly = xunitTestMethodOnly || args.Contains("--test-method-only", StringComparer.Ordinal);
         try
@@ -262,8 +263,8 @@ internal static class Program
 
             return AppBuilder.Configure<SmokeApplication>()
                 .UsePlatformDetect()
-                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly)))
-                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly ? [] : args);
+                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly, compactOnly)))
+                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly || compactOnly ? [] : args);
         }
         finally
         {
@@ -286,14 +287,18 @@ internal static class Program
         }
     }
 
-    private static async Task RunAsync(string fixture, bool resourcesOnly, bool quickInfoOnly, bool testMethodOnly)
+    private static async Task RunAsync(string fixture, bool resourcesOnly, bool quickInfoOnly, bool testMethodOnly, bool compactOnly)
     {
         IClassicDesktopStyleApplicationLifetime desktop =
             (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
         int exitCode = 0;
         try
         {
-            if (quickInfoOnly)
+            if (compactOnly)
+            {
+                await VerifyCompactWorkbenchAsync(desktop, fixture);
+            }
+            else if (quickInfoOnly)
             {
                 await VerifyQuickInfoAsync(fixture);
             }
@@ -306,14 +311,14 @@ internal static class Program
                 await VerifyWorkbenchAsync(desktop, fixture);
                 await VerifyStandaloneAsync(desktop, fixture);
             }
-            if (!quickInfoOnly && !testMethodOnly)
+            if (!quickInfoOnly && !testMethodOnly && !compactOnly)
             {
                 await VerifyReportedResourcePreviewAsync(desktop);
             }
             EditorDocumentWorkspace workspace = SmokeApplication.Services!.GetRequiredService<EditorDocumentWorkspace>();
             desktop.MainWindow!.Close();
             Check(workspace.Tabs.Count == 0, "Closing the workbench did not dispose its document tabs.");
-            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly)
+            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly && !compactOnly)
             {
                 Console.WriteLine("Architecture: navigation, catalog control previews, structure and Grid editing, designer contributions, binary editor, drafts, safe files, standalone review/undo, MCP dispatch and screenshot verified.");
             }
@@ -333,6 +338,98 @@ internal static class Program
         }
 
         desktop.Shutdown(exitCode);
+    }
+
+    private static async Task VerifyCompactWorkbenchAsync(IClassicDesktopStyleApplicationLifetime desktop, string fixture)
+    {
+        Window window = desktop.MainWindow!;
+        MainWindowViewModel workbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
+        Border editor = window.FindControl<Border>("EditorPane")!;
+        Border workspace = window.FindControl<Border>("WorkspacePane")!;
+        Border properties = window.FindControl<Border>("PropertiesPane")!;
+        MenuItem workspaceMenu = window.FindControl<MenuItem>("WorkspaceSidebarMenuItem")!;
+        MenuItem viewMenu = window.FindControl<MenuItem>("ViewMenu")!;
+        ScrollViewer toolbar = window.FindControl<ScrollViewer>("WorkbenchToolbarScroll")!;
+        Expander diagnostics = window.FindControl<Expander>("DiagnosticsExpander")!;
+
+        Check(window.MinWidth == 720 && window.MinHeight == 500, "Unexpected compact minimum dimensions.");
+        await workbench.EditorWorkspace.OpenOrActivateAsync(Path.Combine(fixture, "Sample.cs"));
+        window.Width = 720;
+        window.Height = 500;
+        await WaitUntilAsync(() => Math.Abs(window.ClientSize.Width - 720) < 1
+            && Math.Abs(window.ClientSize.Height - 500) < 1, "720 x 500 workbench layout");
+        Check(workspace.IsVisible && properties.IsVisible, "A workbench pane disappeared at compact size.");
+        Check(workspace.Bounds.Width >= 200 && properties.Bounds.Width >= 250,
+            "The workspace or property pane is unusably narrow at compact size.");
+        TabControl workspaceTabs = window.FindControl<TabControl>("WorkspaceTabs")!;
+        TabItem[] workspaceHeaders = workspaceTabs.GetVisualDescendants().OfType<TabItem>().ToArray();
+        Check(workspaceHeaders.Length == workspaceTabs.ItemCount && workspaceHeaders.Length > 0
+            && workspaceHeaders.All(tab => IsInside(workspaceTabs, tab)),
+            "Workspace tab headers are not all reachable at compact size.");
+
+        Check(IsInside(window, viewMenu), "The View menu is outside the compact window.");
+        viewMenu.IsSubMenuOpen = true;
+        await WaitUntilAsync(() => workspaceMenu.IsEffectivelyVisible && workspaceMenu.Bounds.Width > 0
+            && workspaceMenu.Bounds.Height > 0, "workspace sidebar menu item");
+        workspaceMenu.IsChecked = false;
+        viewMenu.IsSubMenuOpen = false;
+        await WaitUntilAsync(() => !workbench.IsWorkspacePaneVisible && editor.Bounds.Width > 300,
+            "editor space after collapsing the workspace sidebar");
+        Check(!workspace.IsVisible && properties.IsVisible, "Collapsing the sidebar hid the wrong pane.");
+        Check(IsInside(window, editor) && editor.Bounds.Height >= 200
+            && IsInside(window, properties) && IsInside(window, diagnostics),
+            "The compact editor, properties, or diagnostics control is outside the window.");
+        Check(workbench.ActiveEditorTab.TextView is EditorTextArea,
+            "The compact workbench did not retain the active source editor.");
+        await WaitUntilAsync(() => workbench.ActiveEditorTab.TextView.Bounds.Width > 250
+            && workbench.ActiveEditorTab.TextView.Bounds.Height > 100, "compact source editor view");
+        diagnostics.IsExpanded = true;
+        await WaitUntilAsync(() => IsInside(window, diagnostics) && editor.Bounds.Height >= 100,
+            "expanded diagnostics and editor at compact size");
+        diagnostics.IsExpanded = false;
+
+        Button[] buttons = toolbar.GetVisualDescendants().OfType<Button>()
+            .Where(button => ReferenceEquals(button.Command, workbench.OpenWorkspaceCommand)
+                || ReferenceEquals(button.Command, workbench.RunWorkspaceTestsCommand)).ToArray();
+        Check(buttons.Length == 2, "Primary toolbar commands are missing.");
+        foreach (Button button in toolbar.GetVisualDescendants().OfType<Button>())
+        {
+            button.MinWidth = 180;
+        }
+        await WaitUntilAsync(() => toolbar.Extent.Width >= 1080 && toolbar.Extent.Width > toolbar.Viewport.Width,
+            "toolbar overflow for long command labels");
+        Check(toolbar.GetVisualDescendants().OfType<ScrollBar>()
+            .Any(bar => bar.Orientation == Orientation.Horizontal && bar.IsVisible),
+            "The overflowing toolbar has no visible horizontal scrollbar.");
+        toolbar.Offset = new Vector(toolbar.Extent.Width - toolbar.Viewport.Width, 0);
+        await WaitUntilAsync(() => IsInside(toolbar, buttons.Single(button =>
+            ReferenceEquals(button.Command, workbench.RunWorkspaceTestsCommand))), "last toolbar command after scrolling");
+        toolbar.Offset = default;
+        await WaitUntilAsync(() => IsInside(toolbar, buttons.Single(button =>
+            ReferenceEquals(button.Command, workbench.OpenWorkspaceCommand))), "first toolbar command after scrolling");
+        foreach (Button button in toolbar.GetVisualDescendants().OfType<Button>())
+        {
+            button.ClearValue(Layoutable.MinWidthProperty);
+        }
+
+        workspaceMenu.IsChecked = true;
+        await WaitUntilAsync(() => workbench.IsWorkspacePaneVisible && workspace.IsVisible && workspace.Bounds.Width >= 200,
+            "restored workspace sidebar");
+        window.Width = 1200;
+        window.Height = 800;
+        await WaitUntilAsync(() => Math.Abs(window.ClientSize.Width - 1200) < 1
+            && editor.Bounds.Width > 400 && toolbar.Extent.Width <= toolbar.Viewport.Width,
+            "restored full-size layout");
+        Check(properties.IsVisible && workspace.IsVisible, "Full-size panes were not restored.");
+        Console.WriteLine("Compact workbench: 720 x 500 layout, sidebar collapse/restore, editor, properties, diagnostics and toolbar scrolling verified.");
+    }
+
+    private static bool IsInside(Visual ancestor, Visual control)
+    {
+        Point? position = control.TranslatePoint(default, ancestor);
+        return position is { } point && point.X >= -0.5 && point.Y >= -0.5
+            && point.X + control.Bounds.Width <= ancestor.Bounds.Width + 0.5
+            && point.Y + control.Bounds.Height <= ancestor.Bounds.Height + 0.5;
     }
 
     private static async Task VerifyExactTestMethodAsync(IClassicDesktopStyleApplicationLifetime desktop, string fixture)
