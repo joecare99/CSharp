@@ -19,11 +19,13 @@ using Microsoft.Extensions.DependencyInjection;
 internal static class Program
 {
     private static string s_root = null!;
+    private static string s_repositoryRoot = null!;
 
     [STAThread]
     private static int Main(string[] args)
     {
-        s_root = Path.Combine(Directory.GetCurrentDirectory(), $"AvlnWorkbenchMvvm-{Guid.NewGuid():N}");
+        s_repositoryRoot = Directory.GetCurrentDirectory();
+        s_root = Path.Combine(s_repositoryRoot, $"AvlnWorkbenchMvvm-{Guid.NewGuid():N}");
         Directory.CreateDirectory(s_root);
         try
         {
@@ -33,6 +35,16 @@ internal static class Program
 
             string fixtureDirectory = Path.Combine(s_root, "Fixture");
             Directory.CreateDirectory(fixtureDirectory);
+            File.WriteAllText(
+                Path.Combine(fixtureDirectory, "Directory.Build.props"),
+                """
+                <Project>
+                  <PropertyGroup>
+                    <BaseOutputPath>$(MSBuildThisFileDirectory)..\fixture-artifacts\bin\$(MSBuildProjectName)\</BaseOutputPath>
+                    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)..\fixture-artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+                  </PropertyGroup>
+                </Project>
+                """);
             string projectPath = Path.Combine(fixtureDirectory, "Sample.csproj");
             string axamlPath = Path.Combine(fixtureDirectory, "LoginView.axaml");
             File.WriteAllText(
@@ -63,6 +75,7 @@ internal static class Program
                     <AutoCompleteBox x:Name="CityAutoCompleteBox" Text="Paris" />
                     <TextBox x:Name="UserNameTextBox" Text="Ada" />
                     <CheckBox x:Name="RememberMeCheckBox" IsChecked="True" CommandParameter="remember-me" />
+                    <ToggleButton x:Name="PinnedToggleButton" Content="Pin" IsChecked="True" CommandParameter="pin" />
                     <ColorPicker x:Name="ThemeColorPicker" Color="#FF123456" />
                     <TabControl x:Name="SettingsTabControl" SelectedIndex="1">
                       <TabItem Header="General" />
@@ -112,6 +125,7 @@ internal static class Program
                     <AutoCompleteBox x:Name="CityAutoCompleteBox" Text="Paris" />
                     <TextBox x:Name="UserNameTextBox" Text="Ada" />
                     <CheckBox x:Name="RememberMeCheckBox" IsChecked="True" CommandParameter="remember-me" />
+                    <ToggleButton x:Name="PinnedToggleButton" Content="Pin" IsChecked="True" CommandParameter="pin" />
                     <ColorPicker x:Name="ThemeColorPicker" Color="#FF123456" />
                     <TabControl x:Name="SettingsTabControl" SelectedIndex="1">
                       <TabItem Header="General" />
@@ -133,6 +147,7 @@ internal static class Program
                 "Cancelling the MVVM review changed the project files.");
             Check(!workbench.WorkspaceFileChangeService.CanUndo,
                 "Cancelling the MVVM review unexpectedly recorded undo history.");
+            Check(workbench.Editor.Text == originalMarkup, "Cancelling the MVVM review changed the open AXAML document.");
 
             generating = workbench.GenerateAxamlMvvmCommand.ExecuteAsync(null);
             review = await WaitForReviewAsync(desktop, generating, workbench);
@@ -153,6 +168,12 @@ internal static class Program
                 "The approved proposal did not bind the CheckBox command.");
             Check(generatedMarkup.Contains("CommandParameter=\"remember-me\"", StringComparison.Ordinal),
                 "The approved proposal did not preserve the CheckBox command parameter.");
+            Check(generatedMarkup.Contains("IsChecked=\"{Binding Pinned, Mode=TwoWay}\"", StringComparison.Ordinal),
+                "The approved proposal did not bind the ToggleButton state.");
+            Check(generatedMarkup.Contains("Command=\"{Binding PinnedToggleButtonCommand}\"", StringComparison.Ordinal),
+                "The approved proposal did not bind the ToggleButton command.");
+            Check(generatedMarkup.Contains("CommandParameter=\"pin\"", StringComparison.Ordinal),
+                "The approved proposal did not preserve the ToggleButton command parameter.");
             Check(generatedMarkup.Contains("Command=\"{Binding SaveCommand}\"", StringComparison.Ordinal),
                 "The approved proposal did not bind the MenuItem command.");
             Check(generatedMarkup.Contains("CommandParameter=\"menu-save\"", StringComparison.Ordinal),
@@ -165,6 +186,8 @@ internal static class Program
                 "The generated ViewModel did not preserve the TextBox's initial value.");
             Check(generatedViewModel.Contains("public partial string? City { get; set; } = \"Paris\";", StringComparison.Ordinal),
                 "The generated ViewModel did not preserve the AutoCompleteBox's initial value.");
+            Check(generatedViewModel.Contains("public partial bool? Pinned { get; set; } = true;", StringComparison.Ordinal),
+                "The generated ViewModel did not preserve the ToggleButton's initial state.");
             Check(generatedViewModel.Contains(
                     "public partial global::Avalonia.Media.Color Theme { get; set; } = global::Avalonia.Media.Color.Parse(\"#FF123456\");",
                     StringComparison.Ordinal),
@@ -177,6 +200,9 @@ internal static class Program
                 "The generated ViewModel did not include the parameterized Button command.");
             Check(generatedViewModel.Contains("private void RememberMeCheckBox(string? commandParameter)", StringComparison.Ordinal),
                 "The generated ViewModel did not include the parameterized CheckBox command.");
+            Check(generatedViewModel.Contains("private void PinnedToggleButton(string? commandParameter)", StringComparison.Ordinal),
+                "The generated ViewModel did not include the parameterized ToggleButton command.");
+            Check(workbench.Editor.Text == generatedMarkup, "Apply did not synchronize the open AXAML document.");
             Check(!workbench.WorkspaceFileChangeService.CanRedo, "The applied proposal unexpectedly has redo history.");
 
             Check(workbench.WorkspaceFileChangeService.Undo(), "The generated files could not be undone.");
@@ -187,9 +213,10 @@ internal static class Program
             Check(await File.ReadAllTextAsync(axamlPath) == generatedMarkup, "Redo did not restore the approved AXAML.");
             Check(await File.ReadAllTextAsync(generatedViewModelPath) == generatedViewModel,
                 "Redo did not restore the generated ViewModel.");
+            Check(workbench.Editor.Text == generatedMarkup, "Redo did not synchronize the open AXAML document.");
 
             await BuildFixtureAsync(projectPath);
-            Console.WriteLine("Workbench MVVM: review, two-file apply, editor synchronization, undo/redo and generated-project build verified.");
+            Console.WriteLine("Workbench MVVM: ToggleButton state and command, review, two-file apply, editor synchronization, undo/redo and generated-project build verified.");
         }
         catch (Exception exception)
         {
@@ -203,23 +230,54 @@ internal static class Program
     private static async Task BuildFixtureAsync(string projectPath, bool restoreOnly = false)
     {
         string dotnetHost = ResolveDotnetHost();
-        ProcessStartInfo startInfo = new(dotnetHost)
+        bool isWindows = OperatingSystem.IsWindows();
+        ProcessStartInfo startInfo = new(isWindows ? "powershell.exe" : "bash")
         {
-            WorkingDirectory = Path.GetDirectoryName(projectPath)!,
+            WorkingDirectory = s_repositoryRoot,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
         };
-        startInfo.ArgumentList.Add(restoreOnly ? "restore" : "build");
-        startInfo.ArgumentList.Add(projectPath);
-        startInfo.ArgumentList.Add("--verbosity");
-        startInfo.ArgumentList.Add("quiet");
+        if (isWindows)
+        {
+            startInfo.ArgumentList.Add("-NoProfile");
+            startInfo.ArgumentList.Add("-Command");
+        }
+
+        string[] arguments =
+        [
+            Path.Combine(s_repositoryRoot, "tools", "build", isWindows ? "dotnet-isolated.ps1" : "dotnet-isolated.sh"),
+            restoreOnly ? "restore" : "build",
+            projectPath,
+            $"-p:HostArtifactRoot={Path.Combine(s_root, "fixture-artifacts")}",
+            "--verbosity",
+            "quiet",
+        ];
+        if (isWindows)
+        {
+            string quotedArguments = string.Join(" ", arguments.Select(
+                argument => "'" + argument.Replace("'", "''", StringComparison.Ordinal) + "'"));
+            startInfo.ArgumentList.Add($"& {quotedArguments}; exit $LASTEXITCODE");
+        }
+        else
+        {
+            foreach (string argument in arguments)
+            {
+                startInfo.ArgumentList.Add(argument);
+            }
+        }
+        if (Path.IsPathFullyQualified(dotnetHost))
+        {
+            startInfo.Environment["PATH"] = Path.GetDirectoryName(dotnetHost) + Path.PathSeparator
+                + startInfo.Environment["PATH"];
+        }
         startInfo.Environment.Remove("MSBuildSDKsPath");
         startInfo.Environment.Remove("MSBuildExtensionsPath");
         startInfo.Environment.Remove("MSBuildExtensionsPath32");
         startInfo.Environment.Remove("MSBuildToolsPath");
         startInfo.Environment.Remove("DOTNET_MSBUILD_SDK_RESOLVER_SDKS_DIR");
         startInfo.Environment.Remove("DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR");
+        startInfo.Environment["MSBUILDDISABLENODEREUSE"] = "1";
         using Process process = Process.Start(startInfo)
             ?? throw new InvalidOperationException("Could not start the generated MVVM fixture build.");
         Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
