@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <Target Name="BuildLibrariesWithoutTests">
-    <Exec Command="dotnet build &quot;$(MSBuildProjectDirectory)\Libraries.Package.sln&quot; -c $(Configuration)" WorkingDirectory="$(MSBuildProjectDirectory)" ConsoleToMsBuild="true" />
+    <Exec Command="dotnet build &quot;$(MSBuildProjectDirectory)\Libraries.Package.sln&quot; -c $(Configuration) -p:EnableWindowsTargeting=true -m:1" WorkingDirectory="$(MSBuildProjectDirectory)" ConsoleToMsBuild="true" />
   </Target>
 
   <Target Name="StageLibraryOutputs" DependsOnTargets="BuildLibrariesWithoutTests">
