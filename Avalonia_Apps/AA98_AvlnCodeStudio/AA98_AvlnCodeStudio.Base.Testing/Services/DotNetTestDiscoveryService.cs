@@ -93,6 +93,7 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
         string assemblyPath,
         CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (discovery.Cases.Count != 0
             || !await ReferencesTestingPlatformAsync(assemblyPath, cancellationToken).ConfigureAwait(false))
         {
@@ -111,6 +112,7 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
 
     private static async Task<bool> ReferencesTestingPlatformAsync(string assemblyPath, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         string depsPath = Path.ChangeExtension(assemblyPath, ".deps.json");
         try
         {
@@ -138,6 +140,7 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
 
             foreach (JsonProperty library in target.EnumerateObject())
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (!library.Name.StartsWith("Microsoft.Testing.Platform/", StringComparison.OrdinalIgnoreCase)
                     || library.Value.ValueKind != JsonValueKind.Object
                     || !library.Value.TryGetProperty("runtime", out JsonElement runtime)
@@ -158,6 +161,7 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
             // Missing or unreadable dependency metadata does not establish the test platform.
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
         return false;
     }
 }
