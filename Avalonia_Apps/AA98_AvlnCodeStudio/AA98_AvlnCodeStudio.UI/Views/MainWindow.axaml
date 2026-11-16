@@ -84,6 +84,7 @@
                     <MenuItem Header="{Binding FileMenuHeader}">
                         <MenuItem Header="{Binding NewCommandText}" Command="{Binding NewDocumentCommand}" />
                         <MenuItem Header="{Binding OpenCommandText}" Command="{Binding OpenDocumentCommand}" />
+                        <MenuItem x:Name="DecompileAssemblyMenuItem" Header="Decompile assembly..." Click="OnDecompileAssembly" />
                         <MenuItem Header="{Binding SaveCommandText}" Command="{Binding ActiveEditorTab.SaveCommand}" IsEnabled="{Binding CanEditActiveDocument}" />
                         <MenuItem Header="{Binding SaveAsCommandText}" Command="{Binding ActiveEditorTab.SaveAsCommand}" IsEnabled="{Binding CanEditActiveDocument}" />
                         <Separator />

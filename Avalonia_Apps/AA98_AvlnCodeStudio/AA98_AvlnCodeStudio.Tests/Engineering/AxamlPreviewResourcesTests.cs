@@ -69,6 +69,98 @@ public sealed class AxamlPreviewResourcesTests
     }
 
     [TestMethod]
+    public void ApplicationIncludes_UseOnlyBoundedLocalStylesAndLiteralResources()
+    {
+        string root = Path.Combine(Environment.CurrentDirectory, "preview-app-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            Directory.CreateDirectory(Path.Combine(root, "Styles"));
+            Directory.CreateDirectory(Path.Combine(root, "Views"));
+            File.WriteAllText(Path.Combine(root, "Sample.csproj"), "<Project />");
+            string document = Path.Combine(root, "Views", "View.axaml");
+            File.WriteAllText(document, "");
+            string app = Path.Combine(root, "App.axaml");
+            File.WriteAllText(app, """
+                <Application xmlns='https://github.com/avaloniaui' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+                  <Application.Resources>
+                    <SolidColorBrush x:Key='Color' Color='#FF204020'/>
+                    <x:String x:Key='Alias'>{DynamicResource Color}</x:String>
+                    <x:String x:Key='LoopA'>{StaticResource LoopB}</x:String>
+                    <x:String x:Key='LoopB'>{StaticResource LoopA}</x:String>
+                    <x:String x:Key='Duplicate'>A</x:String><x:String x:Key='Duplicate'>B</x:String>
+                  </Application.Resources>
+                  <Application.Styles>
+                    <StyleInclude Source='Styles/Default.axaml'/>
+                    <StyleInclude Source='Styles/Later.axaml'/>
+                    <StyleInclude Source='Styles/Duplicate.axaml'/><StyleInclude Source='Styles/Duplicate.axaml'/>
+                    <StyleInclude Source='Styles/../outside.axaml'/>
+                    <StyleInclude Source='Styles/Dtd.axaml'/>
+                    <StyleInclude Source='Styles/Extra.axaml' Other='ignored'/>
+                    <StyleInclude Source='../outside.axaml'/><StyleInclude Source='https://example.invalid/a.axaml'/>
+                  </Application.Styles>
+                </Application>
+                """);
+            File.WriteAllText(Path.Combine(root, "Styles", "Default.axaml"), """
+                <Styles xmlns='https://github.com/avaloniaui' xmlns:evil='clr-namespace:Evil'>
+                  <Style Selector='Button.Number'><Setter Property='Background' Value='{DynamicResource Alias}'/>
+                    <Setter Property='FontSize' Value='35'/><Setter Property='Margin' Value='5'/></Style>
+                  <Style Selector='Button:pointerover'><Setter Property='FontSize' Value='99'/></Style>
+                  <evil:Style Selector='Button.Number'><Setter Property='FontSize' Value='98'/></evil:Style>
+                  <StyleInclude Source='Nested.axaml'/>
+                </Styles>
+                """);
+            File.WriteAllText(Path.Combine(root, "Styles", "Duplicate.axaml"),
+                "<Styles><Style Selector='Button.Number'><Setter Property='FontSize' Value='90'/></Style></Styles>");
+            File.WriteAllText(Path.Combine(root, "Styles", "Later.axaml"),
+                "<Styles><Style Selector='Button.Number'><Setter Property='FontSize' Value='36'/></Style></Styles>");
+            File.WriteAllText(Path.Combine(root, "outside.axaml"),
+                "<Styles><Style Selector='Button.Number'><Setter Property='FontSize' Value='91'/></Style></Styles>");
+            File.WriteAllText(Path.Combine(root, "Styles", "Extra.axaml"),
+                "<Styles><Style Selector='Button.Number'><Setter Property='FontSize' Value='92'/></Style></Styles>");
+            File.WriteAllText(Path.Combine(root, "Styles", "Dtd.axaml"),
+                "<!DOCTYPE Styles [<!ENTITY x '93'>]><Styles><Style Selector='Button.Number'><Setter Property='FontSize' Value='&x;'/></Style></Styles>");
+            const string markup = """
+                <UserControl xmlns='https://github.com/avaloniaui' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+                  <UserControl.Styles><Style Selector='Button'><Setter Property='Margin' Value='-5'/></Style></UserControl.Styles>
+                  <StackPanel><Button Classes='Number' Content='{StaticResource Color}'/>
+                    <Button Classes='Number' FontSize='40' Background='{Binding Dangerous}' Content='{StaticResource LoopA}'/>
+                    <Button Content='{StaticResource Duplicate}'/><Button Content='{StaticResource Missing}'/>
+                    <StackPanel><StackPanel.Resources><x:String x:Key='Color'>local</x:String></StackPanel.Resources>
+                      <Button Classes='Number' Content='{StaticResource Color}'/></StackPanel>
+                    <StackPanel><StackPanel.Resources><ResourceDictionary><x:String x:Key='Color'>dictionary</x:String></ResourceDictionary></StackPanel.Resources>
+                      <Button Classes='Number'/></StackPanel>
+                  </StackPanel>
+                </UserControl>
+                """;
+            AxamlPreviewNode preview = new AxamlPreviewService().Parse(markup, document, root);
+            Assert.AreEqual("#FF204020", preview.Children[0].Text);
+            Assert.AreEqual("#FF204020", preview.Children[0].RenderProperties["Background"]);
+            Assert.AreEqual("36", preview.Children[0].RenderProperties["FontSize"]);
+            Assert.AreEqual("-5", preview.Children[0].RenderProperties["Margin"]);
+            Assert.AreEqual("40", preview.Children[1].RenderProperties["FontSize"]);
+            Assert.AreEqual("{Binding Dangerous}", preview.Children[1].RenderProperties["Background"]);
+            Assert.AreEqual("[StaticResource LoopA]", preview.Children[1].Text);
+            Assert.AreEqual("[StaticResource Duplicate]", preview.Children[2].Text);
+            Assert.AreEqual("[StaticResource Missing]", preview.Children[3].Text);
+            Assert.AreEqual("local", preview.Children[4].Children[0].Text);
+            Assert.IsFalse(preview.Children[4].Children[0].RenderProperties.ContainsKey("Background"));
+            Assert.AreEqual("36", preview.Children[4].Children[0].RenderProperties["FontSize"]);
+            Assert.IsFalse(preview.Children[5].Children[0].RenderProperties.ContainsKey("Background"));
+            File.WriteAllText(app, "<Application xmlns='clr-namespace:Evil'><Application.Resources /></Application>");
+            preview = new AxamlPreviewService().Parse(markup, document, root);
+            Assert.AreEqual("[StaticResource Color]", preview.Children[0].Text);
+            Assert.IsFalse(preview.Children[0].RenderProperties.ContainsKey("FontSize"));
+            File.WriteAllText(app, "<!DOCTYPE Application [<!ENTITY x SYSTEM 'https://example.invalid/x'>]><Application>&x;</Application>");
+            preview = new AxamlPreviewService().Parse(markup, document, root);
+            Assert.AreEqual("[StaticResource Color]", preview.Children[0].Text);
+        }
+        finally
+        {
+            if (Directory.Exists(root)) Directory.Delete(root, true);
+        }
+    }
+
+    [TestMethod]
     public void Resx_UsesCultureFallbackAndIgnoresTypedDataExternalAndDtd()
     {
         string root = Path.Combine(Environment.CurrentDirectory, "preview-resources-" + Guid.NewGuid().ToString("N"));
@@ -188,6 +280,8 @@ public sealed class AxamlPreviewResourcesTests
             Assert.AreEqual("7", button.Text);
             Assert.AreEqual("-5", button.RenderProperties["Margin"]);
             Assert.AreEqual("10", button.RenderProperties["Padding"]);
+            Assert.AreEqual("35", button.RenderProperties["FontSize"]);
+            Assert.AreEqual("#FF204020", button.RenderProperties["Background"]);
             AxamlPreviewControl control = new() { PreviewNode = preview };
             Button renderedButton = control.GetLogicalDescendants().OfType<Button>()
                 .Single(item => Equals(item.Content, "7"));

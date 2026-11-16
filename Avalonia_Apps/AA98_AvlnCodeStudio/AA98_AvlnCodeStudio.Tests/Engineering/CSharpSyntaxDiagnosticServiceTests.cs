@@ -142,15 +142,12 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
             var roslynWorkspace = (Microsoft.CodeAnalysis.Workspace)context.GetType()
                 .GetProperty("Workspace")!.GetValue(context)!;
             string[] loadedPaths = roslynWorkspace.CurrentSolution.Projects.Single().Documents
-                .Select(document => document.FilePath!)
-                .Where(path => path is not null)
+                .Select(document => document.FilePath)
+                .OfType<string>()
                 .ToArray();
-            if (!loadedPaths.Contains(upperPath, StringComparer.Ordinal)
-                || !loadedPaths.Contains(lowerPath, StringComparer.Ordinal))
-            {
-                Assert.Inconclusive("MSBuildWorkspace did not load both case-distinct Compile items: "
-                    + string.Join(", ", loadedPaths));
-            }
+            Assert.IsTrue(loadedPaths.Contains(upperPath, StringComparer.Ordinal)
+                && loadedPaths.Contains(lowerPath, StringComparer.Ordinal),
+                "MSBuildWorkspace did not load both explicitly included files: " + string.Join(", ", loadedPaths));
 
             IReadOnlyList<Diagnostic> lowerDiagnostics = await service.AnalyzeAsync(lowerSource, lowerPath, workspace);
             Assert.IsTrue(upperDiagnostics.Any(diagnostic => diagnostic.Code == "CS0029" && diagnostic.SourcePath == upperPath));
@@ -214,8 +211,8 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
             CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(projectPath);
             using CSharpSyntaxDiagnosticService service = new();
 
-            // MSBuildWorkspace deduplicates case-distinct compile items, so add the second real file
-            // to its loaded solution to exercise the diagnostic filter with both source trees.
+            // This fixture includes only source.cs; add Source.cs to exercise filtering
+            // independently of project loading.
             await service.AnalyzeAsync(lowerSource, lowerPath, workspace);
             var contexts = (System.Collections.IDictionary)typeof(CSharpSyntaxDiagnosticService)
                 .GetField("_projectContexts", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!

@@ -23,38 +23,26 @@ internal sealed class AxamlPreviewResources(string? documentPath, string? projec
     };
     private readonly Dictionary<string, Dictionary<string, string>> _resxCache = new(StringComparer.OrdinalIgnoreCase);
     private int _fileReads;
+    private bool _applicationLoaded;
+    private XElement? _application;
+    private readonly List<XElement> _applicationStyles = [];
 
     public Dictionary<string, string> GetPreviewProperties(XElement element, Dictionary<string, string> source)
     {
         Dictionary<string, string> result = new(StringComparer.Ordinal);
+        LoadApplication();
+        foreach (XElement style in _applicationStyles)
+        {
+            ApplyStyle(element, style, result, applicationStyle: true);
+        }
+
         foreach (XElement owner in element.AncestorsAndSelf().Reverse())
         {
             foreach (XElement styles in owner.Elements().Where(e => IsAvalonia(e, owner.Name.LocalName + ".Styles")))
             {
                 foreach (XElement style in styles.Elements().Take(256).Where(e => IsAvalonia(e, "Style")))
                 {
-                    if (!MatchesSelector(element, (string?)style.Attribute("Selector")))
-                    {
-                        continue;
-                    }
-
-                    foreach (XElement setter in style.Elements().Take(256).Where(e => IsAvalonia(e, "Setter")))
-                    {
-                        string? name = (string?)setter.Attribute("Property");
-                        string? value = (string?)setter.Attribute("Value");
-                        if (name is null || value is null || !s_styleProperties.Contains(name)
-                            || setter.HasElements || setter.Attributes().Any(a => !a.IsNamespaceDeclaration
-                                && a.Name != "Property" && a.Name != "Value"))
-                        {
-                            continue;
-                        }
-
-                        if (TryLiteral(element, value, out string? literal)
-                            && AxamlPropertyValueValidator.Validate(element.Name.LocalName, name, literal!) is null)
-                        {
-                            result[name] = literal!;
-                        }
-                    }
+                    ApplyStyle(element, style, result, applicationStyle: false);
                 }
             }
         }
@@ -66,6 +54,37 @@ internal sealed class AxamlPreviewResources(string? documentPath, string? projec
         }
 
         return result;
+    }
+
+    private void ApplyStyle(XElement element, XElement style, Dictionary<string, string> result, bool applicationStyle)
+    {
+        if (!MatchesSelector(element, (string?)style.Attribute("Selector")))
+        {
+            return;
+        }
+
+        foreach (XElement setter in style.Elements().Take(256).Where(e => IsAvalonia(e, "Setter")))
+        {
+            string? name = (string?)setter.Attribute("Property");
+            string? value = (string?)setter.Attribute("Value");
+            if (name is null || value is null || !s_styleProperties.Contains(name)
+                || setter.HasElements || setter.Attributes().Any(a => !a.IsNamespaceDeclaration
+                    && a.Name != "Property" && a.Name != "Value"))
+            {
+                continue;
+            }
+
+            string? literal = null;
+            bool resolved = applicationStyle && value.TrimStart().StartsWith('{')
+                ? TryResourceReference(value, out string? key) && _application is not null
+                    && TryLocalResource(_application, key!, new HashSet<string>(StringComparer.Ordinal), out literal, element)
+                : TryLiteral(element, value, out literal);
+            if (resolved
+                && AxamlPropertyValueValidator.Validate(element.Name.LocalName, name, literal!) is null)
+            {
+                result[name] = literal!;
+            }
+        }
     }
 
     public bool TryResolve(XElement element, string value, out string? result)
@@ -106,7 +125,7 @@ internal sealed class AxamlPreviewResources(string? documentPath, string? projec
         return result is not null;
     }
 
-    private bool TryLocalResource(XElement element, string key, HashSet<string> visited, out string? result)
+    private bool TryLocalResource(XElement element, string key, HashSet<string> visited, out string? result, XElement? shadowGuard = null)
     {
         result = null;
         if (visited.Count >= 32 || !visited.Add(key))
@@ -114,7 +133,19 @@ internal sealed class AxamlPreviewResources(string? documentPath, string? projec
             return false;
         }
 
-        foreach (XElement owner in element.AncestorsAndSelf())
+        if (shadowGuard is not null && HasLocalResourceConflict(shadowGuard, key))
+        {
+            return false;
+        }
+
+        LoadApplication();
+        IEnumerable<XElement> owners = element.AncestorsAndSelf();
+        if (_application is not null && !element.AncestorsAndSelf().Contains(_application))
+        {
+            owners = owners.Append(_application);
+        }
+
+        foreach (XElement owner in owners)
         {
             XElement[] matches = owner.Elements()
                 .Where(e => IsAvalonia(e, owner.Name.LocalName + ".Resources"))
@@ -143,7 +174,7 @@ internal sealed class AxamlPreviewResources(string? documentPath, string? projec
 
             if (TryResourceReference(value, out string? next))
             {
-                return TryLocalResource(resource, next!, visited, out result);
+                return TryLocalResource(resource, next!, visited, out result, shadowGuard);
             }
 
             if (value.TrimStart().StartsWith('{'))
@@ -156,6 +187,106 @@ internal sealed class AxamlPreviewResources(string? documentPath, string? projec
         }
 
         return false;
+    }
+
+    private static bool HasLocalResourceConflict(XElement element, string key) =>
+        element.AncestorsAndSelf().Any(owner => owner.Elements()
+            .Where(e => IsAvalonia(e, owner.Name.LocalName + ".Resources"))
+            .SelectMany(e => e.Elements().Take(512))
+            .Any(e => (string?)e.Attribute(s_xaml + "Key") == key || IsAvalonia(e, "ResourceDictionary")));
+
+    private void LoadApplication()
+    {
+        if (_applicationLoaded)
+        {
+            return;
+        }
+
+        _applicationLoaded = true;
+        try
+        {
+            if (documentPath is null || projectRoot is null || !Path.IsPathFullyQualified(documentPath)
+                || !Path.IsPathFullyQualified(projectRoot))
+            {
+                return;
+            }
+
+            string root = Path.GetFullPath(projectRoot).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string document = Path.GetFullPath(documentPath);
+            if (IsNetworkPath(root) || !IsUnderRoot(root, document) || HasReparsePoint(root, document))
+            {
+                return;
+            }
+
+            string[] projects = Directory.EnumerateFiles(root, "*.csproj", SearchOption.TopDirectoryOnly).Take(2).ToArray();
+            if (projects.Length != 1 || HasReparsePoint(root, projects[0]))
+            {
+                return;
+            }
+
+            string appPath = Path.Combine(root, "App.axaml");
+            if (HasReparsePoint(root, appPath) || ReadSafeAxaml(appPath) is not XElement app
+                || !IsAvalonia(app, "Application"))
+            {
+                return;
+            }
+
+            _application = app;
+            XElement[] includes = app.Elements().Where(e => IsAvalonia(e, "Application.Styles"))
+                .SelectMany(e => e.Elements().Take(256)).Where(e => IsAvalonia(e, "StyleInclude"))
+                .Take(17).ToArray();
+            if (includes.Length > 16)
+            {
+                return;
+            }
+
+            StringComparer pathComparer = OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
+            var sources = includes.Select(e => (string?)e.Attribute("Source")).ToArray();
+            foreach (XElement include in includes)
+            {
+                string? source = (string?)include.Attribute("Source");
+                if (source is null || source.Length > 256 || sources.Count(s => pathComparer.Equals(s, source)) != 1
+                    || include.HasElements || include.Attributes().Any(a => !a.IsNamespaceDeclaration && a.Name != "Source")
+                    || !Regex.IsMatch(source, @"^[A-Za-z0-9_-]+(?:/[A-Za-z0-9_-]+)*\.axaml$", RegexOptions.CultureInvariant))
+                {
+                    continue;
+                }
+
+                string path = Path.GetFullPath(Path.Combine(root, source.Replace('/', Path.DirectorySeparatorChar)));
+                if (!IsUnderRoot(root, path) || HasReparsePoint(root, path)
+                    || ReadSafeAxaml(path) is not XElement styles || !IsAvalonia(styles, "Styles"))
+                {
+                    continue;
+                }
+
+                _applicationStyles.AddRange(styles.Elements().Take(256).Where(e => IsAvalonia(e, "Style"))
+                    .Take(256 - _applicationStyles.Count));
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            _application = null;
+            _applicationStyles.Clear();
+        }
+    }
+
+    private static XElement? ReadSafeAxaml(string path)
+    {
+        if (!File.Exists(path) || new FileInfo(path).Length > 1_000_000)
+        {
+            return null;
+        }
+
+        try
+        {
+            XmlReaderSettings settings = new() { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null, MaxCharactersInDocument = 1_000_000 };
+            using XmlReader reader = XmlReader.Create(path, settings);
+            return XDocument.Load(reader).Root;
+        }
+        catch (XmlException)
+        {
+            return null;
+        }
     }
 
     private static bool TryResourceReference(string value, out string? key)

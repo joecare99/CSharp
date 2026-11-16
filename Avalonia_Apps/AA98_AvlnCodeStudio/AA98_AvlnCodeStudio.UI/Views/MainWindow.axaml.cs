@@ -16,11 +16,14 @@ using Property.Editor.Avalonia;
 using Property.Editor.Avalonia.Views;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using AA98_AvlnCodeStudio.Decompilation;
+using Code.Navigation;
 
 namespace AA98_AvlnCodeStudio.UI.Views
 {
@@ -29,6 +32,7 @@ namespace AA98_AvlnCodeStudio.UI.Views
         private bool _closeConfirmed;
         private bool _closePromptActive;
         private bool _updatingThemeMenu;
+        private IServiceProvider? _hostServices;
 
         private sealed class ProjectSectionRegistry(params IConfigUiSection[] sections) : IConfigUiSectionRegistry
         {
@@ -74,6 +78,57 @@ namespace AA98_AvlnCodeStudio.UI.Views
             if (DataContext is ViewModels.MainWindowViewModel viewModel)
             {
                 viewModel.EditorWorkspace.Dispose();
+            }
+        }
+
+        private async void OnDecompileAssembly(object? sender, RoutedEventArgs e)
+        {
+            if (_hostServices is null || DataContext is not ViewModels.MainWindowViewModel viewModel)
+            {
+                return;
+            }
+
+            var dialog = new DecompilationDialog(
+                _hostServices.GetRequiredService<IAssemblyDecompilationService>(),
+                _hostServices.GetRequiredService<Services.IDecompilationAssemblyPicker>());
+            bool contextChanged = false;
+            void ContextChanged(object? _, PropertyChangedEventArgs args)
+            {
+                if (!contextChanged && (args.PropertyName is nameof(viewModel.Workspace) or nameof(viewModel.ActiveEditorTab)))
+                {
+                    contextChanged = true;
+                    dialog.Close();
+                }
+            }
+
+            CodeLocation? location;
+            viewModel.PropertyChanged += ContextChanged;
+            try
+            {
+                location = await dialog.ShowDialog<CodeLocation?>(this);
+            }
+            catch (Exception exception)
+            {
+                if (IsVisible) viewModel.Editor.StatusText = $"Cannot open decompilation dialog: {exception.Message}";
+                return;
+            }
+            finally
+            {
+                viewModel.PropertyChanged -= ContextChanged;
+            }
+
+            if (location is null || contextChanged || !IsVisible)
+            {
+                return;
+            }
+
+            try
+            {
+                await _hostServices.GetRequiredService<ICodeNavigator>().NavigateAsync(location);
+            }
+            catch (Exception exception)
+            {
+                if (IsVisible) viewModel.Editor.StatusText = $"Cannot open decompiled source: {exception.Message}";
             }
         }
 
@@ -161,6 +216,7 @@ namespace AA98_AvlnCodeStudio.UI.Views
         public MainWindow(ViewModels.MainWindowViewModel viewModel, IServiceProvider? hostServices)
             : this()
         {
+            _hostServices = hostServices;
             DataContext = viewModel;
             viewModel.ApproveAIChatToolExecutionAsync = ApproveAIChatToolExecutionAsync;
             viewModel.ApproveSvnUpdateAsync = ApproveSvnUpdateAsync;
