@@ -6,7 +6,7 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
-	<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
+	<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.12.0" />
 	<PackageReference Include="Microsoft.Build" Version="18.12.2" ExcludeAssets="runtime" />
 	<PackageReference Include="Microsoft.Build.Framework" Version="18.12.2" ExcludeAssets="runtime" />
 	<PackageReference Include="Microsoft.Build.Locator" Version="1.11.2" />
