@@ -4,7 +4,13 @@ This component provides metadata listing and opt-in per-type C# decompilation fo
 
 Workbench DI registration stores generated files in the current user's local application data at `AA98_AvlnCodeStudio/Decompilation`, outside the project tree. The service requires an explicit artifact root when constructed directly, rejects paths overlapping the inspected assembly's directory, rejects reparse points in artifact paths, writes with create-new semantics, and bounds input assemblies to 512 MiB, metadata to 50,000 types/25,000 members per type, and generated output to 16 Mi characters. Consumers can inspect the `CodeLocation` or use the existing editor navigation service to open its artifact and move to the selected type.
 
-The API is a reusable Workbench component; it deliberately adds no automatic DLL discovery, project scanning, project mutation, source-file creation in the assembly directory, decompilation UI, or execution of the target assembly. This is not a sandbox for malicious input: the decompiler parses untrusted PE/metadata and may read local dependency metadata while resolving references. Use only inputs from sources you are willing to inspect and keep the decompiler package current.
+In the Workbench, choose **File → Decompile assembly...**, explicitly select one local managed DLL or EXE, select a listed type, and choose **Open source**. The resulting artifact opens through the normal editor navigation, separately from the original assembly and project sources. Closing the dialog cancels pending work; changing the selection invalidates older results. Empty assemblies and errors are reported in the dialog.
+
+There is no automatic DLL discovery, project scanning, project mutation, source-file creation in the assembly directory, or execution of the target assembly. This is not a sandbox for malicious input: the decompiler parses untrusted PE/metadata and may read local dependency metadata while resolving references. Use only inputs from sources you are willing to inspect and keep the decompiler package current.
+
+## Workbench window smoke
+
+`tools/WorkbenchDecompilationSmoke` runs a real desktop Workbench and dialog. It substitutes only the file picker with a known local fixture assembly, selects its type in the actual list, and checks the generated artifact, editor and `CodeLocation` caret. It also checks picker cancellation, closing during a delayed response, and changing tabs during a delayed response. The smoke does **not** exercise the operating system's native file picker. Run it from a physical (non-reparse) project path with a graphical desktop and isolated build artifact root, after a successful restore.
 
 ## Dependency and legal review
 
