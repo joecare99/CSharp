@@ -28,7 +28,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.161" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
-		<PackageReference Include="MySqlConnector" Version="2.6.2" />
+		<PackageReference Include="MySqlConnector" Version="3.0.0" />
 	</ItemGroup>
 	<ItemGroup>
    <ProjectReference Include="..\DbCoreAbstractions\DbCoreAbstractions.csproj" />
