@@ -10,6 +10,17 @@ For the resource/focus check only, pass `-- --resources-only`. If the read-only
 AA05 calculator sample exists at its development path, this checks its visible
 button caption, local margin/padding and source focus in both real hosts.
 
+For the theme check, set `AVLN_THEME_SCREENSHOT_DIR` to an output directory and
+pass `-- --theme-only`. It captures the synthetic Workbench as `dark.png` and
+`light.png`, verifies representative C# highlighting and menu/editor/status
+contrast, switches dark/light/dark through the View menu and checks editor text,
+caret and undo/redo. It exercises the menu item's automation invoke and toggle
+providers and checks synchronization when the application theme changes.
+This uses the Workbench window with Fluent and AvaloniaEdit styles in a smoke
+application; it does not test physical display, input or screen-reader behavior.
+The product starts in dark mode; the View menu can switch themes for the current
+session. The selection is not persisted.
+
 For the C# quick-info check only, pass `-- --quick-info-only`. It restores a
 temporary SDK project and verifies the keyboard event, visible information,
 pointer-movement hover, unsaved-file protection and dismissal in a real Workbench

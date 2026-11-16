@@ -23,10 +23,13 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Markup.Xaml.Styling;
+using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using AvaloniaEdit.Highlighting;
 using Code.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 using Project.Explorer.Avalonia.ViewModels;
@@ -52,11 +55,13 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
-        s_root = Directory.CreateDirectory(Path.Combine(
-            Environment.CurrentDirectory, "AvlnWorkbenchArchitecture-" + Guid.NewGuid().ToString("N"))).FullName;
         bool resourcesOnly = args.Contains("--resources-only", StringComparer.Ordinal);
         bool quickInfoOnly = args.Contains("--quick-info-only", StringComparer.Ordinal);
         bool compactOnly = args.Contains("--compact-only", StringComparer.Ordinal);
+        bool themeOnly = args.Contains("--theme-only", StringComparer.Ordinal);
+        s_root = Directory.CreateDirectory(Path.Combine(
+            themeOnly ? Path.GetTempPath() : Environment.CurrentDirectory,
+            "AvlnWorkbenchArchitecture-" + Guid.NewGuid().ToString("N"))).FullName;
         bool xunitTestMethodOnly = args.Contains("--xunit-test-method-only", StringComparer.Ordinal);
         bool testMethodOnly = xunitTestMethodOnly || args.Contains("--test-method-only", StringComparer.Ordinal);
         try
@@ -253,7 +258,9 @@ internal static class Program
                 + "<Label Content=\"Invalid label layout\" LineHeight=\"0\" MaxLines=\"-1\" />"
                 + "<Label Content=\"Bound label layout\" LineHeight=\"{Binding LineHeight}\" MaxLines=\"{Binding MaxLines}\" />"
                 + "</StackPanel>");
-            File.WriteAllText(Path.Combine(fixture, "Sample.cs"), "namespace Sample; public class Example { }");
+            File.WriteAllText(Path.Combine(fixture, "Sample.cs"), themeOnly
+                ? "using System;\n\nnamespace Sample;\n\n/// <summary>Syntax contrast.</summary>\npublic class Example\n{\n    // TODO HACK: Check syntax colors.\n    public string Message => $\"Hello, {Count}!\";\n    public int Count => 42;\n}\n"
+                : "namespace Sample; public class Example { }");
             File.WriteAllBytes(Path.Combine(fixture, "Image.png"), [0x89, 0x50, 0x4e, 0x47, 0x00]);
             if (!testMethodOnly)
             {
@@ -263,8 +270,8 @@ internal static class Program
 
             return AppBuilder.Configure<SmokeApplication>()
                 .UsePlatformDetect()
-                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly, compactOnly)))
-                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly || compactOnly ? [] : args);
+                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly, compactOnly, themeOnly)))
+                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly || compactOnly || themeOnly ? [] : args);
         }
         finally
         {
@@ -287,14 +294,18 @@ internal static class Program
         }
     }
 
-    private static async Task RunAsync(string fixture, bool resourcesOnly, bool quickInfoOnly, bool testMethodOnly, bool compactOnly)
+    private static async Task RunAsync(string fixture, bool resourcesOnly, bool quickInfoOnly, bool testMethodOnly, bool compactOnly, bool themeOnly)
     {
         IClassicDesktopStyleApplicationLifetime desktop =
             (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
         int exitCode = 0;
         try
         {
-            if (compactOnly)
+            if (themeOnly)
+            {
+                await CaptureWorkbenchThemesAsync(desktop, fixture);
+            }
+            else if (compactOnly)
             {
                 await VerifyCompactWorkbenchAsync(desktop, fixture);
             }
@@ -311,14 +322,14 @@ internal static class Program
                 await VerifyWorkbenchAsync(desktop, fixture);
                 await VerifyStandaloneAsync(desktop, fixture);
             }
-            if (!quickInfoOnly && !testMethodOnly && !compactOnly)
+            if (!quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly)
             {
                 await VerifyReportedResourcePreviewAsync(desktop);
             }
             EditorDocumentWorkspace workspace = SmokeApplication.Services!.GetRequiredService<EditorDocumentWorkspace>();
             desktop.MainWindow!.Close();
             Check(workspace.Tabs.Count == 0, "Closing the workbench did not dispose its document tabs.");
-            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly && !compactOnly)
+            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly)
             {
                 Console.WriteLine("Architecture: navigation, catalog control previews, structure and Grid editing, designer contributions, binary editor, drafts, safe files, standalone review/undo, MCP dispatch and screenshot verified.");
             }
@@ -338,6 +349,142 @@ internal static class Program
         }
 
         desktop.Shutdown(exitCode);
+    }
+
+    private static async Task CaptureWorkbenchThemesAsync(IClassicDesktopStyleApplicationLifetime desktop, string fixture)
+    {
+        string outputDirectory = Environment.GetEnvironmentVariable("AVLN_THEME_SCREENSHOT_DIR")
+            ?? throw new InvalidOperationException("Set AVLN_THEME_SCREENSHOT_DIR to capture theme screenshots.");
+        Directory.CreateDirectory(outputDirectory);
+        Window window = desktop.MainWindow!;
+        MainWindowViewModel workbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
+        await workbench.OpenWorkspaceFileAsync(Path.Combine(fixture, "Sample.csproj"));
+        await workbench.EditorWorkspace.OpenOrActivateAsync(Path.Combine(fixture, "Sample.cs"));
+        await WaitUntilAsync(() => window.ClientSize.Width > 0 && workbench.ActiveEditorTab.TextView is EditorTextArea,
+            "theme screenshot editor");
+
+        EditorTextArea editorHost = (EditorTextArea)workbench.ActiveEditorTab.TextView!;
+        AvaloniaEdit.TextEditor editor = editorHost.FindControl<AvaloniaEdit.TextEditor>("PART_Editor")!;
+        MenuItem lightThemeMenu = window.FindControl<MenuItem>("LightThemeMenuItem")!;
+        Check(string.Equals(lightThemeMenu.Header?.ToString(), workbench.LightThemeMenuText, StringComparison.Ordinal),
+            "The light theme menu item is not localized through the Workbench resources.");
+        MenuItem viewMenu = window.FindControl<MenuItem>("ViewMenu")!;
+        AutomationPeer menuPeer = ControlAutomationPeer.CreatePeerForElement(lightThemeMenu);
+        IInvokeProvider menuInvoke = menuPeer.GetProvider<IInvokeProvider>()
+            ?? throw new InvalidOperationException("The theme menu item has no invoke provider.");
+        IToggleProvider menuToggle = menuPeer.GetProvider<IToggleProvider>()
+            ?? throw new InvalidOperationException("The theme menu item has no toggle provider.");
+        string original = editor.Text;
+        editor.Document.Insert(editor.Document.TextLength, " ");
+        editor.CaretOffset = 5;
+
+        Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
+        await WaitUntilAsync(() => !lightThemeMenu.IsChecked, "dark theme menu state");
+        foreach (ThemeVariant variant in new[] { ThemeVariant.Dark, ThemeVariant.Light, ThemeVariant.Dark })
+        {
+            if (variant == ThemeVariant.Light)
+            {
+                viewMenu.IsSubMenuOpen = true;
+                await WaitUntilAsync(() => lightThemeMenu.IsEffectivelyVisible, "visible theme menu");
+                menuInvoke.Invoke();
+            }
+            else if (lightThemeMenu.IsChecked)
+            {
+                menuToggle.Toggle();
+            }
+            await Task.Delay(500);
+            Check(Application.Current.RequestedThemeVariant == variant
+                && lightThemeMenu.IsChecked == (variant == ThemeVariant.Light),
+                "The theme menu did not request or reflect the selected variant.");
+            Check(editorHost.ActualThemeVariant == variant, "Editor did not adopt the requested theme.");
+            Check(editor.Text == original + " " && editor.CaretOffset == 5,
+                "Changing the theme changed editor text or caret.");
+            VerifyThemeContrast(window, editor);
+            double scaling = window.RenderScaling;
+            using RenderTargetBitmap bitmap = new(
+                new PixelSize((int)Math.Ceiling(window.Bounds.Width * scaling), (int)Math.Ceiling(window.Bounds.Height * scaling)),
+                new Vector(96 * scaling, 96 * scaling));
+            bitmap.Render(window);
+            string path = Path.Combine(outputDirectory, variant == ThemeVariant.Dark ? "dark.png" : "light.png");
+            using (Stream stream = File.Create(path))
+            {
+                bitmap.Save(stream, PngBitmapEncoderOptions.Default);
+            }
+            Console.WriteLine($"Theme screenshot: {path}");
+        }
+
+        editor.Undo();
+        Check(editor.Text == original, "Theme switching broke editor undo.");
+        editor.Redo();
+        Check(editor.Text == original + " ", "Theme switching broke editor redo.");
+        editor.Undo();
+
+        Application.Current.RequestedThemeVariant = ThemeVariant.Light;
+        await WaitUntilAsync(() => lightThemeMenu.IsChecked, "externally changed light theme menu state");
+        Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
+        await WaitUntilAsync(() => !lightThemeMenu.IsChecked, "externally changed dark theme menu state");
+    }
+
+    private static void VerifyThemeContrast(Window window, AvaloniaEdit.TextEditor editor)
+    {
+        Color background = ((ISolidColorBrush)window.Background!).Color;
+        Color text = ((ISolidColorBrush)editor.Foreground!).Color;
+        Check(ContrastRatio(text, background) >= 4.5, "Editor text contrast is below 4.5:1.");
+        Menu menu = window.FindControl<Menu>("WorkbenchMenu")!;
+        Border status = window.FindControl<Border>("WorkbenchStatusBar")!;
+        TextBlock label = window.FindControl<TextBlock>("WorkbenchStatusLabel")!;
+        Check(ContrastRatio(((ISolidColorBrush)menu.Foreground!).Color, ((ISolidColorBrush)menu.Background!).Color) >= 4.5,
+            "Menu text contrast is below 4.5:1.");
+        Color statusBackground = ((ISolidColorBrush)status.Background!).Color;
+        Color statusText = ((ISolidColorBrush)label.Foreground!).Color;
+        static byte Blend(byte foreground, byte background, double opacity) =>
+            (byte)Math.Round(foreground * opacity + background * (1 - opacity));
+        Color effectiveStatusText = Color.FromRgb(
+            Blend(statusText.R, statusBackground.R, label.Opacity),
+            Blend(statusText.G, statusBackground.G, label.Opacity),
+            Blend(statusText.B, statusBackground.B, label.Opacity));
+        Check(ContrastRatio(effectiveStatusText, statusBackground) >= 4.5, "Status text contrast is below 4.5:1.");
+
+        foreach (HighlightingColor color in editor.SyntaxHighlighting.NamedHighlightingColors)
+        {
+            if (color.Foreground?.GetColor(null!) is Color foreground)
+            {
+                Check(ContrastRatio(foreground, background) >= 4.5,
+                    $"Syntax color {color.Name} has insufficient contrast.");
+            }
+        }
+
+        using DocumentHighlighter highlighter = new(editor.Document, editor.SyntaxHighlighting);
+        int coloredSections = 0;
+        for (int line = 1; line <= editor.Document.LineCount; line++)
+        {
+            foreach (HighlightedSection section in highlighter.HighlightLine(line).Sections)
+            {
+                if (section.Color.Foreground?.GetColor(null!) is Color foreground)
+                {
+                    coloredSections++;
+                    Check(ContrastRatio(foreground, background) >= 4.5,
+                        $"Rendered syntax on line {line} has insufficient contrast.");
+                }
+            }
+        }
+        Check(coloredSections >= 12, "Representative C# syntax was not highlighted.");
+    }
+
+    private static double ContrastRatio(Color first, Color second)
+    {
+        static double Luminance(Color color)
+        {
+            static double Linear(byte value)
+            {
+                double component = value / 255.0;
+                return component <= 0.04045 ? component / 12.92 : Math.Pow((component + 0.055) / 1.055, 2.4);
+            }
+            return 0.2126 * Linear(color.R) + 0.7152 * Linear(color.G) + 0.0722 * Linear(color.B);
+        }
+        double a = Luminance(first);
+        double b = Luminance(second);
+        return (Math.Max(a, b) + 0.05) / (Math.Min(a, b) + 0.05);
     }
 
     private static async Task VerifyCompactWorkbenchAsync(IClassicDesktopStyleApplicationLifetime desktop, string fixture)
