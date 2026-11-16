@@ -1,6 +1,8 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Config.Service;
@@ -26,6 +28,7 @@ namespace AA98_AvlnCodeStudio.UI.Views
     {
         private bool _closeConfirmed;
         private bool _closePromptActive;
+        private bool _updatingThemeMenu;
 
         private sealed class ProjectSectionRegistry(params IConfigUiSection[] sections) : IConfigUiSectionRegistry
         {
@@ -35,8 +38,35 @@ namespace AA98_AvlnCodeStudio.UI.Views
         public MainWindow()
         {
             InitializeComponent();
+            this.FindControl<MenuItem>("LightThemeMenuItem")!.PropertyChanged += OnLightThemeMenuPropertyChanged;
+            ActualThemeVariantChanged += OnActualThemeVariantChanged;
+            UpdateThemeMenu();
             Closing += OnWindowClosing;
             Closed += OnWindowClosed;
+        }
+
+        private void OnLightThemeMenuPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+        {
+            if (!_updatingThemeMenu && e.Property == MenuItem.IsCheckedProperty
+                && sender is MenuItem item && Application.Current is { } application)
+            {
+                application.RequestedThemeVariant = item.IsChecked ? ThemeVariant.Light : ThemeVariant.Dark;
+            }
+        }
+
+        private void OnActualThemeVariantChanged(object? sender, EventArgs e) => UpdateThemeMenu();
+
+        private void UpdateThemeMenu()
+        {
+            _updatingThemeMenu = true;
+            try
+            {
+                this.FindControl<MenuItem>("LightThemeMenuItem")!.IsChecked = ActualThemeVariant == ThemeVariant.Light;
+            }
+            finally
+            {
+                _updatingThemeMenu = false;
+            }
         }
 
         private void OnWindowClosed(object? sender, EventArgs e)

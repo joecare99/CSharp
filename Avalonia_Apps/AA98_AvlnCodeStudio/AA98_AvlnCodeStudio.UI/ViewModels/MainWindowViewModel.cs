@@ -384,6 +384,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public string WorkspaceSidebarMenuText => UiStrings.WorkspaceSidebarMenuText;
 
+        public string LightThemeMenuText => UiStrings.LightThemeMenuText;
+
         public string NewCommandText => UiStrings.NewCommandText;
 
         public string OpenCommandText => UiStrings.OpenCommandText;

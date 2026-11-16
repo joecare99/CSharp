@@ -51,6 +51,9 @@
   <data name="WorkspaceSidebarMenuText" xml:space="preserve">
     <value>Show Workspace Sidebar</value>
   </data>
+  <data name="LightThemeMenuText" xml:space="preserve">
+    <value>Light Theme</value>
+  </data>
   <data name="NewCommandText" xml:space="preserve">
     <value>New</value>
   </data>

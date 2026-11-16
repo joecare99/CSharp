@@ -17,8 +17,27 @@
         Height="800"
         MinWidth="720"
         MinHeight="500"
-        Background="#252526"
+        Background="{DynamicResource WorkbenchBackgroundBrush}"
         Title="{Binding WindowTitle}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="WorkbenchBackgroundBrush" Color="#252526" />
+                    <SolidColorBrush x:Key="WorkbenchMenuBrush" Color="#1E1E1E" />
+                    <SolidColorBrush x:Key="WorkbenchStatusBrush" Color="#2D2D30" />
+                    <SolidColorBrush x:Key="WorkbenchStatusBorderBrush" Color="#555555" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="WorkbenchBackgroundBrush" Color="#FAFAFA" />
+                    <SolidColorBrush x:Key="WorkbenchMenuBrush" Color="#F0F0F0" />
+                    <SolidColorBrush x:Key="WorkbenchStatusBrush" Color="#E8E8E8" />
+                    <SolidColorBrush x:Key="WorkbenchStatusBorderBrush" Color="#A0A0A0" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
 
     <Window.Styles>
         <Style Selector="TabControl TabItem">
@@ -32,7 +51,7 @@
             <Setter Property="MinHeight" Value="0" />
         </Style>
         <Style Selector="Menu">
-            <Setter Property="Background" Value="#1E1E1E" />
+            <Setter Property="Background" Value="{DynamicResource WorkbenchMenuBrush}" />
         </Style>
     </Window.Styles>
 
@@ -61,7 +80,7 @@
                 BorderThickness="1"
                 CornerRadius="4">
             <StackPanel Spacing="6">
-                <Menu>
+                <Menu x:Name="WorkbenchMenu">
                     <MenuItem Header="{Binding FileMenuHeader}">
                         <MenuItem Header="{Binding NewCommandText}" Command="{Binding NewDocumentCommand}" />
                         <MenuItem Header="{Binding OpenCommandText}" Command="{Binding OpenDocumentCommand}" />
@@ -79,6 +98,9 @@
                                   Header="{Binding WorkspaceSidebarMenuText}"
                                   ToggleType="CheckBox"
                                   IsChecked="{Binding IsWorkspacePaneVisible, Mode=TwoWay}" />
+                        <MenuItem x:Name="LightThemeMenuItem"
+                                  Header="{Binding LightThemeMenuText}"
+                                  ToggleType="CheckBox" />
                         <Separator />
                         <MenuItem Header="Settings..." Command="{Binding OpenConfigurationCommand}" />
                         <MenuItem Header="System Settings..." Command="{Binding OpenSystemConfigurationCommand}" />
@@ -586,15 +608,17 @@
         </Grid>
         </Grid>
 
-        <Border Grid.Row="1"
+        <Border x:Name="WorkbenchStatusBar"
+                Grid.Row="1"
                 Height="28"
                 Padding="8,3"
-                Background="#2D2D30"
-                BorderBrush="#555555"
+                Background="{DynamicResource WorkbenchStatusBrush}"
+                BorderBrush="{DynamicResource WorkbenchStatusBorderBrush}"
                 BorderThickness="0,1,0,0">
             <Grid ColumnDefinitions="*,Auto,*">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="{Binding DocumentStatusLabel}"
+                    <TextBlock x:Name="WorkbenchStatusLabel"
+                               Text="{Binding DocumentStatusLabel}"
                                Opacity="0.75"
                                VerticalAlignment="Center" />
                     <TextBlock Text="{Binding Editor.StatusText}"

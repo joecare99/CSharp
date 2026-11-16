@@ -5,7 +5,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using AvaloniaEdit;
-using AvaloniaEdit.Highlighting;
 using Code.Navigation;
 using System;
 
@@ -33,7 +32,8 @@ public partial class EditorTextArea : UserControl
         _editor = this.FindControl<TextEditor>("PART_Editor");
         if (_editor is not null)
         {
-            _editor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("C#");
+            ActualThemeVariantChanged += (_, _) => UpdateSyntaxHighlighting();
+            UpdateSyntaxHighlighting();
             _editor.Text = Text ?? string.Empty;
             _editor.TextChanged += OnEditorTextChanged;
             _editor.KeyDown += OnEditorKeyDown;
@@ -65,6 +65,14 @@ public partial class EditorTextArea : UserControl
     public int CaretOffset => _editor?.CaretOffset ?? 0;
 
     public int? HoverOffset { get; private set; }
+
+    private void UpdateSyntaxHighlighting()
+    {
+        if (_editor is not null)
+        {
+            _editor.SyntaxHighlighting = CSharpThemeHighlighting.Get(ActualThemeVariant);
+        }
+    }
 
     /// <summary>
     /// Gets or sets the editor text.

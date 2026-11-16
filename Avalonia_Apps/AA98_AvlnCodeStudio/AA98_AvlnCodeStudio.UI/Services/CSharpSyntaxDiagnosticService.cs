@@ -111,11 +111,9 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                     + string.Join(" ", context.Workspace.Diagnostics.Select(static diagnostic => diagnostic.Message)));
             return compilation.GetDiagnostics(cancellationToken)
                 .Where(diagnostic => diagnostic.Severity != Microsoft.CodeAnalysis.DiagnosticSeverity.Hidden)
-                .Where(diagnostic => diagnostic.Location.SourceTree is not null
-                    && string.Equals(
-                        diagnostic.Location.SourceTree.FilePath,
-                        normalizedFilePath,
-                        StringComparison.OrdinalIgnoreCase))
+                .Where(diagnostic => diagnostic.Location.SourceTree?.FilePath is { } sourcePath
+                    && !string.IsNullOrWhiteSpace(sourcePath)
+                    && WorkspacePathIdentity.AreEqual(sourcePath, normalizedFilePath))
                 .Select(diagnostic => MapDiagnostic(diagnostic, filePath))
                 .ToArray();
         }
