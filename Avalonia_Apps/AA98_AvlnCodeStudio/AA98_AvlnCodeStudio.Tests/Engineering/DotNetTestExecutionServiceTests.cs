@@ -155,6 +155,105 @@ public sealed class DotNetTestExecutionServiceTests
     }
 
     [TestMethod]
+    public async Task Discovery_MissingAdapterReportsTestingPlatformOnlyWhenManifestProvidesEvidence()
+    {
+        string root = Path.Combine(AppContext.BaseDirectory, $"PlatformDetection_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string assembly = Path.Combine(root, "Sample.dll");
+            string deps = Path.ChangeExtension(assembly, ".deps.json");
+            await File.WriteAllTextAsync(assembly, string.Empty);
+            await File.WriteAllTextAsync(deps, TestingPlatformDependencies);
+            DotNetTestDiscoveryService service = new();
+            DiscoveredTestCase testCase = new("id", "executor://sample", assembly, "Sample.Test", "Test", null, null);
+
+            InvalidOperationException error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+                () => service.DiscoverAsync(assembly, root));
+            StringAssert.Contains(error.Message, "Microsoft.Testing.Platform-only projects are not supported");
+            StringAssert.Contains(error.Message, "runner");
+            error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => service.RunCaseAsync(assembly, root, testCase));
+            StringAssert.Contains(error.Message, "Microsoft.Testing.Platform-only projects are not supported");
+            error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+                () => service.DebugCaseAsync(assembly, root, testCase, (_, _) => throw new AssertFailedException("Unexpected attach")));
+            StringAssert.Contains(error.Message, "Microsoft.Testing.Platform-only projects are not supported");
+
+            foreach (string? uncertain in new[]
+            {
+                null,
+                "{invalid json",
+                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.NET.Test.Sdk/1.0":{}}}}""",
+                """{"runtimeTarget":{"name":"active"},"targets":{"other":{"Microsoft.Testing.Platform/1.0":{"runtime":{"lib/Microsoft.Testing.Platform.dll":{}}}},"active":{}}}""",
+                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"dependencies":{}}}}}""",
+            })
+            {
+                if (uncertain is null)
+                {
+                    File.Delete(deps);
+                }
+                else
+                {
+                    await File.WriteAllTextAsync(deps, uncertain);
+                }
+
+                error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => service.DiscoverAsync(assembly, root));
+                Assert.AreEqual("No VSTest adapter was found beside the built test assembly.", error.Message);
+            }
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task Discovery_EmptyResultsWarnAboutPlatformWithoutClassifyingCoexistence()
+    {
+        string root = Path.Combine(AppContext.BaseDirectory, $"PlatformWarning_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string assembly = Path.Combine(root, "Sample.dll");
+            string deps = Path.ChangeExtension(assembly, ".deps.json");
+            await File.WriteAllTextAsync(deps, TestingPlatformDependencies);
+            TestDiscoveryResult empty = new([], ["Adapter warning"]);
+            TestDiscoveryResult warned = await DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, CancellationToken.None);
+            Assert.AreEqual(2, warned.Warnings.Count);
+            Assert.AreEqual("Adapter warning", warned.Warnings[0]);
+            StringAssert.Contains(warned.Warnings[1], "Microsoft.Testing.Platform-only projects are not supported");
+            StringAssert.Contains(warned.Warnings[1], "VSTest adapter");
+
+            await File.WriteAllTextAsync(deps, TestingPlatformDependencies.Replace(
+                "\"Microsoft.Testing.Platform/2.0.0\"", "\"Microsoft.TestPlatform.TestHost/1.0\":{},\"Microsoft.Testing.Platform/2.0.0\""));
+            TestDiscoveryResult coexistence = new(
+                [new DiscoveredTestCase("id", "executor://sample", assembly, "Sample.Test", "Test", null, null)],
+                ["Existing warning"]);
+            Assert.AreSame(coexistence, await DotNetTestDiscoveryService.AddPlatformWarningAsync(coexistence, assembly, CancellationToken.None));
+
+            File.Delete(deps);
+            Assert.AreSame(empty, await DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, CancellationToken.None));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task Discovery_VSTestAndTestingPlatformCoexistenceStillDiscoversCases()
+    {
+        string assembly = typeof(DotNetTestExecutionServiceTests).Assembly.Location;
+        TestDiscoveryResult result = await new DotNetTestDiscoveryService().DiscoverAsync(assembly, AppContext.BaseDirectory);
+        Assert.IsTrue(result.Cases.Any(test => test.FullyQualifiedName.Contains(
+            nameof(DotNetTestExecutionServiceTests), StringComparison.Ordinal)));
+        Assert.IsFalse(result.Warnings.Any(warning => warning.Contains(
+            "Microsoft.Testing.Platform-only projects are not supported", StringComparison.Ordinal)));
+    }
+
+    private const string TestingPlatformDependencies =
+        """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/2.0.0":{"runtime":{"lib/net8.0/Microsoft.Testing.Platform.dll":{}}}}}}""";
+
+    [TestMethod]
     public async Task AdapterResolver_IncludesExplicitAdaptersOutsideAssemblyOutput()
     {
         string root = Path.Combine(Path.GetTempPath(), $"AA98_ExternalAdapters_{Guid.NewGuid():N}");

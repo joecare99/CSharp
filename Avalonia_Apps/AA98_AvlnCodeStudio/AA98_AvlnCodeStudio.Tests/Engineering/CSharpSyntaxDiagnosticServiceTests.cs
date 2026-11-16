@@ -103,6 +103,104 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
     }
 
     [TestMethod]
+    public async Task AnalyzeAsync_CaseDistinctSourceFilesReportOnlyTheirOwnDiagnostics()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Assert.Inconclusive("This test requires case-sensitive platform path identity.");
+        }
+
+        string root = Path.Combine(
+            Environment.GetEnvironmentVariable("AA98_LANGUAGE_TEST_ROOT") ?? Directory.GetCurrentDirectory(),
+            $"LanguageDiagnosticsCase_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string upperPath = Path.Combine(root, "Source.cs");
+            string lowerPath = Path.Combine(root, "source.cs");
+            const string upperSource = "public class Upper { public string Read() => 123; }";
+            const string lowerSource = "public class Lower { public int Read() => MissingName; }";
+            await File.WriteAllTextAsync(upperPath, upperSource);
+            if (File.Exists(lowerPath))
+            {
+                Assert.Inconclusive("The test directory is on a case-insensitive filesystem.");
+            }
+
+            await File.WriteAllTextAsync(lowerPath, lowerSource);
+            await File.WriteAllTextAsync(projectPath,
+                $"<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net{Environment.Version.Major}.0</TargetFramework><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup><ItemGroup><Compile Include=\"source.cs\" /></ItemGroup></Project>");
+            await RunFixtureAsync("restore", projectPath);
+            CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(projectPath);
+            using CSharpSyntaxDiagnosticService service = new();
+
+            // MSBuildWorkspace deduplicates case-distinct compile items, so add the second real file
+            // to its loaded solution to exercise the diagnostic filter with both source trees.
+            await service.AnalyzeAsync(lowerSource, lowerPath, workspace);
+            var contexts = (System.Collections.IDictionary)typeof(CSharpSyntaxDiagnosticService)
+                .GetField("_projectContexts", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+                .GetValue(service)!;
+            object context = contexts.Values.Cast<object>().Single();
+            var roslynWorkspace = (Microsoft.CodeAnalysis.Workspace)context.GetType()
+                .GetProperty("Workspace")!.GetValue(context)!;
+            var project = roslynWorkspace.CurrentSolution.Projects.Single();
+            var solution = roslynWorkspace.CurrentSolution.AddDocument(
+                Microsoft.CodeAnalysis.DocumentId.CreateNewId(project.Id), "Source.cs",
+                Microsoft.CodeAnalysis.Text.SourceText.From(upperSource), filePath: upperPath);
+            Assert.IsTrue(roslynWorkspace.TryApplyChanges(solution));
+
+            IReadOnlyList<Diagnostic> upperDiagnostics = await service.AnalyzeAsync(upperSource, upperPath, workspace);
+            IReadOnlyList<Diagnostic> lowerDiagnostics = await service.AnalyzeAsync(lowerSource, lowerPath, workspace);
+
+            Assert.IsTrue(upperDiagnostics.Any(diagnostic => diagnostic.Code == "CS0029" && diagnostic.SourcePath == upperPath),
+                $"Upper: {string.Join(", ", upperDiagnostics.Select(diagnostic => $"{diagnostic.Code}: {diagnostic.SourcePath}"))}; "
+                + $"lower: {string.Join(", ", lowerDiagnostics.Select(diagnostic => $"{diagnostic.Code}: {diagnostic.SourcePath}"))}");
+            Assert.IsFalse(upperDiagnostics.Any(diagnostic => diagnostic.Code == "CS0103"));
+            Assert.IsTrue(lowerDiagnostics.Any(diagnostic => diagnostic.Code == "CS0103" && diagnostic.SourcePath == lowerPath),
+                string.Join(Environment.NewLine, lowerDiagnostics.Select(diagnostic => $"{diagnostic.Code}: {diagnostic.SourcePath} {diagnostic.Message}")));
+            Assert.IsFalse(lowerDiagnostics.Any(diagnostic => diagnostic.Code == "CS0029"));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task AnalyzeAsync_WindowsCaseAliasReportsSemanticDiagnostics()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            Assert.Inconclusive("This test exercises Windows path identity.");
+        }
+
+        string root = Path.Combine(Directory.GetCurrentDirectory(), $"LanguageDiagnosticsAlias_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string sourcePath = Path.Combine(root, "Source.cs");
+            string aliasPath = Path.Combine(root, "source.cs");
+            const string source = "public class Sample { public string Read() => 123; }";
+            await File.WriteAllTextAsync(projectPath,
+                $"<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net{Environment.Version.Major}.0</TargetFramework></PropertyGroup></Project>");
+            await File.WriteAllTextAsync(sourcePath, source);
+            await RunFixtureAsync("restore", projectPath);
+            CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(projectPath);
+            using CSharpSyntaxDiagnosticService service = new();
+
+            IReadOnlyList<Diagnostic> diagnostics = await service.AnalyzeAsync(source, aliasPath, workspace);
+
+            Assert.IsTrue(diagnostics.Any(diagnostic =>
+                diagnostic.Code == "CS0029" && WorkspacePathIdentity.AreEqual(diagnostic.SourcePath!, sourcePath)));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task AnalyzeAxamlMvvmAsync_ResolvesViewAndRejectsExistingOrAmbiguousDataContext()
     {
         string root = Path.Combine(Path.GetTempPath(), $"AA98_AxamlSemantic_{Guid.NewGuid():N}");
