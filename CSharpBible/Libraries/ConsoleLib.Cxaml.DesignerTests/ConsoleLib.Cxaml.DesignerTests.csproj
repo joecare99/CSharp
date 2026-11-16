@@ -13,7 +13,7 @@
     <ProjectReference Include="..\Code.Navigation\Code.Navigation.csproj" />
     <ProjectReference Include="..\Property.Editor\Property.Editor.csproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
-    <PackageReference Include="coverlet.collector" Version="10.1.0">
+    <PackageReference Include="coverlet.collector" Version="10.1.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
