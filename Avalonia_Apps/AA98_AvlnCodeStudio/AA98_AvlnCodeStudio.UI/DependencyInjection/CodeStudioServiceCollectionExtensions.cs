@@ -20,6 +20,8 @@ using Microsoft.Extensions.DependencyInjection;
 using AA98_AvlnCodeStudio.Host.Mcp;
 using AA98_AvlnCodeStudio.Versioning.Svn.DependencyInjection;
 using System;
+using AA98_AvlnCodeStudio.Decompilation;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 #if NET10_0
 using AA98_AvlnCodeStudio.Base.Versioning.Services;
 #endif
@@ -58,6 +60,9 @@ public static class CodeStudioServiceCollectionExtensions
         services.AddCodeStudioBuilding();
         services.AddCodeStudioVersioning();
 #endif
+        services.TryAddSingleton<IAssemblyDecompilationService>(
+            _ => new AssemblyDecompilationService(AssemblyDecompilationService.GetDefaultArtifactRoot()));
+        services.TryAddSingleton<IDecompilationAssemblyPicker, DecompilationAssemblyPicker>();
         services.AddCodeStudioTesting<DotNetTestExecutionService>();
         services.AddComponentMcpCommand<Commands.TestWorkspaceChatCommand>();
         services.AddSingleton<AA98_AvlnCodeStudio.Base.Debugging.Services.IDebugSessionService>(

@@ -69,6 +69,7 @@
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Testing\AA98_AvlnCodeStudio.Base.Testing.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Base.Debugging\AA98_AvlnCodeStudio.Base.Debugging.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Editor\AA98_AvlnCodeStudio.Editor.csproj" />
+    <ProjectReference Include="..\AA98_AvlnCodeStudio.Decompilation\AA98_AvlnCodeStudio.Decompilation.csproj" />
     <ProjectReference Include="..\AA98_AvlnCodeStudio.Diagnostics.UI\AA98_AvlnCodeStudio.Diagnostics.UI.csproj" />
     <ProjectReference Include="..\..\Libraries\Config.Service\Config.Service.csproj" />
     <ProjectReference Include="..\..\Libraries\Config.UI.ConfigService\Config.UI.ConfigService.csproj" />

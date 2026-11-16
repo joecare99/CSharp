@@ -29,6 +29,10 @@ namespace AA98_AvlnCodeStudio.UI.Services;
 /// <summary>
 /// Produces Roslyn syntax diagnostics for a C# source document.
 /// </summary>
+/// <remarks>
+/// Semantic results use the documents loaded by MSBuildWorkspace. A file absent from
+/// that project receives only syntax diagnostics or no editor result.
+/// </remarks>
 public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
 {
     private readonly Dictionary<ProjectContextKey, ProjectContext> _projectContexts = new();
