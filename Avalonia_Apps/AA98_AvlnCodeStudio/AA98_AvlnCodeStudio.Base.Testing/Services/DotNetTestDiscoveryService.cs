@@ -119,6 +119,7 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
             await using FileStream stream = new(depsPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
             if (stream.Length > 16 * 1024 * 1024)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 return false;
             }
 
