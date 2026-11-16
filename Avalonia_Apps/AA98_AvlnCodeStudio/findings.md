@@ -85,6 +85,8 @@ The .NET 10 restore/build emitted `NU1701` for `Microsoft.Build 18.12.2` and `Mi
 
 **Testhost follow-up:** A focused investigation reproduced the SDK 11/VSTest 18.12 protocol crash on net8 and net9 with `System.Text.Json` 11.0.0, and the SDK 10/VSTest 18.7 negotiation timeout on net9. Experiments replacing output assemblies permitted individual tests to run but did not represent the restored dependency graph and are not an accepted fix. A compatible package graph and clean runs for both frameworks remain open; the unsupported-runtime caveat remains unchanged.
 
+**Roslyn downgrade follow-up:** A subsequent isolated Linux restore reported `NU1605`: the external `Workbench.Builder.Core` project now requires `Microsoft.CodeAnalysis.CSharp` 5.12.0, while the Workbench directly references central version 5.9.0. The AXAML resource tests passed only after retrying with `NoWarn=NU1605`; this is not a clean restore or proof of compatibility. The external project change was not reverted, and the package graph needs deliberate alignment and validation.
+
 ### Credential library still advertises end-of-support target frameworks
 
 **Location:** `AA98_AvlnCodeStudio.Config.Secrets/AA98_AvlnCodeStudio.Config.Secrets.csproj:4-18`
