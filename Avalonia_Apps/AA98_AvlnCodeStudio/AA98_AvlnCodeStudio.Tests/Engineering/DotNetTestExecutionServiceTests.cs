@@ -178,6 +178,11 @@ public sealed class DotNetTestExecutionServiceTests
                 () => service.DebugCaseAsync(assembly, root, testCase, (_, _) => throw new AssertFailedException("Unexpected attach")));
             StringAssert.Contains(error.Message, "Microsoft.Testing.Platform-only projects are not supported");
 
+            await File.WriteAllTextAsync(deps,
+                """{"runtimeTarget":{"name":".NETCoreApp,Version=v10.0/win-x64"},"targets":{".NETCoreApp,Version=v10.0":{},".NETCoreApp,Version=v10.0/win-x64":{"Microsoft.Testing.Platform/2.5.1":{"runtime":{"lib/net9.0/Microsoft.Testing.Platform.dll":{"assemblyVersion":"2.5.1.0"}}}}}}""");
+            error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => service.DiscoverAsync(assembly, root));
+            StringAssert.Contains(error.Message, "Microsoft.Testing.Platform-only projects are not supported");
+
             foreach (string? uncertain in new[]
             {
                 null,
@@ -185,6 +190,9 @@ public sealed class DotNetTestExecutionServiceTests
                 """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.NET.Test.Sdk/1.0":{}}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"other":{"Microsoft.Testing.Platform/1.0":{"runtime":{"lib/Microsoft.Testing.Platform.dll":{}}}},"active":{}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"dependencies":{}}}}}""",
+                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"runtimes/win/lib/Microsoft.Testing.Platform.dll":{"assetType":"runtime","rid":"win"}}}}}}""",
+                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform.Extensions/1.0":{"runtime":{"lib/Microsoft.Testing.Platform.dll":{}}}}}}""",
+                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"resources":{"lib/Microsoft.Testing.Platform.dll":{}}}}}}""",
             })
             {
                 if (uncertain is null)
@@ -240,9 +248,53 @@ public sealed class DotNetTestExecutionServiceTests
     }
 
     [TestMethod]
+    public async Task Discovery_PlatformMetadataIsBoundedAndCancellationIsNotSwallowed()
+    {
+        string root = Path.Combine(AppContext.BaseDirectory, $"PlatformBounds_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string assembly = Path.Combine(root, "Sample.dll");
+            string deps = Path.ChangeExtension(assembly, ".deps.json");
+            TestDiscoveryResult empty = new([], []);
+            using CancellationTokenSource canceled = new();
+            canceled.Cancel();
+
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(
+                () => DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, canceled.Token));
+            TestDiscoveryResult nonempty = new(
+                [new DiscoveredTestCase("id", "executor://sample", assembly, "Sample.Test", "Test", null, null)], []);
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(
+                () => DotNetTestDiscoveryService.AddPlatformWarningAsync(nonempty, assembly, canceled.Token));
+
+            using (FileStream stream = File.Create(deps))
+            {
+                stream.SetLength(16 * 1024 * 1024 + 1);
+            }
+
+            Assert.AreSame(empty, await DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, CancellationToken.None));
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(
+                () => DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, canceled.Token));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task Discovery_VSTestAndTestingPlatformCoexistenceStillDiscoversCases()
     {
         string assembly = typeof(DotNetTestExecutionServiceTests).Assembly.Location;
+        using JsonDocument deps = JsonDocument.Parse(await File.ReadAllTextAsync(Path.ChangeExtension(assembly, ".deps.json")));
+        JsonElement root = deps.RootElement;
+        string target = root.GetProperty("runtimeTarget").GetProperty("name").GetString()!;
+        Assert.IsTrue(root.GetProperty("targets").GetProperty(target).EnumerateObject().Any(library =>
+            library.Name.StartsWith("Microsoft.Testing.Platform/", StringComparison.OrdinalIgnoreCase)
+            && library.Value.TryGetProperty("runtime", out JsonElement runtime)
+            && runtime.EnumerateObject().Any(asset => asset.Name.EndsWith("/Microsoft.Testing.Platform.dll", StringComparison.OrdinalIgnoreCase))));
+        TestDiscoveryResult empty = new([], []);
+        Assert.AreEqual(1, (await DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, CancellationToken.None)).Warnings.Count);
         TestDiscoveryResult result = await new DotNetTestDiscoveryService().DiscoverAsync(assembly, AppContext.BaseDirectory);
         Assert.IsTrue(result.Cases.Any(test => test.FullyQualifiedName.Contains(
             nameof(DotNetTestExecutionServiceTests), StringComparison.Ordinal)));

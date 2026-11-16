@@ -103,6 +103,86 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
     }
 
     [TestMethod]
+    public async Task AnalyzeAsync_RealProjectWithCaseDistinctSourcesRequiresBothDocuments()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Assert.Inconclusive("This test requires case-sensitive platform path identity.");
+        }
+
+        string root = Path.Combine(
+            Environment.GetEnvironmentVariable("AA98_LANGUAGE_TEST_ROOT") ?? Directory.GetCurrentDirectory(),
+            $"LanguageDiagnosticsRealCase_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string upperPath = Path.Combine(root, "Source.cs");
+            string lowerPath = Path.Combine(root, "source.cs");
+            const string upperSource = "public class Upper { public static int Value => 123; public string Error() => 123; }";
+            const string lowerSource = "public class Lower { public int Read() => Upper.Value; public int Error() => MissingName; }";
+            await File.WriteAllTextAsync(upperPath, upperSource);
+            if (File.Exists(lowerPath))
+            {
+                Assert.Inconclusive("The test directory is on a case-insensitive filesystem.");
+            }
+
+            await File.WriteAllTextAsync(lowerPath, lowerSource);
+            await File.WriteAllTextAsync(projectPath,
+                $"<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net{Environment.Version.Major}.0</TargetFramework><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup><ItemGroup><Compile Include=\"Source.cs\" /><Compile Include=\"source.cs\" /></ItemGroup></Project>");
+            await RunFixtureAsync("restore", projectPath);
+            CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(projectPath);
+            using CSharpSyntaxDiagnosticService service = new();
+            IReadOnlyList<Diagnostic> upperDiagnostics = await service.AnalyzeAsync(upperSource, upperPath, workspace);
+
+            var contexts = (System.Collections.IDictionary)typeof(CSharpSyntaxDiagnosticService)
+                .GetField("_projectContexts", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+                .GetValue(service)!;
+            object context = contexts.Values.Cast<object>().Single();
+            var roslynWorkspace = (Microsoft.CodeAnalysis.Workspace)context.GetType()
+                .GetProperty("Workspace")!.GetValue(context)!;
+            string[] loadedPaths = roslynWorkspace.CurrentSolution.Projects.Single().Documents
+                .Select(document => document.FilePath!)
+                .Where(path => path is not null)
+                .ToArray();
+            if (!loadedPaths.Contains(upperPath, StringComparer.Ordinal)
+                || !loadedPaths.Contains(lowerPath, StringComparer.Ordinal))
+            {
+                Assert.Inconclusive("MSBuildWorkspace did not load both case-distinct Compile items: "
+                    + string.Join(", ", loadedPaths));
+            }
+
+            IReadOnlyList<Diagnostic> lowerDiagnostics = await service.AnalyzeAsync(lowerSource, lowerPath, workspace);
+            Assert.IsTrue(upperDiagnostics.Any(diagnostic => diagnostic.Code == "CS0029" && diagnostic.SourcePath == upperPath));
+            Assert.IsFalse(upperDiagnostics.Any(diagnostic => diagnostic.Code == "CS0103"));
+            Assert.IsTrue(lowerDiagnostics.Any(diagnostic => diagnostic.Code == "CS0103" && diagnostic.SourcePath == lowerPath));
+            Assert.IsFalse(lowerDiagnostics.Any(diagnostic => diagnostic.Code is "CS0029" or "CS0246"));
+            Assert.AreEqual(1, lowerDiagnostics.Count(diagnostic => diagnostic.Code == "CS0103"));
+            string? quickInfo = await service.GetQuickInfoAsync(
+                lowerSource, lowerPath, lowerSource.IndexOf("Upper.Value", StringComparison.Ordinal) + "Upper.".Length,
+                workspace);
+            Assert.IsNotNull(quickInfo);
+            Assert.IsTrue(quickInfo.Contains("Value", StringComparison.Ordinal));
+
+            var openTexts = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                [upperPath] = upperSource.Replace("int Value", "string Value", StringComparison.Ordinal),
+                [lowerPath] = lowerSource,
+            };
+            IReadOnlyList<Diagnostic> editedLowerDiagnostics =
+                await service.AnalyzeAsync(lowerSource, lowerPath, workspace, openDocumentTexts: openTexts);
+            Assert.IsTrue(editedLowerDiagnostics.Any(diagnostic =>
+                diagnostic.Code == "CS0029" && diagnostic.SourcePath == lowerPath));
+            Assert.AreEqual(upperSource, await File.ReadAllTextAsync(upperPath));
+            Assert.AreEqual(lowerSource, await File.ReadAllTextAsync(lowerPath));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task AnalyzeAsync_CaseDistinctSourceFilesReportOnlyTheirOwnDiagnostics()
     {
         if (OperatingSystem.IsWindows())
