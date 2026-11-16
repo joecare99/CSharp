@@ -16,6 +16,23 @@ Review scope: Windows/.NET 10 build and test run, documented Workbench desktop s
 
 ## Medium priority
 
+### Workbench syntax colors are unreadable on dark backgrounds
+
+The AvaloniaEdit C# definition used dark fixed syntax colors on the Workbench's
+dark background. The light variant also inherited fixed dark Workbench surfaces,
+making its Fluent foreground text unreadable.
+
+**Status after follow-up:** The editor loads independent light/dark versions of
+the existing C# and XML-documentation highlighting definitions with contrasting
+foreground colors. Workbench, menu and status surfaces now follow the theme.
+Programmatic Windows and WSLg/net10 theme smokes check contrast for representative
+highlighted text, menu, editor and status, theme switching and editor undo/redo;
+WSLg screenshots were visually inspected. The View menu now exposes a localized
+light-theme toggle; dark remains the startup default and the selection is
+session-only. The menu updates the theme through both automation invoke and
+toggle and reflects application theme changes. These programmatic checks do not
+constitute a full accessibility, high-DPI or physical-display assessment.
+
 ### Windows and Linux can collide in shared build artifacts
 
 **Location:** `AA98_AvlnCodeStudio.props:1-12`, `Solution.props:3-5`, `tools/ReleaseAcceptance/README.md:46-51`, `tools/WorkbenchMvvmSmoke/README.md:9-13`
