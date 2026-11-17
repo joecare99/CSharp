@@ -145,9 +145,13 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
             await connection.SendRequestAsync("configurationDone", new { }, cancellationToken).ConfigureAwait(false);
             if (request.StopAtEntry)
             {
-                await session.InitialStop.Task
+                bool stopped = await session.InitialStop.Task
                     .WaitAsync(TimeSpan.FromSeconds(10), cancellationToken)
                     .ConfigureAwait(false);
+                if (!stopped)
+                {
+                    throw new InvalidOperationException("The debuggee exited before reaching its entry point.");
+                }
             }
 
             if (session.State == DebugSessionState.Starting)
@@ -461,7 +465,11 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
 
         if (eventName == "stopped")
         {
-            session.InitialStop.TrySetResult();
+            session.InitialStop.TrySetResult(true);
+        }
+        else if (eventName is "terminated" or "exited")
+        {
+            session.InitialStop.TrySetResult(false);
         }
 
         SessionEventReceived?.Invoke(this, new DebugSessionEventArgs
@@ -540,7 +548,7 @@ public sealed class NetCoreDbgDebugSessionService : IDebugSessionService
 
         public int StoppedThreadId;
 
-        public TaskCompletionSource InitialStop { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource<bool> InitialStop { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
         public DebugSessionState State { get; set; } = DebugSessionState.Starting;
     }
