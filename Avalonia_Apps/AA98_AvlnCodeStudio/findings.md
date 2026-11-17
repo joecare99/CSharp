@@ -106,7 +106,40 @@ foreach ($tfm in 'net8.0','net9.0') {
 }
 ```
 
-**Limitations/next step:** Full suites, Linux, net10 behavior and SDK 10's runner were not tested for this final variant. No product fix, minimal compatible graph, or support for end-of-support net8/net9 runtimes is claimed. Review all affected direct and transitive constraints and warning-bearing dependencies; if adopting an aligned graph, validate it without suppression in the actual coordinated solution and run full suites on both platforms and supported deployment targets.
+**Limitations/next step:** At the end of the Windows investigation, full suites, Linux, net10 behavior and SDK 10's runner had not been tested for this final variant; see the Linux follow-up below for subsequent results. No product fix, minimal compatible graph, or support for end-of-support net8/net9 runtimes is claimed. Review all affected direct and transitive constraints and warning-bearing dependencies; if adopting an aligned graph, validate it without suppression in the actual coordinated solution and run full suites on both platforms and supported deployment targets.
+
+**Isolated aligned-graph Linux follow-up (2026-11-18):** WSL2 Ubuntu 26.04 x64, kernel 6.18.40.1, has SDKs 10.0.402, 10.0.403 and 10.0.404; SDK 10.0.404 was used. The only installed Microsoft.NETCore.App and Microsoft.AspNetCore.App runtimes are 10.0.13, 10.0.14 and 10.0.15. There is **no net8 or net9 runtime**, so Linux execution/acceptance of those targets is blocked; they were not run using a major-version roll-forward. No SDK, runtime or network package was installed.
+
+The same experimental copy above was restored using only the existing Linux NuGet cache as a package source, with separate Linux package, CLI, HTTP-cache, fixture, intermediate and output directories under `artifacts\fleet-supported-graph-copy-84671c27\linux-check-20261118`. This did not use or overwrite the Windows `out-final-verified` assets, modify product manifests, or suppress warnings. Full-graph forced restore succeeded (13 NU1701 warning lines). The Linux test assets resolve Hosting, DI, DI.Abstractions, Logging.Abstractions and STJ 10.0.14 on both net8 and net9, Test SDK/TestHost/ObjectModel/TranslationLayer 18.12.0 and MSTest 4.5.3. On net10 the named Extensions and test packages have the same versions; STJ is not a package in that target's assets. `--no-restore` builds succeeded for net8 (25 warnings), net9 (23), and net10 (35), each with zero errors. Warnings include NU1701 and the Microsoft.Build.Utilities.Core and Microsoft.NET.StringTools 18.12.2 net10 support warnings. Building older targets does not establish that they run on Linux.
+
+As a separate **net10-only experiment**, VSTest passed 5/5 focused tests (three AppContext contracts and both NUnit/xUnit parameterized fixture discovery/execution tests), 11/11 DotNetTestExecutionService/VSTestRunResult tests, and 16 passed/4 skipped in CSharpSyntaxDiagnosticServiceTests. The syntax set overlaps the focused set. On the case-insensitive mounted checkout, three case-sensitive path tests skipped; the Windows-specific case-alias test also skipped. These are not full-suite, debugger-path, net8/net9 or product-support results. Logs and TRX files are retained in the Linux directory (`restore.log`, `build-net*.log`, `test-*-net10.log`, `results\*.trx`).
+
+Commands from the original workspace root under WSL (fixture-generated restores also use the existing cache via fixture-only `NuGet.Config`; `TMPDIR` remains in the isolated Linux directory):
+
+```bash
+base="$PWD/artifacts/fleet-supported-graph-copy-84671c27"
+run="$base/linux-check-20261118"
+mkdir -p "$run/fixture" "$run/packages" "$run/cli" "$run/http-cache" "$run/results"
+export PATH="$HOME/.dotnet:$PATH"
+export DOTNET_CLI_HOME="$run/cli" NUGET_PACKAGES="$run/packages" NUGET_HTTP_CACHE_PATH="$run/http-cache" TMPDIR="$run/fixture"
+export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 DOTNET_CLI_TELEMETRY_OPTOUT=1
+printf '%s\n' '<Project><PropertyGroup><ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally></PropertyGroup></Project>' > "$TMPDIR/Directory.Packages.props"
+printf '<configuration><packageSources><clear/><add key="cached" value="%s/.nuget/packages" /></packageSources></configuration>\n' "$HOME" > "$TMPDIR/NuGet.Config"
+cd "$base/Avalonia_Apps/AA98_AvlnCodeStudio"
+project=AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj
+common=("-p:HostArtifactRoot=$run/out" "-p:CustomAfterDirectoryBuildProps=$PWD/tools/build/IsolatedArtifacts.props" "-p:RestoreFallbackFolders=")
+dotnet restore "$project" "${common[@]}" --source "$HOME/.nuget/packages" --force --verbosity minimal
+for tfm in net8.0 net9.0 net10.0; do dotnet build "$project" "${common[@]}" --no-restore -f "$tfm" --verbosity quiet; done
+focused='FullyQualifiedName~AppContextContractTests|FullyQualifiedName~FindTestMethodCandidatesAsync_NUnitCandidateRunsParameterizedCases|FullyQualifiedName~FindTestMethodCandidatesAsync_XunitCandidateRunsParameterizedCases'
+broader='FullyQualifiedName~DotNetTestExecutionServiceTests|FullyQualifiedName~VSTestRunResultTests'
+syntax='FullyQualifiedName~CSharpSyntaxDiagnosticServiceTests'
+for group in focused broader syntax; do
+  filter="${!group}"
+  dotnet test "$project" "${common[@]}" --no-build --no-restore -f net10.0 --filter "$filter" --blame-hang-timeout 4m --logger "trx;LogFileName=$group-net10.trx" --results-directory "$run/results" --verbosity minimal
+done
+```
+
+**Next step:** In an appropriately provisioned Linux environment with actual net8 and net9 runtimes, repeat clean isolated restore/build and focused tests on each runtime, including adapter discovery, then run complete suites and case-sensitive filesystem checks. Investigate existing warnings and dependency compatibility before any adoption. No installation was attempted in this WSL environment, and neither the net10 experiment nor the Windows results constitute Linux net8/net9 acceptance.
 
 **Roslyn downgrade follow-up:** A subsequent isolated Linux restore reported `NU1605`: the external `Workbench.Builder.Core` project now requires `Microsoft.CodeAnalysis.CSharp` 5.12.0, while the Workbench directly references central version 5.9.0. The AXAML resource tests passed only after retrying with `NoWarn=NU1605`; this is not a clean restore or proof of compatibility. The external project change was not reverted, and the package graph needs deliberate alignment and validation.
 
