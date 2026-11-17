@@ -14,3 +14,8 @@ temporary net10 debuggee and drives the real Workbench project selection,
 inspection, build, runtime refresh and DAP services. It verifies stop-at-entry,
 a source breakpoint, stack and local-variable inspection, step-over, continue
 and stop. The temporary project uses no user source files or credentials.
+
+When stop-at-entry is requested and the debuggee exits or the adapter reports
+termination before the first stop, startup fails as soon as configuration
+completes instead of waiting for the entry-stop timeout. Cancellation still
+cleans up the adapter.
