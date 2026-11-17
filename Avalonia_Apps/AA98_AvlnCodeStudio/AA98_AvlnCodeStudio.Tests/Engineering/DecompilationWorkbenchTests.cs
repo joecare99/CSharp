@@ -1,10 +1,12 @@
 using System;
 using System.IO;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AA98_AvlnCodeStudio.Decompilation;
 using AA98_AvlnCodeStudio.UI.ViewModels;
+using AA98_AvlnCodeStudio.UI.Resources;
 using Code.Navigation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -15,6 +17,28 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class DecompilationWorkbenchTests
 {
     private static AssemblyTypeInfo Type(string name) => new(name, name, 1, true, [], [], []);
+
+    [TestMethod]
+    public async Task GermanResourcesLocalizeStatusAndPreserveErrorDetails()
+    {
+        CultureInfo? previous = UiStrings.Culture;
+        try
+        {
+            UiStrings.Culture = CultureInfo.GetCultureInfo("de-DE");
+            IAssemblyDecompilationService service = Substitute.For<IAssemblyDecompilationService>();
+            service.InspectAsync("bad", Arg.Any<CancellationToken>()).Returns<Task<AssemblyInspection>>(_ => throw new IOException("details"));
+            using DecompilationWorkbench workbench = new(service);
+            Assert.AreEqual("Eine verwaltete Assembly zur Untersuchung auswählen.", workbench.Status);
+            await workbench.InspectAsync("bad");
+            Assert.AreEqual("Assembly kann nicht untersucht werden: details", workbench.Status);
+            Assert.AreEqual("Assembly-Typen", UiStrings.DecompileTypesLabel);
+            Assert.AreEqual("Assembly dekompilieren...", UiStrings.DecompileAssemblyMenuText);
+        }
+        finally
+        {
+            UiStrings.Culture = previous;
+        }
+    }
 
     [TestMethod]
     public async Task RealAssembly_ExplicitTypeProducesNavigableArtifact()
@@ -54,7 +78,7 @@ public sealed class DecompilationWorkbenchTests
         await workbench.InspectAsync("empty");
         Assert.AreEqual(0, workbench.Types.Count);
         Assert.IsNull(workbench.SelectedType);
-        StringAssert.Contains(workbench.Status, "No types");
+        Assert.AreEqual(UiStrings.DecompileNoTypesText, workbench.Status);
         await workbench.InspectAsync("bad");
         Assert.IsNull(workbench.Assembly);
         StringAssert.Contains(workbench.Status, "bad input");

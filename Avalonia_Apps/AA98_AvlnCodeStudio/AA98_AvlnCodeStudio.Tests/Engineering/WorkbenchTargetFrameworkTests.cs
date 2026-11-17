@@ -146,6 +146,25 @@ public sealed class WorkbenchTargetFrameworkTests
             vm.SelectedWorkflowFramework = "net10.0";
             await vm.RequestQuickInfoCommand.ExecuteAsync(null);
             StringAssert.Contains(vm.QuickInfoText, "OnlyTen");
+
+            var sourceTab = vm.ActiveEditorTab;
+            vm.Editor.NotificationText = string.Empty;
+            await gate.WaitAsync();
+            try
+            {
+                pending = vm.GoToDefinitionCommand.ExecuteAsync(null);
+                Assert.IsFalse(pending.IsCompleted);
+                vm.SelectedWorkflowFramework = "net9.0";
+            }
+            finally
+            {
+                gate.Release();
+            }
+            await pending;
+            Assert.AreSame(sourceTab, vm.ActiveEditorTab);
+            Assert.IsFalse(vm.Editor.NotificationText.Contains("No source definition", StringComparison.Ordinal));
+            Assert.AreEqual(Fixture.SavedApi, await File.ReadAllTextAsync(fixture.ApiPath));
+            Assert.AreEqual(Fixture.SavedConsumer, await File.ReadAllTextAsync(fixture.ConsumerPath));
         });
     }
 
@@ -192,6 +211,15 @@ public sealed class WorkbenchTargetFrameworkTests
             await vm.RequestQuickInfoCommand.ExecuteAsync(null);
             Assert.IsFalse(vm.QuickInfoText.Contains("OnlyTen", StringComparison.Ordinal));
             await WaitUntilAsync(() => vm.Editor.NotificationText.Contains("multiple workspace projects", StringComparison.Ordinal));
+
+            var sourceTab = vm.ActiveEditorTab;
+            int position = editor.CaretOffset;
+            await vm.GoToDefinitionCommand.ExecuteAsync(null);
+            Assert.AreSame(sourceTab, vm.ActiveEditorTab);
+            Assert.AreEqual(position, editor.CaretOffset);
+            StringAssert.Contains(vm.Editor.NotificationText, "No source definition");
+            Assert.AreEqual(Fixture.SavedApi, await File.ReadAllTextAsync(fixture.ApiPath));
+            Assert.AreEqual(Fixture.SavedConsumer, await File.ReadAllTextAsync(fixture.ConsumerPath));
         });
     }
 

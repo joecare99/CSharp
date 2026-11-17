@@ -77,6 +77,45 @@ public sealed class AxamlPreviewServiceTests
     }
 
     [TestMethod]
+    public void CanvasTrailingCoordinates_PreservePrefixesAndRejectAmbiguousMarkup()
+    {
+        const string markup = "<av:Canvas xmlns:av='https://github.com/avaloniaui'><av:Button av:Canvas.Right='12.5' /></av:Canvas>";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode canvas = service.Parse(markup);
+        AxamlPreviewNode button = canvas.Children.Single();
+        Assert.IsTrue(canvas.IsSupported);
+        Assert.IsTrue(service.GetEditableProperties(button).Contains("Canvas.Right"));
+        Assert.IsTrue(service.GetEditableProperties(button).Contains("Canvas.Bottom"));
+        Assert.AreEqual("12.5", button.Properties["Canvas.Right"]);
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "Canvas.Right", "Infinity"));
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("Button", "Canvas.Bottom", "-100001"));
+
+        string updated = service.UpdateAttribute(markup, button, "Canvas.Right", "-4.25");
+        StringAssert.Contains(updated, "av:Canvas.Right='-4.25'");
+        updated = service.UpdateAttribute(updated, service.Parse(updated).Children.Single(), "Canvas.Bottom", "3");
+        StringAssert.Contains(updated, "av:Canvas.Bottom=\"3\"");
+        Assert.ThrowsExactly<InvalidDataException>(() => service.UpdateAttribute(
+            markup.Replace("12.5", "13.5", StringComparison.Ordinal), button, "Canvas.Right", "4"));
+
+        string[] ambiguous =
+        [
+            "<Canvas><Button Canvas.Right='{Binding X}' /></Canvas>",
+            "<Canvas xmlns:a='https://github.com/avaloniaui'><Button Canvas.Right='1' a:Canvas.Right='2' /></Canvas>",
+            "<Canvas xmlns:f='urn:foreign'><Button f:Canvas.Bottom='2' /></Canvas>",
+            "<a:Canvas xmlns:a='https://github.com/avaloniaui'><a:Button Canvas.Right='2' /></a:Canvas>",
+            "<Canvas><Button Canvas.Bottom='' /></Canvas>",
+            "<Canvas><Button><Canvas.Right>3</Canvas.Right></Button></Canvas>",
+        ];
+        foreach (string source in ambiguous)
+        {
+            AxamlPreviewNode unsafeCanvas = service.Parse(source);
+            Assert.IsFalse(unsafeCanvas.IsSupported, source);
+            Assert.ThrowsExactly<InvalidOperationException>(
+                () => service.UpdateAttribute(source, unsafeCanvas.Children.Single(), "Canvas.Right", "4"), source);
+        }
+    }
+
+    [TestMethod]
     public void DockPanelPlacement_IsEditableOnlyForDirectChildrenAndPreservesNamespace()
     {
         const string markup =

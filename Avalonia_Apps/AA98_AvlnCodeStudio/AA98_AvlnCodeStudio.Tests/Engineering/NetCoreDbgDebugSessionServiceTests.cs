@@ -100,6 +100,81 @@ public sealed class NetCoreDbgDebugSessionServiceTests
     }
 
     [TestMethod]
+    public async Task StartSession_StopAtEntryReportsEarlyExitAndCleansUpOnCancellation()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_NetCoreDbgEntry_{Guid.NewGuid():N}");
+        string outputDirectory = Path.Combine(root, "output");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "FakeAdapter.csproj");
+            File.WriteAllText(projectPath,
+                $"""
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <OutputType>Exe</OutputType>
+                    <TargetFramework>net{Environment.Version.Major}.0</TargetFramework>
+                    <ImplicitUsings>enable</ImplicitUsings>
+                    <Nullable>enable</Nullable>
+                  </PropertyGroup>
+                </Project>
+                """);
+            File.WriteAllText(Path.Combine(root, "Program.cs"), FakeAdapterSource);
+            await BuildFakeAdapterAsync(projectPath, outputDirectory);
+            string adapterPath = Path.Combine(outputDirectory, OperatingSystem.IsWindows() ? "FakeAdapter.exe" : "FakeAdapter");
+            var service = new NetCoreDbgDebugSessionService(adapterPath);
+            TaskCompletionSource ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            service.SessionEventReceived += (_, args) =>
+            {
+                if (args.EventName == "entry-wait-ready")
+                {
+                    ready.TrySetResult();
+                }
+            };
+            foreach (string mode in new[] { "exited", "terminated", "wait" })
+            {
+                string marker = Path.Combine(root, $"adapter-entry-{mode}");
+                DebugLaunchRequest request = new()
+                {
+                    Target = typeof(NetCoreDbgDebugSessionService).Assembly.Location,
+                    WorkingDirectory = root,
+                    StopAtEntry = true,
+                };
+                request.Arguments.Add(mode);
+                using CancellationTokenSource cancellation = new();
+                Task<DebugSessionInfo> start = service.StartSessionAsync(request, cancellation.Token);
+                if (mode == "wait")
+                {
+                    await ready.Task.WaitAsync(TimeSpan.FromSeconds(10));
+                    cancellation.Cancel();
+                    await Assert.ThrowsAsync<OperationCanceledException>(() => start.WaitAsync(TimeSpan.FromSeconds(5)));
+                }
+                else
+                {
+                    InvalidOperationException error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+                        () => start.WaitAsync(TimeSpan.FromSeconds(5)));
+                    StringAssert.Contains(error.Message, "exited before reaching its entry point");
+                }
+
+                int adapterProcessId = int.Parse(await File.ReadAllTextAsync(marker));
+                try
+                {
+                    using Process adapter = Process.GetProcessById(adapterProcessId);
+                    Assert.IsTrue(adapter.HasExited, "The failed or cancelled start must clean up the adapter.");
+                }
+                catch (ArgumentException)
+                {
+                    // The exited adapter is no longer present in the process table.
+                }
+            }
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     [TestCategory("Integration")]
     public async Task StartAndStopSession_UsesInstalledNetCoreDbgWhenConfigured()
     {
@@ -412,6 +487,7 @@ public sealed class NetCoreDbgDebugSessionServiceTests
         Stream output = Console.OpenStandardOutput();
         int responseSequence = 0;
         bool attached = false;
+        string? entryMode = null;
 
         while (true)
         {
@@ -437,9 +513,20 @@ public sealed class NetCoreDbgDebugSessionServiceTests
             using JsonDocument request = JsonDocument.Parse(content);
             JsonElement root = request.RootElement;
             string command = root.GetProperty("command").GetString()!;
+            if (command == "launch")
+            {
+                JsonElement args = root.GetProperty("arguments").GetProperty("args");
+                entryMode = args.GetArrayLength() > 0 ? args[0].GetString() : null;
+            }
+            if (command == "configurationDone" && entryMode is "exited" or "terminated" or "wait")
+            {
+                File.WriteAllText($"adapter-entry-{entryMode}", Environment.ProcessId.ToString());
+            }
             object? eventBody = command switch
             {
                 "continue" => new { threadId = 1, allThreadsContinued = true },
+                "configurationDone" when entryMode is "exited" or "terminated" => new { },
+                "configurationDone" when entryMode == "wait" => null,
                 "configurationDone" => new { reason = "entry", threadId = 1, allThreadsStopped = true },
                 "pause" => new { reason = "breakpoint", threadId = 2, allThreadsStopped = true },
                 _ => null,
@@ -449,6 +536,7 @@ public sealed class NetCoreDbgDebugSessionServiceTests
                 string eventName = command switch
                 {
                     "continue" => "continued",
+                    "configurationDone" when entryMode is "exited" or "terminated" => entryMode,
                     "configurationDone" or "pause" => "stopped",
                     _ => throw new InvalidOperationException($"Unexpected event-producing command '{command}'."),
                 };
@@ -544,6 +632,20 @@ public sealed class NetCoreDbgDebugSessionServiceTests
             await output.WriteAsync(header);
             await output.WriteAsync(response);
             await output.FlushAsync();
+
+            if (command == "configurationDone" && entryMode == "wait")
+            {
+                byte[] ready = JsonSerializer.SerializeToUtf8Bytes(new
+                {
+                    seq = ++responseSequence,
+                    type = "event",
+                    @event = "entry-wait-ready",
+                });
+                byte[] readyHeader = Encoding.ASCII.GetBytes($"Content-Length: {ready.Length}\r\n\r\n");
+                await output.WriteAsync(readyHeader);
+                await output.WriteAsync(ready);
+                await output.FlushAsync();
+            }
 
             if (command == "disconnect")
             {
