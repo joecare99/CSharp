@@ -115,7 +115,7 @@ public sealed class AxamlPreviewService
 
         return node.ParentTypeName switch
         {
-            "Canvas" => [.. capability.EditableProperties, "Canvas.Left", "Canvas.Top"],
+            "Canvas" => [.. capability.EditableProperties, "Canvas.Left", "Canvas.Top", "Canvas.Right", "Canvas.Bottom"],
             "DockPanel" => [.. capability.EditableProperties, "DockPanel.Dock"],
             "Grid" when node.ParentHasSafeGridLayout =>
                 [.. capability.EditableProperties, "Grid.Row", "Grid.Column", "Grid.RowSpan", "Grid.ColumnSpan"],
@@ -139,7 +139,7 @@ public sealed class AxamlPreviewService
 
     public string UpdateAttribute(string axaml, AxamlPreviewNode node, string propertyName, string value)
     {
-        if (propertyName is "Canvas.Left" or "Canvas.Top" && node.ParentTypeName == "Canvas")
+        if (propertyName is "Canvas.Left" or "Canvas.Top" or "Canvas.Right" or "Canvas.Bottom" && node.ParentTypeName == "Canvas")
         {
             return UpdateCanvasPosition(axaml, node, propertyName, value);
         }
@@ -232,7 +232,7 @@ public sealed class AxamlPreviewService
                 && capability.BindableProperties.Any(property => property.Name == propertyName)
                 && !node.PropertyElementNames.Contains($"{node.TypeName}.{propertyName}", StringComparer.Ordinal))
             && !(allowQualifiedAttachedProperty
-                && propertyName is "Grid.Row" or "Grid.Column" or "Canvas.Left" or "Canvas.Top" or "DockPanel.Dock"
+                && propertyName is "Grid.Row" or "Grid.Column" or "Canvas.Left" or "Canvas.Top" or "Canvas.Right" or "Canvas.Bottom" or "DockPanel.Dock"
                 && node.IsSupported
                 && node.SourceStartOffset >= 0))
         {
@@ -1342,6 +1342,7 @@ public sealed class AxamlPreviewService
             throw new InvalidOperationException($"The '{propertyName}' value is invalid: {validationError}");
         }
 
+        ValidateSourceTag(axaml, child);
         AxamlPreviewNode root = Parse(axaml);
         AxamlPreviewNode currentChild = FindNodeAtSourceOffset(root, child.SourceStartOffset)
             ?? throw new InvalidDataException("The selected Canvas child no longer exists in the AXAML source.");
@@ -2019,7 +2020,7 @@ public sealed class AxamlPreviewService
                 StringComparer.Ordinal);
         foreach (XAttribute attribute in element.Attributes().Where(static attribute =>
             attribute.Name.Namespace == s_avaloniaNamespace
-            && attribute.Name.LocalName is "Grid.Row" or "Grid.Column" or "Grid.RowSpan" or "Grid.ColumnSpan" or "DockPanel.Dock" or "Canvas.Left" or "Canvas.Top"))
+            && attribute.Name.LocalName is "Grid.Row" or "Grid.Column" or "Grid.RowSpan" or "Grid.ColumnSpan" or "DockPanel.Dock" or "Canvas.Left" or "Canvas.Top" or "Canvas.Right" or "Canvas.Bottom"))
         {
             properties.TryAdd(attribute.Name.LocalName, attribute.Value);
         }
@@ -2145,6 +2146,10 @@ public sealed class AxamlPreviewService
             PropertyElementNames = propertyElementNames,
             Properties = properties,
             PreviewProperties = previewProperties,
+            BorderBackgroundGradient = typeName == "Border"
+                && properties.TryGetValue("Background", out string? background)
+                    ? resources.TryBorderGradient(element, background)
+                    : null,
             Children = children,
             RowDefinitions = rowDefinitions,
             ColumnDefinitions = columnDefinitions,
@@ -2496,16 +2501,26 @@ public sealed class AxamlPreviewService
                 return false;
             }
 
+            if (child.Elements().Any(static element =>
+                    element.Name.LocalName is "Canvas.Left" or "Canvas.Top" or "Canvas.Right" or "Canvas.Bottom"))
+            {
+                return false;
+            }
+
             XAttribute[] positions = child.Attributes()
-                .Where(static attribute => attribute.Name.LocalName is "Canvas.Left" or "Canvas.Top")
+                .Where(static attribute => attribute.Name.LocalName is "Canvas.Left" or "Canvas.Top" or "Canvas.Right" or "Canvas.Bottom")
                 .ToArray();
             if (positions.Any(static attribute =>
                     attribute.Name.Namespace != XNamespace.None
                     && attribute.Name.Namespace != s_avaloniaNamespace)
+                || child.Name.Namespace == s_avaloniaNamespace
+                    && child.GetDefaultNamespace() != s_avaloniaNamespace
+                    && positions.Any(static attribute => attribute.Name.Namespace == XNamespace.None)
                 || positions.GroupBy(static attribute => attribute.Name.LocalName, StringComparer.Ordinal)
                     .Any(static group => group.Count() > 1)
                 || positions.Any(attribute =>
-                    AxamlPropertyValueValidator.Validate(
+                    string.IsNullOrWhiteSpace(attribute.Value)
+                    || AxamlPropertyValueValidator.Validate(
                         child.Name.LocalName,
                         attribute.Name.LocalName,
                         attribute.Value) is not null))

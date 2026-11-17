@@ -114,6 +114,101 @@ internal sealed class AxamlPreviewResources(string? documentPath, string? projec
         return TryResx(nsText[prefix.Length..], match.Groups[2].Value, match.Groups[3].Value, out result);
     }
 
+    public AxamlPreviewLinearGradient? TryBorderGradient(XElement element, string value)
+    {
+        if (!TryResourceReference(value, out string? key))
+        {
+            return null;
+        }
+
+        LoadApplication();
+        IEnumerable<XElement> owners = element.AncestorsAndSelf();
+        if (_application is not null && !owners.Contains(_application))
+        {
+            owners = owners.Append(_application);
+        }
+
+        foreach (XElement owner in owners)
+        {
+            XElement[] entries = owner.Elements()
+                .Where(e => IsAvalonia(e, owner.Name.LocalName + ".Resources"))
+                .SelectMany(e => e.Elements().Take(513)).ToArray();
+            if (entries.Length > 512 || entries.Any(e => IsAvalonia(e, "ResourceDictionary")))
+            {
+                return null;
+            }
+
+            XElement[] matches = entries.Where(e => (string?)e.Attribute(s_xaml + "Key") == key).Take(2).ToArray();
+            if (matches.Length != 0)
+            {
+                return matches.Length == 1 ? ParseGradient(matches[0]) : null;
+            }
+        }
+
+        return null;
+    }
+
+    private static AxamlPreviewLinearGradient? ParseGradient(XElement brush)
+    {
+        if (!IsAvalonia(brush, "LinearGradientBrush")
+            || !OnlyAttributes(brush, s_xaml + "Key", "StartPoint", "EndPoint")
+            || !TryPoint((string?)brush.Attribute("StartPoint"), out double startX, out double startY)
+            || !TryPoint((string?)brush.Attribute("EndPoint"), out double endX, out double endY)
+            || HasUnsupportedNodes(brush))
+        {
+            return null;
+        }
+
+        XElement[] containers = brush.Elements().ToArray();
+        if (containers.Length != 1 || !IsAvalonia(containers[0], "LinearGradientBrush.GradientStops")
+            || !OnlyAttributes(containers[0]) || HasUnsupportedNodes(containers[0]))
+        {
+            return null;
+        }
+
+        XElement[] stops = containers[0].Elements().Take(33).ToArray();
+        if (stops.Length is < 2 or > 32)
+        {
+            return null;
+        }
+
+        List<AxamlPreviewGradientStop> result = [];
+        foreach (XElement stop in stops)
+        {
+            string? color = (string?)stop.Attribute("Color");
+            if (!IsAvalonia(stop, "GradientStop") || !OnlyAttributes(stop, "Offset", "Color")
+                || stop.HasElements || HasUnsupportedNodes(stop)
+                || !double.TryParse((string?)stop.Attribute("Offset"), NumberStyles.Float, CultureInfo.InvariantCulture, out double offset)
+                || !double.IsFinite(offset) || offset is < 0 or > 1
+                || color is null || !Regex.IsMatch(color, @"^#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$", RegexOptions.CultureInvariant))
+            {
+                return null;
+            }
+
+            result.Add(new AxamlPreviewGradientStop(offset, color));
+        }
+
+        return new AxamlPreviewLinearGradient(startX, startY, endX, endY, result);
+    }
+
+    private static bool OnlyAttributes(XElement element, params XName[] names) =>
+        element.Attributes().All(a => a.IsNamespaceDeclaration || names.Contains(a.Name));
+
+    private static bool HasUnsupportedNodes(XElement element) =>
+        element.Nodes().Any(node => node is not XElement
+            && (node is not XText text || !string.IsNullOrWhiteSpace(text.Value)));
+
+    private static bool TryPoint(string? value, out double x, out double y)
+    {
+        x = y = 0;
+        string[] parts = value?.Split(',', StringSplitOptions.TrimEntries) ?? [];
+        return value is { Length: <= 64 } && parts.Length == 2
+            && double.TryParse(parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out x)
+            && double.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out y)
+            && double.IsFinite(x) && double.IsFinite(y)
+            && x is >= -10000 and <= 10000 && y is >= -10000 and <= 10000;
+    }
+
     private bool TryLiteral(XElement element, string value, out string? result)
     {
         if (value.TrimStart().StartsWith('{'))

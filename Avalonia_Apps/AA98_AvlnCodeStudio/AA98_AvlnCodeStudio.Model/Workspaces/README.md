@@ -205,6 +205,9 @@ physical keyboard, screen-reader or accessibility acceptance test.
 
 ## AXAML structure editing
 
+The inert resource and style preview, including its safety limits and Grid
+background support, is described in [AxamlPreviewResources.md](AxamlPreviewResources.md).
+
 The Workbench and standalone designers also select preview elements by clicking their inert
 visuals, or by moving the source-editor caret inside an element. Tree,
 inspector and preview follow the same selection; selecting in the tree or
@@ -262,6 +265,17 @@ qualified with an Avalonia namespace prefix. Duplicate, foreign-namespace
 and unresolved unqualified placements are rejected. Insertions and missing
 placement attributes use an in-scope prefix when needed; no namespace
 declaration is rewritten.
+
+For direct children of a simple Canvas, the inspector also edits literal
+`Canvas.Left`, `Canvas.Top`, `Canvas.Right` and `Canvas.Bottom` offsets.
+The inert preview applies the same attached properties; unset offsets remain
+unset. When both sides of an axis are set, Avalonia gives Left or Top
+precedence. Values must be finite and between -100000 and 100000; clearing
+an editor removes its attribute. Bindings, property-element placements,
+duplicate or foreign-namespace coordinates and ambiguous Canvas content
+block structural and coordinate edits rather than being rewritten. Edits
+preserve supported prefixes and quotes and participate in session undo/redo.
+New Canvas children still start at the existing staggered Left/Top positions.
 
 Operations preserve the surrounding source. Direct panel comments and other
 ambiguous content block changes; moving a whole subtree preserves its nested

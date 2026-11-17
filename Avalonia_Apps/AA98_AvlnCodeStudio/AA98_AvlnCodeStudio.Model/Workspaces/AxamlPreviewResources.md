@@ -39,17 +39,36 @@ or a local `ResourceDictionary` is present, that setter is omitted rather than
 guessing Avalonia's resource semantics. Included-style other markup extensions
 are ignored. Direct control references still use local-then-application lookup.
 This approximation does not claim Avalonia cascade parity. Theme dictionaries, templates,
-pseudo-classes, complex selectors, gradients, resource dictionaries and
+pseudo-classes, complex selectors, resource dictionaries and
 arbitrary objects are not loaded. Resource aliases cannot invoke other markup
 extensions.
+
+Direct `Border.Background` resource references additionally support a bounded
+literal `LinearGradientBrush` in inline or application resources, including the
+AA05 sidebar. Both endpoints must be explicit absolute numeric pairs; two to
+32 explicit stops must have finite offsets in [0,1] and six- or eight-digit
+hexadecimal colors. Only the `LinearGradientBrush.GradientStops` property-element
+form and its specified attributes are accepted. Duplicate keys, resource
+dictionaries in the lookup path, unsupported nodes, aliases, bindings, relative
+or percentage points, extra properties and malformed values leave the brush
+unresolved. Gradient style setters and other control properties are not
+supported. The preview creates its own brush from validated data, never from
+runtime XAML; source attributes stay unchanged.
 
 For the calculator example, neutral/culture RESX captions and the local Button
 margin/padding are supported when the host supplies its project context. The
 included `Button.Number` style also supplies its font size and solid background;
-the local Button margin still wins. The
-standalone designer and Workbench use the unique closest project in the selected
+the local Button margin still wins. The included `Grid.Calc` solid background
+is also rendered on the preview Grid. A literal Grid background takes precedence;
+unresolved expressions and unsupported brushes remain unset rather than being
+executed. The standalone designer and Workbench use the unique closest project in the selected
 workspace; without one, they leave expressions unresolved. Unsupported styles
 and brushes remain ignored. The bound status
 and numeric fields remain inert binding placeholders, and its foreign converter
 and data context are ignored. No live localization updates or executed commands
 are provided.
+
+The optional real-calculator regression uses `AA98_CALCULATOR_SAMPLE_ROOT` as
+the calculator project directory, falling back to the original Windows sample
+location. It is inconclusive when the sample is absent; the synthetic resource
+and Grid tests do not require it.
