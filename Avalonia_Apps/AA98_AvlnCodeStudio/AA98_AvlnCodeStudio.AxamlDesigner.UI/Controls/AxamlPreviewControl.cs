@@ -493,16 +493,23 @@ public sealed class AxamlPreviewControl : ContentControl
             border.BorderBrush = borderBrush;
         }
 
-        string? background = GetProperty(node, "Background");
-        if (!string.IsNullOrWhiteSpace(background) && !background.StartsWith('{'))
+        if (node.BorderBackgroundGradient is { } gradient)
         {
-            try
+            LinearGradientBrush brush = new()
             {
-                border.Background = Brush.Parse(background);
-            }
-            catch (FormatException)
+                StartPoint = new RelativePoint(gradient.StartX, gradient.StartY, RelativeUnit.Absolute),
+                EndPoint = new RelativePoint(gradient.EndX, gradient.EndY, RelativeUnit.Absolute),
+            };
+            foreach (AxamlPreviewGradientStop stop in gradient.Stops)
             {
+                brush.GradientStops.Add(new GradientStop(Color.Parse(stop.Color), stop.Offset));
             }
+
+            border.Background = brush;
+        }
+        else if (ParseSimpleBrush(node, "Background") is { } background)
+        {
+            border.Background = background;
         }
 
         return border;
@@ -1423,6 +1430,11 @@ public sealed class AxamlPreviewControl : ContentControl
             RowSpacing = ParseOptionalSizeConstraint(node, "RowSpacing") ?? 0,
             ShowGridLines = ParseBoolean(node, "ShowGridLines") ?? false,
         };
+        if (ParseSimpleBrush(node, "Background") is { } background)
+        {
+            grid.Background = background;
+        }
+
         foreach (string row in node.RowDefinitions)
         {
             grid.RowDefinitions.Add(new RowDefinition(ParseGridLength(row)));
@@ -1491,6 +1503,16 @@ public sealed class AxamlPreviewControl : ContentControl
             if (HasValidLiteralValue(child, "Canvas.Top"))
             {
                 Canvas.SetTop(control, ParseDouble(child, "Canvas.Top", 0));
+            }
+
+            if (HasValidLiteralValue(child, "Canvas.Right"))
+            {
+                Canvas.SetRight(control, ParseDouble(child, "Canvas.Right", 0));
+            }
+
+            if (HasValidLiteralValue(child, "Canvas.Bottom"))
+            {
+                Canvas.SetBottom(control, ParseDouble(child, "Canvas.Bottom", 0));
             }
 
             canvas.Children.Add(control);

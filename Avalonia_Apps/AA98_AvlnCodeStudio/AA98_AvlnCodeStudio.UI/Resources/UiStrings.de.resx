@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="DecompileAssemblyMenuText" xml:space="preserve"><value>Assembly dekompilieren...</value></data>
+  <data name="DecompileAssemblyTitle" xml:space="preserve"><value>Assembly dekompilieren</value></data>
+  <data name="DecompileChooseAssemblyText" xml:space="preserve"><value>Assembly auswählen...</value></data>
+  <data name="DecompileOpenSourceText" xml:space="preserve"><value>Quelltext öffnen</value></data>
+  <data name="DecompileCloseText" xml:space="preserve"><value>Schließen</value></data>
+  <data name="DecompileTypesLabel" xml:space="preserve"><value>Assembly-Typen</value></data>
+  <data name="DecompileStatusLabel" xml:space="preserve"><value>Dekompilierungsstatus</value></data>
+  <data name="DecompileNoAssemblyText" xml:space="preserve"><value>Keine Assembly ausgewählt.</value></data>
+  <data name="DecompileChoosePrompt" xml:space="preserve"><value>Eine verwaltete Assembly zur Untersuchung auswählen.</value></data>
+  <data name="DecompileSelectTypeText" xml:space="preserve"><value>Einen Typ auswählen.</value></data>
+  <data name="DecompileSelectedTypeText" xml:space="preserve"><value>„Quelltext öffnen“ auswählen, um diesen Typ zu dekompilieren.</value></data>
+  <data name="DecompileInspectingText" xml:space="preserve"><value>Assembly wird untersucht...</value></data>
+  <data name="DecompileNoTypesText" xml:space="preserve"><value>Keine Typen in dieser Assembly gefunden.</value></data>
+  <data name="DecompileInspectErrorFormat" xml:space="preserve"><value>Assembly kann nicht untersucht werden: {0}</value></data>
+  <data name="DecompileInProgressText" xml:space="preserve"><value>Ausgewählter Typ wird dekompiliert...</value></data>
+  <data name="DecompileSourceReadyText" xml:space="preserve"><value>Quelltext ist bereit.</value></data>
+  <data name="DecompileErrorFormat" xml:space="preserve"><value>Typ kann nicht dekompiliert werden: {0}</value></data>
+  <data name="DecompilePickerTitle" xml:space="preserve"><value>Verwaltete Assembly auswählen</value></data>
+  <data name="DecompilePickerFilter" xml:space="preserve"><value>Verwaltete Assemblys</value></data>
+  <data name="DecompilePickerLocalOnly" xml:space="preserve"><value>Eine lokale Assemblydatei auswählen.</value></data>
+  <data name="DecompilePickerErrorFormat" xml:space="preserve"><value>Assembly kann nicht ausgewählt werden: {0}</value></data>
+  <data name="DecompileDialogErrorFormat" xml:space="preserve"><value>Dekompilierungsdialog kann nicht geöffnet werden: {0}</value></data>
+  <data name="DecompileNavigationErrorFormat" xml:space="preserve"><value>Dekompilierter Quelltext kann nicht geöffnet werden: {0}</value></data>
+</root>

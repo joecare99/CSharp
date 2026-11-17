@@ -6,11 +6,13 @@ Workbench DI registration stores generated files in the current user's local app
 
 In the Workbench, choose **File → Decompile assembly...**, explicitly select one local managed DLL or EXE, select a listed type, and choose **Open source**. The resulting artifact opens through the normal editor navigation, separately from the original assembly and project sources. Closing the dialog cancels pending work; changing the selection invalidates older results. Empty assemblies and errors are reported in the dialog.
 
+The type list is keyboard-focusable and named for automation; the named status is a polite live region. Escape closes the dialog without opening source. Dialog, menu, picker and status strings use UI resources, with German translations and neutral English fallback.
+
 There is no automatic DLL discovery, project scanning, project mutation, source-file creation in the assembly directory, or execution of the target assembly. This is not a sandbox for malicious input: the decompiler parses untrusted PE/metadata and may read local dependency metadata while resolving references. Use only inputs from sources you are willing to inspect and keep the decompiler package current.
 
 ## Workbench window smoke
 
-`tools/WorkbenchDecompilationSmoke` runs a real desktop Workbench and dialog. It substitutes only the file picker with a known local fixture assembly, selects its type in the actual list, and checks the generated artifact, editor and `CodeLocation` caret. It also checks picker cancellation, closing during a delayed response, and changing tabs during a delayed response. The smoke does **not** exercise the operating system's native file picker. Run it from a physical (non-reparse) project path with a graphical desktop and isolated build artifact root, after a successful restore.
+`tools/WorkbenchDecompilationSmoke` runs a real desktop Workbench and dialog with German resources. It substitutes the file picker with a known local fixture assembly and wraps the real service to delay responses; it checks the actual list, automation properties, Escape, status, generated artifact, editor and `CodeLocation` caret. It also checks picker cancellation, a late picker result after close, closing during a delayed response, and changing tabs during a delayed response. The smoke does **not** exercise the native file picker or constitute a physical screen-reader acceptance test. Run it from a physical (non-reparse) project path with a graphical desktop and isolated build artifact root, after a successful restore.
 
 ## Dependency and legal review
 

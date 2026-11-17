@@ -312,6 +312,27 @@ public sealed class AxamlDesignerSessionTests
     }
 
     [TestMethod]
+    public void CanvasTrailingCoordinates_AreUndoableAndCanBeCleared()
+    {
+        const string markup = "<Canvas><Button Canvas.Right='10' /></Canvas>";
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root!.Children.Single());
+        session.SelectProperty("Canvas.Right");
+        Assert.IsTrue(session.ApplySelectedValue("20.5"));
+        string updated = session.Markup;
+        StringAssert.Contains(updated, "Canvas.Right='20.5'");
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(updated, session.Markup);
+        Assert.IsTrue(session.ApplySelectedValue(string.Empty));
+        Assert.IsFalse(session.Markup.Contains("Canvas.Right", StringComparison.Ordinal));
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(updated, session.Markup);
+    }
+
+    [TestMethod]
     public void AddChildControl_RejectsNonContainersExistingContentAndUnknownControls()
     {
         AxamlDesignerSession session = new();
@@ -1234,6 +1255,8 @@ public sealed class AxamlDesignerSessionTests
             StringAssert.Contains(session.Markup, "<av:Grid.RowDefinitions>");
             StringAssert.Contains(session.Markup, "<av:ColumnDefinition Width=\"Auto\" />");
 
+            File.WriteAllText(Path.Combine(directory, "Directory.Packages.props"),
+                "<Project><PropertyGroup><ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally></PropertyGroup></Project>");
             string projectPath = Path.Combine(directory, "GridFixture.csproj");
             File.WriteAllText(projectPath, """
                 <Project Sdk="Microsoft.NET.Sdk">

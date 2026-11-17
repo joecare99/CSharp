@@ -232,6 +232,14 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             change.TextChange.Span.Start, change.TextChange.Span.Length, change.TextChange.NewText ?? string.Empty, caret);
     }
 
+    /// <summary>
+    /// Finds a source definition using the active file and open-buffer snapshots.
+    /// </summary>
+    /// <remarks>
+    /// The file must have a unique nearest project and be included in that project.
+    /// Multi-target projects require an explicit target framework. Metadata-only
+    /// definitions and ambiguous project ownership return no location.
+    /// </remarks>
     public async Task<CodeLocation?> FindDefinitionAsync(
         string source,
         string filePath,
@@ -241,6 +249,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         IReadOnlyDictionary<string, string>? openDocumentTexts = null,
         string? targetFramework = null)
     {
+        ArgumentNullException.ThrowIfNull(source);
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
         ArgumentNullException.ThrowIfNull(workspace);
         if (position < 0 || position > source.Length)
@@ -248,8 +257,9 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             throw new ArgumentOutOfRangeException(nameof(position));
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
         string normalizedFilePath = Path.GetFullPath(filePath);
-        CSharpWorkspaceProject? projectDescriptor = workspace.Projects
+        var candidates = workspace.Projects
             .Select(project => new
             {
                 Project = project,
@@ -257,13 +267,14 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             })
             .Where(candidate => IsWithinDirectory(normalizedFilePath, candidate.Directory))
             .OrderByDescending(candidate => candidate.Directory.Length)
-            .Select(candidate => candidate.Project)
-            .FirstOrDefault();
-        if (projectDescriptor is null)
+            .ToArray();
+        if (candidates.Length == 0
+            || candidates.Length > 1 && candidates[0].Directory.Length == candidates[1].Directory.Length)
         {
             return null;
         }
 
+        CSharpWorkspaceProject projectDescriptor = candidates[0].Project;
         await _workspaceGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {

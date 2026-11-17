@@ -290,7 +290,7 @@ public static class AxamlPropertyValueValidator
             return "Use a plain literal string; bindings and markup extensions are not evaluated.";
         }
 
-        if (propertyName is "Canvas.Left" or "Canvas.Top")
+        if (propertyName is "Canvas.Left" or "Canvas.Top" or "Canvas.Right" or "Canvas.Bottom")
         {
             return double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double offset)
                 && double.IsFinite(offset)

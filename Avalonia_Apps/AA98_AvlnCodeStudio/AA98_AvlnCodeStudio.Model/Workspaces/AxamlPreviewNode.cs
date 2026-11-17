@@ -53,9 +53,18 @@ public sealed class AxamlPreviewNode
 
     public IReadOnlyDictionary<string, string> RenderProperties => PreviewProperties ?? Properties;
 
+    /// <summary>A bounded, literal gradient for a Border background, never executable XAML.</summary>
+    public AxamlPreviewLinearGradient? BorderBackgroundGradient { get; init; }
+
     public IReadOnlyList<AxamlPreviewNode> Children { get; init; } = [];
 
     public IReadOnlyList<string> RowDefinitions { get; init; } = [];
 
     public IReadOnlyList<string> ColumnDefinitions { get; init; } = [];
 }
+
+public sealed record AxamlPreviewGradientStop(double Offset, string Color);
+
+public sealed record AxamlPreviewLinearGradient(
+    double StartX, double StartY, double EndX, double EndY,
+    IReadOnlyList<AxamlPreviewGradientStop> Stops);

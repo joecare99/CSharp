@@ -183,14 +183,22 @@ public sealed class DotNetTestExecutionServiceTests
             error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => service.DiscoverAsync(assembly, root));
             StringAssert.Contains(error.Message, "Microsoft.Testing.Platform-only projects are not supported");
 
+            await File.WriteAllTextAsync(deps,
+                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtime":{"Microsoft.Testing.Platform.dll":{}}}}}}""");
+            error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => service.DiscoverAsync(assembly, root));
+            StringAssert.Contains(error.Message, "Microsoft.Testing.Platform-only projects are not supported");
+
             foreach (string? uncertain in new[]
             {
                 null,
                 "{invalid json",
                 """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.NET.Test.Sdk/1.0":{}}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"other":{"Microsoft.Testing.Platform/1.0":{"runtime":{"lib/Microsoft.Testing.Platform.dll":{}}}},"active":{}}}""",
+                """{"runtimeTarget":{"name":"active"},"targets":{"other":{"Microsoft.Testing.Platform/1.0":{"runtime":{"Microsoft.Testing.Platform.dll":{}}}},"active":{}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"dependencies":{}}}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"runtimes/win/lib/Microsoft.Testing.Platform.dll":{"assetType":"runtime","rid":"win"}}}}}}""",
+                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"Microsoft.Testing.Platform.dll":{"assetType":"runtime","rid":"other"}}}}}}""",
+                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtime":{"NotMicrosoft.Testing.Platform.dll":{}}}}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform.Extensions/1.0":{"runtime":{"lib/Microsoft.Testing.Platform.dll":{}}}}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"resources":{"lib/Microsoft.Testing.Platform.dll":{}}}}}}""",
             })
@@ -236,6 +244,11 @@ public sealed class DotNetTestExecutionServiceTests
             TestDiscoveryResult coexistence = new(
                 [new DiscoveredTestCase("id", "executor://sample", assembly, "Sample.Test", "Test", null, null)],
                 ["Existing warning"]);
+            Assert.AreSame(coexistence, await DotNetTestDiscoveryService.AddPlatformWarningAsync(coexistence, assembly, CancellationToken.None));
+
+            await File.WriteAllTextAsync(deps,
+                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.TestPlatform.TestHost/1.0":{},"Microsoft.Testing.Platform/2.0.0":{"runtime":{"Microsoft.Testing.Platform.dll":{}}}}}}""");
+            Assert.AreEqual(2, (await DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, CancellationToken.None)).Warnings.Count);
             Assert.AreSame(coexistence, await DotNetTestDiscoveryService.AddPlatformWarningAsync(coexistence, assembly, CancellationToken.None));
 
             File.Delete(deps);

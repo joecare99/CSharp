@@ -2109,6 +2109,70 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
     }
 
     [TestMethod]
+    public async Task FindDefinitionAsync_RejectsAmbiguousProjectOwnershipAndHonorsCancellation()
+    {
+        string root = Path.Combine(
+            Environment.GetEnvironmentVariable("AA98_LANGUAGE_TEST_ROOT") ?? Directory.GetCurrentDirectory(),
+            $"LanguageDefinitionOwnership_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "First.csproj");
+            string otherProjectPath = Path.Combine(root, "Second.csproj");
+            string solutionPath = Path.Combine(root, "Projects.slnx");
+            string sourcePath = Path.Combine(root, "Source.cs");
+            const string savedSource = "public class Saved { }";
+            const string draft = "public class Draft { public int Value; int Read() => Value; }";
+            string project = $"<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net{Environment.Version.Major}.0</TargetFramework></PropertyGroup></Project>";
+            await File.WriteAllTextAsync(projectPath, project);
+            await File.WriteAllTextAsync(otherProjectPath, project);
+            await File.WriteAllTextAsync(sourcePath, savedSource);
+            await File.WriteAllTextAsync(solutionPath,
+                "<Solution><Project Path=\"First.csproj\" /><Project Path=\"Second.csproj\" /></Solution>");
+            await RunFixtureAsync("restore", projectPath);
+            CSharpWorkspaceLoader loader = new();
+            CSharpWorkspace single = loader.Load(projectPath);
+            CSharpWorkspace ambiguous = loader.Load(solutionPath);
+            int position = draft.LastIndexOf("Value", StringComparison.Ordinal);
+            using CSharpSyntaxDiagnosticService service = new();
+
+            Code.Navigation.CodeLocation? location = await service.FindDefinitionAsync(draft, sourcePath, position, single);
+            Assert.IsNotNull(location);
+            Assert.AreEqual(sourcePath, location.Path);
+            Assert.IsNull(await service.FindDefinitionAsync(draft, sourcePath, position, ambiguous));
+            Assert.AreEqual(savedSource, await File.ReadAllTextAsync(sourcePath));
+
+            using CancellationTokenSource canceled = new();
+            canceled.Cancel();
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(() =>
+                service.FindDefinitionAsync(draft, sourcePath, position, ambiguous, canceled.Token));
+            SemaphoreSlim gate = (SemaphoreSlim)typeof(CSharpSyntaxDiagnosticService)
+                .GetField("_workspaceGate", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+                .GetValue(service)!;
+            using CancellationTokenSource waiting = new();
+            await gate.WaitAsync();
+            try
+            {
+                Task<Code.Navigation.CodeLocation?> pending =
+                    service.FindDefinitionAsync(draft, sourcePath, position, single, waiting.Token);
+                Assert.IsFalse(pending.IsCompleted);
+                waiting.Cancel();
+                OperationCanceledException exception = await Assert.ThrowsAsync<OperationCanceledException>(() => pending);
+                Assert.AreEqual(waiting.Token, exception.CancellationToken);
+            }
+            finally
+            {
+                gate.Release();
+            }
+            Assert.IsNotNull(await service.FindDefinitionAsync(draft, sourcePath, position, single));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task FindDefinitionAsync_ReturnsSourceLocationForReferencedSymbol()
     {
         string root = Path.Combine(Path.GetTempPath(), $"AA98_RoslynDefinition_{Guid.NewGuid():N}");

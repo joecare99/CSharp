@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.LogicalTree;
+using Avalonia.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Globalization;
@@ -16,6 +17,99 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 [TestClass]
 public sealed class AxamlPreviewResourcesTests
 {
+    [TestMethod]
+    public void BorderGradient_UsesOnlyUnambiguousBoundedLiteralResources()
+    {
+        const string markup = """
+            <StackPanel xmlns='https://github.com/avaloniaui' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+              <StackPanel.Resources>
+                <LinearGradientBrush x:Key='Good' StartPoint='0,0' EndPoint='220,0'>
+                  <LinearGradientBrush.GradientStops><GradientStop Offset='0' Color='#FF000040'/><GradientStop Offset='1' Color='#FF000000'/></LinearGradientBrush.GradientStops>
+                </LinearGradientBrush>
+                <LinearGradientBrush x:Key='Duplicate' StartPoint='0,0' EndPoint='1,0'/><x:String x:Key='Duplicate'>bad</x:String>
+                <LinearGradientBrush x:Key='BadPoint' StartPoint='NaN,0' EndPoint='1,0'/>
+                <LinearGradientBrush x:Key='BadStop' StartPoint='0,0' EndPoint='1,0'><LinearGradientBrush.GradientStops><GradientStop Offset='0' Color='#FF000000'/><GradientStop Offset='2' Color='#FFFFFFFF'/></LinearGradientBrush.GradientStops></LinearGradientBrush>
+                <LinearGradientBrush x:Key='Extra' StartPoint='0,0' EndPoint='1,0' Opacity='0.5'><LinearGradientBrush.GradientStops><GradientStop Offset='0' Color='#FF000000'/><GradientStop Offset='1' Color='#FFFFFFFF'/></LinearGradientBrush.GradientStops></LinearGradientBrush>
+                <x:String x:Key='Alias'>{StaticResource Good}</x:String>
+              </StackPanel.Resources>
+              <Border Background='{DynamicResource ResourceKey=Good}'/>
+              <Border Background='{StaticResource Duplicate}'/><Border Background='{StaticResource BadPoint}'/>
+              <Border Background='{StaticResource BadStop}'/><Border Background='{StaticResource Extra}'/>
+              <Border Background='{StaticResource Alias}'/><Border Background='{Binding Dangerous}'/>
+              <Border Background='#FF123456'/>
+              <StackPanel><StackPanel.Resources><x:String x:Key='Good'>shadow</x:String></StackPanel.Resources><Border Background='{StaticResource Good}'/></StackPanel>
+              <StackPanel><StackPanel.Resources><ResourceDictionary/></StackPanel.Resources><Border Background='{StaticResource Good}'/></StackPanel>
+            </StackPanel>
+            """;
+        AxamlPreviewNode root = new AxamlPreviewService().Parse(markup);
+        AxamlPreviewControl preview = new() { PreviewNode = root };
+        Border Rendered(AxamlPreviewNode node) => (Border)((Grid)preview.GetLogicalDescendants()
+            .OfType<Border>().Single(border => ReferenceEquals(border.Tag, node)).Child!).Children[0];
+        LinearGradientBrush brush = (LinearGradientBrush)Rendered(root.Children[0]).Background!;
+        Assert.AreEqual(new RelativePoint(220, 0, RelativeUnit.Absolute), brush.EndPoint);
+        Assert.AreEqual(2, brush.GradientStops.Count);
+        Assert.AreEqual(Color.Parse("#FF000040"), brush.GradientStops[0].Color);
+        Assert.AreEqual(1d, brush.GradientStops[1].Offset);
+        Assert.AreEqual("{DynamicResource ResourceKey=Good}", root.Children[0].Properties["Background"]);
+        foreach (AxamlPreviewNode child in root.Children.Skip(1).Take(6))
+        {
+            Assert.IsNull(Rendered(child).Background);
+        }
+
+        Assert.AreEqual(Color.Parse("#FF123456"), ((ISolidColorBrush)Rendered(root.Children[7]).Background!).Color);
+        Assert.IsNull(Rendered(root.Children[8].Children[0]).Background);
+        Assert.IsNull(Rendered(root.Children[9].Children[0]).Background);
+    }
+
+    [TestMethod]
+    public void ReportedCalculatorShell_RendersApplicationSidebarGradient()
+    {
+        string root = Environment.GetEnvironmentVariable("AA98_CALCULATOR_SAMPLE_ROOT")
+            ?? @"C:\Projekte\CSharp\Avalonia_Apps\AA05_CommandParCalc\AA05_CommandParCalc";
+        string view = Path.Combine(root, "Views", "CommandParCalcView.axaml");
+        if (!File.Exists(view))
+        {
+            Assert.Inconclusive("The external read-only calculator sample is not present.");
+        }
+
+        AxamlPreviewNode node = new AxamlPreviewService().Parse(File.ReadAllText(view), view, root);
+        AxamlPreviewNode sidebar = Descendants(node).Single(n => n.TypeName == "Border");
+        Assert.AreEqual("{DynamicResource ResourceKey=SideBarBackground}", sidebar.Properties["Background"]);
+        AxamlPreviewControl preview = new() { PreviewNode = node };
+        Grid wrapper = (Grid)preview.GetLogicalDescendants().OfType<Border>()
+            .Single(border => ReferenceEquals(border.Tag, sidebar)).Child!;
+        LinearGradientBrush brush = (LinearGradientBrush)((Border)wrapper.Children[0]).Background!;
+        Assert.AreEqual(new RelativePoint(220, 0, RelativeUnit.Absolute), brush.EndPoint);
+        Assert.AreEqual(4, brush.GradientStops.Count);
+        Assert.AreEqual(Color.Parse("#FF000040"), brush.GradientStops[0].Color);
+        Assert.AreEqual(0.7d, brush.GradientStops[2].Offset);
+    }
+
+    [TestMethod]
+    public void GridBackground_RendersSafeResourcesAndIgnoresUnresolvedValues()
+    {
+        const string markup = """
+            <StackPanel xmlns='https://github.com/avaloniaui' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+              <StackPanel.Resources><SolidColorBrush x:Key='Color' Color='#FF204020'/></StackPanel.Resources>
+              <StackPanel.Styles><Style Selector='Grid'><Setter Property='Background' Value='{DynamicResource Color}'/></Style></StackPanel.Styles>
+              <Grid/><Grid Background='#FF123456'/><Grid Background='{Binding Dangerous}'/>
+              <Grid Background='{StaticResource Missing}'/><Grid Background='not-a-color'/>
+            </StackPanel>
+            """;
+        AxamlPreviewNode root = new AxamlPreviewService().Parse(markup);
+        AxamlPreviewControl preview = new() { PreviewNode = root };
+        Grid[] grids = root.Children.Select(node => preview.GetLogicalDescendants().OfType<Border>()
+            .Single(border => ReferenceEquals(border.Tag, node)).Child)
+            .Cast<Grid>().Select(wrapper => (Grid)wrapper.Children[0]).ToArray();
+        Assert.AreEqual(5, grids.Length);
+        Assert.AreEqual(Color.Parse("#FF204020"), ((ISolidColorBrush)grids[0].Background!).Color);
+        Assert.AreEqual(Color.Parse("#FF123456"), ((ISolidColorBrush)grids[1].Background!).Color);
+        Assert.IsNull(grids[2].Background);
+        Assert.IsNull(grids[3].Background);
+        Assert.IsNull(grids[4].Background);
+        Assert.AreEqual("{Binding Dangerous}", root.Children[2].Properties["Background"]);
+    }
+
     [TestMethod]
     public void ToggleButtonPreview_DisplaysLiteralStateWithoutExecutingBindings()
     {
@@ -264,7 +358,8 @@ public sealed class AxamlPreviewResourcesTests
     [TestMethod]
     public void ReportedCalculator_ResolvesRealNeutralResxAndLocalStyle()
     {
-        const string root = @"C:\Projekte\CSharp\Avalonia_Apps\AA05_CommandParCalc\AA05_CommandParCalc";
+        string root = Environment.GetEnvironmentVariable("AA98_CALCULATOR_SAMPLE_ROOT")
+            ?? @"C:\Projekte\CSharp\Avalonia_Apps\AA05_CommandParCalc\AA05_CommandParCalc";
         string view = Path.Combine(root, "Views", "CommandParCalculatorView.axaml");
         if (!File.Exists(view))
         {
@@ -282,7 +377,11 @@ public sealed class AxamlPreviewResourcesTests
             Assert.AreEqual("10", button.RenderProperties["Padding"]);
             Assert.AreEqual("35", button.RenderProperties["FontSize"]);
             Assert.AreEqual("#FF204020", button.RenderProperties["Background"]);
+            Assert.AreEqual("#FF000020", preview.RenderProperties["Background"]);
             AxamlPreviewControl control = new() { PreviewNode = preview };
+            Grid renderedGrid = control.GetLogicalDescendants().OfType<Grid>()
+                .Single(grid => grid.RowDefinitions.Count == 6 && grid.ColumnDefinitions.Count == 10);
+            Assert.AreEqual(Color.Parse("#FF000020"), ((ISolidColorBrush)renderedGrid.Background!).Color);
             Button renderedButton = control.GetLogicalDescendants().OfType<Button>()
                 .Single(item => Equals(item.Content, "7"));
             Assert.AreEqual(new Thickness(-5), renderedButton.Margin);

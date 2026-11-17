@@ -1547,6 +1547,7 @@ public sealed class AxamlControlCatalogTests
             "TextBlock",
             "TextBox",
             "TimePicker",
+            "ToggleButton",
             "ToggleSwitch",
         ];
         string[] actual = AxamlControlCatalog.All

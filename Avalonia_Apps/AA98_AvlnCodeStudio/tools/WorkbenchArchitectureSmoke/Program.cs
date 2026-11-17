@@ -208,7 +208,7 @@ internal static class Program
                 + "<UniformGrid Columns=\"4\" RowSpacing=\"NaN\" ColumnSpacing=\"-1\" />"
                 + "<Grid RowSpacing=\"2\" ColumnSpacing=\"4\" ShowGridLines=\"True\" Width=\"99\" />"
                 + "<Grid RowSpacing=\"NaN\" ColumnSpacing=\"-1\" ShowGridLines=\"sometimes\" Width=\"98\" />"
-                + "<Canvas Width=\"140\" Height=\"100\" Background=\"White\"><Button Content=\"Positioned\" Canvas.Left=\"15.5\" Canvas.Top=\"21\" /><TextBlock Text=\"Default position\" /></Canvas>"
+                + "<Canvas Width=\"140\" Height=\"100\" Background=\"White\"><Button Content=\"Positioned\" Canvas.Left=\"15.5\" Canvas.Top=\"21\" Canvas.Right=\"2\" Canvas.Bottom=\"3\" /><TextBlock Text=\"Trailing position\" Canvas.Right=\"13\" Canvas.Bottom=\"7\" /></Canvas>"
                 + "<Grid Width=\"141\" RowDefinitions=\"Auto,*,*\" ColumnDefinitions=\"*,*\"><Button Content=\"Grid cell\" Grid.Row=\"0\" Grid.Column=\"0\" Grid.RowSpan=\"2\" /><TextBlock Text=\"Grid neighbor\" Grid.Row=\"2\" Grid.Column=\"1\" /></Grid>"
                 + "<ScrollViewer HorizontalScrollBarVisibility=\"Hidden\" VerticalScrollBarVisibility=\"Disabled\" Width=\"97\"><TextBlock Text=\"Scroll content\" /></ScrollViewer>"
                 + "<ScrollViewer HorizontalScrollBarVisibility=\"Always\" VerticalScrollBarVisibility=\"None\" Width=\"96\" />"
@@ -978,6 +978,19 @@ internal static class Program
             Check(standaloneEditor.CaretOffset == standaloneOffset, "Standalone resource context change lost caret position.");
             Check(host.Designer.SelectedNode?.StableName == "btn7", "Standalone resource context change lost selection.");
             Check(!host.IsDirty, "Calculator standalone preview modified the source.");
+
+            string shellPath = Path.Combine(root, "Views", "CommandParCalcView.axaml");
+            if (File.Exists(shellPath))
+            {
+                await workbench.EditorWorkspace.OpenOrActivateAsync(shellPath);
+                EditorTabViewModel shellTab = workbench.ActiveEditorTab;
+                await WaitUntilAsync(() => HasSidebarGradient(shellTab.View), "calculator Workbench sidebar gradient");
+                Check(!shellTab.IsDirty, "Workbench sidebar preview modified the source.");
+                Check(host.SetWorkspaceEntry(Path.Combine(root, "AA05_CommandParCalc.csproj")) && host.OpenDocument(shellPath),
+                    "The standalone calculator shell could not be opened.");
+                await WaitUntilAsync(() => HasSidebarGradient(window), "calculator standalone sidebar gradient");
+                Check(!host.IsDirty, "Standalone sidebar preview modified the source.");
+            }
         }
         finally
         {
@@ -986,7 +999,15 @@ internal static class Program
             window.Close();
             workbench.Workspace = null;
         }
-        Console.WriteLine("Calculator: Workbench/standalone caption, local style and source focus verified.");
+        Console.WriteLine("Calculator: Workbench/standalone caption, local style, source focus and sidebar gradient verified.");
+
+        static bool HasSidebarGradient(Control rootControl) =>
+            rootControl.GetVisualDescendants().OfType<AxamlPreviewControl>()
+                .SelectMany(preview => preview.GetVisualDescendants().OfType<Border>())
+                .Any(border => border.Background is LinearGradientBrush brush
+                    && brush.EndPoint == new RelativePoint(220, 0, RelativeUnit.Absolute)
+                    && brush.GradientStops.Count == 4
+                    && brush.GradientStops[0].Color == Color.Parse("#FF000040"));
     }
 
     private static async Task VerifyWorkbenchAsync(IClassicDesktopStyleApplicationLifetime desktop, string fixture)
@@ -1604,13 +1625,24 @@ internal static class Program
             "catalogued numeric, progress, and toggle control previews");
         Canvas canvasPreview = root.GetVisualDescendants().OfType<Canvas>()
             .Single(static canvas => canvas.Width == 140 && canvas.Height == 100);
+        await WaitUntilAsync(() => canvasPreview.Bounds.Width > 0
+            && canvasPreview.Children.All(static child => child.Bounds.Width > 0),
+            "Canvas preview layout");
         Check(canvasPreview.Children.Count == 2
             && Canvas.GetLeft(canvasPreview.Children[0]) == 15.5
             && Canvas.GetTop(canvasPreview.Children[0]) == 21
+            && Canvas.GetRight(canvasPreview.Children[0]) == 2
+            && Canvas.GetBottom(canvasPreview.Children[0]) == 3
             && double.IsNaN(Canvas.GetLeft(canvasPreview.Children[1]))
-            && double.IsNaN(Canvas.GetTop(canvasPreview.Children[1])),
+            && double.IsNaN(Canvas.GetTop(canvasPreview.Children[1]))
+            && Canvas.GetRight(canvasPreview.Children[1]) == 13
+            && Canvas.GetBottom(canvasPreview.Children[1]) == 7
+            && Math.Abs(canvasPreview.Children[0].Bounds.X - 15.5) < 1
+            && Math.Abs(canvasPreview.Children[0].Bounds.Y - 21) < 1
+            && Math.Abs(canvasPreview.Children[1].Bounds.Right - (canvasPreview.Bounds.Width - 13)) < 1
+            && Math.Abs(canvasPreview.Children[1].Bounds.Bottom - (canvasPreview.Bounds.Height - 7)) < 1,
             $"Canvas children render at valid literal coordinates and preserve unset framework positions "
-            + $"(count={canvasPreview.Children.Count}, coordinates={string.Join(';', canvasPreview.Children.Select(child => $"{Canvas.GetLeft(child)},{Canvas.GetTop(child)}"))})");
+            + $"(bounds={canvasPreview.Bounds}, children={string.Join(';', canvasPreview.Children.Select(child => $"{child.Bounds} [{Canvas.GetLeft(child)},{Canvas.GetTop(child)},{Canvas.GetRight(child)},{Canvas.GetBottom(child)}]"))})");
         Border literalImagePreview = root.GetVisualDescendants().OfType<Border>().Single(
             static candidate => candidate.Tag is AxamlPreviewNode node
                 && node.TypeName == "Image"
