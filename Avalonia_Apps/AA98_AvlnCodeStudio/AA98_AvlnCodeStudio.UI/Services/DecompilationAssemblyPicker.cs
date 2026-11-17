@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AA98_AvlnCodeStudio.UI.Resources;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 
@@ -17,11 +18,11 @@ public sealed class DecompilationAssemblyPicker : IDecompilationAssemblyPicker
     {
         var files = await owner.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Choose a managed assembly",
+            Title = UiStrings.DecompilePickerTitle,
             AllowMultiple = false,
-            FileTypeFilter = [new FilePickerFileType("Managed assemblies") { Patterns = ["*.dll", "*.exe"] }],
+            FileTypeFilter = [new FilePickerFileType(UiStrings.DecompilePickerFilter) { Patterns = ["*.dll", "*.exe"] }],
         });
         if (files.FirstOrDefault() is not { } file) return null;
-        return file.TryGetLocalPath() ?? throw new InvalidOperationException("Choose a local assembly file.");
+        return file.TryGetLocalPath() ?? throw new InvalidOperationException(UiStrings.DecompilePickerLocalOnly);
     }
 }

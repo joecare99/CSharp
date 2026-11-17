@@ -48,6 +48,30 @@ public static class UiStrings
 
     public static string OpenCommandText => GetString(nameof(OpenCommandText));
 
+    public static string DecompileAssemblyMenuText => GetString(nameof(DecompileAssemblyMenuText));
+    public static string DecompileAssemblyTitle => GetString(nameof(DecompileAssemblyTitle));
+    public static string DecompileChooseAssemblyText => GetString(nameof(DecompileChooseAssemblyText));
+    public static string DecompileOpenSourceText => GetString(nameof(DecompileOpenSourceText));
+    public static string DecompileCloseText => GetString(nameof(DecompileCloseText));
+    public static string DecompileTypesLabel => GetString(nameof(DecompileTypesLabel));
+    public static string DecompileStatusLabel => GetString(nameof(DecompileStatusLabel));
+    public static string DecompileNoAssemblyText => GetString(nameof(DecompileNoAssemblyText));
+    public static string DecompileChoosePrompt => GetString(nameof(DecompileChoosePrompt));
+    public static string DecompileSelectTypeText => GetString(nameof(DecompileSelectTypeText));
+    public static string DecompileSelectedTypeText => GetString(nameof(DecompileSelectedTypeText));
+    public static string DecompileInspectingText => GetString(nameof(DecompileInspectingText));
+    public static string DecompileNoTypesText => GetString(nameof(DecompileNoTypesText));
+    public static string DecompileInspectErrorFormat => GetString(nameof(DecompileInspectErrorFormat));
+    public static string DecompileInProgressText => GetString(nameof(DecompileInProgressText));
+    public static string DecompileSourceReadyText => GetString(nameof(DecompileSourceReadyText));
+    public static string DecompileErrorFormat => GetString(nameof(DecompileErrorFormat));
+    public static string DecompilePickerTitle => GetString(nameof(DecompilePickerTitle));
+    public static string DecompilePickerFilter => GetString(nameof(DecompilePickerFilter));
+    public static string DecompilePickerLocalOnly => GetString(nameof(DecompilePickerLocalOnly));
+    public static string DecompilePickerErrorFormat => GetString(nameof(DecompilePickerErrorFormat));
+    public static string DecompileDialogErrorFormat => GetString(nameof(DecompileDialogErrorFormat));
+    public static string DecompileNavigationErrorFormat => GetString(nameof(DecompileNavigationErrorFormat));
+
     public static string SaveCommandText => GetString(nameof(SaveCommandText));
 
     public static string SaveAsCommandText => GetString(nameof(SaveAsCommandText));

@@ -389,6 +389,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         public string NewCommandText => UiStrings.NewCommandText;
 
         public string OpenCommandText => UiStrings.OpenCommandText;
+        public string DecompileAssemblyMenuText => UiStrings.DecompileAssemblyMenuText;
 
         public string SaveCommandText => UiStrings.SaveCommandText;
 

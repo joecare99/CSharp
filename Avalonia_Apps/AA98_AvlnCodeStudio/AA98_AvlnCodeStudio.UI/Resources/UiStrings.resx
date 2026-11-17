@@ -12,6 +12,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DecompileAssemblyMenuText" xml:space="preserve"><value>Decompile assembly...</value></data>
+  <data name="DecompileAssemblyTitle" xml:space="preserve"><value>Decompile assembly</value></data>
+  <data name="DecompileChooseAssemblyText" xml:space="preserve"><value>Choose assembly...</value></data>
+  <data name="DecompileOpenSourceText" xml:space="preserve"><value>Open source</value></data>
+  <data name="DecompileCloseText" xml:space="preserve"><value>Close</value></data>
+  <data name="DecompileTypesLabel" xml:space="preserve"><value>Assembly types</value></data>
+  <data name="DecompileStatusLabel" xml:space="preserve"><value>Decompilation status</value></data>
+  <data name="DecompileNoAssemblyText" xml:space="preserve"><value>No assembly selected.</value></data>
+  <data name="DecompileChoosePrompt" xml:space="preserve"><value>Choose one managed assembly to inspect.</value></data>
+  <data name="DecompileSelectTypeText" xml:space="preserve"><value>Select a type.</value></data>
+  <data name="DecompileSelectedTypeText" xml:space="preserve"><value>Select Open source to decompile this type.</value></data>
+  <data name="DecompileInspectingText" xml:space="preserve"><value>Inspecting assembly...</value></data>
+  <data name="DecompileNoTypesText" xml:space="preserve"><value>No types found in this assembly.</value></data>
+  <data name="DecompileInspectErrorFormat" xml:space="preserve"><value>Cannot inspect assembly: {0}</value></data>
+  <data name="DecompileInProgressText" xml:space="preserve"><value>Decompiling selected type...</value></data>
+  <data name="DecompileSourceReadyText" xml:space="preserve"><value>Source ready.</value></data>
+  <data name="DecompileErrorFormat" xml:space="preserve"><value>Cannot decompile type: {0}</value></data>
+  <data name="DecompilePickerTitle" xml:space="preserve"><value>Choose a managed assembly</value></data>
+  <data name="DecompilePickerFilter" xml:space="preserve"><value>Managed assemblies</value></data>
+  <data name="DecompilePickerLocalOnly" xml:space="preserve"><value>Choose a local assembly file.</value></data>
+  <data name="DecompilePickerErrorFormat" xml:space="preserve"><value>Cannot choose assembly: {0}</value></data>
+  <data name="DecompileDialogErrorFormat" xml:space="preserve"><value>Cannot open decompilation dialog: {0}</value></data>
+  <data name="DecompileNavigationErrorFormat" xml:space="preserve"><value>Cannot open decompiled source: {0}</value></data>
   <data name="ApplicationTitle" xml:space="preserve">
     <value>Code Studio</value>
   </data>

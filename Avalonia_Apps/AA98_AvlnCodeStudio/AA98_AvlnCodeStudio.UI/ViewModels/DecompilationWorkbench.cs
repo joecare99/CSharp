@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AA98_AvlnCodeStudio.Decompilation;
+using AA98_AvlnCodeStudio.UI.Resources;
 using Code.Navigation;
 
 namespace AA98_AvlnCodeStudio.UI.ViewModels;
@@ -22,7 +23,7 @@ public sealed class DecompilationWorkbench : IDisposable
     public AssemblyInspection? Assembly { get; private set; }
     public IReadOnlyList<AssemblyTypeInfo> Types => Assembly?.Types ?? Array.Empty<AssemblyTypeInfo>();
     public AssemblyTypeInfo? SelectedType { get; private set; }
-    public string Status { get; private set; } = "Choose one managed assembly to inspect.";
+    public string Status { get; private set; } = UiStrings.DecompileChoosePrompt;
     public bool IsBusy { get; private set; }
 
     public void Reset()
@@ -32,7 +33,7 @@ public sealed class DecompilationWorkbench : IDisposable
         Assembly = null;
         SelectedType = null;
         IsBusy = false;
-        Status = "Choose one managed assembly to inspect.";
+        Status = UiStrings.DecompileChoosePrompt;
         Notify();
     }
 
@@ -42,7 +43,7 @@ public sealed class DecompilationWorkbench : IDisposable
         Invalidate();
         IsBusy = false;
         SelectedType = type is not null && Types.ContainsReference(type) ? type : null;
-        Status = SelectedType is null ? "Select a type." : "Select Open source to decompile this type.";
+        Status = SelectedType is null ? UiStrings.DecompileSelectTypeText : UiStrings.DecompileSelectedTypeText;
         Notify();
     }
 
@@ -50,20 +51,20 @@ public sealed class DecompilationWorkbench : IDisposable
     {
         if (_disposed) return;
         Reset();
-        var (revision, operation) = Start("Inspecting assembly...");
+        var (revision, operation) = Start(UiStrings.DecompileInspectingText);
         try
         {
             AssemblyInspection assembly = await _service.InspectAsync(path, operation.Token);
             if (!IsCurrent(revision, operation)) return;
             Assembly = assembly;
-            Status = assembly.Types.Count == 0 ? "No types found in this assembly." : "Select a type.";
+            Status = assembly.Types.Count == 0 ? UiStrings.DecompileNoTypesText : UiStrings.DecompileSelectTypeText;
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested)
         {
         }
         catch (Exception exception)
         {
-            if (IsCurrent(revision, operation)) Status = $"Cannot inspect assembly: {exception.Message}";
+            if (IsCurrent(revision, operation)) Status = string.Format(UiStrings.DecompileInspectErrorFormat, exception.Message);
         }
         finally
         {
@@ -76,12 +77,12 @@ public sealed class DecompilationWorkbench : IDisposable
         if (_disposed || IsBusy || Assembly is null || SelectedType is null) return null;
         string path = Assembly.AssemblyPath;
         string typeName = SelectedType.FullName;
-        var (revision, operation) = Start("Decompiling selected type...");
+        var (revision, operation) = Start(UiStrings.DecompileInProgressText);
         try
         {
             DecompiledTypeArtifact artifact = await _service.DecompileTypeAsync(path, typeName, operation.Token);
             if (!IsCurrent(revision, operation)) return null;
-            Status = "Source ready.";
+            Status = UiStrings.DecompileSourceReadyText;
             return artifact.NavigationLocation;
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested)
@@ -90,7 +91,7 @@ public sealed class DecompilationWorkbench : IDisposable
         }
         catch (Exception exception)
         {
-            if (IsCurrent(revision, operation)) Status = $"Cannot decompile type: {exception.Message}";
+            if (IsCurrent(revision, operation)) Status = string.Format(UiStrings.DecompileErrorFormat, exception.Message);
             return null;
         }
         finally

@@ -1,8 +1,10 @@
 using System;
 using AA98_AvlnCodeStudio.Decompilation;
+using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Code.Navigation;
@@ -14,23 +16,26 @@ public sealed class DecompilationDialog : Window
     private readonly DecompilationWorkbench _workbench;
     private readonly TextBlock _assembly = new() { TextWrapping = Avalonia.Media.TextWrapping.Wrap };
     private readonly TextBlock _status = new() { TextWrapping = Avalonia.Media.TextWrapping.Wrap };
-    private readonly ListBox _types = new();
-    private readonly Button _open = new() { Content = "Open source", IsEnabled = false };
+    private readonly ListBox _types = new() { Focusable = true };
+    private readonly Button _open = new() { Content = UiStrings.DecompileOpenSourceText, IsEnabled = false };
     private bool _closed;
 
     public DecompilationDialog(IAssemblyDecompilationService service, IDecompilationAssemblyPicker picker)
     {
         _workbench = new DecompilationWorkbench(service);
         ArgumentNullException.ThrowIfNull(picker);
-        Title = "Decompile assembly";
+        Title = UiStrings.DecompileAssemblyTitle;
         Width = 700;
         Height = 520;
         MinWidth = 480;
         MinHeight = 320;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
-        Button choose = new() { Content = "Choose assembly..." };
-        Button cancel = new() { Content = "Close" };
+        Button choose = new() { Content = UiStrings.DecompileChooseAssemblyText };
+        Button cancel = new() { Content = UiStrings.DecompileCloseText, IsCancel = true };
+        AutomationProperties.SetName(_types, UiStrings.DecompileTypesLabel);
+        AutomationProperties.SetName(_status, UiStrings.DecompileStatusLabel);
+        AutomationProperties.SetLiveSetting(_status, AutomationLiveSetting.Polite);
         choose.Click += async (_, _) =>
         {
             choose.IsEnabled = false;
@@ -45,7 +50,7 @@ public sealed class DecompilationDialog : Window
             }
             catch (Exception exception)
             {
-                if (!_closed) _status.Text = $"Cannot choose assembly: {exception.Message}";
+                if (!_closed) _status.Text = string.Format(UiStrings.DecompilePickerErrorFormat, exception.Message);
             }
             finally
             {
@@ -92,7 +97,7 @@ public sealed class DecompilationDialog : Window
     {
         _assembly.Text = _workbench.Assembly is { } assembly
             ? $"{assembly.Name} {assembly.Version} — {assembly.AssemblyPath}"
-            : "No assembly selected.";
+            : UiStrings.DecompileNoAssemblyText;
         if (!ReferenceEquals(_types.ItemsSource, _workbench.Types))
         {
             _types.ItemsSource = _workbench.Types;

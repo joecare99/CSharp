@@ -109,7 +109,7 @@ namespace AA98_AvlnCodeStudio.UI.Views
             }
             catch (Exception exception)
             {
-                if (IsVisible) viewModel.Editor.StatusText = $"Cannot open decompilation dialog: {exception.Message}";
+                if (IsVisible) viewModel.Editor.StatusText = string.Format(global::AA98_AvlnCodeStudio.UI.Resources.UiStrings.DecompileDialogErrorFormat, exception.Message);
                 return;
             }
             finally
@@ -128,7 +128,7 @@ namespace AA98_AvlnCodeStudio.UI.Views
             }
             catch (Exception exception)
             {
-                if (IsVisible) viewModel.Editor.StatusText = $"Cannot open decompiled source: {exception.Message}";
+                if (IsVisible) viewModel.Editor.StatusText = string.Format(global::AA98_AvlnCodeStudio.UI.Resources.UiStrings.DecompileNavigationErrorFormat, exception.Message);
             }
         }
 
