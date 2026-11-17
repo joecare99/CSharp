@@ -151,7 +151,8 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
                 }
 
                 if (runtime.EnumerateObject().Any(static asset =>
-                    asset.Name.EndsWith("/Microsoft.Testing.Platform.dll", StringComparison.OrdinalIgnoreCase)))
+                    asset.Name.Equals("Microsoft.Testing.Platform.dll", StringComparison.OrdinalIgnoreCase)
+                    || asset.Name.EndsWith("/Microsoft.Testing.Platform.dll", StringComparison.OrdinalIgnoreCase)))
                 {
                     return true;
                 }
