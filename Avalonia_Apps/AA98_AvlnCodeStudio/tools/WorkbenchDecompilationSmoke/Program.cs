@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
@@ -7,13 +8,16 @@ using System.Threading.Tasks;
 using AA98_AvlnCodeStudio.Decompilation;
 using AA98_AvlnCodeStudio.UI;
 using AA98_AvlnCodeStudio.UI.Controls;
+using AA98_AvlnCodeStudio.UI.Resources;
 using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using AA98_AvlnCodeStudio.UI.Views;
 using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Themes.Fluent;
 using Avalonia.Threading;
@@ -31,6 +35,7 @@ internal static class Program
     [STAThread]
     private static int Main()
     {
+        UiStrings.Culture = CultureInfo.GetCultureInfo("de-DE");
         s_root = Path.Combine(Environment.CurrentDirectory, "artifacts", "workbench-decompile-smoke-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(s_root);
         Environment.SetEnvironmentVariable("AVLN_CONFIG_GROUP_ROOT", null);
@@ -65,8 +70,18 @@ internal static class Program
             EditorTabViewModel manualTab = workbench.ActiveEditorTab;
 
             DecompilationDialog dialog = await OpenDialogAsync(desktop, window);
+            Check(dialog.Title == "Assembly dekompilieren", "Dialog title is not localized.");
+            ListBox types = dialog.GetVisualDescendants().OfType<ListBox>().Single();
+            TextBlock status = dialog.GetVisualDescendants().OfType<TextBlock>()
+                .Single(t => AutomationProperties.GetName(t) == UiStrings.DecompileStatusLabel);
+            Check(AutomationProperties.GetName(types) == "Assembly-Typen" && types.Focusable,
+                "Type selection must have a localized automation name and keyboard focus.");
+            Check(AutomationProperties.GetName(status) == "Dekompilierungsstatus"
+                && AutomationProperties.GetLiveSetting(status) == AutomationLiveSetting.Polite
+                && status.Text == UiStrings.DecompileChoosePrompt, "Status accessibility metadata or initial text is incorrect.");
             await ChooseTypeAsync(dialog);
-            Click(Button(dialog, "Open source"));
+            Check(status.Text == UiStrings.DecompileSelectedTypeText, "Status did not update after selection.");
+            Click(Button(dialog, UiStrings.DecompileOpenSourceText));
             try
             {
                 await WaitAsync(() => s_service.LastArtifact is { } artifact
@@ -94,12 +109,22 @@ internal static class Program
             dialog = await OpenDialogAsync(desktop, window);
             s_picker.CancelNext = true;
             int inspections = s_service.Inspections;
-            Click(Button(dialog, "Choose assembly..."));
+            Click(Button(dialog, UiStrings.DecompileChooseAssemblyText));
             await WaitAsync(() => !s_picker.CancelNext, "canceled picker");
-            Check(s_service.Inspections == inspections && !Button(dialog, "Open source").IsEnabled,
+            Check(s_service.Inspections == inspections && !Button(dialog, UiStrings.DecompileOpenSourceText).IsEnabled,
                 "Canceling file selection must not inspect or enable decompilation.");
-            Click(Button(dialog, "Close"));
+            Escape(dialog);
             await WaitAsync(() => !dialog.IsVisible, "closing canceled picker dialog");
+
+            dialog = await OpenDialogAsync(desktop, window);
+            s_picker.HoldNext();
+            inspections = s_service.Inspections;
+            Click(Button(dialog, UiStrings.DecompileChooseAssemblyText));
+            Escape(dialog);
+            await WaitAsync(() => !dialog.IsVisible, "closing pending picker");
+            s_picker.Release();
+            await Task.Delay(150);
+            Check(s_service.Inspections == inspections, "Late picker result inspected an assembly after close.");
 
             await CheckInterruptedAsync(desktop, window, workbench, manualTab, changeContext: false);
             await CheckInterruptedAsync(desktop, window, workbench, manualTab, changeContext: true);
@@ -126,7 +151,7 @@ internal static class Program
         DecompilationDialog dialog = await OpenDialogAsync(desktop, window);
         await ChooseTypeAsync(dialog);
         EditorTabViewModel before = workbench.ActiveEditorTab;
-        Click(Button(dialog, "Open source"));
+        Click(Button(dialog, UiStrings.DecompileOpenSourceText));
         await WaitAsync(() => s_service.IsHeld, "held decompilation");
         if (changeContext)
         {
@@ -134,7 +159,7 @@ internal static class Program
         }
         else
         {
-            Click(Button(dialog, "Close"));
+            Escape(dialog);
         }
 
         await WaitAsync(() => !dialog.IsVisible, "dialog cancellation");
@@ -149,6 +174,7 @@ internal static class Program
     private static async Task<DecompilationDialog> OpenDialogAsync(IClassicDesktopStyleApplicationLifetime desktop, Window window)
     {
         MenuItem menu = window.FindControl<MenuItem>("DecompileAssemblyMenuItem")!;
+        Check(Equals(menu.Header, UiStrings.DecompileAssemblyMenuText), "Menu header is not localized.");
         menu.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
         await WaitAsync(() => desktop.Windows.OfType<DecompilationDialog>().Any(dialog => dialog.IsVisible), "decompilation dialog");
         return desktop.Windows.OfType<DecompilationDialog>().Single(dialog => dialog.IsVisible);
@@ -156,19 +182,22 @@ internal static class Program
 
     private static async Task ChooseTypeAsync(DecompilationDialog dialog)
     {
-        Click(Button(dialog, "Choose assembly..."));
+        Click(Button(dialog, UiStrings.DecompileChooseAssemblyText));
         ListBox list = dialog.GetVisualDescendants().OfType<ListBox>().Single();
         await WaitAsync(() => list.ItemsSource is System.Collections.Generic.IEnumerable<AssemblyTypeInfo> types
             && types.Any(type => type.FullName == s_typeName), "assembly metadata");
         list.SelectedItem = ((System.Collections.Generic.IEnumerable<AssemblyTypeInfo>)list.ItemsSource!)
             .Single(type => type.FullName == s_typeName);
-        await WaitAsync(() => Button(dialog, "Open source").IsEnabled, "selected type");
+        await WaitAsync(() => Button(dialog, UiStrings.DecompileOpenSourceText).IsEnabled, "selected type");
     }
 
     private static Button Button(Window window, string text) =>
         window.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, text));
 
     private static void Click(Button button) => button.RaiseEvent(new RoutedEventArgs(Avalonia.Controls.Button.ClickEvent));
+
+    private static void Escape(Window window) =>
+        window.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Escape });
 
     private static async Task WaitAsync(Func<bool> condition, string description)
     {
@@ -216,9 +245,14 @@ internal static class Program
     private sealed class ControlledPicker : IDecompilationAssemblyPicker
     {
         public bool CancelNext { get; set; }
+        private TaskCompletionSource<string?>? _held;
+
+        public void HoldNext() => _held = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public void Release() => _held!.SetResult(typeof(DecompilationSmokeFixture).Assembly.Location);
 
         public Task<string?> PickAsync(Window owner)
         {
+            if (_held is { Task.IsCompleted: false } held) return held.Task;
             if (CancelNext)
             {
                 CancelNext = false;
