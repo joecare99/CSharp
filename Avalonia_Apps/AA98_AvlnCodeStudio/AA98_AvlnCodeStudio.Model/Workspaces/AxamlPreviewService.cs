@@ -1785,28 +1785,29 @@ public sealed class AxamlPreviewService
             };
         }
 
-        private static AxamlPreviewNode DisableSourceEdits(AxamlPreviewNode node)
+    private static AxamlPreviewNode DisableSourceEdits(AxamlPreviewNode node)
+    {
+        return new AxamlPreviewNode
         {
-            return new AxamlPreviewNode
-            {
-                TypeName = node.TypeName,
-                Text = node.Text,
-                ParentTypeName = node.ParentTypeName,
-                ParentSourceStartOffset = -1,
-                IsSupported = node.IsSupported,
-                SourceStartOffset = -1,
-                HasTextPropertyElement = node.HasTextPropertyElement,
-                HasInlineText = node.HasInlineText,
-                HasChildElements = node.HasChildElements,
-                CanAppendChildren = false,
-                CanAddGridChild = false,
-                PropertyElementNames = node.PropertyElementNames,
-                Properties = node.Properties,
-                Children = node.Children.Select(DisableSourceEdits).ToArray(),
-                RowDefinitions = node.RowDefinitions,
-                ColumnDefinitions = node.ColumnDefinitions,
-            };
-        }
+            TypeName = node.TypeName,
+            Text = node.Text,
+            ParentTypeName = node.ParentTypeName,
+            ParentSourceStartOffset = -1,
+            IsSupported = node.IsSupported,
+            SourceStartOffset = -1,
+            HasTextPropertyElement = node.HasTextPropertyElement,
+            HasInlineText = node.HasInlineText,
+            HasChildElements = node.HasChildElements,
+            CanAppendChildren = false,
+            CanAddGridChild = false,
+            PropertyElementNames = node.PropertyElementNames,
+            Properties = node.Properties,
+            PreviewZIndex = node.PreviewZIndex,
+            Children = node.Children.Select(DisableSourceEdits).ToArray(),
+            RowDefinitions = node.RowDefinitions,
+            ColumnDefinitions = node.ColumnDefinitions,
+        };
+    }
 
         private static IReadOnlyList<string> GetRootNamespaceDeclarations(string source)
         {
@@ -2146,6 +2147,7 @@ public sealed class AxamlPreviewService
             PropertyElementNames = propertyElementNames,
             Properties = properties,
             PreviewProperties = previewProperties,
+            PreviewZIndex = ParsePreviewZIndex(element),
             BorderBackgroundGradient = typeName == "Border"
                 && properties.TryGetValue("Background", out string? background)
                     ? resources.TryBorderGradient(element, background)
@@ -2154,6 +2156,29 @@ public sealed class AxamlPreviewService
             RowDefinitions = rowDefinitions,
             ColumnDefinitions = columnDefinitions,
         };
+    }
+
+    private static int? ParsePreviewZIndex(XElement element)
+    {
+        XAttribute[] attributes = element.Attributes()
+            .Where(static attribute => !attribute.IsNamespaceDeclaration
+                && (attribute.Name.LocalName == "ZIndex"
+                    || attribute.Name.LocalName.EndsWith(".ZIndex", StringComparison.Ordinal)))
+            .ToArray();
+        if (attributes.Length != 1
+            || attributes[0].Name.LocalName != "ZIndex"
+            || attributes[0].Name.Namespace != XNamespace.None && attributes[0].Name.Namespace != s_avaloniaNamespace
+            || element.Elements().Any(static child => child.Name.LocalName.EndsWith(".ZIndex", StringComparison.Ordinal)))
+        {
+            return null;
+        }
+
+        string value = attributes[0].Value;
+        return value.Length <= 12
+            && int.TryParse(value, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out int result)
+            && result is >= -100000 and <= 100000
+                ? result
+                : null;
     }
 
     private static string? GetEditablePropertyName(string typeName)
