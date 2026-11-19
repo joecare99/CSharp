@@ -462,7 +462,8 @@ public sealed partial class EditorTabViewModel : ObservableObject, IDisposable
     private void OnCaretPositionChanged(object? sender, EventArgs e)
     {
         if (_synchronizingCaretSelection || _editorKind != "axaml"
-            || sender is not EditorTextArea textArea || Designer is null)
+            || IsDiagnostic || sender is not EditorTextArea textArea || Designer is null
+            || !string.Equals(textArea.Text, Editor.Text, StringComparison.Ordinal))
         {
             return;
         }
@@ -480,8 +481,11 @@ public sealed partial class EditorTabViewModel : ObservableObject, IDisposable
 
     private void OnDesignerSelectionActivated(object? sender, EventArgs e)
     {
-        if (_synchronizingCaretSelection || _inputView is not EditorTextArea textArea
-            || Designer?.SelectedNode is not { SourceStartOffset: >= 0 } node)
+        if (_synchronizingCaretSelection || _editorKind != "axaml" || IsDiagnostic
+            || _inputView is not EditorTextArea textArea
+            || !string.Equals(textArea.Text, Editor.Text, StringComparison.Ordinal)
+            || Designer?.IsSelectionInMarkup(Editor.Text) != true
+            || Designer.SelectedNode is not { SourceStartOffset: >= 0 } node)
         {
             return;
         }

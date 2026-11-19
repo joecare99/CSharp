@@ -38,6 +38,7 @@ public partial class EditorTextArea : UserControl
             _editor.TextChanged += OnEditorTextChanged;
             _editor.KeyDown += OnEditorKeyDown;
             _editor.TextArea.Caret.PositionChanged += OnCaretPositionChanged;
+            _editor.AddHandler(InputElement.GotFocusEvent, OnEditorGotFocus, RoutingStrategies.Bubble, true);
             _editor.AddHandler(InputElement.PointerMovedEvent, OnPointerMoved, RoutingStrategies.Tunnel, true);
             _editor.PointerExited += OnPointerExited;
             _editor.AddHandler(InputElement.PointerPressedEvent, OnPointerPressed, RoutingStrategies.Tunnel, true);
@@ -179,7 +180,11 @@ public partial class EditorTextArea : UserControl
             DismissHoverQuickInfo();
             CaretPositionChanged?.Invoke(this, EventArgs.Empty);
         }
+
     }
+
+    private void OnEditorGotFocus(object? sender, FocusChangedEventArgs e) =>
+        CaretPositionChanged?.Invoke(this, EventArgs.Empty);
 
     public void ShowHoverQuickInfo(string text)
     {
