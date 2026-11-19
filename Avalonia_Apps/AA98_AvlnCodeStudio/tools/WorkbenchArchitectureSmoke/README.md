@@ -6,6 +6,11 @@ Run in an interactive desktop session:
 dotnet run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj
 ```
 
+The Workbench solution explorer additionally nests a C# file under a sibling
+`.resx` when the project declares a literal, unconditional `DependentUpon`.
+This is a read-only XML projection, not MSBuild evaluation: conditional,
+ambiguous, imported and computed metadata is intentionally not resolved.
+
 For preview pointer selection and resize cancellation only, pass `-- --pointer-only`.
 It opens an Avalonia window and uses the rendered input hit target with synthetic
 pointer events; it does not test physical input. The safe preview selects visible
