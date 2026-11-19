@@ -94,6 +94,129 @@ public sealed class AxamlPreviewResourcesTests
     }
 
     [TestMethod]
+    public void ButtonStyleGradient_RejectsConflictsAndRespectsOverridesAndRefresh()
+    {
+        string root = Path.Combine(Environment.CurrentDirectory, "preview-button-gradient-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            Directory.CreateDirectory(Path.Combine(root, "Styles"));
+            Directory.CreateDirectory(Path.Combine(root, "Views"));
+            File.WriteAllText(Path.Combine(root, "Sample.csproj"), "<Project />");
+            string document = Path.Combine(root, "Views", "View.axaml");
+            File.WriteAllText(document, "");
+            string app = Path.Combine(root, "App.axaml");
+            const string appMarkup = """
+                <Application xmlns='https://github.com/avaloniaui' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+                  <Application.Resources>
+                    <LinearGradientBrush x:Key='Gradient' StartPoint='0,0' EndPoint='220,0'>
+                      <LinearGradientBrush.GradientStops><GradientStop Offset='0' Color='#FF000040'/><GradientStop Offset='1' Color='#FF000000'/></LinearGradientBrush.GradientStops>
+                    </LinearGradientBrush>
+                  </Application.Resources>
+                  <Application.Styles><StyleInclude Source='Styles/Default.axaml'/></Application.Styles>
+                </Application>
+                """;
+            File.WriteAllText(app, appMarkup);
+            File.WriteAllText(Path.Combine(root, "Styles", "Default.axaml"), """
+                <Styles xmlns='https://github.com/avaloniaui'>
+                  <Style Selector='Button.Menu'><Setter Property='Background' Value='{DynamicResource Gradient}'/></Style>
+                  <Style Selector='Button.Later'><Setter Property='Background' Value='#FF123456'/></Style>
+                  <Style Selector='Button.Unknown'><Setter Property='Background' Value='{Binding Unsafe}'/></Style>
+                </Styles>
+                """);
+            const string markup = """
+                <UserControl xmlns='https://github.com/avaloniaui' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+                  <StackPanel>
+                    <Button Classes='Menu' Content='Good'/>
+                    <Button Classes='Menu Later' Content='Later'/>
+                    <Button Classes='Menu Unknown' Content='Unknown'/>
+                    <Button Classes='Menu' Content='Literal' Background='#FFABCDEF'/>
+                    <Button Classes='Menu' Content='Binding' Background='{Binding Unsafe}'/>
+                    <Button Classes='Menu' Content='Property'><Button.Background><SolidColorBrush Color='Red'/></Button.Background></Button>
+                    <StackPanel><StackPanel.Resources><x:String x:Key='Gradient'>shadow</x:String></StackPanel.Resources><Button Classes='Menu' Content='Shadow'/></StackPanel>
+                    <StackPanel><StackPanel.Resources><ResourceDictionary/></StackPanel.Resources><Button Classes='Menu' Content='Dictionary'/></StackPanel>
+                    <StackPanel><StackPanel.Styles><Style Selector='Button'><Setter Property='Background' Value='Blue'/></Style></StackPanel.Styles><Button Classes='Menu' Content='Local'/></StackPanel>
+                  </StackPanel>
+                </UserControl>
+                """;
+            AxamlPreviewNode node = new AxamlPreviewService().Parse(markup, document, root);
+            AxamlPreviewNode[] buttons = Descendants(node).Where(n => n.TypeName == "Button").ToArray();
+            Assert.IsNotNull(buttons[0].ButtonBackgroundGradient);
+            Assert.IsFalse(buttons[0].Properties.ContainsKey("Background"));
+            foreach (AxamlPreviewNode button in buttons.Skip(1))
+            {
+                Assert.IsNull(button.ButtonBackgroundGradient, button.Text);
+            }
+
+            Assert.AreEqual("#FF123456", buttons[1].RenderProperties["Background"]);
+            Assert.AreEqual("#FFABCDEF", buttons[3].RenderProperties["Background"]);
+            Assert.AreEqual("{Binding Unsafe}", buttons[4].Properties["Background"]);
+            Assert.AreEqual("Blue", buttons[8].RenderProperties["Background"]);
+
+            string manyResources = string.Concat(Enumerable.Range(0, 513)
+                .Select(i => $"<x:String x:Key='K{i}'>value</x:String>"));
+            string oversizedScope = markup.Replace("<StackPanel>",
+                "<StackPanel><StackPanel.Resources>" + manyResources + "</StackPanel.Resources>");
+            node = new AxamlPreviewService().Parse(oversizedScope, document, root);
+            Assert.IsNull(Descendants(node).First(n => n.TypeName == "Button").ButtonBackgroundGradient);
+
+            File.WriteAllText(app, appMarkup.Replace("</Application.Resources>",
+                "<x:String x:Key='Gradient'>duplicate</x:String></Application.Resources>"));
+            node = new AxamlPreviewService().Parse(markup, document, root);
+            Assert.IsNull(Descendants(node).First(n => n.TypeName == "Button").ButtonBackgroundGradient);
+            File.WriteAllText(app, appMarkup.Replace("EndPoint='220,0'", "EndPoint='NaN,0'"));
+            node = new AxamlPreviewService().Parse(markup, document, root);
+            Assert.IsNull(Descendants(node).First(n => n.TypeName == "Button").ButtonBackgroundGradient);
+            File.WriteAllText(app, appMarkup.Replace("<LinearGradientBrush x:Key='Gradient' StartPoint='0,0' EndPoint='220,0'>",
+                "<LinearGradientBrush x:Key='Gradient' StartPoint='0,0' EndPoint='220,0' Opacity='0.5'>"));
+            node = new AxamlPreviewService().Parse(markup, document, root);
+            Assert.IsNull(Descendants(node).First(n => n.TypeName == "Button").ButtonBackgroundGradient);
+            File.WriteAllText(app, appMarkup.Replace("<LinearGradientBrush x:Key='Gradient' StartPoint='0,0' EndPoint='220,0'>",
+                "<LinearGradientBrush x:Key='Other' StartPoint='0,0' EndPoint='220,0'>")
+                .Replace("</Application.Resources>",
+                    "<x:String x:Key='Gradient'>{StaticResource Other}</x:String></Application.Resources>"));
+            node = new AxamlPreviewService().Parse(markup, document, root);
+            Assert.IsNull(Descendants(node).First(n => n.TypeName == "Button").ButtonBackgroundGradient);
+            File.WriteAllText(app, appMarkup.Replace("EndPoint='220,0'", "EndPoint='120,0'"));
+            node = new AxamlPreviewService().Parse(markup, document, root);
+            Assert.AreEqual(120d, Descendants(node).First(n => n.TypeName == "Button").ButtonBackgroundGradient!.EndX);
+        }
+        finally
+        {
+            if (Directory.Exists(root)) Directory.Delete(root, true);
+        }
+    }
+
+    [TestMethod]
+    public void ReportedCalculatorShell_LocalizesMenuAlongsideGradient()
+    {
+        string root = Environment.GetEnvironmentVariable("AA98_CALCULATOR_SAMPLE_ROOT")
+            ?? @"C:\Projekte\CSharp\Avalonia_Apps\AA05_CommandParCalc\AA05_CommandParCalc";
+        string view = Path.Combine(root, "Views", "CommandParCalcView.axaml");
+        if (!File.Exists(view))
+        {
+            Assert.Inconclusive("The external read-only calculator sample is not present.");
+        }
+
+        CultureInfo previous = CultureInfo.CurrentUICulture;
+        try
+        {
+            foreach ((string culture, string expected) in new[] { ("de-CH", "Anfang"), ("en", "Home"), ("", "Home") })
+            {
+                CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
+                AxamlPreviewNode node = new AxamlPreviewService().Parse(File.ReadAllText(view), view, root);
+                AxamlPreviewNode home = Descendants(node).Single(n => n.StableName == "btnHome");
+                Assert.AreEqual(expected, home.Text);
+                Assert.AreEqual("{x:Static p:Resources.btnHome}", home.Properties["Content"]);
+                Assert.IsNotNull(home.ButtonBackgroundGradient);
+            }
+        }
+        finally
+        {
+            CultureInfo.CurrentUICulture = previous;
+        }
+    }
+
+    [TestMethod]
     public void GridBackground_RendersSafeResourcesAndIgnoresUnresolvedValues()
     {
         const string markup = """
