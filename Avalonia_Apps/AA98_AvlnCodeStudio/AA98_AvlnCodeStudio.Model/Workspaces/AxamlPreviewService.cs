@@ -2116,7 +2116,8 @@ public sealed class AxamlPreviewService
             }
         }
 
-        Dictionary<string, string> previewProperties = resources.GetPreviewProperties(element, properties);
+        Dictionary<string, string> previewProperties = resources.GetPreviewProperties(element, properties,
+            out AxamlPreviewLinearGradient? buttonBackgroundGradient);
         string? text = GetDisplayText(typeName, properties, element);
         if (GetEditablePropertyName(typeName) is string displayProperty
             && properties.TryGetValue(displayProperty, out string? sourceText)
@@ -2148,6 +2149,7 @@ public sealed class AxamlPreviewService
             Properties = properties,
             PreviewProperties = previewProperties,
             PreviewZIndex = ParsePreviewZIndex(element),
+            ButtonBackgroundGradient = buttonBackgroundGradient,
             BorderBackgroundGradient = typeName == "Border"
                 && properties.TryGetValue("Background", out string? background)
                     ? resources.TryBorderGradient(element, background)

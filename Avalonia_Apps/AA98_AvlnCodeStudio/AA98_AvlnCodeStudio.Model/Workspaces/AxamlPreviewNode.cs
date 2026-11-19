@@ -59,6 +59,9 @@ public sealed class AxamlPreviewNode
     /// <summary>A bounded, literal gradient for a Border background, never executable XAML.</summary>
     public AxamlPreviewLinearGradient? BorderBackgroundGradient { get; init; }
 
+    /// <summary>A bounded application-style gradient for a Button background.</summary>
+    public AxamlPreviewLinearGradient? ButtonBackgroundGradient { get; init; }
+
     public IReadOnlyList<AxamlPreviewNode> Children { get; init; } = [];
 
     public IReadOnlyList<string> RowDefinitions { get; init; } = [];

@@ -27,13 +27,15 @@ internal sealed class AxamlPreviewResources(string? documentPath, string? projec
     private XElement? _application;
     private readonly List<XElement> _applicationStyles = [];
 
-    public Dictionary<string, string> GetPreviewProperties(XElement element, Dictionary<string, string> source)
+    public Dictionary<string, string> GetPreviewProperties(XElement element, Dictionary<string, string> source,
+        out AxamlPreviewLinearGradient? buttonBackgroundGradient)
     {
         Dictionary<string, string> result = new(StringComparer.Ordinal);
+        buttonBackgroundGradient = null;
         LoadApplication();
         foreach (XElement style in _applicationStyles)
         {
-            ApplyStyle(element, style, result, applicationStyle: true);
+            ApplyStyle(element, style, result, applicationStyle: true, ref buttonBackgroundGradient);
         }
 
         foreach (XElement owner in element.AncestorsAndSelf().Reverse())
@@ -42,21 +44,32 @@ internal sealed class AxamlPreviewResources(string? documentPath, string? projec
             {
                 foreach (XElement style in styles.Elements().Take(256).Where(e => IsAvalonia(e, "Style")))
                 {
-                    ApplyStyle(element, style, result, applicationStyle: false);
+                    ApplyStyle(element, style, result, applicationStyle: false, ref buttonBackgroundGradient);
                 }
             }
         }
 
         foreach ((string name, string value) in source)
         {
+            if (name == "Background")
+            {
+                buttonBackgroundGradient = null;
+            }
+
             // An unresolved local value must still override a style.
             result[name] = TryLiteral(element, value, out string? literal) ? literal! : value;
+        }
+
+        if (element.Elements().Any(e => IsAvalonia(e, element.Name.LocalName + ".Background")))
+        {
+            buttonBackgroundGradient = null;
         }
 
         return result;
     }
 
-    private void ApplyStyle(XElement element, XElement style, Dictionary<string, string> result, bool applicationStyle)
+    private void ApplyStyle(XElement element, XElement style, Dictionary<string, string> result, bool applicationStyle,
+        ref AxamlPreviewLinearGradient? buttonBackgroundGradient)
     {
         if (!MatchesSelector(element, (string?)style.Attribute("Selector")))
         {
@@ -67,11 +80,29 @@ internal sealed class AxamlPreviewResources(string? documentPath, string? projec
         {
             string? name = (string?)setter.Attribute("Property");
             string? value = (string?)setter.Attribute("Value");
+            if (name == "Background")
+            {
+                buttonBackgroundGradient = null;
+            }
+
             if (name is null || value is null || !s_styleProperties.Contains(name)
                 || setter.HasElements || setter.Attributes().Any(a => !a.IsNamespaceDeclaration
                     && a.Name != "Property" && a.Name != "Value"))
             {
                 continue;
+            }
+
+            if (applicationStyle && element.Name.LocalName == "Button" && name == "Background"
+                && _application is not null && TryResourceReference(value, out string? gradientKey)
+                && !HasGradientResourceConflict(element, gradientKey!))
+            {
+                AxamlPreviewLinearGradient? gradient = TryBorderGradient(_application, value);
+                if (gradient is not null)
+                {
+                    result.Remove(name);
+                    buttonBackgroundGradient = gradient;
+                    continue;
+                }
             }
 
             string? literal = null;
@@ -84,8 +115,19 @@ internal sealed class AxamlPreviewResources(string? documentPath, string? projec
             {
                 result[name] = literal!;
             }
+
         }
     }
+
+    private static bool HasGradientResourceConflict(XElement element, string key) =>
+        element.AncestorsAndSelf().Any(owner =>
+        {
+            XElement[] entries = owner.Elements()
+                .Where(e => IsAvalonia(e, owner.Name.LocalName + ".Resources"))
+                .SelectMany(e => e.Elements().Take(513)).Take(513).ToArray();
+            return entries.Length > 512 || entries.Any(e => IsAvalonia(e, "ResourceDictionary")
+                || (string?)e.Attribute(s_xaml + "Key") == key);
+        });
 
     public bool TryResolve(XElement element, string value, out string? result)
     {

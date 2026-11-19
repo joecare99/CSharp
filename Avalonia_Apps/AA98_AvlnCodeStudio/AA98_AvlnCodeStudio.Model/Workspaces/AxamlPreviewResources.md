@@ -51,14 +51,22 @@ hexadecimal colors. Only the `LinearGradientBrush.GradientStops` property-elemen
 form and its specified attributes are accepted. Duplicate keys, resource
 dictionaries in the lookup path, unsupported nodes, aliases, bindings, relative
 or percentage points, extra properties and malformed values leave the brush
-unresolved. Gradient style setters and other control properties are not
-supported. The preview creates its own brush from validated data, never from
-runtime XAML; source attributes stay unchanged.
+unresolved. An included application style may also set a `Button.Background`
+to a direct reference to such an application gradient. A local resource with
+the same key, any local resource dictionary, an oversized local resource scope,
+or a duplicate application key prevents that resolution. Aliases, local
+gradient style setters and gradients on other style properties are unsupported.
+A later matching Background setter or a source Background attribute/property
+element suppresses the gradient; a supported later literal setter wins.
+The preview creates its own brush from validated data, never from runtime XAML;
+source attributes stay unchanged.
 
 For the calculator example, neutral/culture RESX captions and the local Button
 margin/padding are supported when the host supplies its project context. The
 included `Button.Number` style also supplies its font size and solid background;
-the local Button margin still wins. The included `Grid.Calc` solid background
+the local Button margin still wins. The included `Button.Menu` style supplies
+the literal sidebar gradient while RESX supplies localized menu captions.
+The included `Grid.Calc` solid background
 is also rendered on the preview Grid. A literal Grid background takes precedence;
 unresolved expressions and unsupported brushes remain unset rather than being
 executed. The standalone designer and Workbench use the unique closest project in the selected
