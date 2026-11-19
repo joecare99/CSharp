@@ -1889,18 +1889,12 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
 
         foreach ((string path, string text) in texts)
         {
-            if (documentsByPath.TryGetValue(path, out List<Document>? candidates)
-                && candidates.Count == 1)
+            if (documentsByPath.TryGetValue(path, out List<Document>? candidates))
             {
-                solution = solution.WithDocumentText(candidates[0].Id, SourceText.From(text));
-            }
-            else if (WorkspacePathIdentity.AreEqual(path, activeFilePath)
-                && documentsByPath.TryGetValue(path, out candidates))
-            {
-                Document? activeDocument = candidates.FirstOrDefault(candidate => candidate.Project.Id == project.Id);
-                if (activeDocument is not null)
+                SourceText snapshot = SourceText.From(text);
+                foreach (Document candidate in candidates)
                 {
-                    solution = solution.WithDocumentText(activeDocument.Id, SourceText.From(text));
+                    solution = solution.WithDocumentText(candidate.Id, snapshot);
                 }
             }
         }
