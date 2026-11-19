@@ -83,6 +83,14 @@ public sealed class AxamlPreviewResourcesTests
         Assert.AreEqual(4, brush.GradientStops.Count);
         Assert.AreEqual(Color.Parse("#FF000040"), brush.GradientStops[0].Color);
         Assert.AreEqual(0.7d, brush.GradientStops[2].Offset);
+        AxamlPreviewNode home = Descendants(node).Single(n => n.StableName == "btnHome");
+        Button menu = preview.GetLogicalDescendants().OfType<Button>()
+            .Single(button => Equals(button.Content, home.Text));
+        Assert.IsInstanceOfType<LinearGradientBrush>(menu.Background);
+        LinearGradientBrush menuBrush = (LinearGradientBrush)menu.Background!;
+        Assert.AreEqual(new RelativePoint(220, 0, RelativeUnit.Absolute), menuBrush.EndPoint);
+        Assert.AreEqual(4, menuBrush.GradientStops.Count);
+        Assert.AreEqual(Color.Parse("#FF000040"), menuBrush.GradientStops[0].Color);
     }
 
     [TestMethod]

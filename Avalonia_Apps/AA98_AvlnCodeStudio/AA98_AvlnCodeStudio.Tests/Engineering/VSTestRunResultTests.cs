@@ -24,6 +24,22 @@ public sealed class VSTestRunResultTests
     }
 
     [TestMethod]
+    [DataRow("executor://other", "sample.dll", "Example.Theory")]
+    [DataRow("executor://example", "other.dll", "Example.Theory")]
+    [DataRow("executor://example", "sample.dll", "Example.Other")]
+    public void ResultWithSameIdButDifferentIdentity_IsRejected(string executor, string source, string name)
+    {
+        Guid id = Guid.NewGuid();
+        TestCase selected = CreateCase(id);
+        TestCase other = new(name, new Uri(executor), source) { Id = id };
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        Complete(handler, new TestResult(other) { Outcome = TestOutcome.Passed });
+
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, "different adapter case");
+    }
+
+    [TestMethod]
     public void ResultForSelectedCase_IsAcceptedEvenWithDifferentDisplayName()
     {
         Guid id = Guid.NewGuid();
