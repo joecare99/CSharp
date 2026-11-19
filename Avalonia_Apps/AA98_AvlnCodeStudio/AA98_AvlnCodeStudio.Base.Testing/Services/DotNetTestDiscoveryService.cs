@@ -74,7 +74,7 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
             if (await ReferencesTestingPlatformAsync(assemblyPath, cancellationToken).ConfigureAwait(false))
             {
                 throw new InvalidOperationException(
-                    "No VSTest adapter was found, and the assembly references Microsoft.Testing.Platform. "
+                    "No VSTest adapter was found, and the dependency metadata includes a Microsoft.Testing.Platform runtime asset. "
                     + "Microsoft.Testing.Platform-only projects are not supported by this VSTest service. "
                     + "Run the project with its Microsoft.Testing.Platform runner, or configure a VSTest adapter "
                     + "for a VSTest-compatible project.");
@@ -103,7 +103,7 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
         return discovery with
         {
             Warnings = discovery.Warnings.Append(
-                "VSTest discovered no tests, and the assembly references Microsoft.Testing.Platform. "
+                "VSTest discovered no tests, and the dependency metadata includes a Microsoft.Testing.Platform runtime asset. "
                 + "Microsoft.Testing.Platform-only projects are not supported by this VSTest service. "
                 + "If this project uses Microsoft.Testing.Platform, run it with its own runner; "
                 + "otherwise check that the correct VSTest adapter is configured.").ToArray(),
