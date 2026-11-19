@@ -546,17 +546,7 @@ public sealed class AxamlPreviewControl : ContentControl
 
         if (node.BorderBackgroundGradient is { } gradient)
         {
-            LinearGradientBrush brush = new()
-            {
-                StartPoint = new RelativePoint(gradient.StartX, gradient.StartY, RelativeUnit.Absolute),
-                EndPoint = new RelativePoint(gradient.EndX, gradient.EndY, RelativeUnit.Absolute),
-            };
-            foreach (AxamlPreviewGradientStop stop in gradient.Stops)
-            {
-                brush.GradientStops.Add(new GradientStop(Color.Parse(stop.Color), stop.Offset));
-            }
-
-            border.Background = brush;
+            border.Background = CreateGradient(gradient);
         }
         else if (GetProperty(node, "Background") is { } background
             && !string.IsNullOrWhiteSpace(background) && !background.StartsWith('{'))
@@ -571,6 +561,21 @@ public sealed class AxamlPreviewControl : ContentControl
         }
 
         return border;
+    }
+
+    private static LinearGradientBrush CreateGradient(AxamlPreviewLinearGradient gradient)
+    {
+        LinearGradientBrush brush = new()
+        {
+            StartPoint = new RelativePoint(gradient.StartX, gradient.StartY, RelativeUnit.Absolute),
+            EndPoint = new RelativePoint(gradient.EndX, gradient.EndY, RelativeUnit.Absolute),
+        };
+        foreach (AxamlPreviewGradientStop stop in gradient.Stops)
+        {
+            brush.GradientStops.Add(new GradientStop(Color.Parse(stop.Color), stop.Offset));
+        }
+
+        return brush;
     }
 
     private static Control BuildImagePreview(AxamlPreviewNode node)
@@ -686,7 +691,13 @@ public sealed class AxamlPreviewControl : ContentControl
             HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment"),
             VerticalAlignment = ParseVerticalAlignment(node),
         };
-        return ApplyTemplatedControlAppearance(button, node);
+        ApplyTemplatedControlAppearance(button, node);
+        if (node.ButtonBackgroundGradient is { } gradient)
+        {
+            button.Background = CreateGradient(gradient);
+        }
+
+        return button;
     }
 
     private static Control BuildNumericUpDown(AxamlPreviewNode node)
