@@ -485,7 +485,10 @@ public sealed class VSTestDiscoveryService
                 }
 
                 TestResult result = _results[0];
-                if (result.TestCase.Id != selectedCase.Id)
+                if (result.TestCase.Id != selectedCase.Id
+                    || !string.Equals(result.TestCase.ExecutorUri?.ToString(), selectedCase.ExecutorUri?.ToString(), StringComparison.Ordinal)
+                    || !string.Equals(result.TestCase.Source, selectedCase.Source, StringComparison.Ordinal)
+                    || !string.Equals(result.TestCase.FullyQualifiedName, selectedCase.FullyQualifiedName, StringComparison.Ordinal))
                 {
                     throw new InvalidOperationException("VSTest returned a result for a different adapter case.");
                 }
