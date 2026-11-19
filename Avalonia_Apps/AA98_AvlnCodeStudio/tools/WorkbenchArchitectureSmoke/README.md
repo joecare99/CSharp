@@ -6,6 +6,17 @@ Run in an interactive desktop session:
 dotnet run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj
 ```
 
+For preview pointer selection and resize cancellation only, pass `-- --pointer-only`.
+It opens an Avalonia window and uses the rendered input hit target with synthetic
+pointer events; it does not test physical input. The safe preview selects visible
+rendered bounds rather than stretched selection wrappers, including overlapping
+and nested controls. Empty wrapper space falls through to the containing node.
+Changing or detaching the preview cancels an active resize; selection never executes
+the document or changes its markup. Generated item containers map to source items
+only while their original preview items remain unchanged; otherwise selection falls
+back to the owning control. The full smoke also checks pointer-to-tree and source-caret
+synchronization in both Workbench and standalone hosts.
+
 For the resource/focus check only, pass `-- --resources-only`. If the read-only
 AA05 calculator sample exists at its development path, this checks its visible
 button caption, local margin/padding and source focus in both real hosts.
@@ -49,7 +60,8 @@ Button background/border/foreground/thickness/corners/typography/padding and con
 Border border brush/corner radius/thickness/padding, and
 TextBox border thickness/corners alongside its text/editing constraints, plus shared border/typography appearance on CheckBox, RadioButton and ToggleSwitch while each remains inert,
 preview pointer selection of disabled controls and visible nested ListBox, Tab and
-TreeView items, synchronized source caret/tree/inspector, source-preserving reorder and designer undo/redo,
+TreeView items, synchronized source caret/tree/inspector including keyboard focus
+return with an unchanged caret, source-preserving reorder and designer undo/redo,
 Grid cell movement/removal, safe Auto row/column expansion and removal of unused final tracks, explicit track-size editing, rendered spans and cross-target draft protection,
 single-content container removal and undo,
 tab/window close protection, a registered synthetic binary editor and its Save

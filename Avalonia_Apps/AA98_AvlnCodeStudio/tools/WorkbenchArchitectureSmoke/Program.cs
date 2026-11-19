@@ -59,6 +59,7 @@ internal static class Program
         bool quickInfoOnly = args.Contains("--quick-info-only", StringComparer.Ordinal);
         bool compactOnly = args.Contains("--compact-only", StringComparer.Ordinal);
         bool themeOnly = args.Contains("--theme-only", StringComparer.Ordinal);
+        bool pointerOnly = args.Contains("--pointer-only", StringComparer.Ordinal);
         s_root = Directory.CreateDirectory(Path.Combine(
             themeOnly ? Path.GetTempPath() : Environment.CurrentDirectory,
             "AvlnWorkbenchArchitecture-" + Guid.NewGuid().ToString("N"))).FullName;
@@ -270,8 +271,8 @@ internal static class Program
 
             return AppBuilder.Configure<SmokeApplication>()
                 .UsePlatformDetect()
-                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly, compactOnly, themeOnly)))
-                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly || compactOnly || themeOnly ? [] : args);
+                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly, compactOnly, themeOnly, pointerOnly)))
+                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly || compactOnly || themeOnly || pointerOnly ? [] : args);
         }
         finally
         {
@@ -294,14 +295,18 @@ internal static class Program
         }
     }
 
-    private static async Task RunAsync(string fixture, bool resourcesOnly, bool quickInfoOnly, bool testMethodOnly, bool compactOnly, bool themeOnly)
+    private static async Task RunAsync(string fixture, bool resourcesOnly, bool quickInfoOnly, bool testMethodOnly, bool compactOnly, bool themeOnly, bool pointerOnly)
     {
         IClassicDesktopStyleApplicationLifetime desktop =
             (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
         int exitCode = 0;
         try
         {
-            if (themeOnly)
+            if (pointerOnly)
+            {
+                await VerifyPreviewPointerAsync();
+            }
+            else if (themeOnly)
             {
                 await CaptureWorkbenchThemesAsync(desktop, fixture);
             }
@@ -322,14 +327,14 @@ internal static class Program
                 await VerifyWorkbenchAsync(desktop, fixture);
                 await VerifyStandaloneAsync(desktop, fixture);
             }
-            if (!quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly)
+            if (!quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly)
             {
                 await VerifyReportedResourcePreviewAsync(desktop);
             }
             EditorDocumentWorkspace workspace = SmokeApplication.Services!.GetRequiredService<EditorDocumentWorkspace>();
             desktop.MainWindow!.Close();
             Check(workspace.Tabs.Count == 0, "Closing the workbench did not dispose its document tabs.");
-            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly)
+            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly)
             {
                 Console.WriteLine("Architecture: navigation, catalog control previews, structure and Grid editing, designer contributions, binary editor, drafts, safe files, standalone review/undo, MCP dispatch and screenshot verified.");
             }
@@ -349,6 +354,155 @@ internal static class Program
         }
 
         desktop.Shutdown(exitCode);
+    }
+
+    private static async Task VerifyPreviewPointerAsync()
+    {
+        AxamlPreviewNode root = new AxamlPreviewService().Parse(
+            "<Grid Width='200' Height='100'><Border Width='40' Height='40' HorizontalAlignment='Left'/>"
+            + "<Border Width='40' Height='40' HorizontalAlignment='Right'/>"
+            + "<Border IsVisible='False'/></Grid>");
+        AxamlPreviewControl preview = new() { PreviewNode = root };
+        Window window = new() { Width = 300, Height = 200, Content = preview };
+        window.Show();
+        try
+        {
+            async Task<Point> AtAsync(double x, double y)
+            {
+                await WaitUntilAsync(() => preview.GetVisualDescendants().OfType<Border>()
+                    .Any(border => ReferenceEquals(border.Tag, root) && border.Bounds.Width > 0),
+                    "pointer selection layout");
+                Border rootWrapper = preview.GetVisualDescendants().OfType<Border>()
+                    .Single(border => ReferenceEquals(border.Tag, root));
+                Control renderedRoot = ((Grid)rootWrapper.Child!).Children[0];
+                return renderedRoot.TranslatePoint(new Point(x, y), preview)
+                    ?? throw new InvalidOperationException("No preview coordinates.");
+            }
+
+            async Task ClickAtAsync(double x, double y, AxamlPreviewNode expected)
+            {
+                Point point = await AtAsync(x, y);
+                Check(ReferenceEquals(preview.FindNodeAtPoint(point), expected),
+                    $"Incorrect preview node at {x},{y}.");
+                Point windowPoint = preview.TranslatePoint(point, window)
+                    ?? throw new InvalidOperationException("No window coordinates.");
+                await Task.Delay(100);
+                IInputElement target = window.InputHitTest(windowPoint)
+                    ?? throw new InvalidOperationException($"No input target at {windowPoint}, window {window.Bounds}, preview {preview.Bounds}.");
+                Check(target is Visual visual && (ReferenceEquals(visual, preview)
+                    || visual.GetVisualAncestors().Contains(preview)), "Input hit did not reach preview.");
+                PointerPressedEventArgs press = new(target, new Pointer(1, PointerType.Mouse, true), window,
+                    windowPoint, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                {
+                    RoutedEvent = InputElement.PointerPressedEvent,
+                };
+                ((Interactive)target).RaiseEvent(press);
+                Check(press.Handled && ReferenceEquals(preview.SelectedNode, expected),
+                    $"Input-target pointer selection failed at {x},{y}.");
+            }
+
+            await ClickAtAsync(20, 50, root.Children[0]);
+            Point rightClickPoint = preview.TranslatePoint(await AtAsync(180, 50), window)
+                ?? throw new InvalidOperationException("No right-click coordinates.");
+            await Task.Delay(100);
+            IInputElement rightClickTarget = window.InputHitTest(rightClickPoint)
+                ?? throw new InvalidOperationException("No right-click target.");
+            PointerPressedEventArgs rightClick = new(rightClickTarget, new Pointer(5, PointerType.Mouse, true),
+                window, rightClickPoint, 0,
+                new PointerPointProperties(RawInputModifiers.RightMouseButton, PointerUpdateKind.RightButtonPressed),
+                KeyModifiers.None, 1)
+            {
+                RoutedEvent = InputElement.PointerPressedEvent,
+            };
+            ((Interactive)rightClickTarget).RaiseEvent(rightClick);
+            Check(ReferenceEquals(preview.SelectedNode, root.Children[0]), "Right click changed selection.");
+            await ClickAtAsync(180, 50, root.Children[1]);
+            await ClickAtAsync(100, 50, root);
+            Check(preview.FindNodeAtPoint(new Point(-1, -1)) is null, "Outside space hit the preview.");
+
+            AxamlPreviewNode replacement = new AxamlPreviewService().Parse(
+                "<Grid Width='200' Height='100'><Border Width='60' Height='60'>"
+                + "<Border Width='20' Height='20'/></Border></Grid>");
+            preview.PreviewNode = root = replacement;
+            await ClickAtAsync(100, 50, root.Children[0].Children[0]);
+            Check(!ReferenceEquals(preview.SelectedNode, replacement.Children[0]),
+                "Nested selection stopped at its parent.");
+
+            int resizeCount = 0;
+            preview.LayoutResizeRequested += (_, _) => resizeCount++;
+            async Task<(Pointer Pointer, Point Point)> StartResizeAsync()
+            {
+                await WaitUntilAsync(() => preview.GetVisualDescendants().OfType<Border>()
+                    .Any(border => border.Classes.Contains("axaml-resize-grip") && border.Bounds.Width > 0),
+                    "resize grip layout");
+                await Task.Delay(100);
+                Border grip = preview.GetVisualDescendants().OfType<Border>()
+                    .Single(border => border.Classes.Contains("axaml-resize-grip"));
+                Point point = grip.TranslatePoint(new Point(grip.Bounds.Width / 2, grip.Bounds.Height / 2), window)
+                    ?? throw new InvalidOperationException("No grip coordinates.");
+                IInputElement target = window.InputHitTest(point)
+                    ?? throw new InvalidOperationException("No grip input target.");
+                Pointer pointer = new(2, PointerType.Mouse, true);
+                PointerPressedEventArgs press = new(target, pointer, window, point, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                {
+                    RoutedEvent = InputElement.PointerPressedEvent,
+                };
+                ((Interactive)target).RaiseEvent(press);
+                Check(press.Handled && ReferenceEquals(pointer.Captured, preview), "Resize did not capture input.");
+                return (pointer, point);
+            }
+
+            void Release(Pointer pointer, Point point)
+            {
+                PointerReleasedEventArgs release = new(preview, pointer, window, point + new Point(5, 5), 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased),
+                    KeyModifiers.None, MouseButton.Left)
+                {
+                    RoutedEvent = InputElement.PointerReleasedEvent,
+                };
+                preview.RaiseEvent(release);
+            }
+
+            (Pointer pointer, Point gripPoint) = await StartResizeAsync();
+            Release(new Pointer(4, PointerType.Mouse, true), gripPoint);
+            Check(resizeCount == 0 && ReferenceEquals(pointer.Captured, preview),
+                "Another pointer ended the active resize.");
+            Release(pointer, gripPoint);
+            Check(resizeCount == 1, "Valid resize was not requested.");
+            (pointer, gripPoint) = await StartResizeAsync();
+            preview.SelectedNode = root;
+            Release(pointer, gripPoint);
+            Check(resizeCount == 1 && pointer.Captured is null, "Changed selection retained a stale resize.");
+            preview.SelectedNode = root.Children[0].Children[0];
+            (pointer, gripPoint) = await StartResizeAsync();
+            preview.PreviewNode = null;
+            Release(pointer, gripPoint);
+            Check(resizeCount == 1 && pointer.Captured is null, "Replaced preview retained a stale resize.");
+            Check(preview.FindNodeAtPoint(new Point(100, 50)) is null, "Detached preview returned a stale node.");
+            preview.PreviewNode = root;
+            preview.SelectedNode = root.Children[0].Children[0];
+            (pointer, gripPoint) = await StartResizeAsync();
+            window.Content = null;
+            Release(pointer, gripPoint);
+            Check(resizeCount == 1 && pointer.Captured is null, "Detached preview retained a stale resize.");
+            window.Content = preview;
+            root = new AxamlPreviewService().Parse(
+                "<Canvas Width='100' Height='60' ClipToBounds='True'>"
+                + "<Border Width='40' Height='40' Canvas.Left='90' Canvas.Top='10'/></Canvas>");
+            preview.PreviewNode = root;
+            await ClickAtAsync(95, 30, root.Children[0]);
+            Check(preview.FindNodeAtPoint(await AtAsync(115, 30)) is null,
+                "Clipped child was selectable outside its parent.");
+            Console.WriteLine("Pointer: input-hit routing, overlapping wrappers, hidden and nested controls verified (synthetic input).");
+        }
+        finally
+        {
+            window.Close();
+        }
     }
 
     private static async Task CaptureWorkbenchThemesAsync(IClassicDesktopStyleApplicationLifetime desktop, string fixture)
@@ -1209,6 +1363,26 @@ internal static class Program
         Check(workbench.PropertySelectionCaption.Contains("TextBlock", StringComparison.Ordinal)
             && secondTab.Editor.Text == unchangedMarkup,
             "Source selection did not update the inspector or changed markup.");
+        await WaitUntilAsync(() => structure.GetVisualDescendants().OfType<TreeViewItem>()
+            .Any(item => ReferenceEquals(item.DataContext, designer.SelectedNode)), "source-selected structure item");
+        Check(structure.GetVisualDescendants().OfType<TreeViewItem>()
+            .First(item => ReferenceEquals(item.DataContext, designer.SelectedNode)).Focus(NavigationMethod.Tab),
+            "The source-selected structure item could not receive focus.");
+        int savedCaret = sourceEditor.CaretOffset;
+        designer.SelectedNode = null;
+        Check(sourceEditor.CaretOffset == savedCaret, "Clearing selection unexpectedly moved the source caret.");
+        Check(sourceEditor.GetVisualDescendants().OfType<AvaloniaEdit.TextEditor>().Single().TextArea.Focus(NavigationMethod.Tab),
+            "The source editor could not receive keyboard focus.");
+        await WaitUntilAsync(() => designer.SelectedNode?.StableName == "Label", "source selection on keyboard focus");
+        Check(sourceEditor.CaretOffset == savedCaret && secondTab.Editor.Text == unchangedMarkup,
+            "Keyboard focus moved the caret or changed the source.");
+        int labelOffset = unchangedMarkup.IndexOf("Label", StringComparison.Ordinal);
+        sourceEditor.ApplyTextChange(labelOffset, "Label".Length, "Label2", labelOffset + "Label2".Length);
+        await WaitUntilAsync(() => designer.SelectedNode?.StableName == "Label2", "selection after a source edit");
+        sourceEditor.ApplyTextChange(labelOffset, "Label2".Length, "Label", labelOffset + "Label".Length);
+        await WaitUntilAsync(() => designer.SelectedNode?.StableName == "Label", "selection after restoring a source edit");
+        Check(secondTab.Editor.Text == unchangedMarkup && !secondTab.Editor.IsDirty,
+            "Restoring the source edit did not restore the clean buffer.");
         sourceEditor.MoveCaretWithoutFocus(unchangedMarkup.IndexOf("Input", StringComparison.Ordinal));
         await WaitUntilAsync(() => designer.SelectedNode?.StableName == "Input", "source caret return selection");
         designer.SelectedNode = designer.PreviewRoot!.Children[1];
@@ -1219,18 +1393,23 @@ internal static class Program
             "preview selection layout");
         Border inputWrapper = preview.GetVisualDescendants().OfType<Border>()
             .First(border => ReferenceEquals(border.Tag, designer.PreviewRoot!.Children[0]));
-        Point inputPoint = inputWrapper.TranslatePoint(
-            new Point(inputWrapper.Bounds.Width / 2, inputWrapper.Bounds.Height / 2), preview)
+        Control inputContent = ((Grid)inputWrapper.Child!).Children[0];
+        Point inputPoint = inputContent.TranslatePoint(
+            new Point(inputContent.Bounds.Width / 2, inputContent.Bounds.Height / 2), preview)
             ?? throw new InvalidOperationException("The preview input has no visible coordinates.");
         AxamlPreviewNode? hitNode = preview.FindNodeAtPoint(inputPoint);
         Check(ReferenceEquals(hitNode, designer.PreviewRoot!.Children[0]),
             $"The inert nested TextBox could not be hit-tested: got {hitNode?.TypeName ?? "none"} at {inputPoint}, wrapper {inputWrapper.Bounds}, preview {preview.Bounds}.");
+        await Task.Delay(100);
+        Point windowInputPoint = preview.TranslatePoint(inputPoint, window)
+            ?? throw new InvalidOperationException("The preview has no window coordinates.");
+        IInputElement inputTarget = window.InputHitTest(windowInputPoint)
+            ?? throw new InvalidOperationException("The preview has no input target.");
         PointerPressedEventArgs press = new(
-            inputWrapper,
+            inputTarget,
             new Pointer(1, PointerType.Mouse, true),
             window,
-            preview.TranslatePoint(inputPoint, window)
-                ?? throw new InvalidOperationException("The preview has no window coordinates."),
+            windowInputPoint,
             0,
             new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
             KeyModifiers.None,
@@ -1238,7 +1417,7 @@ internal static class Program
         {
             RoutedEvent = InputElement.PointerPressedEvent,
         };
-        inputWrapper.RaiseEvent(press);
+        ((Interactive)inputTarget).RaiseEvent(press);
         Check(press.Handled,
             $"Preview pointer was not handled (selected={designer.SelectedNode?.StableName}, pressed={press.GetCurrentPoint(preview).Properties.IsLeftButtonPressed}, point={press.GetPosition(preview)}, expected={inputPoint}, routed={press.RoutedEvent}).");
         await WaitUntilAsync(() => designer.SelectedNode?.StableName == "Input"
@@ -1281,6 +1460,16 @@ internal static class Program
                 Check(ReferenceEquals(itemsPreview.FindNodeAtPoint(point), expectedNode),
                     $"Inert {expectedNode.TypeName} was not selected at its visible item.");
             }
+            ListBox changingList = itemsPreview.GetVisualDescendants().OfType<ListBox>().Single();
+            changingList.ItemsSource = new[] { "Runtime item", "Another runtime item" };
+            await WaitUntilAsync(() => changingList.ContainerFromIndex(0) is { Bounds.Width: > 0, Bounds.Height: > 0 },
+                "changed item container");
+            Control changedItem = changingList.ContainerFromIndex(0)!;
+            Point changedPoint = changedItem.TranslatePoint(
+                new Point(changedItem.Bounds.Width / 2, changedItem.Bounds.Height / 2), itemsPreview)
+                ?? throw new InvalidOperationException("The changed item has no preview coordinates.");
+            Check(ReferenceEquals(itemsPreview.FindNodeAtPoint(changedPoint), itemsRoot.Children[0]),
+                "Changed generated items were incorrectly mapped to stale source nodes.");
         }
         finally
         {
@@ -1452,8 +1641,47 @@ internal static class Program
             "standalone source caret selection");
         Check(host.Markup == originalMarkup && !host.IsDirty,
             "Standalone caret selection changed the source.");
+        await WaitUntilAsync(() => structure.GetVisualDescendants().OfType<TreeViewItem>()
+            .Any(item => ReferenceEquals(item.DataContext, host.Designer.SelectedNode)), "standalone source-selected structure item");
+        Check(structure.GetVisualDescendants().OfType<TreeViewItem>()
+            .First(item => ReferenceEquals(item.DataContext, host.Designer.SelectedNode)).Focus(NavigationMethod.Tab),
+            "The standalone structure item could not receive focus.");
+        int savedCaret = standaloneEditor.CaretOffset;
+        host.Designer.SelectedNode = null;
+        Check(standaloneEditor.GetVisualDescendants().OfType<AvaloniaEdit.TextEditor>().Single().TextArea.Focus(NavigationMethod.Tab),
+            "The standalone source editor could not receive keyboard focus.");
+        await WaitUntilAsync(() => host.Designer.SelectedNode?.TypeName == "TextBox", "standalone source selection on keyboard focus");
+        Check(standaloneEditor.CaretOffset == savedCaret && host.Markup == originalMarkup && !host.IsDirty,
+            "Standalone keyboard focus moved the caret or changed the source.");
         standaloneEditor.MoveCaretWithoutFocus(originalMarkup.IndexOf("<Button", StringComparison.Ordinal));
         await WaitUntilAsync(() => host.Designer.SelectedNode?.TypeName == "Button", "standalone source return selection");
+        AxamlPreviewControl standalonePreview = window.GetVisualDescendants().OfType<AxamlPreviewControl>().Single();
+        await WaitUntilAsync(() => standalonePreview.GetVisualDescendants().OfType<Border>()
+            .Any(border => ReferenceEquals(border.Tag, host.Designer.PreviewRoot!.Children[0])
+                && border.Bounds.Width > 0 && border.Bounds.Height > 0), "standalone pointer layout");
+        Border standaloneWrapper = standalonePreview.GetVisualDescendants().OfType<Border>()
+            .First(border => ReferenceEquals(border.Tag, host.Designer.PreviewRoot!.Children[0]));
+        Control standaloneContent = ((Grid)standaloneWrapper.Child!).Children[0];
+        Point standalonePoint = standaloneContent.TranslatePoint(
+            new Point(standaloneContent.Bounds.Width / 2, standaloneContent.Bounds.Height / 2), window)
+            ?? throw new InvalidOperationException("No standalone preview coordinates.");
+        await Task.Delay(100);
+        IInputElement standaloneTarget = window.InputHitTest(standalonePoint)
+            ?? throw new InvalidOperationException("No standalone preview input target.");
+        PointerPressedEventArgs standalonePress = new(standaloneTarget, new Pointer(3, PointerType.Mouse, true),
+            window, standalonePoint, 0,
+            new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+            KeyModifiers.None, 1)
+        {
+            RoutedEvent = InputElement.PointerPressedEvent,
+        };
+        ((Interactive)standaloneTarget).RaiseEvent(standalonePress);
+        await WaitUntilAsync(() => host.Designer.SelectedNode?.TypeName == "TextBox"
+            && ReferenceEquals(structure.SelectedItem, host.Designer.SelectedNode), "standalone pointer selection");
+        Check(standalonePress.Handled && standaloneEditor.CaretOffset == host.Designer.SelectedNode!.SourceStartOffset
+            && host.Markup == originalMarkup && !host.IsDirty, "Standalone pointer changed source or missed selection synchronization.");
+        standaloneEditor.MoveCaretWithoutFocus(originalMarkup.IndexOf("<Button", StringComparison.Ordinal));
+        await WaitUntilAsync(() => host.Designer.SelectedNode?.TypeName == "Button", "standalone source return after pointer");
         Invoke(palette, "Up");
         await WaitUntilAsync(() => host.Designer.PreviewRoot!.Children[0].TypeName == "Button"
             && host.Designer.SelectedNode?.TypeName == "Button", "standalone structure reorder");
