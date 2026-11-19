@@ -24,6 +24,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
@@ -39,6 +40,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -497,7 +499,124 @@ internal static class Program
             await ClickAtAsync(95, 30, root.Children[0]);
             Check(preview.FindNodeAtPoint(await AtAsync(115, 30)) is null,
                 "Clipped child was selectable outside its parent.");
+            await VerifyZIndexAsync();
             Console.WriteLine("Pointer: input-hit routing, overlapping wrappers, hidden and nested controls verified (synthetic input).");
+
+            async Task VerifyZIndexAsync()
+            {
+                Color PixelAt(Control control, Point point)
+                {
+                    PixelSize size = new((int)Math.Ceiling(control.Bounds.Width), (int)Math.Ceiling(control.Bounds.Height));
+                    using RenderTargetBitmap rendered = new(size, new Vector(96, 96));
+                    rendered.Render(control);
+                    using WriteableBitmap pixels = new(size, new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
+                    using ILockedFramebuffer buffer = pixels.Lock();
+                    rendered.CopyPixels(buffer);
+                    IntPtr pixel = buffer.Address + (int)point.Y * buffer.RowBytes + (int)point.X * 4;
+                    return Color.FromArgb(Marshal.ReadByte(pixel, 3), Marshal.ReadByte(pixel, 2),
+                        Marshal.ReadByte(pixel, 1), Marshal.ReadByte(pixel));
+                }
+
+                foreach (bool canvas in new[] { false, true })
+                {
+                    Panel native = canvas ? new Canvas() : new Grid();
+                    native.Width = native.Height = 100;
+                    Border high = new() { Width = 60, Height = 60, Background = Brushes.Red, ZIndex = 5 };
+                    Border low = new() { Width = 60, Height = 60, Background = Brushes.Blue };
+                    if (!canvas)
+                    {
+                        high.HorizontalAlignment = low.HorizontalAlignment = HorizontalAlignment.Left;
+                        high.VerticalAlignment = low.VerticalAlignment = VerticalAlignment.Top;
+                    }
+                    native.Children.Add(high);
+                    native.Children.Add(low);
+                    window.Content = native;
+                    await WaitUntilAsync(() => high.Bounds.Width == 60 && low.Bounds.Width == 60, "native z-order layout");
+                    await Task.Delay(100);
+                    Check(PixelAt(native, new Point(20, 20)) == Colors.Red, "Avalonia native z-order rendering differs.");
+                    Point nativePoint = native.TranslatePoint(new Point(20, 20), window)!.Value;
+                    Check(ReferenceEquals(window.InputHitTest(nativePoint), high), "Avalonia native z-order hit differs.");
+                    window.Content = preview;
+
+                    string panel = canvas ? "Canvas" : "Grid";
+                    string alignment = canvas ? "" : " HorizontalAlignment='Left' VerticalAlignment='Top'";
+                    async Task CaseAsync(string firstZ, string secondZ, int expected, Color color, string extra = "")
+                    {
+                        preview.SelectedNode = null;
+                        root = new AxamlPreviewService().Parse(
+                            $"<{panel} Width='100' Height='100' {extra}><Border Width='60' Height='60' Background='Red'{alignment} {firstZ}/>"
+                            + $"<Border Width='60' Height='60' Background='Blue'{alignment} {secondZ}/></{panel}>");
+                        preview.PreviewNode = root;
+                        Point point = await AtAsync(20, 20);
+                        await Task.Delay(100);
+                        Check(PixelAt(preview, point) == color,
+                            $"{panel} rendered wrong color for '{firstZ}' / '{secondZ}'.");
+                        await ClickAtAsync(20, 20, root.Children[expected]);
+                    }
+
+                    await CaseAsync("ZIndex='5'", "", 0, Colors.Red);
+                    await CaseAsync("ZIndex='-1'", "", 1, Colors.Blue);
+                    await CaseAsync("ZIndex='-1'", "ZIndex='-2'", 0, Colors.Red);
+                    await CaseAsync("ZIndex='3'", "ZIndex='3'", 1, Colors.Blue);
+                    await CaseAsync("", "", 1, Colors.Blue);
+                    await CaseAsync("ZIndex='100000'", "ZIndex='-100000'", 0, Colors.Red);
+                    await CaseAsync("ZIndex='100001'", "", 1, Colors.Blue);
+                    await CaseAsync("ZIndex='999999999999999999'", "", 1, Colors.Blue);
+                    await CaseAsync("ZIndex='1.5'", "", 1, Colors.Blue);
+                    await CaseAsync("ZIndex=' 9 '", "", 1, Colors.Blue);
+                    await CaseAsync("ZIndex='{Binding Layer}'", "", 1, Colors.Blue);
+                    await CaseAsync("ZIndex='{StaticResource Layer}'", "", 1, Colors.Blue);
+                    await CaseAsync("z:ZIndex='9'", "", 1, Colors.Blue, "xmlns:z='urn:foreign'");
+                    await CaseAsync("ZIndex='9' z:ZIndex='1'", "", 1, Colors.Blue, "xmlns:z='urn:foreign'");
+                    await CaseAsync("ZIndex='9' Visual.ZIndex='1'", "", 1, Colors.Blue);
+                    await CaseAsync("av:ZIndex='+9'", "", 0, Colors.Red, "xmlns:av='https://github.com/avaloniaui'");
+                }
+
+                root = new AxamlPreviewService().Parse(
+                    "<Grid Width='100' Height='100'><Border Width='60' Height='60' Background='Red' ZIndex='9'>"
+                    + "<Border.ZIndex><TextBlock Text='10'/></Border.ZIndex></Border>"
+                    + "<Border Width='60' Height='60' Background='Blue'/></Grid>");
+                preview.PreviewNode = root;
+                preview.SelectedNode = null;
+                Point propertyPoint = await AtAsync(50, 50);
+                await Task.Delay(100);
+                Check(PixelAt(preview, propertyPoint) == Colors.Blue, "Property-element ZIndex was applied.");
+                await ClickAtAsync(50, 50, root.Children[1]);
+
+                root = new AxamlPreviewService().Parse(
+                    "<Grid Width='100' Height='100'><Border Background='Red' ZIndex='1'>"
+                    + "<Border Background='Red' ZIndex='100'/></Border><Border Background='Blue' ZIndex='2'/></Grid>");
+                preview.PreviewNode = root;
+                preview.SelectedNode = root.Children[0];
+                Point nestedPoint = await AtAsync(50, 50);
+                await Task.Delay(100);
+                Check(PixelAt(preview, nestedPoint) == Colors.Blue, "Descendant escaped its parent's stacking context.");
+                await ClickAtAsync(50, 50, root.Children[1]);
+
+                preview.SelectedNode = root.Children[0];
+                await WaitUntilAsync(() => preview.GetVisualDescendants().OfType<Border>()
+                    .Any(border => border.Classes.Contains("axaml-resize-grip") && border.Bounds.Width > 0),
+                    "occluded resize grip layout");
+                Border occludedGrip = preview.GetVisualDescendants().OfType<Border>()
+                    .Single(border => border.Classes.Contains("axaml-resize-grip"));
+                Point occludedPoint = occludedGrip.TranslatePoint(
+                    new Point(occludedGrip.Bounds.Width / 2, occludedGrip.Bounds.Height / 2), preview)!.Value;
+                Check(ReferenceEquals(preview.FindNodeAtPoint(occludedPoint), root.Children[1]),
+                    "An occluded resize grip won over the higher sibling.");
+                Point occludedWindowPoint = preview.TranslatePoint(occludedPoint, window)!.Value;
+                IInputElement occludedTarget = window.InputHitTest(occludedWindowPoint)!;
+                Pointer occludedPointer = new(7, PointerType.Mouse, true);
+                PointerPressedEventArgs occludedPress = new(occludedTarget, occludedPointer, window, occludedWindowPoint, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                {
+                    RoutedEvent = InputElement.PointerPressedEvent,
+                };
+                ((Interactive)occludedTarget).RaiseEvent(occludedPress);
+                Check(occludedPress.Handled && ReferenceEquals(preview.SelectedNode, root.Children[1])
+                    && occludedPointer.Captured is null, "Occluded grip started a resize.");
+                Console.WriteLine("ZIndex: native Canvas/Grid and 34 preview render/pointer cases plus occluded resize verified (synthetic input).");
+            }
         }
         finally
         {

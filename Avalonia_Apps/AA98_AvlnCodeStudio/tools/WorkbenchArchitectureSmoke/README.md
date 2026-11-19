@@ -17,6 +17,18 @@ only while their original preview items remain unchanged; otherwise selection fa
 back to the owning control. The full smoke also checks pointer-to-tree and source-caret
 synchronization in both Workbench and standalone hosts.
 
+For supported preview controls, a single unqualified or Avalonia-namespaced `ZIndex`
+attribute containing a signed decimal integer from -100000 through 100000 is applied
+to the selection wrapper. Higher sibling values render and select in front; equal
+values retain source order, and children cannot escape their parent's stacking.
+The default is zero. Bindings, resources, property elements, foreign or ambiguous
+attributes, whitespace and out-of-range values fall back to zero; they are not
+evaluated. This is preview-only, not an inspector/source editing feature. Item
+containers and native template internals are not assigned source ZIndex values.
+The pointer smoke compares native Canvas/Grid rendering and input hits with preview
+rendered pixels and synthetic clicks, including occluded grips and stale resize
+cancellation; physical mouse and compositor acceptance remain separate.
+
 For the resource/focus check only, pass `-- --resources-only`. If the read-only
 AA05 calculator sample exists at its development path, this checks its visible
 button caption, local margin/padding and source focus in both real hosts.
