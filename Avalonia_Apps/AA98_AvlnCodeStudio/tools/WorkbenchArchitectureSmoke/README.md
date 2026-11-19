@@ -103,6 +103,11 @@ Rectangle, Ellipse, Line, Polygon and Polyline can be inserted from the palette
 with Undo/Redo. They render only literal solid-color fills/strokes; line
 endpoints and polygon/polyline point lists are finite and bounded. Brush
 resources and dynamic shape bindings remain outside the editable preview subset.
+
+The inert resource preview also renders the AA05 `Button.Menu` application-style
+gradient with localized RESX captions. It accepts only bounded literal
+application gradients and conservative, conflict-free resource lookup; see
+`AA98_AvlnCodeStudio.Model/Workspaces/AxamlPreviewResources.md` for limits.
 Image controls can be inserted from the palette and edit literal source references
 and stretch settings. The preview always uses an inert placeholder; it does not
 load local files, network resources or binding expressions.
