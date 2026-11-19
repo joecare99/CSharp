@@ -145,7 +145,7 @@ public sealed class AxamlPreviewControl : ContentControl
         }
 
         bool isGrip = withinGrip || visual is Control control && control.Classes.Contains("axaml-resize-grip") && contains;
-        foreach (Visual child in visual.GetVisualChildren().Reverse())
+        foreach (Visual child in visual.GetVisualChildren().OrderBy(static child => child.ZIndex).Reverse())
         {
             var result = HitTestSelection(child, point, isGrip);
             if (result.Node is not null)
@@ -457,6 +457,7 @@ public sealed class AxamlPreviewControl : ContentControl
         return new Border
         {
             Tag = node.SourceStartOffset >= 0 ? node : null,
+            ZIndex = node.IsSupported ? node.PreviewZIndex ?? 0 : 0,
             Child = wrapper,
             Background = Brushes.Transparent,
             BorderBrush = isSelected ? Brushes.DodgerBlue : Brushes.Transparent,
