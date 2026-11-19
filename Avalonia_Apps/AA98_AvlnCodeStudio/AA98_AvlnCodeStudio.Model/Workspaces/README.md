@@ -188,6 +188,9 @@ UTF-16/UTF-32 when replacing existing files. Files without a BOM must be valid
 UTF-8; invalid Unicode is reported before review. Newly created files use
 UTF-8 without a BOM. Undo and redo retain the corresponding original and
 proposed bytes. This contract does not change ordinary editor save behavior.
+If undo/redo fails after changing files, rollback preserves a target that was
+externally removed or replaced in the meantime and reports incomplete recovery;
+the failed history action remains available for review.
 
 An opt-in desktop regression exercises the Workbench project-settings dialog,
 both review modes, cancellation, conflicts, context changes and undo/redo:
@@ -215,6 +218,12 @@ preview moves the source caret without focusing the editor. Selection does not
 change markup. The source mapping is available only for valid, unambiguous
 XML; recovery previews and unrepresented markup are not guessed. Invisible or
 unrealized preview items can still be selected in the tree or source.
+Pointer hit testing uses the visible content bounds rather than stretched
+selection wrappers, so overlapping siblings and empty container space do not
+select the wrong child. Generated item containers map to source items only while
+their original preview items are unchanged; otherwise the owning control is
+selected. A preview replacement, selection change or visual detach cancels an
+active resize instead of applying it to a stale node.
 
 `AxamlDesignerSession` exposes the safe preview tree and document-local undo
 and redo independently of a host. `RemoveSelectedControl` and

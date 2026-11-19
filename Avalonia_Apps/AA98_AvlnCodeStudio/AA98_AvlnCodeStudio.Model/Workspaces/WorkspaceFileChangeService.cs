@@ -554,6 +554,9 @@ public sealed class WorkspaceFileChangeService
 
         if (!File.Exists(change.TargetPath))
         {
+            if (transition.TargetExistsAfterTransition)
+                throw new IOException($"The undo/redo target '{change.RelativePath}' was removed during rollback.");
+
             string temporary = WriteTemporaryFile(Path.GetDirectoryName(change.TargetPath)!, transition.ExpectedBytes!);
             try { File.Move(temporary, change.TargetPath); }
             finally { File.Delete(temporary); }
