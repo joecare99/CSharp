@@ -351,6 +351,85 @@ public sealed class WorkspaceFileChangeServiceTests
     }
 
     [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void UndoRedo_RollbackPreservesExternalDeletion(bool undo)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string firstPath = Path.Combine(root, "First.txt");
+            string secondPath = Path.Combine(root, "Second.txt");
+            File.WriteAllText(firstPath, "first");
+            File.WriteAllText(secondPath, "before");
+            ToggleSynchronizationProvider documents = new(secondPath);
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "generated-first"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "before", "generated"),
+            ]);
+            service.Apply(proposal, confirmed: true);
+            if (!undo) Assert.IsTrue(service.Undo());
+            documents.OnNextChange = () =>
+            {
+                File.Delete(firstPath);
+                documents.Content = "external editor edit";
+                throw new IOException("The open document snapshot is stale.");
+            };
+
+            AggregateException exception = Assert.ThrowsExactly<AggregateException>(() =>
+            {
+                if (undo) service.Undo();
+                else service.Redo();
+            });
+
+            StringAssert.Contains(exception.Message, "rollback was incomplete");
+            StringAssert.Contains(exception.ToString(), "First.txt' was removed during rollback");
+            Assert.IsFalse(File.Exists(firstPath));
+            Assert.AreEqual(undo ? "generated" : "before", File.ReadAllText(secondPath));
+            Assert.AreEqual("external editor edit", documents.Content);
+            Assert.AreEqual(undo ? "generated" : "before", documents.SavedContent);
+            Assert.AreEqual(undo, service.CanUndo);
+            Assert.AreEqual(!undo, service.CanRedo);
+        });
+    }
+
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void Undo_RollbackRestoresDeletedFileOnlyWhenNotRecreated(bool recreated)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string firstPath = Path.Combine(root, "New.txt");
+            string secondPath = Path.Combine(root, "Second.txt");
+            File.WriteAllText(secondPath, "before");
+            ToggleSynchronizationProvider documents = new(secondPath);
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.CreateNew("New.txt", "generated-first"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "before", "generated"),
+            ]);
+            service.Apply(proposal, confirmed: true);
+            documents.OnNextChange = () =>
+            {
+                if (recreated) File.WriteAllText(firstPath, "external");
+                throw new IOException("Simulated editor synchronization failure.");
+            };
+
+            if (recreated) Assert.ThrowsExactly<AggregateException>(() => service.Undo());
+            else Assert.ThrowsExactly<IOException>(() => service.Undo());
+
+            Assert.AreEqual(recreated ? "external" : "generated-first", File.ReadAllText(firstPath));
+            Assert.AreEqual("generated", File.ReadAllText(secondPath));
+            Assert.AreEqual("generated", documents.Content);
+            Assert.IsTrue(service.CanUndo);
+            Assert.IsFalse(service.CanRedo);
+        });
+    }
+
+    [TestMethod]
     public void ApplyAfterUndo_ClearsRedoHistoryAndResetClearsUndoHistory()
     {
         WithTemporaryDirectory(root =>
@@ -467,6 +546,50 @@ public sealed class WorkspaceFileChangeServiceTests
             Assert.AreEqual("before", File.ReadAllText(viewPath));
             Assert.IsFalse(File.Exists(generatedPath));
             Assert.IsFalse(Directory.Exists(Path.GetDirectoryName(generatedPath)));
+        });
+    }
+
+    [TestMethod]
+    [DataRow(false, false)]
+    [DataRow(false, true)]
+    [DataRow(true, false)]
+    [DataRow(true, true)]
+    public void Apply_RollbackPreservesExternalFileChange(bool newFile, bool deleted)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string firstPath = Path.Combine(root, "First.txt");
+            string secondPath = Path.Combine(root, "Second.txt");
+            if (!newFile) File.WriteAllText(firstPath, "first");
+            File.WriteAllText(secondPath, "before");
+            ToggleSynchronizationProvider documents = new(secondPath);
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                newFile
+                    ? WorkspaceFileChangeRequest.CreateNew("First.txt", "generated-first")
+                    : WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "generated-first"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "before", "generated"),
+            ]);
+            documents.OnNextChange = () =>
+            {
+                if (deleted) File.Delete(firstPath);
+                else File.WriteAllText(firstPath, "external");
+                documents.Content = "external editor edit";
+                throw new IOException("The open document snapshot is stale.");
+            };
+
+            AggregateException exception = Assert.ThrowsExactly<AggregateException>(
+                () => service.Apply(proposal, confirmed: true));
+
+            StringAssert.Contains(exception.ToString(), "The file no longer contains the content written by this proposal.");
+            if (deleted) Assert.IsFalse(File.Exists(firstPath));
+            else Assert.AreEqual("external", File.ReadAllText(firstPath));
+            Assert.AreEqual("before", File.ReadAllText(secondPath));
+            Assert.AreEqual("external editor edit", documents.Content);
+            Assert.AreEqual("before", documents.SavedContent);
+            Assert.IsFalse(service.CanUndo);
+            Assert.IsFalse(service.CanRedo);
         });
     }
 
@@ -658,6 +781,8 @@ public sealed class WorkspaceFileChangeServiceTests
 
         public bool FailNextChange { get; set; }
 
+        public Action? OnNextChange { get; set; }
+
         public bool IsDocumentOpen(string fullPath) => WorkspacePathIdentity.AreEqual(fullPath, _openPath);
 
         public bool CanApplyChange(string fullPath, string expectedContent, string expectedSavedContent)
@@ -678,6 +803,10 @@ public sealed class WorkspaceFileChangeServiceTests
             {
                 throw new IOException("The open document snapshot is stale.");
             }
+
+            Action? onNextChange = OnNextChange;
+            OnNextChange = null;
+            onNextChange?.Invoke();
 
             if (FailNextChange)
             {

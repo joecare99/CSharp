@@ -58,6 +58,43 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public void CaretSelection_RespectsBoundariesAndReloadedMarkup()
+    {
+        const string markup = " \n<StackPanel><Button /><TextBlock /></StackPanel> ";
+        AxamlDesignerViewModel viewModel = new();
+        int changes = 0;
+        viewModel.MarkupChanged += (_, _) => changes++;
+        viewModel.LoadMarkup(markup);
+        int button = markup.IndexOf("<Button", StringComparison.Ordinal);
+        int textBlock = markup.IndexOf("<TextBlock", StringComparison.Ordinal);
+
+        viewModel.SelectAtCaret(markup, button);
+        Assert.AreEqual("Button", viewModel.SelectedNode?.TypeName);
+        Assert.IsTrue(viewModel.IsSelectionInMarkup(markup));
+        viewModel.SelectAtCaret(markup, textBlock - 1);
+        Assert.AreEqual("Button", viewModel.SelectedNode?.TypeName);
+        viewModel.SelectAtCaret(markup, textBlock);
+        Assert.AreEqual("TextBlock", viewModel.SelectedNode?.TypeName);
+        AxamlPreviewNode? selected = viewModel.SelectedNode;
+        foreach (int offset in new[] { -1, 0, markup.Length, markup.Length + 1 })
+        {
+            viewModel.SelectAtCaret(markup, offset);
+            Assert.AreSame(selected, viewModel.SelectedNode);
+        }
+
+        string edited = markup.Replace("<Button />", "<Button Width='20' />", StringComparison.Ordinal);
+        Assert.IsFalse(viewModel.IsSelectionInMarkup(edited));
+        viewModel.LoadMarkup(edited);
+        viewModel.SelectAtCaret(markup, button);
+        viewModel.SelectAtCaret(edited, edited.IndexOf("<Button", StringComparison.Ordinal));
+        Assert.AreEqual("Button", viewModel.SelectedNode?.TypeName);
+        Assert.IsTrue(viewModel.IsSelectionInMarkup(edited));
+        viewModel.LoadMarkup("<StackPanel><Button");
+        Assert.IsFalse(viewModel.IsSelectionInMarkup("<StackPanel><Button"));
+        Assert.AreEqual(0, changes);
+    }
+
+    [TestMethod]
     public void DesignerViewModel_ApplyUndoRedo_PublishesUpdatedMarkup()
     {
         AxamlDesignerViewModel viewModel = new();

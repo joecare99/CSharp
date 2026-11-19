@@ -27,7 +27,7 @@ public sealed class AxamlPreviewResourcesTests
                   <LinearGradientBrush.GradientStops><GradientStop Offset='0' Color='#FF000040'/><GradientStop Offset='1' Color='#FF000000'/></LinearGradientBrush.GradientStops>
                 </LinearGradientBrush>
                 <LinearGradientBrush x:Key='Duplicate' StartPoint='0,0' EndPoint='1,0'/><x:String x:Key='Duplicate'>bad</x:String>
-                <LinearGradientBrush x:Key='BadPoint' StartPoint='NaN,0' EndPoint='1,0'/>
+                <LinearGradientBrush x:Key='BadPoint' StartPoint='NaN,0' EndPoint='1,0'><LinearGradientBrush.GradientStops><GradientStop Offset='0' Color='#FF000000'/><GradientStop Offset='1' Color='#FFFFFFFF'/></LinearGradientBrush.GradientStops></LinearGradientBrush>
                 <LinearGradientBrush x:Key='BadStop' StartPoint='0,0' EndPoint='1,0'><LinearGradientBrush.GradientStops><GradientStop Offset='0' Color='#FF000000'/><GradientStop Offset='2' Color='#FFFFFFFF'/></LinearGradientBrush.GradientStops></LinearGradientBrush>
                 <LinearGradientBrush x:Key='Extra' StartPoint='0,0' EndPoint='1,0' Opacity='0.5'><LinearGradientBrush.GradientStops><GradientStop Offset='0' Color='#FF000000'/><GradientStop Offset='1' Color='#FFFFFFFF'/></LinearGradientBrush.GradientStops></LinearGradientBrush>
                 <x:String x:Key='Alias'>{StaticResource Good}</x:String>

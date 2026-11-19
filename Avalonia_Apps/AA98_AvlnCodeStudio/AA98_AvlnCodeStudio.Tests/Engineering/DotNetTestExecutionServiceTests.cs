@@ -171,6 +171,8 @@ public sealed class DotNetTestExecutionServiceTests
             InvalidOperationException error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
                 () => service.DiscoverAsync(assembly, root));
             StringAssert.Contains(error.Message, "Microsoft.Testing.Platform-only projects are not supported");
+            StringAssert.Contains(error.Message, "dependency metadata includes a Microsoft.Testing.Platform runtime asset");
+            Assert.IsFalse(error.Message.Contains("assembly references", StringComparison.Ordinal));
             StringAssert.Contains(error.Message, "runner");
             error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => service.RunCaseAsync(assembly, root, testCase));
             StringAssert.Contains(error.Message, "Microsoft.Testing.Platform-only projects are not supported");
@@ -237,6 +239,8 @@ public sealed class DotNetTestExecutionServiceTests
             Assert.AreEqual(2, warned.Warnings.Count);
             Assert.AreEqual("Adapter warning", warned.Warnings[0]);
             StringAssert.Contains(warned.Warnings[1], "Microsoft.Testing.Platform-only projects are not supported");
+            StringAssert.Contains(warned.Warnings[1], "dependency metadata includes a Microsoft.Testing.Platform runtime asset");
+            Assert.IsFalse(warned.Warnings[1].Contains("assembly references", StringComparison.Ordinal));
             StringAssert.Contains(warned.Warnings[1], "VSTest adapter");
 
             await File.WriteAllTextAsync(deps, TestingPlatformDependencies.Replace(
@@ -307,7 +311,10 @@ public sealed class DotNetTestExecutionServiceTests
             && library.Value.TryGetProperty("runtime", out JsonElement runtime)
             && runtime.EnumerateObject().Any(asset => asset.Name.EndsWith("/Microsoft.Testing.Platform.dll", StringComparison.OrdinalIgnoreCase))));
         TestDiscoveryResult empty = new([], []);
-        Assert.AreEqual(1, (await DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, CancellationToken.None)).Warnings.Count);
+        TestDiscoveryResult warning = await DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, CancellationToken.None);
+        Assert.AreEqual(1, warning.Warnings.Count);
+        StringAssert.Contains(warning.Warnings[0], "dependency metadata includes a Microsoft.Testing.Platform runtime asset");
+        Assert.IsFalse(warning.Warnings[0].Contains("assembly references", StringComparison.Ordinal));
         TestDiscoveryResult result = await new DotNetTestDiscoveryService().DiscoverAsync(assembly, AppContext.BaseDirectory);
         Assert.IsTrue(result.Cases.Any(test => test.FullyQualifiedName.Contains(
             nameof(DotNetTestExecutionServiceTests), StringComparison.Ordinal)));

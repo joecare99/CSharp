@@ -515,8 +515,8 @@ public sealed class NetCoreDbgDebugSessionServiceTests
             string command = root.GetProperty("command").GetString()!;
             if (command == "launch")
             {
-                JsonElement args = root.GetProperty("arguments").GetProperty("args");
-                entryMode = args.GetArrayLength() > 0 ? args[0].GetString() : null;
+                JsonElement launchArgs = root.GetProperty("arguments").GetProperty("args");
+                entryMode = launchArgs.GetArrayLength() > 0 ? launchArgs[0].GetString() : null;
             }
             if (command == "configurationDone" && entryMode is "exited" or "terminated" or "wait")
             {
