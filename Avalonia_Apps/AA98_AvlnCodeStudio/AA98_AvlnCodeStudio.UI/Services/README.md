@@ -7,6 +7,11 @@ included in its Roslyn project; equally near project owners are rejected.
 Multi-target projects require an explicit target framework. Metadata-only
 symbols and unresolved source definitions return no location.
 
+When a physical source file is linked into multiple reachable projects, its
+open-buffer text is applied to every linked Roslyn document in the snapshot.
+Each project still parses that text with its own framework and compilation
+settings; no project or source files are saved.
+
 The workbench discards a result if the workspace, selected framework, editor,
 caret, source text, or open-document snapshots change while it is computed.
 Requests support cancellation, including while waiting for the workspace gate.

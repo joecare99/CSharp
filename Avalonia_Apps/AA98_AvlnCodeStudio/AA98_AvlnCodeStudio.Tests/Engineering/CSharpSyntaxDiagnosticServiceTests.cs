@@ -2109,6 +2109,89 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
     }
 
     [TestMethod]
+    public async Task LanguageOperations_UseUnsavedLinkedFileAcrossReferencedProjects()
+    {
+        string root = Path.Combine(
+            Environment.GetEnvironmentVariable("AA98_LANGUAGE_TEST_ROOT") ?? Directory.GetCurrentDirectory(),
+            $"LanguageLinkedSnapshot_{Guid.NewGuid():N}");
+        string appDirectory = Path.Combine(root, "App");
+        string libraryDirectory = Path.Combine(root, "Library");
+        string sharedDirectory = Path.Combine(root, "Shared");
+        Directory.CreateDirectory(appDirectory);
+        Directory.CreateDirectory(libraryDirectory);
+        Directory.CreateDirectory(sharedDirectory);
+        try
+        {
+            string appProject = Path.Combine(appDirectory, "App.csproj");
+            string libraryProject = Path.Combine(libraryDirectory, "Library.csproj");
+            string appPath = Path.Combine(appDirectory, "Consumer.cs");
+            string sharedPath = Path.Combine(sharedDirectory, "Shared.cs");
+            const string appProjectText = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework><DefineConstants>APP</DefineConstants></PropertyGroup>
+                  <ItemGroup><Compile Include="../Shared/Shared.cs" Link="Shared.cs" /><ProjectReference Include="../Library/Library.csproj" /></ItemGroup>
+                </Project>
+                """;
+            const string libraryProjectText = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+                  <ItemGroup><Compile Include="../Shared/Shared.cs" Link="Shared.cs" /></ItemGroup>
+                </Project>
+                """;
+            const string savedShared = """
+                #if APP
+                public class AppShared { }
+                #else
+                public class LibraryShared { public int Saved => 0; }
+                #endif
+                """;
+            const string draftShared = """
+                #if APP
+                public class AppShared { }
+                #else
+                public class LibraryShared
+                {
+                    public string Draft => "";
+                }
+                #endif
+                """;
+            const string savedConsumer = "public class SavedConsumer { }";
+            const string consumer = "public class Consumer { string Read(LibraryShared item) => item.Draft; }";
+            await File.WriteAllTextAsync(appProject, appProjectText);
+            await File.WriteAllTextAsync(libraryProject, libraryProjectText);
+            await File.WriteAllTextAsync(appPath, savedConsumer);
+            await File.WriteAllTextAsync(sharedPath, savedShared);
+            await RunFixtureAsync("restore", appProject);
+            CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(appProject);
+            IReadOnlyDictionary<string, string> openDocuments = new Dictionary<string, string> { [sharedPath] = draftShared };
+            using CSharpSyntaxDiagnosticService service = new();
+            int position = consumer.IndexOf("Draft", StringComparison.Ordinal);
+
+            string? info = await service.GetQuickInfoAsync(
+                consumer, appPath, position, workspace, openDocumentTexts: openDocuments, targetFramework: "net10.0");
+            StringAssert.Contains(info, "string LibraryShared.Draft");
+            Code.Navigation.CodeLocation? definition = await service.FindDefinitionAsync(
+                consumer, appPath, position, workspace, openDocumentTexts: openDocuments, targetFramework: "net10.0");
+            Assert.AreEqual(sharedPath, definition?.Path);
+            Assert.AreEqual(6, definition?.Line);
+            IReadOnlyList<CSharpCompletionSuggestion> completions = await service.GetCompletionItemsAsync(
+                consumer, appPath, position + "Draft".Length, workspace,
+                openDocumentTexts: openDocuments, targetFramework: "net10.0");
+            Assert.IsTrue(completions.Any(item => item.DisplayText == "Draft"));
+
+            Assert.IsNull(await service.GetQuickInfoAsync(consumer, appPath, position, workspace, targetFramework: "net10.0"));
+            Assert.AreEqual(savedShared, await File.ReadAllTextAsync(sharedPath));
+            Assert.AreEqual(savedConsumer, await File.ReadAllTextAsync(appPath));
+            Assert.AreEqual(appProjectText, await File.ReadAllTextAsync(appProject));
+            Assert.AreEqual(libraryProjectText, await File.ReadAllTextAsync(libraryProject));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task FindDefinitionAsync_RejectsAmbiguousProjectOwnershipAndHonorsCancellation()
     {
         string root = Path.Combine(

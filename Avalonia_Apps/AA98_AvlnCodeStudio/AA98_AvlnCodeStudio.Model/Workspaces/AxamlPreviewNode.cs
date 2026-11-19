@@ -53,6 +53,9 @@ public sealed class AxamlPreviewNode
 
     public IReadOnlyDictionary<string, string> RenderProperties => PreviewProperties ?? Properties;
 
+    /// <summary>A safe literal stacking value; null means the default stacking order.</summary>
+    public int? PreviewZIndex { get; init; }
+
     /// <summary>A bounded, literal gradient for a Border background, never executable XAML.</summary>
     public AxamlPreviewLinearGradient? BorderBackgroundGradient { get; init; }
 
