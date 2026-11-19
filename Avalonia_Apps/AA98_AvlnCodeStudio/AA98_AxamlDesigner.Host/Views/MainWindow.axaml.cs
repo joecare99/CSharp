@@ -81,7 +81,8 @@ public partial class MainWindow : Window
 
     private void OnCaretPositionChanged(object? sender, EventArgs e)
     {
-        if (_synchronizingSelection || _selectionHost is not { } host)
+        if (_synchronizingSelection || _selectionHost is not { } host
+            || !string.Equals(SourceEditor.Text, host.Markup, StringComparison.Ordinal))
         {
             return;
         }
@@ -99,7 +100,10 @@ public partial class MainWindow : Window
 
     private void OnDesignerSelectionActivated(object? sender, EventArgs e)
     {
-        if (_synchronizingSelection || _selectionHost?.Designer.SelectedNode is not { SourceStartOffset: >= 0 } node)
+        if (_synchronizingSelection || _selectionHost is not { } host
+            || !string.Equals(SourceEditor.Text, host.Markup, StringComparison.Ordinal)
+            || !host.Designer.IsSelectionInMarkup(host.Markup)
+            || host.Designer.SelectedNode is not { SourceStartOffset: >= 0 } node)
         {
             return;
         }
