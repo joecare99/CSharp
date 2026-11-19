@@ -165,6 +165,11 @@ public partial class AxamlDesignerViewModel : ObservableObject
         }
     }
 
+    public bool IsSelectionInMarkup(string markup) =>
+        string.Equals(markup, _currentMarkup, StringComparison.Ordinal)
+        && SelectedNode is { SourceStartOffset: >= 0 } node
+        && ReferenceEquals(_sourceSelection?.Find(node.SourceStartOffset), node);
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPreview))]
     [NotifyPropertyChangedFor(nameof(StructureRoots))]
