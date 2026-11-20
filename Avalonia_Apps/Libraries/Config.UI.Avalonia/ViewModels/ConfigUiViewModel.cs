@@ -125,7 +125,7 @@ public sealed partial class ConfigUiViewModel : ObservableObject
         && _loadedSections.Contains(section)
         && !DraftNeedsRecovery(section);
 
-    /// <summary>Gets whether failed shared-draft operations require explicit recovery.</summary>
+    /// <summary>Gets whether failed draft operations require explicit recovery.</summary>
     public bool NeedsReloadRecovery => _sectionsRequiringRefresh.Count > 0;
 
     /// <summary>
@@ -344,7 +344,7 @@ public sealed partial class ConfigUiViewModel : ObservableObject
         }
         if (_sectionsWithUnsavedChanges.Any(DraftNeedsRecovery))
         {
-            OperationMessage = "A shared draft may have been discarded, but some sections could not be refreshed. Retry discard/reload or Cancel before applying.";
+            OperationMessage = "A draft may have changed, but some sections could not be refreshed. Retry discard/reload or Cancel before applying.";
             RefreshState();
             return false;
         }
@@ -546,6 +546,10 @@ public sealed partial class ConfigUiViewModel : ObservableObject
                         {
                             MarkDraftUncertain(uncertainDraft.DraftIdentity);
                         }
+                        else
+                        {
+                            MarkSectionForRefresh(section);
+                        }
                     }
                 }
                 catch (Exception exception) when (exception is not OperationCanceledException)
@@ -560,6 +564,10 @@ public sealed partial class ConfigUiViewModel : ObservableObject
                     {
                         MarkDraftUncertain(uncertainDraft.DraftIdentity);
                     }
+                    else
+                    {
+                        MarkSectionForRefresh(section);
+                    }
                 }
                 catch (OperationCanceledException)
                 {
@@ -567,6 +575,10 @@ public sealed partial class ConfigUiViewModel : ObservableObject
                         && discardedDrafts.TryGetValue(sharedDraft.DraftIdentity, out bool discarded) && !discarded)
                     {
                         MarkDraftUncertain(sharedDraft.DraftIdentity);
+                    }
+                    else if (section is not IConfigUiDraftDiscard)
+                    {
+                        MarkSectionForRefresh(section);
                     }
                     throw;
                 }
@@ -581,7 +593,7 @@ public sealed partial class ConfigUiViewModel : ObservableObject
 
             OperationMessage = failures.Count == 0
                 ? "Unapplied changes were discarded."
-                : $"Some settings could not be reloaded. A shared draft may already have been discarded:{Environment.NewLine}{string.Join(Environment.NewLine, failures)}";
+                : $"Some settings could not be reloaded. Drafts may already have changed or been discarded:{Environment.NewLine}{string.Join(Environment.NewLine, failures)}";
             if (SelectedSection is not null && _loadedSections.Contains(SelectedSection))
             {
                 DisplaySection(SelectedSection);
@@ -679,9 +691,13 @@ public sealed partial class ConfigUiViewModel : ObservableObject
             }
             else
             {
+                if (!discardAttempted)
+                {
+                    MarkSectionForRefresh(section);
+                }
                 string hint = discardAttempted
                     ? " The shared draft may already have been discarded; retry discard/reload or Cancel."
-                    : string.Empty;
+                    : " The draft may have changed; retry reload or Cancel.";
                 OperationMessage = $"{section.Section.DisplayName}: {section.ErrorMessage ?? "The section could not be reloaded."}{hint}";
             }
             if (discardConfirmed && !string.IsNullOrEmpty(OperationMessage))
@@ -699,6 +715,10 @@ public sealed partial class ConfigUiViewModel : ObservableObject
             {
                 MarkDraftUncertain(sharedDraft.DraftIdentity);
             }
+            else if (!discardAttempted)
+            {
+                MarkSectionForRefresh(section);
+            }
             string hint = discardAttempted && !discardConfirmed
                 ? " The shared draft may already have been discarded; retry discard/reload or Cancel."
                 : _sectionsRequiringRefresh.Contains(section)
@@ -711,6 +731,10 @@ public sealed partial class ConfigUiViewModel : ObservableObject
             if (discardAttempted && !discardConfirmed && section is IConfigUiDraftDiscard sharedDraft)
             {
                 MarkDraftUncertain(sharedDraft.DraftIdentity);
+            }
+            else if (!discardAttempted)
+            {
+                MarkSectionForRefresh(section);
             }
             throw;
         }
