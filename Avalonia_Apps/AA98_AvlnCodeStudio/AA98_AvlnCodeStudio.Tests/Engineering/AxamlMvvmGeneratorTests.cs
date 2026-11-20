@@ -9,6 +9,43 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class AxamlMvvmGeneratorTests
 {
     [TestMethod]
+    public void Generate_RejectsNamedControlsUnderNestedDataType()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="using:Sample" x:Class="Sample.MainWindow">
+              <StackPanel x:DataType="vm:OtherViewModel">
+                <TextBox x:Name="NameTextBox" />
+              </StackPanel>
+            </Window>
+            """;
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmGenerator().Generate("MainWindow.axaml", markup));
+    }
+
+    [TestMethod]
+    public void Generate_RejectsExplicitBindingKindsBeforeAddingRootDataContext()
+    {
+        foreach (string kind in new[] { "CompiledBinding", "ReflectionBinding" })
+        {
+            string markup = $$"""
+                <Window xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        x:Class="Sample.MainWindow">
+                  <StackPanel>
+                    <TextBox x:Name="NameTextBox" />
+                    <TextBlock Text="{ {{kind}} Existing}" />
+                  </StackPanel>
+                </Window>
+                """;
+            Assert.ThrowsExactly<InvalidDataException>(() =>
+                new AxamlMvvmGenerator().Generate("MainWindow.axaml", markup));
+        }
+    }
+
+    [TestMethod]
     public void Generate_BindsNamedTextBoxesAndButtonsAndCreatesToolkitViewModel()
     {
         const string markup = """

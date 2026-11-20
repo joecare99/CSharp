@@ -9,6 +9,70 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class AxamlMvvmBindingAnalyzerTests
 {
     [TestMethod]
+    public void Analyze_RejectsBindingsUnderNestedDataType()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="using:Sample" x:DataType="vm:RootViewModel">
+              <StackPanel x:DataType="vm:OtherViewModel">
+                <TextBox Text="{CompiledBinding OtherName}" />
+              </StackPanel>
+            </Window>
+            """;
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmBindingAnalyzer().Analyze(markup));
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmBindingAnalyzer().Analyze(markup.Replace("CompiledBinding", "Binding")));
+
+        string withoutNestedBinding = markup.Replace(
+            "<TextBox Text=\"{CompiledBinding OtherName}\" />",
+            "<TextBox Text=\"{DynamicResource OtherName}\" />");
+        Assert.AreEqual(0, new AxamlMvvmBindingAnalyzer().Analyze(withoutNestedBinding).Count);
+    }
+
+    [TestMethod]
+    public void Analyze_HandlesExplicitBindingKindsAndRejectsOtherSources()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui">
+              <StackPanel>
+                <TextBox Text="{CompiledBinding Name, Mode=TwoWay}" />
+                <TextBlock Text="{ReflectionBinding Path=Status}" />
+                <Button Command="{CompiledBinding SaveCommand}" />
+              </StackPanel>
+            </Window>
+            """;
+
+        AxamlMvvmMemberRequirement[] requirements = new AxamlMvvmBindingAnalyzer().Analyze(markup).ToArray();
+        CollectionAssert.AreEqual(new[] { "Name", "Status", "SaveCommand" },
+            requirements.Select(static requirement => requirement.Name).ToArray());
+        Assert.IsTrue(requirements[2].IsCommand);
+
+        foreach (string kind in new[] { "CompiledBinding", "ReflectionBinding" })
+        {
+            foreach (string source in new[] { "ElementName=Other", "Source={StaticResource Other}", "RelativeSource={RelativeSource Self}" })
+            {
+                string explicitSource = markup.Replace(
+                    "{CompiledBinding Name, Mode=TwoWay}",
+                    "{" + kind + " Name, " + source + "}");
+                Assert.ThrowsExactly<InvalidDataException>(() => new AxamlMvvmBindingAnalyzer().Analyze(explicitSource));
+            }
+            string nestedScope = $$"""
+                <Window xmlns="https://github.com/avaloniaui">
+                  <DataTemplate><TextBlock Text="{ {{kind}} Name}" /></DataTemplate>
+                </Window>
+                """;
+            Assert.ThrowsExactly<InvalidDataException>(() => new AxamlMvvmBindingAnalyzer().Analyze(nestedScope));
+            string complexPath = markup.Replace(
+                "{CompiledBinding Name, Mode=TwoWay}",
+                "{" + kind + " Customer.Name}");
+            Assert.ThrowsExactly<InvalidDataException>(() => new AxamlMvvmBindingAnalyzer().Analyze(complexPath));
+        }
+    }
+
+    [TestMethod]
     public void Analyze_ExtractsSimpleBindingsForSupportedControls()
     {
         const string markup = """
