@@ -12,6 +12,8 @@ The test-discovery service automatically uses `*TestAdapter.dll` files beside th
 
 Paths are relative to the project directory. Absolute paths, `.`/`..` path segments, missing files, non-adapter DLL names, symbolic links, and junctions are rejected. The manifest is limited to 64 KiB and 32 adapter entries. Adapter packages are not downloaded or installed by the discovery service.
 
+Adapter paths are deduplicated case-insensitively on Windows and case-sensitively on other platforms. On a case-insensitive filesystem mounted on Linux, different spellings of the same path may therefore both be passed to VSTest.
+
 Discovery, single-case execution and debugging use VSTest; Microsoft.Testing.Platform (MTP)-only projects are not supported. Run those projects using their MTP runner, or configure a VSTest adapter for a VSTest-compatible project.
 
 Before single-case execution, rediscovery must match exactly one case by adapter ID, executor URI, source and fully qualified name. The returned result must match the same identity; display names may differ. Missing, ambiguous or mismatched cases are rejected rather than attributed to the selection.

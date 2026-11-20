@@ -14,6 +14,10 @@ internal static class VSTestAdapterResolver
     private const int MaximumManifestBytes = 64 * 1024;
     private const int MaximumConfiguredAdapters = 32;
 
+    internal static StringComparer PathComparer { get; } = OperatingSystem.IsWindows()
+        ? StringComparer.OrdinalIgnoreCase
+        : StringComparer.Ordinal;
+
     public static async Task<string[]> ResolveAsync(
         string assemblyPath,
         string projectDirectory,
@@ -104,7 +108,7 @@ internal static class VSTestAdapterResolver
                     $"The {ManifestFileName} manifest may configure at most {MaximumConfiguredAdapters} adapters.");
             }
 
-            HashSet<string> knownPaths = new(adapters, StringComparer.OrdinalIgnoreCase);
+            HashSet<string> knownPaths = new(adapters, PathComparer);
             foreach (JsonElement entry in paths.EnumerateArray())
             {
                 cancellationToken.ThrowIfCancellationRequested();
