@@ -90,6 +90,12 @@ and numeric fields remain inert binding placeholders, and its foreign converter
 and data context are ignored. No live localization updates or executed commands
 are provided.
 
+The real calculator's Memory and Accumulator TextBoxes have literal
+`TextAlignment="Right"` and `TextWrapping="Wrap"`. These literals are previewed
+and editable with undo/redo while the original `Text` binding is preserved;
+the converter's resulting value is not evaluated or predicted. Ambiguous or
+expression-based alignment and wrapping sources are not editable as literals.
+
 The optional real-calculator regression uses `AA98_CALCULATOR_SAMPLE_ROOT` as
 the calculator project directory, falling back to the original Windows sample
 location. It is inconclusive when the sample is absent; the synthetic resource
