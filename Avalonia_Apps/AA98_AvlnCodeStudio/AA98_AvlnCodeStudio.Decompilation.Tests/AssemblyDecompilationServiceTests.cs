@@ -80,6 +80,71 @@ public sealed class AssemblyDecompilationServiceTests
     }
 
     [TestMethod]
+    [DataRow("NavigationDelegate", "delegate int NavigationDelegate")]
+    [DataRow("GenericNavigationDelegate`1", "delegate T GenericNavigationDelegate<T>")]
+    [DataRow("VoidNavigationDelegate", "delegate void VoidNavigationDelegate")]
+    [DataRow("AttributeNavigationDelegate", "delegate void AttributeNavigationDelegate")]
+    [DataRow("class", "delegate void @class")]
+    [DataRow("ComplexReturnDelegate", "delegate Dictionary<string, int> ComplexReturnDelegate")]
+    [DataRow("NavigationContainer+NestedNavigationDelegate", "delegate void NestedNavigationDelegate")]
+    public async Task DecompileTypeAsync_NavigatesToDelegateDeclaration(string metadataName, string declaration)
+    {
+        string assemblyPath = typeof(DecompilationFixture).Assembly.Location;
+        using TemporaryDirectory artifacts = new();
+        AssemblyDecompilationService service = new(artifacts.Path);
+        AssemblyInspection inspection = await service.InspectAsync(assemblyPath).ConfigureAwait(false);
+        string fullName = $"{typeof(DecompilationFixture).Namespace}.{metadataName}";
+        AssemblyTypeInfo type = inspection.Types.Single(item => item.FullName == fullName);
+
+        DecompiledTypeArtifact result = await service.DecompileTypeAsync(assemblyPath, type.FullName).ConfigureAwait(false);
+
+        Assert.AreEqual(result.ArtifactPath, result.NavigationLocation.Path);
+        if (metadataName == "AttributeNavigationDelegate")
+        {
+            StringAssert.Contains(result.Source, "[Obsolete(\"class AttributeNavigationDelegate\")]");
+        }
+
+        string[] lines = File.ReadAllLines(result.ArtifactPath);
+        Assert.IsTrue(
+            lines[result.NavigationLocation.Line!.Value - 1].Contains(declaration, StringComparison.Ordinal),
+            $"Expected '{declaration}' at line {result.NavigationLocation.Line}, source:\n{result.Source}");
+    }
+
+    [TestMethod]
+    [DataRow("NavigationInterface", "interface NavigationInterface")]
+    [DataRow("NavigationEnum", "enum NavigationEnum")]
+    [DataRow("NavigationStruct", "struct NavigationStruct")]
+    [DataRow("NavigationRecord", "record NavigationRecord")]
+    public async Task DecompileTypeAsync_NavigatesToOtherTypeDeclarations(string metadataName, string declaration)
+    {
+        using TemporaryDirectory artifacts = new();
+        AssemblyDecompilationService service = new(artifacts.Path);
+
+        DecompiledTypeArtifact result = await service.DecompileTypeAsync(
+            typeof(DecompilationFixture).Assembly.Location,
+            $"{typeof(DecompilationFixture).Namespace}.{metadataName}").ConfigureAwait(false);
+
+        string line = File.ReadAllLines(result.ArtifactPath)[result.NavigationLocation.Line!.Value - 1];
+        Assert.IsTrue(line.Contains(declaration, StringComparison.Ordinal), $"Source:\n{result.Source}");
+    }
+
+    [TestMethod]
+    public async Task DecompileTypeAsync_IgnoresDeclarationTextInAttributes()
+    {
+        using TemporaryDirectory artifacts = new();
+        AssemblyDecompilationService service = new(artifacts.Path);
+
+        DecompiledTypeArtifact result = await service.DecompileTypeAsync(
+            typeof(DecompilationFixture).Assembly.Location,
+            $"{typeof(DecompilationFixture).Namespace}.AttributedClass").ConfigureAwait(false);
+
+        StringAssert.Contains(result.Source, "[Obsolete(\"class AttributedClass\")]");
+        string line = File.ReadAllLines(result.ArtifactPath)[result.NavigationLocation.Line!.Value - 1];
+        StringAssert.Contains(line, "class AttributedClass");
+        Assert.IsFalse(line.Contains("Obsolete", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
     public async Task DecompileTypeAsync_RejectsArtifactSymlinkEscape()
     {
         using TemporaryDirectory artifacts = new();
@@ -145,3 +210,41 @@ internal sealed class DecompilationFixture
 {
     public static string TargetMethod(int value) => $"target-{value}";
 }
+
+public delegate int NavigationDelegate(int value);
+
+public delegate T GenericNavigationDelegate<T>(T value);
+
+public delegate void VoidNavigationDelegate();
+
+[Obsolete("class AttributeNavigationDelegate")]
+public delegate void AttributeNavigationDelegate();
+
+public delegate void @class();
+
+public delegate System.Collections.Generic.Dictionary<string, int> ComplexReturnDelegate();
+
+[Obsolete("class AttributedClass")]
+public class AttributedClass
+{
+}
+
+public class NavigationContainer
+{
+    public delegate void NestedNavigationDelegate();
+}
+
+public interface NavigationInterface
+{
+}
+
+public enum NavigationEnum
+{
+    Value
+}
+
+public readonly struct NavigationStruct
+{
+}
+
+public record NavigationRecord;
