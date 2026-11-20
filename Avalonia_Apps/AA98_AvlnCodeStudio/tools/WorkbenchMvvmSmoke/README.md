@@ -62,3 +62,10 @@ being guessed. Nested `x:DataType` scopes are also treated conservatively:
 bindings there are not planned against the root ViewModel, and fresh generation
 refuses named supported controls in such a scope. Complex paths and unsupported
 controls are not generated.
+
+The smoke also edits a generated root-DataContext view using the shared visual
+binding editor. It reviews and applies a compiled property binding and a
+reflection command binding with their new ViewModel members, checks both source
+files and editor synchronization through workspace undo/redo, and rebuilds the
+fixture. The review buttons are invoked programmatically; this is not physical
+UX acceptance.

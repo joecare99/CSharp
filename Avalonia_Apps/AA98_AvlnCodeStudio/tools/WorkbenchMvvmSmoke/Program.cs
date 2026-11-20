@@ -3,8 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.Views;
 using AA98_AvlnCodeStudio.UI;
+using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using Avalonia;
 using Avalonia.Controls;
@@ -240,6 +242,44 @@ internal static class Program
             Check(workbench.Editor.Text == generatedMarkup, "Redo did not synchronize the open AXAML document.");
 
             await BuildFixtureAsync(projectPath);
+            CSharpSyntaxDiagnosticService semanticService =
+                (SmokeApplication.Services ?? throw new InvalidOperationException("Smoke services are unavailable."))
+                .GetRequiredService<CSharpSyntaxDiagnosticService>();
+            var safeContext = await semanticService.AnalyzeAxamlMvvmAsync(
+                generatedMarkup, axamlPath, workbench.Workspace!, allowExistingRuntimeDataContext: true);
+            Check(safeContext.IsSuccessful && safeContext.HasRuntimeDataContext,
+                "The generated root DataContext was not resolved for visual review.");
+            var freshGeneration = await semanticService.AnalyzeAxamlMvvmAsync(
+                generatedMarkup, axamlPath, workbench.Workspace!);
+            Check(!freshGeneration.IsSuccessful, "Fresh generation accepted an existing root DataContext.");
+            XDocument mismatchedContext = XDocument.Parse(generatedMarkup);
+            XElement root = mismatchedContext.Root!;
+            XElement value = root.Element(root.Name.Namespace + "Window.DataContext")!.Elements().Single();
+            value.Name = value.Name.Namespace + "OtherViewModel";
+            var unsafeContext = await semanticService.AnalyzeAxamlMvvmAsync(
+                mismatchedContext.ToString(), axamlPath, workbench.Workspace!, allowExistingRuntimeDataContext: true);
+            Check(!unsafeContext.IsSuccessful, "Semantic analysis accepted a mismatched root DataContext.");
+
+            string visualMarkup = generatedMarkup
+                .Replace("{Binding UserName,", "{CompiledBinding UserName,", StringComparison.Ordinal)
+                .Replace("{Binding SubmitCommand}", "{ReflectionBinding SubmitCommand}", StringComparison.Ordinal);
+            Check(visualMarkup != generatedMarkup, "Could not prepare visual binding kinds.");
+            workbench.Editor.Text = visualMarkup;
+            await workbench.Editor.SaveCommand.ExecuteAsync(null);
+            await WaitUntilAsync(
+                () => workbench.AxamlDesigner.PreviewRoot?.Children.Any(node =>
+                    node.StableName == "UserNameTextBox"
+                    && node.Properties.TryGetValue("Text", out string? text)
+                    && text.Contains("{CompiledBinding", StringComparison.Ordinal)) == true,
+                "generated view visual bindings");
+            await VerifyVisualBindingAsync(workbench, desktop, axamlPath, generatedViewModelPath,
+                "UserNameTextBox", "Text", "CompiledBinding", "VisualName");
+            await VerifyVisualBindingAsync(workbench, desktop, axamlPath, generatedViewModelPath,
+                "SubmitButton", "Command", "ReflectionBinding", "VisualCommand");
+            generatedMarkup = await File.ReadAllTextAsync(axamlPath);
+            generatedViewModel = await File.ReadAllTextAsync(generatedViewModelPath);
+            await BuildFixtureAsync(projectPath);
+
             string incrementalAxamlPath = Path.Combine(Path.GetDirectoryName(axamlPath)!, "ExistingView.axaml");
             string incrementalViewModelPath = Path.Combine(Path.GetDirectoryName(axamlPath)!, "ExistingViewModel.cs");
             string originalIncrementalViewModel = await File.ReadAllTextAsync(incrementalViewModelPath);
@@ -287,7 +327,7 @@ internal static class Program
                 && await File.ReadAllTextAsync(incrementalViewModelPath) == incrementalViewModel,
                 "Incremental generation could not be redone.");
             await BuildFixtureAsync(projectPath);
-            Console.WriteLine("Workbench MVVM: initial and incremental review, source preservation, undo/redo and generated-project build verified.");
+            Console.WriteLine("Workbench MVVM: generation and visual binding review, source preservation, undo/redo and generated-project build verified.");
         }
         catch (Exception exception)
         {
@@ -296,6 +336,47 @@ internal static class Program
         }
 
         desktop.Shutdown(exitCode);
+    }
+
+    private static async Task VerifyVisualBindingAsync(
+        MainWindowViewModel workbench,
+        IClassicDesktopStyleApplicationLifetime desktop,
+        string axamlPath,
+        string viewModelPath,
+        string controlName,
+        string propertyName,
+        string kind,
+        string replacement)
+    {
+        string beforeMarkup = await File.ReadAllTextAsync(axamlPath);
+        string beforeViewModel = await File.ReadAllTextAsync(viewModelPath);
+        var designer = workbench.AxamlDesigner;
+        designer.SelectedNode = designer.PreviewRoot!.Children.Single(node => node.StableName == controlName);
+        designer.SetBindingContext([]);
+        var row = designer.BindingRows.Single(binding => binding.PropertyName == propertyName);
+        Check(row.CanEditBinding, $"The generated root DataContext blocked {kind}: {row.BindingExpressionDiagnostic}");
+        row.NewMemberName = replacement;
+        Task applying = designer.ApplyBindingRowAsync(row);
+        WorkspaceFileChangeReviewDialog review = await WaitForReviewAsync(desktop, applying, workbench);
+        Click(review, "Apply 2 change(s)");
+        await applying.WaitAsync(TimeSpan.FromMinutes(2));
+
+        string afterMarkup = await File.ReadAllTextAsync(axamlPath);
+        string afterViewModel = await File.ReadAllTextAsync(viewModelPath);
+        Check(afterMarkup.Contains("{" + kind + " " + replacement, StringComparison.Ordinal)
+            && afterViewModel.Contains(replacement == "VisualCommand" ? "private void Visual()" : replacement, StringComparison.Ordinal)
+            && workbench.Editor.Text == afterMarkup,
+            $"The {kind} visual review did not apply both source edits: {row.Diagnostic}");
+        Check(workbench.WorkspaceFileChangeService.Undo()
+            && await File.ReadAllTextAsync(axamlPath) == beforeMarkup
+            && await File.ReadAllTextAsync(viewModelPath) == beforeViewModel
+            && workbench.Editor.Text == beforeMarkup,
+            $"The {kind} visual review could not be undone.");
+        Check(workbench.WorkspaceFileChangeService.Redo()
+            && await File.ReadAllTextAsync(axamlPath) == afterMarkup
+            && await File.ReadAllTextAsync(viewModelPath) == afterViewModel
+            && workbench.Editor.Text == afterMarkup,
+            $"The {kind} visual review could not be redone.");
     }
 
     private static async Task BuildFixtureAsync(string projectPath, bool restoreOnly = false)
