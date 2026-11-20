@@ -1632,6 +1632,39 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task TextBlockWrapping_DefaultBaselineAndLiteralSurviveUndoRedo()
+    {
+        const string markup = "<TextBlock xmlns='https://github.com/avaloniaui' Text='Example' />";
+        AxamlDesignerViewModel viewModel = new();
+        string? published = null;
+        viewModel.MarkupChanged += (_, args) => published = args.Markup;
+        viewModel.LoadMarkup(markup);
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var wrapping = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "TextWrapping");
+        Assert.IsTrue(wrapping.TrySetValue("Wrap"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        StringAssert.Contains(published!, "TextWrapping=\"Wrap\"");
+        Assert.AreEqual("Wrap", viewModel.PreviewRoot!.Properties["TextWrapping"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(markup, published);
+        Assert.IsFalse(viewModel.PreviewRoot!.Properties.ContainsKey("TextWrapping"));
+        Assert.AreEqual("NoWrap", AxamlPropertyValueValidator.Describe(viewModel.PreviewRoot, "TextWrapping").Value);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual("Wrap", viewModel.PreviewRoot!.Properties["TextWrapping"]);
+
+        const string literal = "<TextBlock xmlns='https://github.com/avaloniaui' TextWrapping='NoWrap' />";
+        viewModel.LoadMarkup(literal);
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        await viewModel.PropertyProvider.ApplyAsync();
+        Assert.AreEqual("NoWrap", viewModel.PreviewRoot!.Properties["TextWrapping"]);
+        wrapping = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "TextWrapping");
+        Assert.IsTrue(wrapping.TrySetValue("Wrap"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(literal, published);
+    }
+
+    [TestMethod]
     public async Task TextBoxForeground_IsEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();

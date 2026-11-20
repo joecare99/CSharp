@@ -18,6 +18,48 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class AxamlPreviewResourcesTests
 {
     [TestMethod]
+    public void TextBlockWrapping_PreviewUsesNativeDefaultAndSafeLiterals()
+    {
+        AxamlPreviewService service = new();
+        foreach ((string markup, TextWrapping expected) in new[]
+        {
+            ("<TextBlock Text='example' />", new TextBlock().TextWrapping),
+            ("<TextBlock Text='example' TextWrapping='Wrap' />", TextWrapping.Wrap),
+            ("<TextBlock Text='example' TextWrapping='{Binding Broken' />", TextWrapping.NoWrap),
+            ("<TextBlock xmlns:e='urn:foreign' TextWrapping='Wrap' e:TextWrapping='NoWrap' />", TextWrapping.NoWrap),
+        })
+        {
+            AxamlPreviewNode node = service.Parse(markup);
+            AxamlPreviewControl preview = new() { PreviewNode = node };
+            Grid wrapper = (Grid)preview.GetLogicalDescendants().OfType<Border>()
+                .Single(border => ReferenceEquals(border.Tag, node)).Child!;
+            Assert.AreEqual(expected, ((TextBlock)wrapper.Children[0]).TextWrapping, markup);
+        }
+    }
+
+    [TestMethod]
+    public void TextBoxWrapping_PreviewUsesNativeDefaultAndSafeLiterals()
+    {
+        AxamlPreviewService service = new();
+        foreach ((string markup, TextWrapping expected) in new[]
+        {
+            ("<TextBox />", new TextBox().TextWrapping),
+            ("<TextBox TextWrapping='Wrap' />", TextWrapping.Wrap),
+            ("<TextBox TextWrapping='2' />", TextWrapping.NoWrap),
+            ("<TextBox TextWrapping='{Binding Wrapping}' />", TextWrapping.NoWrap),
+            ("<TextBox xmlns:e='urn:foreign' TextWrapping='Wrap' e:TextWrapping='NoWrap' />", TextWrapping.NoWrap),
+            ("<TextBox TextWrapping='Wrap'><TextBox.TextWrapping>Wrap</TextBox.TextWrapping></TextBox>", TextWrapping.NoWrap),
+        })
+        {
+            AxamlPreviewNode node = service.Parse(markup);
+            AxamlPreviewControl preview = new() { PreviewNode = node };
+            Grid wrapper = (Grid)preview.GetLogicalDescendants().OfType<Border>()
+                .Single(border => ReferenceEquals(border.Tag, node)).Child!;
+            Assert.AreEqual(expected, ((TextBox)wrapper.Children[0]).TextWrapping, markup);
+        }
+    }
+
+    [TestMethod]
     public void BorderGradient_UsesOnlyUnambiguousBoundedLiteralResources()
     {
         const string markup = """

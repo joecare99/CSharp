@@ -148,7 +148,8 @@ public sealed class AxamlWorkbenchResourceTests
     [TestMethod]
     public async Task Workbench_OpensReportedCalculatorUsingItsProjectContext()
     {
-        const string root = @"C:\Projekte\CSharp\Avalonia_Apps\AA05_CommandParCalc\AA05_CommandParCalc";
+        string root = Environment.GetEnvironmentVariable("AA98_CALCULATOR_SAMPLE_ROOT")
+            ?? @"C:\Projekte\CSharp\Avalonia_Apps\AA05_CommandParCalc\AA05_CommandParCalc";
         string path = Path.Combine(root, "Views", "CommandParCalculatorView.axaml");
         if (!File.Exists(path))
         {

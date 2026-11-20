@@ -436,7 +436,7 @@ public sealed class AxamlPreviewServiceTests
         Assert.IsNull(foreground.ValidationError);
         Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "Foreground", "LinearGradientBrush(Red,Blue)"));
         Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "Foreground", "NotAColorName"));
-        Assert.AreEqual("Wrap", AxamlPropertyValueValidator.Describe(
+        Assert.AreEqual(new Avalonia.Controls.TextBlock().TextWrapping.ToString(), AxamlPropertyValueValidator.Describe(
             service.Parse("<TextBlock />"),
             "TextWrapping").Value);
         CollectionAssert.AreEqual(
@@ -450,6 +450,56 @@ public sealed class AxamlPreviewServiceTests
         Assert.IsTrue(AxamlPropertyValueValidator.Describe(
             service.Parse("<TextBlock Foreground='{DynamicResource TextBrush}' />"),
             "Foreground").IsReadOnly);
+    }
+
+    [TestMethod]
+    public void TextBlockWrapping_RejectsAmbiguousAndDynamicSource()
+    {
+        AxamlPreviewService service = new();
+        foreach (string markup in new[]
+        {
+            "<TextBlock TextWrapping='{Binding Broken' />",
+            "<TextBlock xmlns:a='https://github.com/avaloniaui' a:TextWrapping='Wrap' />",
+            "<TextBlock xmlns:e='urn:foreign' TextWrapping='Wrap' e:TextWrapping='NoWrap' />",
+            "<TextBlock TextWrapping='Wrap'><TextBlock.TextWrapping>Wrap</TextBlock.TextWrapping></TextBlock>",
+            "<TextBlock xmlns:e='urn:foreign'><e:Other.TextWrapping>Wrap</e:Other.TextWrapping></TextBlock>",
+        })
+        {
+            AxamlPreviewNode node = service.Parse(markup);
+            Assert.IsFalse(service.CanEditProperty(node, "TextWrapping"), markup);
+            Assert.ThrowsExactly<InvalidOperationException>(() => service.UpdateAttribute(markup, node, "TextWrapping", "NoWrap"));
+            if (node.HasUnsafeTextWrappingSource)
+            {
+                Assert.IsFalse(node.RenderProperties.ContainsKey("TextWrapping"), markup);
+            }
+        }
+
+        Assert.IsNotNull(AxamlPropertyValueValidator.Validate("TextBlock", "TextWrapping", "Broken"));
+    }
+
+    [TestMethod]
+    public void TextBoxWrapping_RejectsAmbiguousAndDynamicSource()
+    {
+        AxamlPreviewService service = new();
+        foreach (string markup in new[]
+        {
+            "<TextBox TextWrapping='{Binding Wrapping}' />",
+            "<TextBox TextWrapping='{DynamicResource Wrapping}' />",
+            "<TextBox xmlns:a='https://github.com/avaloniaui' a:TextWrapping='Wrap' />",
+            "<TextBox xmlns:e='urn:foreign' TextWrapping='Wrap' e:TextWrapping='NoWrap' />",
+            "<TextBox TextWrapping='Wrap'><TextBox.TextWrapping>Wrap</TextBox.TextWrapping></TextBox>",
+            "<TextBox xmlns:e='urn:foreign'><e:Other.TextWrapping>Wrap</e:Other.TextWrapping></TextBox>",
+        })
+        {
+            AxamlPreviewNode node = service.Parse(markup);
+            Assert.IsTrue(AxamlPropertyValueValidator.Describe(node, "TextWrapping").IsReadOnly, markup);
+            Assert.IsFalse(service.CanEditProperty(node, "TextWrapping"), markup);
+            Assert.ThrowsExactly<InvalidOperationException>(() => service.UpdateAttribute(markup, node, "TextWrapping", "NoWrap"));
+            if (node.HasUnsafeTextWrappingSource)
+            {
+                Assert.IsFalse(node.RenderProperties.ContainsKey("TextWrapping"), markup);
+            }
+        }
     }
 
     [TestMethod]

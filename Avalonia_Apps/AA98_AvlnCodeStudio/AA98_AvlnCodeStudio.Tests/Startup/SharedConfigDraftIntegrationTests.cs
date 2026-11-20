@@ -19,6 +19,39 @@ namespace AA98_AvlnCodeStudio.Tests.Startup;
 public sealed class SharedConfigDraftIntegrationTests
 {
     [TestMethod]
+    public async Task LegacyReloadFailureAfterModelReplacement_BlocksStaleDraftUntilRetry()
+    {
+        IConfigStore store = Substitute.For<IConfigStore>();
+        FragileSettings model = new("Original");
+        store.LoadAsync("TestHost.Legacy", Arg.Any<FragileSettings>())
+            .Returns(_ => Task.FromResult(model));
+        IConfigSectionProvider provider = Substitute.For<IConfigSectionProvider>();
+        provider.Name.Returns("Legacy");
+        provider.DisplayName.Returns("Legacy");
+        provider.ModelType.Returns(typeof(FragileSettings));
+        provider.CreateModel().Returns(_ => new FragileSettings("Default"));
+        ConfigServiceUiSection section = new(new global::Config.Service.ConfigService(store, "TestHost"), provider);
+        IConfigUiSectionRegistry registry = Substitute.For<IConfigUiSectionRegistry>();
+        registry.Sections.Returns([section]);
+        ConfigUiViewModel config = new(registry, new PropertyEditorViewModel());
+        Assert.IsTrue(config.PropertyEditor.Items.Single().PropertyItem.TrySetValue("Draft"));
+        model = new FragileSettings("Stored", failGetter: true);
+
+        await config.LoadCommand.ExecuteAsync(null);
+
+        Assert.IsTrue(config.HasUnsavedChanges);
+        Assert.IsTrue(config.NeedsReloadRecovery);
+        Assert.AreEqual(0, config.PropertyEditor.Items.Count);
+        Assert.IsFalse(await config.ApplyChangesAsync());
+        await store.DidNotReceive().SaveAsync(Arg.Any<string>(), Arg.Any<FragileSettings>());
+        model = new FragileSettings("Stored");
+        await config.RetryFailedReloadsCommand.ExecuteAsync(null);
+        Assert.IsFalse(config.NeedsReloadRecovery);
+        Assert.IsFalse(config.HasUnsavedChanges);
+        Assert.AreEqual("Stored", config.PropertyEditor.Items.Single().PropertyItem.Value);
+    }
+
+    [TestMethod]
     public async Task ReloadFailureAfterSnapshotReplacement_BlocksStaleDraftUntilRetry()
     {
         ConfigSectionRegistry registry = new();
@@ -287,5 +320,16 @@ public sealed class SharedConfigDraftIntegrationTests
     public sealed class TestSettings
     {
         public string Name { get; set; } = "Default";
+    }
+
+    public sealed class FragileSettings(string name, bool failGetter = false)
+    {
+        private string _name = name;
+
+        public string Name
+        {
+            get => failGetter ? throw new InvalidOperationException("Property unavailable") : _name;
+            set => _name = value;
+        }
     }
 }

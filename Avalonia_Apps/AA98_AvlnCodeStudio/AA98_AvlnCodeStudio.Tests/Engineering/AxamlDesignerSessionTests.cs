@@ -13,6 +13,38 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class AxamlDesignerSessionTests
 {
     [TestMethod]
+    public void TextBoxWrapping_Aa05StyleLiteralPreservesSourceAndHistory()
+    {
+        const string markup = "<TextBox Grid.Row='1' Text='{Binding Memory}' TextAlignment='Right' TextWrapping='Wrap' />";
+        AxamlDesignerSession session = new();
+        session.Load(markup);
+        session.SelectNode(session.Root);
+        session.SelectProperty("TextWrapping");
+        Assert.AreEqual("Wrap", session.SelectedValue);
+        Assert.ThrowsExactly<InvalidOperationException>(() => session.ApplySelectedValue("2"));
+        Assert.AreEqual(markup, session.Markup);
+        Assert.IsTrue(session.ApplySelectedValue("NoWrap"));
+        string edited = markup.Replace("TextWrapping='Wrap'", "TextWrapping='NoWrap'", StringComparison.Ordinal);
+        Assert.AreEqual(edited, session.Markup);
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual(markup, session.Markup);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual(edited, session.Markup);
+
+        session.Load("<TextBox />");
+        session.SelectNode(session.Root);
+        session.SelectProperty("TextWrapping");
+        Assert.AreEqual(new Avalonia.Controls.TextBox().TextWrapping.ToString(),
+            AxamlPropertyValueValidator.Describe(session.SelectedNode!, "TextWrapping").Value);
+        Assert.IsTrue(session.ApplySelectedValue("Wrap"));
+        Assert.IsTrue(session.Undo());
+        Assert.AreEqual("<TextBox />", session.Markup);
+        Assert.AreEqual("NoWrap", AxamlPropertyValueValidator.Describe(session.SelectedNode!, "TextWrapping").Value);
+        Assert.IsTrue(session.Redo());
+        Assert.AreEqual("Wrap", session.SelectedValue);
+    }
+
+    [TestMethod]
     public void ApplySelectedValue_UpdatesLayoutAndSupportsUndoRedo()
     {
         AxamlDesignerSession session = new();
