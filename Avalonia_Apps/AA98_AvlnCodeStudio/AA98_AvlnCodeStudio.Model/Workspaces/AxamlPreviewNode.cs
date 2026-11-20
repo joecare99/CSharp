@@ -33,6 +33,8 @@ public sealed class AxamlPreviewNode
 
     public bool HasUnsafeTextWrappingSource { get; init; }
 
+    public bool HasUnsafeTextAlignmentSource { get; init; }
+
     public bool HasInlineText { get; init; }
 
     public bool HasChildElements { get; init; }

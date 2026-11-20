@@ -13,6 +13,8 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 /// Existing files retain UTF-8 encoding and BOM, or BOM-marked UTF-16/UTF-32 encoding.
 /// Files without a BOM must be valid UTF-8; new files use UTF-8 without a BOM.
 /// Invalid Unicode is rejected before review rather than silently replaced.
+/// If undo fails after deleting a generated file, rollback does not overwrite a file recreated at that path,
+/// even when it is empty; it reports incomplete rollback and leaves the history entry available.
 /// </remarks>
 public sealed class WorkspaceFileChangeService
 {
@@ -563,7 +565,8 @@ public sealed class WorkspaceFileChangeService
             return;
         }
 
-        if (!File.ReadAllBytes(change.TargetPath).AsSpan().SequenceEqual(transition.TargetBytesAfterTransition))
+        if (!transition.TargetExistsAfterTransition
+            || !File.ReadAllBytes(change.TargetPath).AsSpan().SequenceEqual(transition.TargetBytesAfterTransition))
             throw new IOException($"The undo/redo target '{change.RelativePath}' changed during rollback.");
         string restorePath = WriteTemporaryFile(Path.GetDirectoryName(change.TargetPath)!, transition.ExpectedBytes!);
         try { File.Replace(restorePath, change.TargetPath, destinationBackupFileName: null); }

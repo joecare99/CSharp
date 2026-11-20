@@ -100,6 +100,7 @@ public sealed class AxamlPreviewService
             && GetEditableProperties(node).Contains(propertyName, StringComparer.Ordinal)
             && node.SourceStartOffset >= 0
             && !(propertyName == "TextWrapping" && node.HasUnsafeTextWrappingSource)
+            && !(propertyName == "TextAlignment" && node.HasUnsafeTextAlignmentSource)
             && (!node.Properties.TryGetValue(propertyName, out string? value)
                 || !IsMarkupExtensionValue(node.TypeName, propertyName, value))
             && !(propertyName == GetEditablePropertyName(node.TypeName) && node.HasInlineText)
@@ -251,6 +252,20 @@ public sealed class AxamlPreviewService
             || !axaml.AsSpan(tagStart, tagEnd - tagStart + 1).SequenceEqual(node.SourceStartTag.AsSpan()))
         {
             throw new InvalidDataException("The AXAML source changed; select the preview element again.");
+        }
+
+        if (propertyName == "TextAlignment" && node.TypeName is "TextBox" or "TextBlock")
+        {
+            AxamlPreviewNode current = Parse(axaml);
+            AxamlPreviewNode? FindNode(AxamlPreviewNode candidate) =>
+                candidate.SourceStartOffset == tagStart
+                    ? candidate
+                    : candidate.Children.Select(FindNode).FirstOrDefault(static child => child is not null);
+            AxamlPreviewNode? currentNode = FindNode(current);
+            if (currentNode is null || currentNode.TypeName != node.TypeName || !CanEditProperty(currentNode, propertyName))
+            {
+                throw new InvalidDataException("The AXAML source changed; select the preview element again.");
+            }
         }
 
         int elementNameStart = tagStart + 1;
@@ -1798,6 +1813,7 @@ public sealed class AxamlPreviewService
             SourceStartOffset = -1,
             HasTextPropertyElement = node.HasTextPropertyElement,
             HasUnsafeTextWrappingSource = node.HasUnsafeTextWrappingSource,
+            HasUnsafeTextAlignmentSource = node.HasUnsafeTextAlignmentSource,
             HasInlineText = node.HasInlineText,
             HasChildElements = node.HasChildElements,
             CanAppendChildren = false,
@@ -2129,6 +2145,15 @@ public sealed class AxamlPreviewService
         {
             previewProperties.Remove("TextWrapping");
         }
+        bool unsafeTextAlignment = typeName is "TextBlock" or "TextBox"
+            && (element.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration
+                    && (attribute.Name.LocalName == "TextAlignment" || attribute.Name.LocalName.EndsWith(".TextAlignment", StringComparison.Ordinal))
+                    && (attribute.Name.Namespace != XNamespace.None || attribute.Name.LocalName != "TextAlignment"))
+                || element.Elements().Any(static child => child.Name.LocalName.EndsWith(".TextAlignment", StringComparison.Ordinal)));
+        if (unsafeTextAlignment)
+        {
+            previewProperties.Remove("TextAlignment");
+        }
         string? text = GetDisplayText(typeName, properties, element);
         if (GetEditablePropertyName(typeName) is string displayProperty
             && properties.TryGetValue(displayProperty, out string? sourceText)
@@ -2151,6 +2176,7 @@ public sealed class AxamlPreviewService
                 : null,
             HasTextPropertyElement = hasTextPropertyElement,
             HasUnsafeTextWrappingSource = unsafeTextWrapping,
+            HasUnsafeTextAlignmentSource = unsafeTextAlignment,
             HasInlineText = element.Nodes().OfType<XText>().Any(static value => !string.IsNullOrWhiteSpace(value.Value)),
             HasChildElements = element.HasElements,
             CanAppendChildren = canAppendChildren,

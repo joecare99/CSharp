@@ -655,6 +655,11 @@ public static class AxamlPropertyValueValidator
 
     private static string? GetReadOnlyReason(AxamlPreviewNode node, string propertyName)
     {
+        if (propertyName == "TextAlignment" && node.HasUnsafeTextAlignmentSource)
+        {
+            return "Qualified or property-element TextAlignment is ambiguous and read-only.";
+        }
+
         if (propertyName == "TextWrapping" && node.HasUnsafeTextWrappingSource)
         {
             return "Qualified or property-element TextWrapping is ambiguous and read-only.";

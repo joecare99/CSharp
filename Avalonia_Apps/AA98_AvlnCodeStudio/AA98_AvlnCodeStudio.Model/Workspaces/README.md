@@ -233,6 +233,11 @@ Literal enum edits preserve the original source through undo/redo; bindings,
 qualified or conflicting attributes, and property-element forms are not
 rewritten. Ambiguous and unsupported literal forms are not rendered as literals. This preview does not
 evaluate arbitrary XAML or bindings.
+For `TextBox.TextAlignment` and `TextBlock.TextAlignment`, literal edits remain
+undoable; qualified attributes and property elements are conservatively
+read-only and omitted from the inert preview rather than guessing precedence.
+Bindings and dynamic resources remain untouched. This does not resolve styles
+or execute the source document.
 The shared Workbench and standalone binding editor accepts its supported simple
 paths and options only; empty binding arguments such as `{Binding Name,, Mode=TwoWay}`
 or a trailing comma are ambiguous and cannot be edited there. Their original
