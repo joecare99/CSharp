@@ -1604,7 +1604,7 @@ public sealed class AxamlPreviewControl : ContentControl
             TextWrapping = !node.HasUnsafeTextWrappingSource && HasValidLiteralValue(node, "TextWrapping")
                 ? ParseTextWrapping(node, TextWrapping.NoWrap)
                 : TextWrapping.NoWrap,
-            TextAlignment = HasValidLiteralValue(node, "TextAlignment")
+            TextAlignment = !node.HasUnsafeTextAlignmentSource && HasValidLiteralValue(node, "TextAlignment")
                 ? ParseTextAlignment(node, TextAlignment.Left)
                 : TextAlignment.Left,
             HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment"),
@@ -1640,7 +1640,9 @@ public sealed class AxamlPreviewControl : ContentControl
             FontStyle = ParseFontStyle(node),
             FontWeight = ParseFontWeight(node),
             HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment"),
-            TextAlignment = ParseTextAlignment(node, TextAlignment.Left),
+            TextAlignment = !node.HasUnsafeTextAlignmentSource && HasValidLiteralValue(node, "TextAlignment")
+                ? ParseTextAlignment(node, TextAlignment.Left)
+                : TextAlignment.Left,
             TextWrapping = !node.HasUnsafeTextWrappingSource && HasValidLiteralValue(node, "TextWrapping")
                 ? ParseTextWrapping(node, TextWrapping.NoWrap)
                 : TextWrapping.NoWrap,
