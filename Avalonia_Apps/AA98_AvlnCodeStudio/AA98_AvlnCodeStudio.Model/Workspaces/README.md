@@ -233,6 +233,10 @@ Literal enum edits preserve the original source through undo/redo; bindings,
 qualified or conflicting attributes, and property-element forms are not
 rewritten. Ambiguous and unsupported literal forms are not rendered as literals. This preview does not
 evaluate arbitrary XAML or bindings.
+The shared Workbench and standalone binding editor accepts its supported simple
+paths and options only; empty binding arguments such as `{Binding Name,, Mode=TwoWay}`
+or a trailing comma are ambiguous and cannot be edited there. Their original
+source is preserved instead of silently dropping the empty argument.
 `RemoveSelectedControl` and
 `MoveSelectedControl` with direction `-1` or `1` operate on direct children of
 simple `StackPanel`, `WrapPanel`, `UniformGrid` and `DockPanel` elements. For a
