@@ -445,6 +445,85 @@ public sealed class ConfigUiViewModelTests
     }
 
     [TestMethod]
+    [DataRow(false, false, false)]
+    [DataRow(false, true, false)]
+    [DataRow(false, false, true)]
+    [DataRow(true, false, false)]
+    [DataRow(true, true, false)]
+    [DataRow(true, false, true)]
+    public async Task FailedIndependentReload_BlocksStaleDraftUntilRetry(bool discard, bool cancelled, bool reportState)
+    {
+        PropertyItem stale = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Original");
+        PropertyItem current = new(new PropertyCategory("First", "First"), "Name", "Name", typeof(string), "Stored");
+        PropertyItem independent = new(new PropertyCategory("Second", "Second"), "Name", "Name", typeof(string), "Original");
+        IConfigUiSection first = CreateSection("First", 0, properties: [stale]);
+        IConfigUiSection second = CreateSection("Second", 1, properties: [independent]);
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        Assert.IsTrue(stale.TrySetValue("Draft"));
+        viewModel.SelectedSection = second;
+        Assert.IsTrue(independent.TrySetValue("Other draft"));
+        viewModel.SelectedSection = first;
+        bool fail = true;
+        first.LoadAsync().Returns(_ =>
+        {
+            if (fail)
+            {
+                if (reportState)
+                {
+                    first.State.Returns(ConfigUiSectionState.Failed);
+                    first.ErrorMessage.Returns("Reload failed");
+                    return Task.CompletedTask;
+                }
+                return Task.FromException(cancelled
+                    ? new OperationCanceledException()
+                    : new InvalidOperationException("Reload failed"));
+            }
+            first.State.Returns(ConfigUiSectionState.Ready);
+            first.Properties.Returns([current]);
+            return Task.CompletedTask;
+        });
+
+        if (discard)
+        {
+            if (cancelled)
+            {
+                await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => viewModel.DiscardChangesAsync());
+            }
+            else
+            {
+                Assert.IsFalse(await viewModel.DiscardChangesAsync());
+            }
+        }
+        else if (cancelled)
+        {
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => viewModel.LoadCommand.ExecuteAsync(null));
+        }
+        else
+        {
+            await viewModel.LoadCommand.ExecuteAsync(null);
+        }
+
+        Assert.IsTrue(viewModel.NeedsReloadRecovery);
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        Assert.IsFalse(viewModel.CanApplyChanges);
+        Assert.AreEqual(0, viewModel.PropertyEditor.Items.Count);
+        Assert.IsFalse(await viewModel.ApplyChangesAsync());
+        await first.DidNotReceive().SaveAsync();
+
+        fail = false;
+        await viewModel.RetryFailedReloadsCommand.ExecuteAsync(null);
+        Assert.IsFalse(viewModel.NeedsReloadRecovery);
+        Assert.AreSame(current, viewModel.PropertyEditor.Items[0].PropertyItem);
+        if (!discard || cancelled)
+        {
+            Assert.IsTrue(viewModel.HasUnsavedChanges);
+            Assert.AreEqual("Other draft", independent.Value);
+            Assert.IsTrue(await viewModel.ApplyChangesAsync());
+            await second.Received(1).SaveAsync();
+        }
+    }
+
+    [TestMethod]
     public async Task InitialLoad_BlocksApplyAndDiscardUntilLoadCompletes()
     {
         IConfigUiSection section = CreateSection("General", 0);
