@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AA98_AvlnCodeStudio.Base.Testing.Models;
 using AA98_AvlnCodeStudio.Base.Testing.Services;
@@ -117,15 +118,80 @@ public sealed class VSTestRunResultTests
     }
 
     [TestMethod]
-    public void CanceledRunWithResult_IsRejected()
+    [DataRow(true, false, false)]
+    [DataRow(true, false, true)]
+    [DataRow(false, true, false)]
+    [DataRow(false, true, true)]
+    public void CanceledOrAbortedRunWithPartialResult_IsRejected(bool canceled, bool aborted, bool finalChunk)
     {
         TestCase selected = CreateCase(Guid.NewGuid());
         VSTestDiscoveryService.RunHandler handler = new(selected);
         TestRunChangedEventArgs chunk = new(null!, [new TestResult(selected) { Outcome = TestOutcome.Passed }], null!);
-        TestRunCompleteEventArgs complete = new(null!, true, false, null!, null!, TimeSpan.Zero);
+        if (!finalChunk)
+        {
+            handler.HandleTestRunStatsChange(chunk);
+        }
+        TestRunCompleteEventArgs complete = new(null!, canceled, aborted, null!, null!, TimeSpan.Zero);
+        handler.HandleTestRunComplete(complete, finalChunk ? chunk : null, null, null);
+
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, "did not complete successfully");
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void AbortedDiscoveryWithPartialCases_IsRejected(bool finalChunk)
+    {
+        TestCase[] cases = [CreateCase(Guid.NewGuid())];
+        VSTestDiscoveryService.DiscoveryHandler handler = new();
+        if (!finalChunk)
+        {
+            handler.HandleDiscoveredTests(cases);
+        }
+        handler.HandleDiscoveryComplete(new DiscoveryCompleteEventArgs(1, true), finalChunk ? cases : null);
+
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, "discovery did not complete successfully");
+    }
+
+    [TestMethod]
+    public void RunCompletionErrorWithPartialResult_IsFailure()
+    {
+        TestCase selected = CreateCase(Guid.NewGuid());
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        TestRunChangedEventArgs chunk = new(null!, [new TestResult(selected) { Outcome = TestOutcome.Passed }], null!);
+        TestRunCompleteEventArgs complete = new(null!, false, false, new InvalidOperationException("adapter error"), null!, TimeSpan.Zero);
         handler.HandleTestRunComplete(complete, chunk, null, null);
 
-        Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, "adapter error");
+    }
+
+    [TestMethod]
+    public async Task PreCanceledRequests_ThrowCancellationBeforeStartingVSTest()
+    {
+        using CancellationTokenSource cancellation = new();
+        cancellation.Cancel();
+        VSTestDiscoveryService service = new();
+        DiscoveredTestCase selected = new("id", "executor://example", "sample.dll", "Example.Theory", "Example", null, null);
+        bool attached = false;
+
+        OperationCanceledException discovery = await Assert.ThrowsExactlyAsync<OperationCanceledException>(
+            () => service.DiscoverAsync("missing-runner", "missing-assembly", [], cancellation.Token));
+        OperationCanceledException run = await Assert.ThrowsExactlyAsync<OperationCanceledException>(
+            () => service.RunCaseAsync("missing-runner", "missing-assembly", [], selected, cancellation.Token));
+        OperationCanceledException debug = await Assert.ThrowsExactlyAsync<OperationCanceledException>(
+            () => service.DebugCaseAsync("missing-runner", "missing-assembly", [], selected, (_, _) =>
+            {
+                attached = true;
+                throw new InvalidOperationException("Debugger should not attach.");
+            }, cancellation.Token));
+
+        Assert.AreEqual(cancellation.Token, discovery.CancellationToken);
+        Assert.AreEqual(cancellation.Token, run.CancellationToken);
+        Assert.AreEqual(cancellation.Token, debug.CancellationToken);
+        Assert.IsFalse(attached);
     }
 
     [TestMethod]

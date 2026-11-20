@@ -266,6 +266,24 @@ public sealed class AxamlDesignerSessionTests
     }
 
     [TestMethod]
+    public void UpdateBinding_RejectsAmbiguousAndStaleSources()
+    {
+        AxamlPreviewService service = new();
+        const string ambiguous = "<TextBox xmlns:a='https://github.com/avaloniaui' Text='{ReflectionBinding Caption}' a:Text='other' />";
+        AxamlPreviewNode node = service.Parse(ambiguous);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => service.UpdateBinding(ambiguous, node, "Text", "NewText"));
+
+        const string original = "<StackPanel Tag='first'><TextBox Text='{CompiledBinding Caption}' /></StackPanel>";
+        node = service.Parse(original).Children[0];
+        string changedAncestor = original.Replace("first", "other", StringComparison.Ordinal);
+        Assert.ThrowsExactly<System.IO.InvalidDataException>(() => service.UpdateBinding(changedAncestor, node, "Text", "NewText"));
+
+        const string unsupported = "<TextBox Text='{ReflectionBinding Caption, Converter=Thing}' />";
+        node = service.Parse(unsupported);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => service.UpdateBinding(unsupported, node, "Text", "NewText"));
+    }
+
+    [TestMethod]
     public void ApplyValues_RejectsPropertyElementsWithoutChangingMarkup()
     {
         const string markup = "<StackPanel xmlns='https://github.com/avaloniaui'><StackPanel.Width>120</StackPanel.Width></StackPanel>";

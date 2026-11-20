@@ -33,6 +33,16 @@ public sealed class AxamlMvvmBindingAnalyzerTests
     }
 
     [TestMethod]
+    public void Analyze_AcceptsEditableExplicitPathAfterLeadingComma()
+    {
+        foreach (string kind in new[] { "CompiledBinding", "ReflectionBinding" })
+        {
+            string markup = $"<TextBox xmlns='https://github.com/avaloniaui' Text='{{{kind}, Path=Caption, Mode=OneWay}}' />";
+            Assert.AreEqual("Caption", new AxamlMvvmBindingAnalyzer().Analyze(markup).Single().Name);
+        }
+    }
+
+    [TestMethod]
     public void Analyze_HandlesExplicitBindingKindsAndRejectsOtherSources()
     {
         const string markup = """

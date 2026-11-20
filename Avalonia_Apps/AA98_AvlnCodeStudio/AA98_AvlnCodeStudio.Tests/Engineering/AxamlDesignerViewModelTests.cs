@@ -3224,6 +3224,168 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task BindingRows_PreserveBindingKindsThroughReviewApplyAndHistory()
+    {
+        foreach (string kind in new[] { "CompiledBinding", "ReflectionBinding" })
+        {
+            string original = $"<a:TextBox xmlns:a='https://github.com/avaloniaui' Text='{{{kind}, Path=Caption, Mode=OneWay}}' Tag='keep' />";
+            AxamlDesignerViewModel viewModel = new();
+            string? snapshot = null;
+            viewModel.MarkupChanged += (_, e) => snapshot = e.Markup;
+            viewModel.LoadMarkup(original);
+            viewModel.SelectedNode = viewModel.PreviewRoot;
+            AxamlBindingRowViewModel row = viewModel.BindingRows.Single();
+            Assert.IsTrue(row.CanEditBinding, kind);
+            Assert.AreEqual("Caption", row.MemberName);
+            Assert.AreEqual(AxamlBindingMode.OneWay, row.BindingMode);
+            row.NewMemberName = "Replacement";
+            row.BindingMode = AxamlBindingMode.TwoWay;
+            row.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.LostFocus;
+            string expected = $"{{{kind} Replacement, Mode=TwoWay, UpdateSourceTrigger=LostFocus}}";
+            bool reviewed = false;
+            viewModel.ApplyMissingBindingAsync = requested =>
+            {
+                reviewed = true;
+                StringAssert.Contains(viewModel.CreateBindingMarkupForRow(requested), expected);
+                return Task.FromResult(false);
+            };
+            await viewModel.ApplyBindingRowAsync(row);
+            Assert.IsTrue(reviewed);
+            Assert.IsNull(snapshot);
+            viewModel.ApplyBindingRow(row);
+            string edited = snapshot!;
+            StringAssert.Contains(edited, "<a:TextBox");
+            StringAssert.Contains(edited, expected);
+            StringAssert.Contains(edited, "Tag='keep'");
+            viewModel.UndoCommand.Execute(null);
+            Assert.AreEqual(original, snapshot);
+            viewModel.RedoCommand.Execute(null);
+            Assert.AreEqual(edited, snapshot);
+        }
+    }
+
+    [TestMethod]
+    public async Task BindingRows_RejectUnsafeKindsAndScopes()
+    {
+        foreach (string kind in new[] { "CompiledBinding", "ReflectionBinding" })
+        {
+            foreach (string args in new[] { "Caption, , Mode=TwoWay", "Caption,", ", , Path=Caption",
+                "Caption, Converter=Thing", "Caption, Source={StaticResource X}", "Caption, ElementName=Other",
+                "Caption, RelativeSource={RelativeSource Self}", "User.Name", "Caption, Mode=2",
+                "Caption, Mode=OneWay, Mode=TwoWay", "Caption, UpdateSourceTrigger=" })
+            {
+                string expression = $"{{{kind} {args}}}";
+                Assert.IsNull(AxamlBindingRowViewModel.ReadBindingPath(expression), expression);
+                AxamlDesignerViewModel vm = new();
+                vm.LoadMarkup($"<TextBox Text='{expression}' />");
+                vm.SelectedNode = vm.PreviewRoot;
+                AxamlBindingRowViewModel row = vm.BindingRows.Single();
+                Assert.IsFalse(row.CanEditBinding, expression);
+                row.NewMemberName = "Replacement";
+                bool reviewed = false;
+                vm.ApplyMissingBindingAsync = _ => { reviewed = true; return Task.FromResult(true); };
+                await vm.ApplyBindingRowAsync(row);
+                vm.ApplyBindingRow(row);
+                Assert.IsFalse(reviewed);
+                Assert.AreEqual(expression, vm.PreviewRoot!.Properties["Text"]);
+                Assert.IsFalse(vm.CanUndo);
+            }
+        }
+
+        foreach (string scope in new[] { "DataContext='other'", "x:DataType='vm:Other'" })
+        {
+            string markup = $"<StackPanel xmlns='https://github.com/avaloniaui' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml' xmlns:vm='using:Demo'><StackPanel {scope}><TextBox Text='{{CompiledBinding Caption}}' /></StackPanel></StackPanel>";
+            AxamlDesignerViewModel vm = new();
+            vm.LoadMarkup(markup);
+            vm.SelectedNode = vm.PreviewRoot!.Children[0].Children[0];
+            AxamlBindingRowViewModel row = vm.BindingRows.Single();
+            Assert.IsFalse(row.CanEditBinding, scope);
+            row.NewMemberName = "Replacement";
+            vm.ApplyBindingRow(row);
+            Assert.IsFalse(vm.CanUndo);
+        }
+
+        AxamlDesignerViewModel ambiguous = new();
+        ambiguous.LoadMarkup("<TextBox xmlns:a='https://github.com/avaloniaui' Text='{ReflectionBinding Caption}' a:Text='other' />");
+        ambiguous.SelectedNode = ambiguous.PreviewRoot;
+        Assert.IsFalse(ambiguous.BindingRows.Single().CanEditBinding);
+
+        AxamlDesignerViewModel rootType = new();
+        rootType.LoadMarkup("<TextBox xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml' x:DataType='Root' Text='{CompiledBinding Caption}' />");
+        rootType.SelectedNode = rootType.PreviewRoot;
+        Assert.IsTrue(rootType.BindingRows.Single().CanEditBinding);
+    }
+
+    [TestMethod]
+    public void BindingRows_AllowGeneratedRootDataContextAndPreserveBindingKinds()
+    {
+        const string input = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="using:Other"
+                    x:Class="Sample.LoginView">
+              <StackPanel><TextBox x:Name="NameTextBox" Text="initial" /></StackPanel>
+            </Window>
+            """;
+        string generated = new AxamlMvvmGenerator().Generate("LoginView.axaml", input)[0].ProposedContent;
+        StringAssert.Contains(generated, "<Window.DataContext>");
+        StringAssert.Contains(generated, "x:DataType=\"vm1:LoginViewViewModel\"");
+        foreach (string kind in new[] { "Binding", "CompiledBinding", "ReflectionBinding" })
+        {
+            string original = generated.Replace("{Binding Name,", "{" + kind + " Name,", StringComparison.Ordinal);
+            if (kind != "Binding")
+            {
+                Assert.AreNotEqual(generated, original, kind);
+            }
+            AxamlDesignerViewModel vm = new();
+            string? snapshot = null;
+            vm.MarkupChanged += (_, e) => snapshot = e.Markup;
+            vm.LoadMarkup(original);
+            vm.SelectedNode = vm.PreviewRoot!.Children.Single();
+            AxamlBindingRowViewModel row = vm.BindingRows.Single();
+            Assert.IsTrue(row.CanEditBinding, kind);
+            row.NewMemberName = "Replacement";
+            vm.ApplyBindingRow(row);
+            StringAssert.Contains(snapshot, "{" + kind + " Replacement, Mode=TwoWay}");
+            StringAssert.Contains(snapshot, "x:DataType=\"vm1:LoginViewViewModel\"");
+            vm.UndoCommand.Execute(null);
+            Assert.AreEqual(original, snapshot);
+            vm.RedoCommand.Execute(null);
+            StringAssert.Contains(snapshot, "{" + kind + " Replacement, Mode=TwoWay}");
+        }
+    }
+
+    [TestMethod]
+    public async Task BindingRows_RejectUnverifiedRootAndNestedDataContexts()
+    {
+        const string prefix = "<Window xmlns='https://github.com/avaloniaui' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml' xmlns:vm='using:Sample' x:DataType='vm:Root'";
+        foreach (string markup in new[]
+        {
+            prefix + " DataContext='{Binding Other}'><StackPanel><TextBox Text='{CompiledBinding Name}' /></StackPanel></Window>",
+            prefix + "><Window.DataContext><vm:Other /></Window.DataContext><StackPanel><TextBox Text='{CompiledBinding Name}' /></StackPanel></Window>",
+            prefix + "><Window.DataContext><vm:Root Value='{Binding Other}' /></Window.DataContext><StackPanel><TextBox Text='{CompiledBinding Name}' /></StackPanel></Window>",
+            prefix + "><Window.DataContext><vm:Root /><vm:Root /></Window.DataContext><StackPanel><TextBox Text='{CompiledBinding Name}' /></StackPanel></Window>",
+            prefix + "><Window.DataContext><vm:Root /></Window.DataContext><StackPanel DataContext='other'><TextBox Text='{ReflectionBinding Name}' /></StackPanel></Window>",
+            prefix + "><Window.DataContext><vm:Root /></Window.DataContext><StackPanel x:DataType='vm:Other'><TextBox Text='{ReflectionBinding Name}' /></StackPanel></Window>",
+            prefix + "><Window.DataContext><vm:Root /></Window.DataContext><StackPanel><StackPanel.DataContext><vm:Other /></StackPanel.DataContext><TextBox Text='{ReflectionBinding Name}' /></StackPanel></Window>",
+        })
+        {
+            AxamlDesignerViewModel vm = new();
+            vm.LoadMarkup(markup);
+            vm.SelectedNode = vm.PreviewRoot!.Children.Single();
+            AxamlBindingRowViewModel row = vm.BindingRows.Single();
+            Assert.IsFalse(row.CanEditBinding, markup);
+            row.NewMemberName = "Replacement";
+            bool reviewed = false;
+            vm.ApplyMissingBindingAsync = _ => { reviewed = true; return Task.FromResult(true); };
+            await vm.ApplyBindingRowAsync(row);
+            vm.ApplyBindingRow(row);
+            Assert.IsFalse(reviewed, markup);
+            Assert.IsFalse(vm.CanUndo, markup);
+        }
+    }
+
+    [TestMethod]
     public async Task BindingRows_SendMissingMemberToWorkspaceReviewHandler()
     {
         AxamlDesignerViewModel viewModel = new();
