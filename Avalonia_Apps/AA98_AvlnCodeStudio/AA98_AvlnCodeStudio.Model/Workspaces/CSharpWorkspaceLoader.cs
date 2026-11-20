@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace AA98_AvlnCodeStudio.Model.Workspaces;
@@ -66,7 +67,13 @@ public sealed class CSharpWorkspaceLoader
 
     private static IEnumerable<string> LoadXmlSolution(string solutionPath)
     {
-        XDocument solution = XDocument.Load(solutionPath);
+        using XmlReader reader = XmlReader.Create(solutionPath, new XmlReaderSettings
+        {
+            DtdProcessing = DtdProcessing.Prohibit,
+            XmlResolver = null,
+            MaxCharactersInDocument = 1_000_000,
+        });
+        XDocument solution = XDocument.Load(reader);
         return solution
             .Descendants()
             .Where(static element => element.Name.LocalName == "Project")

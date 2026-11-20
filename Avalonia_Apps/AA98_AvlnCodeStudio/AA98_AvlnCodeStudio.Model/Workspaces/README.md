@@ -226,7 +226,14 @@ selected. A preview replacement, selection change or visual detach cancels an
 active resize instead of applying it to a stale node.
 
 `AxamlDesignerSession` exposes the safe preview tree and document-local undo
-and redo independently of a host. `RemoveSelectedControl` and
+and redo independently of a host. For `TextBlock.TextWrapping` and
+`TextBox.TextWrapping`, an omitted
+attribute has Avalonia's `NoWrap` baseline in both inspector and inert preview.
+Literal enum edits preserve the original source through undo/redo; bindings,
+qualified or conflicting attributes, and property-element forms are not
+rewritten. Ambiguous and unsupported literal forms are not rendered as literals. This preview does not
+evaluate arbitrary XAML or bindings.
+`RemoveSelectedControl` and
 `MoveSelectedControl` with direction `-1` or `1` operate on direct children of
 simple `StackPanel`, `WrapPanel`, `UniformGrid` and `DockPanel` elements. For a
 DockPanel, child placement attributes must be unique, literal, valid Avalonia

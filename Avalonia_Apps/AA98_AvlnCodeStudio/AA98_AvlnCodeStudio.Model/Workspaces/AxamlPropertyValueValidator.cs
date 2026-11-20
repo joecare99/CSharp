@@ -111,7 +111,7 @@ public static class AxamlPropertyValueValidator
                 "TextAlignment" when node.TypeName is "TextBlock" or "TextBox" => "Left",
                 "TextAlignment" when node.TypeName == "NumericUpDown" => "Start",
                 "TextTrimming" when node.TypeName == "TextBlock" => "None",
-                "TextWrapping" when node.TypeName == "TextBlock" => "Wrap",
+                "TextWrapping" when node.TypeName == "TextBlock" => "NoWrap",
                 "TextWrapping" when node.TypeName == "TextBox" => "NoWrap",
                 "StartPoint" when node.TypeName == "Line" => "0,0",
                 "EndPoint" when node.TypeName == "Line" => "80,40",
@@ -655,6 +655,11 @@ public static class AxamlPropertyValueValidator
 
     private static string? GetReadOnlyReason(AxamlPreviewNode node, string propertyName)
     {
+        if (propertyName == "TextWrapping" && node.HasUnsafeTextWrappingSource)
+        {
+            return "Qualified or property-element TextWrapping is ambiguous and read-only.";
+        }
+
         if (node.Properties.TryGetValue(propertyName, out string? value)
             && value.TrimStart().StartsWith('{')
             && !(IsFormatProperty(node.TypeName, propertyName)

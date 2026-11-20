@@ -99,6 +99,7 @@ public sealed class AxamlPreviewService
         return node.IsSupported
             && GetEditableProperties(node).Contains(propertyName, StringComparer.Ordinal)
             && node.SourceStartOffset >= 0
+            && !(propertyName == "TextWrapping" && node.HasUnsafeTextWrappingSource)
             && (!node.Properties.TryGetValue(propertyName, out string? value)
                 || !IsMarkupExtensionValue(node.TypeName, propertyName, value))
             && !(propertyName == GetEditablePropertyName(node.TypeName) && node.HasInlineText)
@@ -1796,6 +1797,7 @@ public sealed class AxamlPreviewService
             IsSupported = node.IsSupported,
             SourceStartOffset = -1,
             HasTextPropertyElement = node.HasTextPropertyElement,
+            HasUnsafeTextWrappingSource = node.HasUnsafeTextWrappingSource,
             HasInlineText = node.HasInlineText,
             HasChildElements = node.HasChildElements,
             CanAppendChildren = false,
@@ -2118,6 +2120,15 @@ public sealed class AxamlPreviewService
 
         Dictionary<string, string> previewProperties = resources.GetPreviewProperties(element, properties,
             out AxamlPreviewLinearGradient? buttonBackgroundGradient);
+        bool unsafeTextWrapping = typeName is "TextBlock" or "TextBox"
+            && (element.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration
+                    && (attribute.Name.LocalName == "TextWrapping" || attribute.Name.LocalName.EndsWith(".TextWrapping", StringComparison.Ordinal))
+                    && (attribute.Name.Namespace != XNamespace.None || attribute.Name.LocalName != "TextWrapping"))
+                || element.Elements().Any(static child => child.Name.LocalName.EndsWith(".TextWrapping", StringComparison.Ordinal)));
+        if (unsafeTextWrapping)
+        {
+            previewProperties.Remove("TextWrapping");
+        }
         string? text = GetDisplayText(typeName, properties, element);
         if (GetEditablePropertyName(typeName) is string displayProperty
             && properties.TryGetValue(displayProperty, out string? sourceText)
@@ -2139,6 +2150,7 @@ public sealed class AxamlPreviewService
                 ? source[sourceStartOffset..(FindStartTagEnd(source, sourceStartOffset) + 1)]
                 : null,
             HasTextPropertyElement = hasTextPropertyElement,
+            HasUnsafeTextWrappingSource = unsafeTextWrapping,
             HasInlineText = element.Nodes().OfType<XText>().Any(static value => !string.IsNullOrWhiteSpace(value.Value)),
             HasChildElements = element.HasElements,
             CanAppendChildren = canAppendChildren,

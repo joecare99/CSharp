@@ -20,6 +20,20 @@ the original expression as a placeholder. Changes to RESX are reflected on the
 next preview parse. Changing the resource context reparses the current preview
 without changing markup, undo/redo history or an active grouped property edit.
 
+There is currently no product UI culture selector or culture-change notification
+for either host. `UiStrings.Culture` controls Workbench UI resource lookups,
+not the designer's `CurrentUICulture` lookup, and does not notify existing
+views. A direct runtime change to `CurrentUICulture` does not reparse an open
+preview: an unchanged resource context and unchanged markup are both no-ops.
+The existing preview can therefore retain its old caption until another action
+actually reparses it. For example, designer undo reparses using the then-current
+culture, but also changes the document and is not a refresh command. Reopening
+or changing the resource context may reparse; do not rely on an unchanged
+context or reopening identical markup to force a refresh. This is a limitation,
+not acceptance of live culture switching. A future supported switch must define
+notification and safe refresh semantics for both hosts and preserve document,
+selection, drafts and history without executing project code.
+
 Inline control resources support literal `x:String`, literal
 `SolidColorBrush.Color`, and simple local `StaticResource`/`DynamicResource`
 references, with nearest-scope lookup and cycle detection. Styles declared in

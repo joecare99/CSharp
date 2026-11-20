@@ -31,6 +31,8 @@ public sealed class AxamlPreviewNode
 
     public bool HasTextPropertyElement { get; init; }
 
+    public bool HasUnsafeTextWrappingSource { get; init; }
+
     public bool HasInlineText { get; init; }
 
     public bool HasChildElements { get; init; }
