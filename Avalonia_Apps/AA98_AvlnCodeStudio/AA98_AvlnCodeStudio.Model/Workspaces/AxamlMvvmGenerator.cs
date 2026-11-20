@@ -90,6 +90,13 @@ public sealed class AxamlMvvmGenerator
                 continue;
             }
 
+            if (element.AncestorsAndSelf().TakeWhile(ancestor => ancestor != root)
+                .Any(ancestor => ancestor.Attribute(s_xamlNamespace + "DataType") is not null))
+            {
+                throw new InvalidDataException(
+                    $"Named {element.Name.LocalName} '{controlName}' is inside a nested x:DataType scope; generating a root ViewModel binding is unsafe.");
+            }
+
             if (element.Name.LocalName == "AutoCompleteBox")
             {
                 string? initialValue = (string?)element.Attribute("Text");
@@ -621,7 +628,8 @@ public sealed class AxamlMvvmGenerator
 
         string expression = value.Trim();
         int end = expression.EndsWith('}') ? expression.Length - 1 : expression.Length;
-        string body = expression[1..end].Trim()["Binding".Length..].Trim();
+        string body = expression[1..end].Trim();
+        body = body[AxamlBindingMarkup.GetBindingKeywordLength(body.AsSpan())..].Trim();
         int separator = body.IndexOf(',');
         path = (separator < 0 ? body : body[..separator]).Trim();
         if (path.StartsWith("Path=", StringComparison.Ordinal))

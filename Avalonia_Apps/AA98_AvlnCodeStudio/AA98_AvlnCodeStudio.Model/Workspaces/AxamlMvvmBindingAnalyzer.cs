@@ -10,6 +10,7 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 public sealed class AxamlMvvmBindingAnalyzer
 {
     private static readonly XNamespace s_avaloniaNamespace = "https://github.com/avaloniaui";
+    private static readonly XNamespace s_xamlNamespace = "http://schemas.microsoft.com/winfx/2006/xaml";
     private const int MaximumMarkupLength = 1_000_000;
 
     public IReadOnlyList<AxamlMvvmMemberRequirement> Analyze(string markup)
@@ -36,7 +37,7 @@ public sealed class AxamlMvvmBindingAnalyzer
                 if (AxamlBindingMarkup.ContainsBindingExpression(element))
                 {
                     throw new InvalidDataException(
-                        $"Bindings inside '{element.Name.LocalName}' or its nested DataContext use a different or unresolved source and cannot be planned safely.");
+                        $"Bindings inside '{element.Name.LocalName}' or its nested DataContext/x:DataType use a different or unresolved source or static type and cannot be planned safely.");
                 }
 
                 continue;
@@ -107,7 +108,8 @@ public sealed class AxamlMvvmBindingAnalyzer
             return true;
         }
 
-        return element.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal)
+        return element.Attribute(s_xamlNamespace + "DataType") is not null
+            || element.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal)
             || element.Attributes().Any(static attribute =>
                 attribute.Name.LocalName == "DataContext"
                 || attribute.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal));
@@ -136,10 +138,8 @@ public sealed class AxamlMvvmBindingAnalyzer
         }
 
         ReadOnlySpan<char> body = expression[1..].TrimStart();
-        if (!body.StartsWith("Binding", StringComparison.Ordinal)
-            || body.Length > "Binding".Length
-                && !char.IsWhiteSpace(body["Binding".Length])
-                && body["Binding".Length] != ',')
+        int keywordLength = AxamlBindingMarkup.GetBindingKeywordLength(body);
+        if (keywordLength == 0)
         {
             return false;
         }
@@ -148,8 +148,7 @@ public sealed class AxamlMvvmBindingAnalyzer
             throw new InvalidDataException("The binding expression is missing its closing brace.");
         }
 
-        expression = expression[1..^1].Trim();
-        expression = expression["Binding".Length..].Trim();
+        expression = body[keywordLength..^1].Trim();
         if (expression.Length == 0)
         {
             throw new InvalidDataException("A binding used by MVVM planning must specify a member path.");
@@ -193,10 +192,23 @@ internal static class AxamlBindingMarkup
         }
 
         ReadOnlySpan<char> body = expression[1..].TrimStart();
-        return body.StartsWith("Binding", StringComparison.Ordinal)
-            && (body.Length == "Binding".Length
-                || char.IsWhiteSpace(body["Binding".Length])
-                || body["Binding".Length] is ',' or '}');
+        return GetBindingKeywordLength(body) != 0;
+    }
+
+    public static int GetBindingKeywordLength(ReadOnlySpan<char> body)
+    {
+        foreach (string keyword in new[] { "Binding", "CompiledBinding", "ReflectionBinding" })
+        {
+            if (body.StartsWith(keyword, StringComparison.Ordinal)
+                && (body.Length == keyword.Length
+                    || char.IsWhiteSpace(body[keyword.Length])
+                    || body[keyword.Length] is ',' or '}'))
+            {
+                return keyword.Length;
+            }
+        }
+
+        return 0;
     }
 
     public static bool HasExplicitSource(string value)
@@ -209,7 +221,7 @@ internal static class AxamlBindingMarkup
         string expression = value.Trim();
         int end = expression.EndsWith('}') ? expression.Length - 1 : expression.Length;
         string body = expression[1..end].Trim();
-        body = body["Binding".Length..].Trim();
+        body = body[GetBindingKeywordLength(body.AsSpan())..].Trim();
         string[] options = body.Split(',');
         return options.Skip(1).Any(static option =>
         {
