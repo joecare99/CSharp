@@ -1601,9 +1601,9 @@ public sealed class AxamlPreviewControl : ContentControl
             LineHeight = HasValidLiteralValue(node, "LineHeight") ? ParseLineHeight(node) : double.NaN,
             MaxLines = HasValidLiteralValue(node, "MaxLines") ? ParseInt(node, "MaxLines") : 0,
             TextTrimming = HasValidLiteralValue(node, "TextTrimming") ? ParseTextTrimming(node) : TextTrimming.None,
-            TextWrapping = HasValidLiteralValue(node, "TextWrapping")
-                ? ParseTextWrapping(node, TextWrapping.Wrap)
-                : TextWrapping.Wrap,
+            TextWrapping = !node.HasUnsafeTextWrappingSource && HasValidLiteralValue(node, "TextWrapping")
+                ? ParseTextWrapping(node, TextWrapping.NoWrap)
+                : TextWrapping.NoWrap,
             TextAlignment = HasValidLiteralValue(node, "TextAlignment")
                 ? ParseTextAlignment(node, TextAlignment.Left)
                 : TextAlignment.Left,
@@ -1641,7 +1641,9 @@ public sealed class AxamlPreviewControl : ContentControl
             FontWeight = ParseFontWeight(node),
             HorizontalAlignment = ParseAlignment(node, "HorizontalAlignment"),
             TextAlignment = ParseTextAlignment(node, TextAlignment.Left),
-            TextWrapping = ParseTextWrapping(node, TextWrapping.NoWrap),
+            TextWrapping = !node.HasUnsafeTextWrappingSource && HasValidLiteralValue(node, "TextWrapping")
+                ? ParseTextWrapping(node, TextWrapping.NoWrap)
+                : TextWrapping.NoWrap,
             UseFloatingPlaceholder = ParseBoolean(node, "UseFloatingPlaceholder") ?? false,
             VerticalAlignment = ParseVerticalAlignment(node),
             IsReadOnly = true,
