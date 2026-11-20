@@ -19,6 +19,8 @@ namespace AA98_AvlnCodeStudio.Base.Testing.Services;
 /// </summary>
 public sealed class VSTestDiscoveryService
 {
+    private const string MissingErrorMessage = "VSTest reported an error without a message.";
+
     public async Task<TestDiscoveryResult> DiscoverAsync(
         string runnerPath,
         string assemblyPath,
@@ -337,7 +339,7 @@ public sealed class VSTestDiscoveryService
         }
     }
 
-    private sealed class DiscoveryHandler : ITestDiscoveryEventsHandler2
+    internal sealed class DiscoveryHandler : ITestDiscoveryEventsHandler2
     {
         private readonly object _gate = new();
         private readonly List<TestCase> _cases = [];
@@ -373,17 +375,13 @@ public sealed class VSTestDiscoveryService
 
         public void HandleLogMessage(TestMessageLevel level, string? message)
         {
-            if (string.IsNullOrWhiteSpace(message))
-            {
-                return;
-            }
             lock (_gate)
             {
                 if (level == TestMessageLevel.Error)
                 {
-                    _errors.Add(message);
+                    _errors.Add(string.IsNullOrWhiteSpace(message) ? MissingErrorMessage : message);
                 }
-                else if (level == TestMessageLevel.Warning)
+                else if (level == TestMessageLevel.Warning && !string.IsNullOrWhiteSpace(message))
                 {
                     _warnings.Add(message);
                 }
@@ -454,11 +452,11 @@ public sealed class VSTestDiscoveryService
 
         public void HandleLogMessage(TestMessageLevel level, string? message)
         {
-            if (level == TestMessageLevel.Error && !string.IsNullOrWhiteSpace(message))
+            if (level == TestMessageLevel.Error)
             {
                 lock (_gate)
                 {
-                    _errors.Add(message);
+                    _errors.Add(string.IsNullOrWhiteSpace(message) ? MissingErrorMessage : message);
                 }
             }
         }
@@ -473,7 +471,7 @@ public sealed class VSTestDiscoveryService
             lock (_gate)
             {
                 if (_completed is null || _completed.IsAborted || _completed.IsCanceled
-                    || _completed.Error is not null)
+                    || _completed.Error is not null || _errors.Count > 0)
                 {
                     throw new InvalidOperationException("VSTest case execution did not complete successfully. "
                         + _completed?.Error?.Message + " " + string.Join(Environment.NewLine, _errors));
@@ -493,10 +491,6 @@ public sealed class VSTestDiscoveryService
                     throw new InvalidOperationException("VSTest returned a result for a different adapter case.");
                 }
                 TestRunSummary summary = new() { TotalCount = 1 };
-                foreach (string error in _errors)
-                {
-                    summary.Messages.Add(error);
-                }
                 summary.Cases.Add(new TestCaseResult(
                     result.DisplayName ?? result.TestCase.DisplayName,
                     result.Outcome.ToString(),

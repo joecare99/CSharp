@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -8,6 +10,8 @@ using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.UI;
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using Avalonia;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Provider;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
@@ -15,9 +19,11 @@ using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Themes.Fluent;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Config.UI;
 using Config.UI.Avalonia.ViewModels;
 using Config.UI.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Property.Editor;
 
 internal static class Program
 {
@@ -26,9 +32,18 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
-        s_root = Directory.CreateTempSubdirectory("AvlnProjectSettingsReview-").FullName;
+        s_root = Directory.CreateDirectory(Path.Combine(
+            Directory.GetCurrentDirectory(), "artifacts", $"project-settings-review-fixture-{Guid.NewGuid():N}")).FullName;
         try
         {
+            ProcessStartInfo git = new("git") { WorkingDirectory = s_root, UseShellExecute = false };
+            git.ArgumentList.Add("init");
+            git.ArgumentList.Add("--quiet");
+            using (Process process = Process.Start(git) ?? throw new InvalidOperationException("Could not start git."))
+            {
+                process.WaitForExit();
+                Check(process.ExitCode == 0, "Could not initialize the synthetic fixture repository.");
+            }
             Environment.SetEnvironmentVariable("CONFIG_ROOT", Path.Combine(s_root, "config"));
             Environment.SetEnvironmentVariable("AVLN_CONFIG_GROUP_ROOT", null);
             Environment.SetEnvironmentVariable("AVLN_CONFIG_GROUP_ID", null);
@@ -170,8 +185,10 @@ internal static class Program
 
             Click(dialog, "Cancel");
             await showing.WaitAsync(TimeSpan.FromSeconds(30));
+            await VerifyReloadRecoveryAsync(workbench, desktop, projectPath);
             await VerifyReviewModesAsync(desktop.MainWindow!);
             Console.WriteLine("Project settings: single apply, undo/redo, decline, cancellation, conflict and context changes verified.");
+            Console.WriteLine("Project settings: independent reload failure, retry, apply and failed close verified.");
             Console.WriteLine("Review dialog: approval-only and original apply behavior verified.");
         }
         catch (Exception exception)
@@ -181,6 +198,79 @@ internal static class Program
         }
 
         desktop.Shutdown(exitCode);
+    }
+
+    private static async Task VerifyReloadRecoveryAsync(
+        MainWindowViewModel workbench, IClassicDesktopStyleApplicationLifetime desktop, string projectPath)
+    {
+        await workbench.OpenWorkspaceFileAsync(projectPath);
+        Task showing = workbench.OpenProjectConfigurationDialogAsync!();
+        await WaitUntilAsync(() => desktop.Windows.OfType<ConfigUiDialog>().Any(), "recovery dialog");
+        ConfigUiDialog dialog = desktop.Windows.OfType<ConfigUiDialog>().Single();
+        ConfigUiViewModel config = (ConfigUiViewModel)dialog.DataContext!;
+        await WaitUntilAsync(() => config.IsSelectedSectionReady, "recovery project section");
+        IConfigUiSection projectSection = config.SelectedSection!;
+        IndependentSection independent = new();
+        config.Sections.Add(independent);
+        ListBox sectionList = dialog.GetVisualDescendants().OfType<ListBox>()
+            .Single(list => ReferenceEquals(list.ItemsSource, config.Sections));
+        SetAssemblyName(config, "DiscardedDraft");
+        sectionList.SelectedItem = independent;
+        await WaitUntilAsync(() => config.IsSelectedSectionReady, "independent section");
+        config.PropertyEditor.Items.Single().ScalarValue = "IndependentDraft";
+        sectionList.SelectedItem = projectSection;
+        string source = await File.ReadAllTextAsync(projectPath);
+        File.Delete(projectPath);
+        try
+        {
+            await config.LoadCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => config.NeedsReloadRecovery && !config.IsBusy, "failed reload");
+            Check(config.HasUnsavedChanges && !config.CanApplyChanges && config.PropertyEditor.Items.Count == 0,
+                "A failed independent reload did not hide and block the stale draft.");
+            Button retry = FindButton(dialog, "Retry discard/reload");
+            Check(retry.IsVisible && retry.IsEnabled, "Recovery action was not visible and enabled.");
+            Check(!FindButton(dialog, "Apply").IsEnabled, "Apply remained enabled after failed reload.");
+            Check(!string.IsNullOrWhiteSpace(config.OperationMessage), "Reload failure was not reported.");
+            Check(dialog.GetVisualDescendants().OfType<TextBlock>()
+                    .Any(text => text.IsVisible && text.Text == config.OperationMessage),
+                "The reload failure message was not displayed.");
+            sectionList.SelectedItem = independent;
+            Check(Equals(config.PropertyEditor.Items.Single().ScalarValue, "IndependentDraft"),
+                "The unrelated draft was not preserved.");
+            Check(!FindButton(dialog, "Apply").IsEnabled, "Apply was enabled on the unrelated section.");
+            sectionList.SelectedItem = projectSection;
+            Check(config.PropertyEditor.Items.Count == 0, "Switching sections exposed the stale project draft.");
+            await File.WriteAllTextAsync(projectPath, source);
+            Invoke(dialog, "Retry discard/reload");
+            await WaitUntilAsync(() => !config.NeedsReloadRecovery && !config.IsBusy, "successful retry");
+            Check(Equals(config.PropertyEditor.Items.Single().ScalarValue, "ExternalName"),
+                "Retry did not replace the affected draft with the stored project value.");
+            Check(config.HasUnsavedChanges && FindButton(dialog, "Apply").IsEnabled,
+                "Retry lost the independent draft or did not re-enable Apply.");
+            Invoke(dialog, "Apply");
+            await WaitUntilAsync(() => !config.HasUnsavedChanges && !config.IsBusy, "independent apply");
+            Check(independent.SavedValue == "IndependentDraft", "Apply did not save the independent draft.");
+            Check(await File.ReadAllTextAsync(projectPath) == source, "Apply saved the discarded project draft.");
+
+            SetAssemblyName(config, "CloseDraft");
+            File.Delete(projectPath);
+            dialog.Close();
+            await WaitUntilAsync(() => config.NeedsReloadRecovery && !config.IsBusy, "failed close discard");
+            Check(dialog.IsVisible && config.HasUnsavedChanges && config.PropertyEditor.Items.Count == 0,
+                "A failed close discard closed the dialog or exposed the stale draft.");
+            Check(FindButton(dialog, "Retry discard/reload").IsVisible && !FindButton(dialog, "Apply").IsEnabled,
+                "A failed close did not expose recovery and block Apply.");
+            await File.WriteAllTextAsync(projectPath, source);
+            Invoke(dialog, "Retry discard/reload");
+            await WaitUntilAsync(() => !config.NeedsReloadRecovery && !config.IsBusy, "close recovery");
+            Check(!config.HasUnsavedChanges, "Close recovery did not discard the affected draft.");
+            Invoke(dialog, "Cancel");
+            await showing.WaitAsync(TimeSpan.FromSeconds(30));
+        }
+        finally
+        {
+            if (!File.Exists(projectPath)) await File.WriteAllTextAsync(projectPath, source);
+        }
     }
 
     private static async Task VerifyReviewModesAsync(Window owner)
@@ -217,10 +307,16 @@ internal static class Program
 
     private static void Click(Window window, string label)
     {
-        Button button = window.GetVisualDescendants().OfType<Button>()
-            .Single(candidate => string.Equals(candidate.Content?.ToString(), label, StringComparison.Ordinal));
+        Button button = FindButton(window, label);
         button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
     }
+
+    private static Button FindButton(Window window, string label) =>
+        window.GetVisualDescendants().OfType<Button>()
+            .Single(candidate => string.Equals(candidate.Content?.ToString(), label, StringComparison.Ordinal));
+
+    private static void Invoke(Window window, string label) =>
+        ((IInvokeProvider)ControlAutomationPeer.CreatePeerForElement(FindButton(window, label))!).Invoke();
 
     private static async Task WaitUntilAsync(Func<bool> condition, string description)
     {
@@ -241,6 +337,31 @@ internal static class Program
     private sealed class NoOpenDocuments : IWorkspaceOpenDocumentProvider
     {
         public bool IsDocumentOpen(string fullPath) => false;
+    }
+
+    private sealed class IndependentSection : IConfigUiSection
+    {
+        public ConfigUiSection Section { get; } = new("Synthetic", "Synthetic", sortOrder: 100);
+        public IReadOnlyList<IPropertyItem> Properties { get; private set; } = [];
+        public bool IsReadOnly => false;
+        public ConfigUiSectionState State => ConfigUiSectionState.Ready;
+        public string? ErrorMessage => null;
+        public string SavedValue { get; private set; } = "Original";
+
+        public Task LoadAsync(CancellationToken cancellationToken = default)
+        {
+            Properties = [new PropertyItem(new PropertyCategory("Synthetic", "Synthetic"),
+                "Name", "Name", typeof(string), SavedValue)];
+            return Task.CompletedTask;
+        }
+
+        public Task SaveAsync(CancellationToken cancellationToken = default)
+        {
+            SavedValue = (string)Properties.Single().Value!;
+            return Task.CompletedTask;
+        }
+
+        public Task ResetAsync(CancellationToken cancellationToken = default) => LoadAsync(cancellationToken);
     }
 
     private sealed class SmokeApplication : Application

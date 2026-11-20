@@ -5,6 +5,7 @@ using AA98_AvlnCodeStudio.Base.Testing.Models;
 using AA98_AvlnCodeStudio.Base.Testing.Services;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestResult = Microsoft.VisualStudio.TestPlatform.ObjectModel.TestResult;
 
@@ -49,11 +50,82 @@ public sealed class VSTestRunResultTests
         TestCase returned = CreateCase(id);
         returned.DisplayName = "Adapter formatted result";
         VSTestDiscoveryService.RunHandler handler = new(selected);
+        handler.HandleLogMessage(TestMessageLevel.Warning, "Adapter warning.");
+        handler.HandleLogMessage(TestMessageLevel.Warning, null);
         Complete(handler, new TestResult(returned) { Outcome = TestOutcome.Passed });
 
         TestRunSummary summary = handler.GetResult();
         Assert.AreEqual(TestRunOutcome.Passed, summary.Outcome);
         Assert.AreEqual(id.ToString(), summary.Cases[0].TestId);
+    }
+
+    [TestMethod]
+    [DataRow(TestOutcome.Passed)]
+    [DataRow(TestOutcome.Failed)]
+    [DataRow(TestOutcome.Skipped)]
+    public void ErrorReportedDuringCaseExecution_IsRejected(TestOutcome outcome)
+    {
+        TestCase selected = CreateCase(Guid.NewGuid());
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        handler.HandleLogMessage(TestMessageLevel.Error, "Adapter failed after reporting a result.");
+        Complete(handler, new TestResult(selected) { Outcome = outcome });
+
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, "Adapter failed after reporting a result.");
+    }
+
+    [TestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    [DataRow(" \t\r\n")]
+    public void ErrorWithoutMessageDuringCaseExecution_IsRejected(string? message)
+    {
+        TestCase selected = CreateCase(Guid.NewGuid());
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        handler.HandleLogMessage(TestMessageLevel.Error, message);
+        Complete(handler, new TestResult(selected) { Outcome = TestOutcome.Passed });
+
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, "VSTest reported an error without a message.");
+    }
+
+    [TestMethod]
+    [DataRow(null)]
+    [DataRow("")]
+    [DataRow(" \t\r\n")]
+    public void ErrorWithoutMessageDuringDiscovery_IsRejected(string? message)
+    {
+        VSTestDiscoveryService.DiscoveryHandler handler = new();
+        handler.HandleDiscoveredTests([CreateCase(Guid.NewGuid())]);
+        handler.HandleLogMessage(TestMessageLevel.Error, message);
+        handler.HandleDiscoveryComplete(new DiscoveryCompleteEventArgs(1, false), null);
+
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, "VSTest reported an error without a message.");
+    }
+
+    [TestMethod]
+    public void DiscoveryWarningsWithoutMessages_AreIgnored()
+    {
+        VSTestDiscoveryService.DiscoveryHandler handler = new();
+        handler.HandleLogMessage(TestMessageLevel.Warning, null);
+        handler.HandleLogMessage(TestMessageLevel.Warning, "  ");
+        handler.HandleLogMessage(TestMessageLevel.Warning, "Adapter warning.");
+        handler.HandleDiscoveryComplete(new DiscoveryCompleteEventArgs(0, false), null);
+
+        CollectionAssert.AreEqual(new[] { "Adapter warning." }, handler.GetResult().Warnings.ToArray());
+    }
+
+    [TestMethod]
+    public void CanceledRunWithResult_IsRejected()
+    {
+        TestCase selected = CreateCase(Guid.NewGuid());
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        TestRunChangedEventArgs chunk = new(null!, [new TestResult(selected) { Outcome = TestOutcome.Passed }], null!);
+        TestRunCompleteEventArgs complete = new(null!, true, false, null!, null!, TimeSpan.Zero);
+        handler.HandleTestRunComplete(complete, chunk, null, null);
+
+        Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
     }
 
     [TestMethod]

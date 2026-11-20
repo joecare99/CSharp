@@ -230,7 +230,13 @@ public partial class AxamlBindingRowViewModel : ObservableObject
             return null;
         }
 
-        string[] tokens = value[extensionName.Length..^1]
+        string arguments = value[extensionName.Length..^1].Trim();
+        if (arguments.StartsWith(','))
+        {
+            arguments = arguments[1..];
+        }
+
+        string[] tokens = arguments
             .Split(',')
             .Select(static token => token.Trim())
             .ToArray();
@@ -241,7 +247,7 @@ public partial class AxamlBindingRowViewModel : ObservableObject
         {
             if (token.Length == 0)
             {
-                continue;
+                return null;
             }
 
             int separator = token.IndexOf('=');

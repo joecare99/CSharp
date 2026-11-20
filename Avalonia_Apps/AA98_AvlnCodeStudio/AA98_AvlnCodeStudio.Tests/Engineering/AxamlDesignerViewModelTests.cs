@@ -3140,6 +3140,63 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task BindingRows_PreserveAmbiguousEmptyBindingArguments()
+    {
+        foreach ((string control, string property, string expression) in new[]
+        {
+            ("TextBox", "Text", "{Binding Caption,, Mode=TwoWay}"),
+            ("TextBox", "Text", "{Binding Caption,}"),
+            ("TextBox", "Text", "{Binding,, Path=Caption}"),
+            ("Button", "Command", "{Binding SaveCommand,, Mode=OneWay}"),
+        })
+        {
+            string markup = $"<{control} {property}='{expression}' Tag='keep' />";
+            AxamlDesignerViewModel viewModel = new();
+            string? changedMarkup = null;
+            int changes = 0;
+            viewModel.MarkupChanged += (_, e) => { changedMarkup = e.Markup; changes++; };
+            viewModel.LoadMarkup(markup);
+            viewModel.SelectedNode = viewModel.PreviewRoot;
+            AxamlBindingRowViewModel row = viewModel.BindingRows.Single();
+            Assert.IsFalse(row.CanEditBinding, expression);
+            row.NewMemberName = "Replacement";
+            bool reviewCalled = false;
+            viewModel.ApplyMissingBindingAsync = _ => { reviewCalled = true; return Task.FromResult(true); };
+            await viewModel.ApplyBindingRowAsync(row);
+            viewModel.ApplyBindingRow(row);
+            Assert.ThrowsExactly<InvalidOperationException>(() => viewModel.CreateBindingMarkupForRow(row));
+            Assert.IsFalse(reviewCalled, expression);
+            Assert.AreEqual(expression, viewModel.PreviewRoot!.Properties[property]);
+            Assert.AreEqual(0, changes);
+            Assert.IsFalse(viewModel.CanUndo);
+            Assert.IsNull(changedMarkup);
+        }
+    }
+
+    [TestMethod]
+    public void BindingRows_ValidExplicitPathPreservesSourceAcrossUndoRedo()
+    {
+        const string original = "<TextBox Text='{Binding, Path=Caption}' Tag='keep' />";
+        AxamlDesignerViewModel viewModel = new();
+        string? snapshot = null;
+        viewModel.MarkupChanged += (_, e) => snapshot = e.Markup;
+        viewModel.LoadMarkup(original);
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        AxamlBindingRowViewModel row = viewModel.BindingRows.Single();
+        Assert.IsTrue(row.CanEditBinding);
+        row.NewMemberName = "Replacement";
+        viewModel.ApplyBindingRow(row);
+        string? edited = snapshot;
+        Assert.IsNotNull(edited);
+        StringAssert.Contains(edited, "Tag='keep'");
+        StringAssert.Contains(edited, "{Binding Replacement}");
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(original, snapshot);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual(edited, snapshot);
+    }
+
+    [TestMethod]
     public async Task BindingRows_SendMissingMemberToWorkspaceReviewHandler()
     {
         AxamlDesignerViewModel viewModel = new();
