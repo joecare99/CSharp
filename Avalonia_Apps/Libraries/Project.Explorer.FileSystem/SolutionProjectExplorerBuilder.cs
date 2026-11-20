@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Xml;
 using System.Xml.Linq;
 using Project.Explorer;
 
@@ -47,7 +48,7 @@ internal static class SolutionProjectExplorerBuilder
 
     private static void ReadXmlSolution(Node root, string path, ISet<string>? extensions, CancellationToken token)
     {
-        XDocument document = XDocument.Load(path);
+        XDocument document = LoadXml(path);
         string directory = Path.GetDirectoryName(path)!;
         foreach (XElement element in document.Descendants())
         {
@@ -177,7 +178,7 @@ internal static class SolutionProjectExplorerBuilder
 
         string directory = Path.GetDirectoryName(path)!;
         List<ProjectExplorerItem> children = ScanDirectory(directory, id, extensions, token);
-        XDocument project = XDocument.Load(path);
+        XDocument project = LoadXml(path);
         List<ProjectExplorerItem> references = [];
         foreach (XElement element in project.Descendants().Where(e =>
                      e.Name.LocalName is "PackageReference" or "ProjectReference" or "Reference"))
@@ -236,6 +237,17 @@ internal static class SolutionProjectExplorerBuilder
 
     private static string Resolve(string directory, string path) =>
         Path.GetFullPath(Path.Combine(directory, path.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar)));
+
+    private static XDocument LoadXml(string path)
+    {
+        using XmlReader reader = XmlReader.Create(path, new XmlReaderSettings
+        {
+            DtdProcessing = DtdProcessing.Prohibit,
+            XmlResolver = null,
+            MaxCharactersInDocument = 1_000_000,
+        });
+        return XDocument.Load(reader);
+    }
 
     private sealed class Node(string id, string name, string path, ProjectExplorerItemKind kind)
     {
