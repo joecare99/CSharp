@@ -195,6 +195,33 @@ public sealed class AxamlPreviewService
             throw new InvalidOperationException($"The '{propertyName}' binding on '{node.TypeName}' cannot be edited safely.");
         }
 
+        if (!string.Equals(node.BindingSourceSnapshot, axaml, StringComparison.Ordinal))
+        {
+            throw new InvalidDataException("The AXAML source changed; select the preview element again.");
+        }
+
+        if (node.HasUnsafeBindingScope || node.AmbiguousBindingProperties.Contains(propertyName, StringComparer.Ordinal))
+        {
+            throw new InvalidOperationException("The binding source or property is ambiguous and cannot be edited safely.");
+        }
+
+        string kind = "Binding";
+        if (node.Properties.TryGetValue(propertyName, out string? existing) && existing.TrimStart().StartsWith('{'))
+        {
+            if (AxamlEditableBinding.ReadPath(existing, out _, out _) is null)
+            {
+                throw new InvalidOperationException("The existing binding expression cannot be edited safely.");
+            }
+
+            string trimmed = existing.TrimStart();
+            int kindEnd = 1;
+            while (kindEnd < trimmed.Length && !char.IsWhiteSpace(trimmed[kindEnd]) && trimmed[kindEnd] != ',')
+            {
+                kindEnd++;
+            }
+            kind = trimmed[1..kindEnd];
+        }
+
         List<string> options = [];
         if (bindingMode != AxamlBindingMode.Default)
         {
@@ -210,7 +237,7 @@ public sealed class AxamlPreviewService
             axaml,
             node,
             propertyName,
-            $"{{Binding {memberName}{optionSuffix}}}",
+            $"{{{kind} {memberName}{optionSuffix}}}",
             allowExistingBinding: true);
     }
 
@@ -1811,6 +1838,7 @@ public sealed class AxamlPreviewService
             ParentSourceStartOffset = -1,
             IsSupported = node.IsSupported,
             SourceStartOffset = -1,
+            HasUnsafeBindingScope = true,
             HasTextPropertyElement = node.HasTextPropertyElement,
             HasUnsafeTextWrappingSource = node.HasUnsafeTextWrappingSource,
             HasUnsafeTextAlignmentSource = node.HasUnsafeTextAlignmentSource,
@@ -1996,6 +2024,82 @@ public sealed class AxamlPreviewService
             return -1;
         }
 
+    private static bool HasUnsafeBindingScope(XElement element)
+    {
+        XElement? root = element.Document?.Root;
+        foreach (XElement scope in element.AncestorsAndSelf())
+        {
+            if (scope.Name.LocalName is "DataTemplate" or "TreeDataTemplate" or "HierarchicalDataTemplate" or "ItemsPanelTemplate" or "ControlTemplate"
+                || scope.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal)
+                || scope != root && scope.Attribute(s_xamlNamespace + "DataType") is not null
+                || scope.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration
+                    && (attribute.Name.LocalName == "DataContext" || attribute.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal))))
+            {
+                return true;
+            }
+
+            XElement[] contextElements = scope.Elements()
+                .Where(static child => child.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal)
+                    || child.Name.LocalName == "DataContext")
+                .ToArray();
+            if (contextElements.Length > 0
+                && (scope != root || !HasMatchingRootDataContext(scope)))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static bool HasMatchingRootDataContext(XElement root)
+    {
+        ArgumentNullException.ThrowIfNull(root);
+        XElement[] contexts = root.Elements()
+            .Where(static child => child.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal)
+                || child.Name.LocalName == "DataContext")
+            .ToArray();
+        if (contexts.Length != 1
+            || contexts[0].Name != root.Name.Namespace + $"{root.Name.LocalName}.DataContext"
+            || root.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration
+                && (attribute.Name.LocalName == "DataContext" || attribute.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal)))
+            || contexts[0].Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration)
+            || contexts[0].Nodes().OfType<XText>().Any(static text => !string.IsNullOrWhiteSpace(text.Value)))
+        {
+            return false;
+        }
+
+        XElement[] values = contexts[0].Elements().ToArray();
+        string? dataType = (string?)root.Attribute(s_xamlNamespace + "DataType");
+        int separator = dataType?.IndexOf(':') ?? -1;
+        if (values.Length != 1 || separator <= 0 || separator == dataType!.Length - 1
+            || dataType.IndexOf(':', separator + 1) >= 0)
+        {
+            return false;
+        }
+
+        string prefix;
+        try
+        {
+            prefix = XmlConvert.VerifyNCName(dataType[..separator]);
+        }
+        catch (XmlException)
+        {
+            return false;
+        }
+
+        XElement value = values[0];
+        XNamespace? typeNamespace = root.GetNamespaceOfPrefix(prefix);
+        return typeNamespace is not null
+            && typeNamespace.NamespaceName.StartsWith("using:", StringComparison.Ordinal)
+            && typeNamespace.NamespaceName.Length > "using:".Length
+            && value.Name.Namespace == typeNamespace
+            && value.Name.LocalName == dataType[(separator + 1)..]
+            && !value.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration)
+            && !value.HasElements
+            && !value.Nodes().OfType<XText>().Any(static text => !string.IsNullOrWhiteSpace(text.Value));
+    }
+
     private static AxamlPreviewNode ParseElement(
         XElement element,
         string source,
@@ -2174,6 +2278,16 @@ public sealed class AxamlPreviewService
             SourceStartTag = sourceStartOffset >= 0
                 ? source[sourceStartOffset..(FindStartTagEnd(source, sourceStartOffset) + 1)]
                 : null,
+            BindingSourceSnapshot = source,
+            HasUnsafeBindingScope = HasUnsafeBindingScope(element),
+            AmbiguousBindingProperties = capability is null
+                ? []
+                : capability.BindableProperties.Where(property =>
+                    element.Attributes().Any(attribute => !attribute.IsNamespaceDeclaration
+                        && (attribute.Name.LocalName == property.Name || attribute.Name.LocalName.EndsWith("." + property.Name, StringComparison.Ordinal))
+                        && (attribute.Name.Namespace != XNamespace.None || attribute.Name.LocalName != property.Name))
+                    || element.Elements().Any(child => child.Name.LocalName.EndsWith("." + property.Name, StringComparison.Ordinal)))
+                    .Select(static property => property.Name).ToArray(),
             HasTextPropertyElement = hasTextPropertyElement,
             HasUnsafeTextWrappingSource = unsafeTextWrapping,
             HasUnsafeTextAlignmentSource = unsafeTextAlignment,

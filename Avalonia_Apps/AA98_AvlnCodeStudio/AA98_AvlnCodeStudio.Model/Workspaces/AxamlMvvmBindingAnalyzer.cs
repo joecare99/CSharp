@@ -131,6 +131,12 @@ public sealed class AxamlMvvmBindingAnalyzer
     private static bool TryReadBindingPath(string value, out string path)
     {
         path = string.Empty;
+        if (AxamlEditableBinding.ReadPath(value, out _, out _) is { } editablePath)
+        {
+            path = editablePath;
+            return true;
+        }
+
         ReadOnlySpan<char> expression = value.AsSpan().Trim();
         if (expression.Length < 2 || expression[0] != '{')
         {

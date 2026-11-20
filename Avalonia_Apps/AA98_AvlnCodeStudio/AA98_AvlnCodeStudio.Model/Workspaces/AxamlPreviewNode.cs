@@ -29,6 +29,12 @@ public sealed class AxamlPreviewNode
 
     public string? SourceStartTag { get; init; }
 
+    internal string? BindingSourceSnapshot { get; init; }
+
+    public bool HasUnsafeBindingScope { get; init; }
+
+    public IReadOnlyList<string> AmbiguousBindingProperties { get; init; } = [];
+
     public bool HasTextPropertyElement { get; init; }
 
     public bool HasUnsafeTextWrappingSource { get; init; }
