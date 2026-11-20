@@ -18,7 +18,8 @@ public partial class AxamlBindingRowViewModel : ObservableObject
         string memberTypeName = "object",
         bool isCommand = false,
         AxamlBindingMode defaultBindingMode = AxamlBindingMode.Default,
-        bool supportsUpdateSourceTrigger = false)
+        bool supportsUpdateSourceTrigger = false,
+        bool hasUnsafeBindingScope = false)
     {
         ControlType = controlType;
         PropertyName = propertyName;
@@ -33,9 +34,12 @@ public partial class AxamlBindingRowViewModel : ObservableObject
             ? AxamlBindingUpdateSourceTrigger.Default
             : parsedUpdateSourceTrigger;
         SupportsUpdateSourceTrigger = supportsUpdateSourceTrigger;
-        HasUnsupportedBindingExpression = expression?.TrimStart().StartsWith('{') == true
-            && MemberName.Length == 0;
+        SourceExpression = expression;
+        HasUnsupportedBindingExpression = hasUnsafeBindingScope
+            || expression?.TrimStart().StartsWith('{') == true && MemberName.Length == 0;
     }
+
+    internal string? SourceExpression { get; }
 
     public string ControlType { get; }
 
@@ -212,103 +216,8 @@ public partial class AxamlBindingRowViewModel : ObservableObject
         out AxamlBindingMode bindingMode,
         out AxamlBindingUpdateSourceTrigger updateSourceTrigger)
     {
-        bindingMode = AxamlBindingMode.Default;
-        updateSourceTrigger = AxamlBindingUpdateSourceTrigger.Default;
-        if (string.IsNullOrWhiteSpace(expression))
-        {
-            return null;
-        }
-
-        string value = expression.Trim();
-        const string extensionName = "{Binding";
-        if (!value.StartsWith(extensionName, StringComparison.Ordinal)
-            || !value.EndsWith('}')
-            || value.Length > extensionName.Length
-                && !char.IsWhiteSpace(value[extensionName.Length])
-                && value[extensionName.Length] != ',')
-        {
-            return null;
-        }
-
-        string arguments = value[extensionName.Length..^1].Trim();
-        if (arguments.StartsWith(','))
-        {
-            arguments = arguments[1..];
-        }
-
-        string[] tokens = arguments
-            .Split(',')
-            .Select(static token => token.Trim())
-            .ToArray();
-        string? path = null;
-        bool modeSpecified = false;
-        bool updateSourceTriggerSpecified = false;
-        foreach (string token in tokens)
-        {
-            if (token.Length == 0)
-            {
-                return null;
-            }
-
-            int separator = token.IndexOf('=');
-            if (separator < 0)
-            {
-                if (path is not null || !AxamlMvvmMemberName.IsValid(token))
-                {
-                    return null;
-                }
-
-                path = token;
-                continue;
-            }
-
-            string optionName = token[..separator].Trim();
-            string optionValue = token[(separator + 1)..].Trim();
-            if (string.Equals(optionName, "Path", StringComparison.Ordinal))
-            {
-                if (path is not null || !AxamlMvvmMemberName.IsValid(optionValue))
-                {
-                    return null;
-                }
-
-                path = optionValue;
-            }
-            else if (string.Equals(optionName, "Mode", StringComparison.Ordinal))
-            {
-                if (modeSpecified
-                    || !Enum.TryParse(optionValue, ignoreCase: true, out AxamlBindingMode parsedMode)
-                    || !Enum.IsDefined(parsedMode))
-                {
-                    return null;
-                }
-
-                bindingMode = parsedMode;
-                modeSpecified = true;
-            }
-            else if (string.Equals(optionName, "UpdateSourceTrigger", StringComparison.Ordinal))
-            {
-                if (updateSourceTriggerSpecified
-                    || !Enum.TryParse(
-                        optionValue,
-                        ignoreCase: true,
-                        out AxamlBindingUpdateSourceTrigger parsedTrigger)
-                    || !Enum.IsDefined(parsedTrigger))
-                {
-                    return null;
-                }
-
-                updateSourceTrigger = parsedTrigger;
-                updateSourceTriggerSpecified = true;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        return path;
+        return AxamlEditableBinding.ReadPath(expression, out bindingMode, out updateSourceTrigger);
     }
-
     partial void OnDiagnosticChanged(string? value)
     {
         OnPropertyChanged(nameof(HasDiagnostic));

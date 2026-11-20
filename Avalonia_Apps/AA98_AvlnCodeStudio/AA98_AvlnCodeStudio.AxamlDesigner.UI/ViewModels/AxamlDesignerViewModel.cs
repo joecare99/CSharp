@@ -68,8 +68,13 @@ public partial class AxamlDesignerViewModel : ObservableObject
                 out AxamlBindingMode parsedBindingMode,
                 out AxamlBindingUpdateSourceTrigger parsedUpdateSourceTrigger);
             string memberName = parsedMemberName ?? string.Empty;
+            bool unsafeScope = !node.IsSupported || node.SourceStartOffset < 0 || node.HasUnsafeBindingScope
+                || node.AmbiguousBindingProperties.Contains(property.Name, StringComparer.Ordinal);
             bool isNewRow = !existing.TryGetValue(property.Name, out AxamlBindingRowViewModel? current)
-                || current.ControlType != node.TypeName;
+                || current.ControlType != node.TypeName
+                || !string.Equals(current.SourceExpression, expression, StringComparison.Ordinal)
+                || current.HasUnsupportedBindingExpression != (unsafeScope
+                    || expression?.TrimStart().StartsWith('{') == true && parsedMemberName is null);
             AxamlBindingRowViewModel row = isNewRow
                 ? new AxamlBindingRowViewModel(
                     node.TypeName,
@@ -78,7 +83,8 @@ public partial class AxamlDesignerViewModel : ObservableObject
                     property.TypeName,
                     property.IsCommand,
                     property.DefaultBindingMode,
-                    property.SupportsUpdateSourceTrigger)
+                    property.SupportsUpdateSourceTrigger,
+                    unsafeScope)
                 : current!;
             bool bindingChanged = !string.Equals(row.MemberName, memberName, StringComparison.Ordinal);
             AxamlBindingMode desiredBindingMode = parsedMemberName is null
