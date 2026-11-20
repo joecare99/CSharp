@@ -18,6 +18,87 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class ResourceDependencyProjectExplorerTests
 {
     [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task LiteralMetadataAttribute_AndConflictingConditionalUpdate(bool conditionalOverride)
+    {
+        string root = Path.Combine(Directory.GetCurrentDirectory(), $"ResourceExplorer-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string project = Path.Combine(root, "App.csproj");
+            string resource = Path.Combine(root, "Resources.resx");
+            string designer = Path.Combine(root, "Resources.Designer.cs");
+            await File.WriteAllTextAsync(resource, "");
+            await File.WriteAllTextAsync(designer, "");
+            await File.WriteAllTextAsync(Path.Combine(root, "Alternate.resx"), "");
+            ResourceDependencyProjectExplorerSource source = new(new FileSystemProjectExplorerSource());
+
+            string xml = conditionalOverride ? """
+                <Project Sdk="Microsoft.NET.Sdk"><ItemGroup>
+                  <Compile Update="Resources.Designer.cs"><DependentUpon>Resources.resx</DependentUpon></Compile>
+                  <Compile Update="Resources.Designer.cs" Condition="'$(Configuration)' == 'Release'">
+                    <DependentUpon>Alternate.resx</DependentUpon>
+                  </Compile>
+                </ItemGroup></Project>
+                """ : """
+                <Project Sdk="Microsoft.NET.Sdk"><ItemGroup>
+                  <Compile Update="Resources.Designer.cs" DependentUpon="Resources.resx" />
+                </ItemGroup></Project>
+                """;
+            await File.WriteAllTextAsync(project, xml);
+            ProjectExplorerItem tree = (await source.RefreshAsync(project)).RootItems.Single();
+            ProjectExplorerItem parent = tree.Children.Single(i => i.Path == resource);
+            if (conditionalOverride)
+            {
+                Assert.IsTrue(tree.Children.Any(i => i.Path == designer));
+                Assert.AreEqual(0, parent.Children.Count);
+            }
+            else
+            {
+                Assert.AreEqual(designer, parent.Children.Single().Path);
+                Assert.IsFalse(tree.Children.Any(i => i.Path == designer));
+            }
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [TestMethod]
+    [DataRow("<ItemGroup Condition=\"'$(Configuration)' == 'Release'\"><Compile Update=\"Designer.cs\" DependentUpon=\"Other.resx\" /></ItemGroup>")]
+    [DataRow("<ItemGroup><Compile Update=\"Designer.cs\"><DependentUpon Condition=\"'$(X)' == '1'\">Other.resx</DependentUpon></Compile></ItemGroup>")]
+    [DataRow("<ItemGroup><Compile Update=\"Designer.cs\" DependentUpon=\"$(Resource).resx\" /></ItemGroup>")]
+    [DataRow("<ItemGroup><Compile Update=\"Designer.cs\" DependentUpon=\"Other.resx\"><DependentUpon>Resource.resx</DependentUpon></Compile></ItemGroup>")]
+    [DataRow("<Choose><When Condition=\"'$(X)' == '1'\" /><Otherwise><ItemGroup><Compile Update=\"Designer.cs\" DependentUpon=\"Other.resx\" /></ItemGroup></Otherwise></Choose>")]
+    [DataRow("<Target Name=\"ChangeMetadata\"><ItemGroup><Compile Update=\"Designer.cs\" DependentUpon=\"Other.resx\" /></ItemGroup></Target>")]
+    public async Task UncertainMetadataAssignment_DoesNotLeaveAnEarlierDependency(string uncertainAssignment)
+    {
+        string root = Path.Combine(Directory.GetCurrentDirectory(), $"ResourceExplorer-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string project = Path.Combine(root, "App.csproj");
+            await File.WriteAllTextAsync(project,
+                "<Project><ItemGroup><Compile Update=\"Designer.cs\" DependentUpon=\"Resource.resx\" /></ItemGroup>" +
+                uncertainAssignment + "</Project>");
+            await File.WriteAllTextAsync(Path.Combine(root, "Resource.resx"), "");
+            await File.WriteAllTextAsync(Path.Combine(root, "Other.resx"), "");
+            await File.WriteAllTextAsync(Path.Combine(root, "Designer.cs"), "");
+
+            ProjectExplorerItem tree = (await new ResourceDependencyProjectExplorerSource(new FileSystemProjectExplorerSource())
+                .RefreshAsync(project)).RootItems.Single();
+            Assert.IsTrue(tree.Children.Any(i => i.Name == "Designer.cs"));
+            Assert.AreEqual(0, tree.Children.Single(i => i.Name == "Resource.resx").Children.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [TestMethod]
     public async Task Slnx_NestsLiteralResourceDependency_AndRefreshesWithoutDuplicates()
     {
         string root = Path.Combine(Directory.GetCurrentDirectory(), $"ResourceExplorer-{Guid.NewGuid():N}");
