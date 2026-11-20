@@ -29,6 +29,7 @@ internal static class Program
         Directory.CreateDirectory(s_root);
         try
         {
+            Environment.SetEnvironmentVariable("AVALONIA_TELEMETRY_OPTOUT", "1");
             Environment.SetEnvironmentVariable("CONFIG_ROOT", Path.Combine(s_root, "config"));
             Environment.SetEnvironmentVariable("AVLN_CONFIG_GROUP_ROOT", null);
             Environment.SetEnvironmentVariable("AVLN_CONFIG_GROUP_ID", null);
@@ -65,6 +66,29 @@ internal static class Program
             File.WriteAllText(
                 Path.Combine(fixtureDirectory, "LoginView.axaml.cs"),
                 "using Avalonia.Controls; namespace Sample; public partial class LoginView : Window { }");
+            File.WriteAllText(
+                Path.Combine(fixtureDirectory, "ExistingView.axaml.cs"),
+                "using Avalonia.Controls; namespace Sample; public partial class ExistingView : Window { public ExistingView() { DataContext = new ExistingViewModel(); } }");
+            File.WriteAllText(
+                Path.Combine(fixtureDirectory, "ExistingViewModel.cs"),
+                """
+                using CommunityToolkit.Mvvm.ComponentModel;
+                namespace Sample;
+                public partial class ExistingViewModel : ObservableObject
+                {
+                    // preserve
+                }
+                """);
+            File.WriteAllText(
+                Path.Combine(fixtureDirectory, "ExistingView.axaml"),
+                """
+                <Window xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:vm="using:Sample"
+                        x:Class="Sample.ExistingView" x:DataType="vm:ExistingViewModel">
+                  <StackPanel />
+                </Window>
+                """);
             File.WriteAllText(
                 axamlPath,
                 """
@@ -216,7 +240,54 @@ internal static class Program
             Check(workbench.Editor.Text == generatedMarkup, "Redo did not synchronize the open AXAML document.");
 
             await BuildFixtureAsync(projectPath);
-            Console.WriteLine("Workbench MVVM: ToggleButton state and command, review, two-file apply, editor synchronization, undo/redo and generated-project build verified.");
+            string incrementalAxamlPath = Path.Combine(Path.GetDirectoryName(axamlPath)!, "ExistingView.axaml");
+            string incrementalViewModelPath = Path.Combine(Path.GetDirectoryName(axamlPath)!, "ExistingViewModel.cs");
+            string originalIncrementalViewModel = await File.ReadAllTextAsync(incrementalViewModelPath);
+            await workbench.EditorWorkspace.OpenOrActivateAsync(incrementalAxamlPath);
+            string incrementalMarkup = workbench.Editor.Text.Replace(
+                "<StackPanel />",
+                "<StackPanel><TextBox Text=\"{CompiledBinding ExtraName}\" />"
+                + "<Button Command=\"{ReflectionBinding ExtraCommand}\" /></StackPanel>",
+                StringComparison.Ordinal);
+            Check(incrementalMarkup != workbench.Editor.Text, "Could not extend the controlled AXAML fixture.");
+            workbench.Editor.Text = incrementalMarkup;
+            await workbench.Editor.SaveCommand.ExecuteAsync(null);
+            string sentinelPath = Path.Combine(Path.GetDirectoryName(axamlPath)!, "Unrelated.txt");
+            await File.WriteAllTextAsync(sentinelPath, "unchanged");
+            string originalCodeBehind = await File.ReadAllTextAsync(Path.ChangeExtension(incrementalAxamlPath, ".axaml.cs"));
+            await WaitUntilAsync(() => workbench.GenerateAxamlMvvmCommand.CanExecute(null),
+                "incremental MVVM generation becoming available");
+            generating = workbench.GenerateAxamlMvvmCommand.ExecuteAsync(null);
+            review = await WaitForReviewAsync(desktop, generating, workbench);
+            Click(review, "Cancel");
+            await generating.WaitAsync(TimeSpan.FromMinutes(2));
+            Check(await File.ReadAllTextAsync(incrementalViewModelPath) == originalIncrementalViewModel,
+                "Cancelling incremental generation changed the ViewModel.");
+
+            generating = workbench.GenerateAxamlMvvmCommand.ExecuteAsync(null);
+            review = await WaitForReviewAsync(desktop, generating, workbench);
+            Click(review, "Apply 1 change(s)");
+            await generating.WaitAsync(TimeSpan.FromMinutes(2));
+            string incrementalViewModel = await File.ReadAllTextAsync(incrementalViewModelPath);
+            Check(incrementalViewModel.Contains("ExtraName", StringComparison.Ordinal)
+                && incrementalViewModel.Contains("private void Extra()", StringComparison.Ordinal)
+                && incrementalViewModel.Contains("// preserve", StringComparison.Ordinal),
+                "Incremental generation did not add the property and command while preserving existing source.");
+            Check(await File.ReadAllTextAsync(incrementalAxamlPath) == incrementalMarkup
+                && workbench.Editor.Text == incrementalMarkup
+                && await File.ReadAllTextAsync(sentinelPath) == "unchanged"
+                && await File.ReadAllTextAsync(Path.ChangeExtension(incrementalAxamlPath, ".axaml.cs")) == originalCodeBehind
+                && await File.ReadAllTextAsync(axamlPath) == generatedMarkup
+                && await File.ReadAllTextAsync(generatedViewModelPath) == generatedViewModel,
+                "Incremental generation changed AXAML or unrelated files.");
+            Check(workbench.WorkspaceFileChangeService.Undo()
+                && await File.ReadAllTextAsync(incrementalViewModelPath) == originalIncrementalViewModel,
+                "Incremental generation could not be undone.");
+            Check(workbench.WorkspaceFileChangeService.Redo()
+                && await File.ReadAllTextAsync(incrementalViewModelPath) == incrementalViewModel,
+                "Incremental generation could not be redone.");
+            await BuildFixtureAsync(projectPath);
+            Console.WriteLine("Workbench MVVM: initial and incremental review, source preservation, undo/redo and generated-project build verified.");
         }
         catch (Exception exception)
         {
