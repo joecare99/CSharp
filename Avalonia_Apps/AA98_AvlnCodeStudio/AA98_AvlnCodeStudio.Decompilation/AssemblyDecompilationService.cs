@@ -419,8 +419,9 @@ public sealed class AssemblyDecompilationService : IAssemblyDecompilationService
     private static int FindTypeDeclarationLine(string source, string simpleTypeName)
     {
         Regex declaration = new(
-            $@"\b(?:class|struct|interface|enum|record|delegate)\s+@?{Regex.Escape(simpleTypeName)}\b",
-            RegexOptions.CultureInvariant);
+            $@"^\s*(?:(?:public|internal|private|protected|unsafe|new|abstract|sealed|static|partial|readonly|ref|file)\s+)*(?:class|struct|interface|enum|record(?:\s+(?:class|struct))?)\s+@?{Regex.Escape(simpleTypeName)}\b"
+            + $@"|^\s*(?:(?:public|internal|private|protected|unsafe|new)\s+)*delegate\s+.*\s+@?{Regex.Escape(simpleTypeName)}\b",
+            RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
         using StringReader reader = new(source);
         int lineNumber = 0;
         string? line;
