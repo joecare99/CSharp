@@ -20,6 +20,13 @@ Before single-case execution, rediscovery must match exactly one case by adapter
 
 An error-level VSTest event makes discovery or selected-case execution fail, even if cases or a result were reported; partial results are not presented as successful. An event with no usable message receives an English fallback diagnostic, consistent with the component's other diagnostics.
 
+Aborted discovery and canceled or aborted execution also reject partial results.
+When a request returns, caller cancellation is checked before publishing results;
+a VSTest abort or execution error without caller cancellation is a failure.
+Handler tests cover partial chunks; separate service tests cover pre-canceled
+requests. They do not prove active token propagation, timely shutdown of an
+uncooperative adapter or cancellation races during runner startup.
+
 `VSTestErrorAdapterIntegrationTests` builds a controlled adapter and test source using
 `Microsoft.NET.Test.Sdk` 18.12.0. It verifies successful discovery and execution,
 then sends nonempty error events after reporting a case or passed result and
