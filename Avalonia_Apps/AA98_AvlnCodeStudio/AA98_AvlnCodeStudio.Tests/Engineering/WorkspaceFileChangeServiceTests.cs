@@ -430,6 +430,43 @@ public sealed class WorkspaceFileChangeServiceTests
     }
 
     [TestMethod]
+    [DataRow("")]
+    [DataRow("external")]
+    public void Undo_RollbackPreservesRecreatedFileEvenWhenEmpty(string externalContent)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string newPath = Path.Combine(root, "New.txt");
+            string openPath = Path.Combine(root, "Open.txt");
+            File.WriteAllText(openPath, "before");
+            ToggleSynchronizationProvider documents = new(openPath);
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.CreateNew("New.txt", "generated"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Open.txt", "before", "after"),
+            ]);
+            service.Apply(proposal, confirmed: true);
+            documents.OnNextChange = () =>
+            {
+                File.WriteAllText(newPath, externalContent);
+                throw new IOException("Simulated editor synchronization failure.");
+            };
+
+            AggregateException exception = Assert.ThrowsExactly<AggregateException>(() => service.Undo());
+
+            StringAssert.Contains(exception.Message, "rollback was incomplete");
+            Assert.AreEqual(externalContent, File.ReadAllText(newPath));
+            Assert.AreEqual("after", File.ReadAllText(openPath));
+            Assert.AreEqual("after", documents.Content);
+            Assert.IsTrue(service.CanUndo);
+            Assert.IsFalse(service.CanRedo);
+            Assert.ThrowsExactly<WorkspaceFileChangeConflictException>(() => service.Undo());
+            Assert.AreEqual(externalContent, File.ReadAllText(newPath));
+        });
+    }
+
+    [TestMethod]
     public void ApplyAfterUndo_ClearsRedoHistoryAndResetClearsUndoHistory()
     {
         WithTemporaryDirectory(root =>
@@ -614,7 +651,7 @@ public sealed class WorkspaceFileChangeServiceTests
     [TestMethod]
     public void Prepare_RejectsSymbolicLinksThatEscapeWorkspace()
     {
-        string parent = Path.Combine(Path.GetTempPath(), $"AvlnWorkspaceLinks-{Guid.NewGuid():N}");
+        string parent = Path.Combine(Directory.GetCurrentDirectory(), $"AvlnWorkspaceLinks-{Guid.NewGuid():N}");
         string root = Path.Combine(parent, "workspace");
         string outside = Path.Combine(parent, "outside");
         Directory.CreateDirectory(root);
@@ -692,7 +729,7 @@ public sealed class WorkspaceFileChangeServiceTests
 
     private static void WithTemporaryDirectory(Action<string> action)
     {
-        string root = Path.Combine(Path.GetTempPath(), $"AvlnWorkspaceChanges-{Guid.NewGuid():N}");
+        string root = Path.Combine(Directory.GetCurrentDirectory(), $"AvlnWorkspaceChanges-{Guid.NewGuid():N}");
         Directory.CreateDirectory(root);
         try
         {

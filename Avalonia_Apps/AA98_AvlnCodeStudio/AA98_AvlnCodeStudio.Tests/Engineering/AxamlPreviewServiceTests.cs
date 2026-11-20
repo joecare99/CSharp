@@ -10,6 +10,39 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class AxamlPreviewServiceTests
 {
     [TestMethod]
+    public void TextAlignment_RejectsAmbiguousAndDynamicSources()
+    {
+        AxamlPreviewService service = new();
+        foreach (string type in new[] { "TextBox", "TextBlock" })
+        {
+            foreach (string markup in new[]
+            {
+                $"<{type} TextAlignment='{{Binding Alignment}}' />",
+                $"<{type} TextAlignment='{{DynamicResource Alignment}}' />",
+                $"<{type} xmlns:a='https://github.com/avaloniaui' a:TextAlignment='Right' />",
+                $"<{type} xmlns:e='urn:foreign' TextAlignment='Right' e:TextAlignment='Left' />",
+                $"<{type} TextAlignment='Right'><{type}.TextAlignment>Left</{type}.TextAlignment></{type}>",
+                $"<{type} xmlns:e='urn:foreign'><e:Other.TextAlignment>Right</e:Other.TextAlignment></{type}>",
+            })
+            {
+                AxamlPreviewNode node = service.Parse(markup);
+                Assert.IsTrue(AxamlPropertyValueValidator.Describe(node, "TextAlignment").IsReadOnly, markup);
+                Assert.IsFalse(service.CanEditProperty(node, "TextAlignment"), markup);
+                Assert.ThrowsExactly<InvalidOperationException>(() => service.UpdateAttribute(markup, node, "TextAlignment", "Center"), markup);
+            }
+
+            const string original = "<TextBox TextAlignment='Right' />";
+            AxamlPreviewNode stale = service.Parse(original);
+            Assert.ThrowsExactly<System.IO.InvalidDataException>(() =>
+                service.UpdateAttribute("<TextBox TextAlignment='{Binding Alignment}' />", stale, "TextAlignment", "Center"));
+            const string open = "<TextBox TextAlignment='Right'></TextBox>";
+            stale = service.Parse(open);
+            Assert.ThrowsExactly<System.IO.InvalidDataException>(() =>
+                service.UpdateAttribute("<TextBox TextAlignment='Right'><TextBox.TextAlignment>Left</TextBox.TextAlignment></TextBox>", stale, "TextAlignment", "Center"));
+        }
+    }
+
+    [TestMethod]
     public void Parse_BuildsSafeTreeForSupportedControlsAndLayout()
     {
         const string axaml = """

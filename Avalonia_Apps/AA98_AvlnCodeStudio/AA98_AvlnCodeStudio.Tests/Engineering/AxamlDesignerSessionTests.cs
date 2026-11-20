@@ -1307,6 +1307,8 @@ public sealed class AxamlDesignerSessionTests
                 RedirectStandardError = true,
                 UseShellExecute = false,
             };
+            // The telemetry collector can outlive the build with the fixture as its working directory.
+            startInfo.Environment["AVALONIA_TELEMETRY_OPTOUT"] = "1";
             foreach (string variable in new[]
             {
                 "MSBuildSDKsPath", "MSBuildExtensionsPath", "MSBuildExtensionsPath32", "MSBuildToolsPath",

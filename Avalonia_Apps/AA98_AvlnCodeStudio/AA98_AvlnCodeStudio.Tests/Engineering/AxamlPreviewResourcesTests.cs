@@ -18,6 +18,33 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class AxamlPreviewResourcesTests
 {
     [TestMethod]
+    public void TextAlignment_PreviewIgnoresAmbiguousSources()
+    {
+        AxamlPreviewService service = new();
+        foreach (string type in new[] { "TextBox", "TextBlock" })
+        {
+            foreach ((string attributes, TextAlignment expected) in new[]
+            {
+                ("TextAlignment='Right'", TextAlignment.Right),
+                ("TextAlignment='2'", TextAlignment.Left),
+                ("TextAlignment='{Binding Alignment}'", TextAlignment.Left),
+                ("xmlns:e='urn:foreign' TextAlignment='Right' e:TextAlignment='Center'", TextAlignment.Left),
+            })
+            {
+                string markup = $"<{type} {attributes} />";
+                AxamlPreviewNode node = service.Parse(markup);
+                AxamlPreviewControl preview = new() { PreviewNode = node };
+                Grid wrapper = (Grid)preview.GetLogicalDescendants().OfType<Border>()
+                    .Single(border => ReferenceEquals(border.Tag, node)).Child!;
+                TextAlignment alignment = wrapper.Children[0] is TextBox textBox
+                    ? textBox.TextAlignment
+                    : ((TextBlock)wrapper.Children[0]).TextAlignment;
+                Assert.AreEqual(expected, alignment, markup);
+            }
+        }
+    }
+
+    [TestMethod]
     public void TextBlockWrapping_PreviewUsesNativeDefaultAndSafeLiterals()
     {
         AxamlPreviewService service = new();

@@ -747,6 +747,33 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task TextBoxAlignment_Aa05SourceBaselineAndHistoryArePreserved()
+    {
+        const string baseline = "<TextBox Grid.Row='1' Margin='5,2,5,2' Text='{Binding Memory}' TextAlignment='Right' TextWrapping='Wrap' />";
+        AxamlDesignerViewModel viewModel = new();
+        string? published = null;
+        viewModel.MarkupChanged += (_, args) => published = args.Markup;
+        viewModel.LoadMarkup(baseline);
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var alignment = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "TextAlignment");
+        Assert.IsTrue(alignment.TrySetValue("Center"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        string edited = baseline.Replace("TextAlignment='Right'", "TextAlignment='Center'", StringComparison.Ordinal);
+        Assert.AreEqual(edited, published);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(baseline, published);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual(edited, published);
+
+        const string external = "<TextBox Text='{Binding Memory}' TextAlignment='{DynamicResource Alignment}' />";
+        viewModel.LoadMarkup(external);
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        alignment = viewModel.PropertyProvider.Properties.Single(static property => property.Name == "TextAlignment");
+        Assert.IsFalse(alignment.TrySetValue("Left"));
+        Assert.IsFalse(viewModel.UndoCommand.CanExecute(null));
+    }
+
+    [TestMethod]
     public async Task TextBlockTextAlignment_IsEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();
