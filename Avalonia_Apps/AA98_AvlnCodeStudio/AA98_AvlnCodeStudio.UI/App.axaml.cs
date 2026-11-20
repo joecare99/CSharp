@@ -268,7 +268,7 @@ namespace AA98_AvlnCodeStudio.UI
             services.AddSingleton<IEditorCaretService, WorkbenchEditorCaretService>();
             services.AddSingleton<ICodeNavigator, EditorCodeNavigator>();
             services.AddSingleton<IProjectExplorerSource>(
-                new FileSystemProjectExplorerSource());
+                new UI.Services.ResourceDependencyProjectExplorerSource(new FileSystemProjectExplorerSource()));
             services.AddSingleton<IProjectExplorerState, ProjectExplorerState>();
             services.AddSingleton<IProjectExplorerItemOpener>(serviceProvider =>
                 new CodeNavigatorProjectExplorerItemOpener(
