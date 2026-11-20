@@ -152,6 +152,45 @@ public sealed class CredentialContractTests
     }
 
     [TestMethod]
+    public async Task EncryptedFileCredentialProvider_RequiresLockBeforeReinitializingDeletedVault()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"AvlnVaultTest-{Guid.NewGuid():N}");
+        string path = Path.Combine(directory, "vault.json");
+        await using EncryptedFileCredentialProvider provider = new(path);
+        using CredentialSecret passphrase = new("a long test passphrase".AsSpan());
+        try
+        {
+            await provider.InitializeAsync(passphrase);
+            byte[] originalKey = (byte[])typeof(EncryptedFileCredentialProvider)
+                .GetField("_key", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .GetValue(provider)!;
+            File.Delete(path);
+
+            await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+                () => provider.InitializeAsync(passphrase));
+            Assert.IsFalse(File.Exists(path));
+            Assert.IsTrue(provider.IsUnlocked);
+            Assert.AreSame(originalKey, typeof(EncryptedFileCredentialProvider)
+                .GetField("_key", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .GetValue(provider));
+
+            await provider.LockAsync();
+            CollectionAssert.AreEqual(new byte[originalKey.Length], originalKey);
+            await provider.InitializeAsync(passphrase);
+            Assert.IsTrue(provider.IsUnlocked);
+            Assert.IsTrue(File.Exists(path));
+        }
+        finally
+        {
+            await provider.LockAsync();
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
+    }
+
+    [TestMethod]
     public async Task EncryptedFileCredentialProvider_RefusesToOverwriteExternalFileChanges()
     {
         string directory = Path.Combine(Path.GetTempPath(), $"AvlnVaultTest-{Guid.NewGuid():N}");
