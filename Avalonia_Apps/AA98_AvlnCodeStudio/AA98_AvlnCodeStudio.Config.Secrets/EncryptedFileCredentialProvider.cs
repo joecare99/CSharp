@@ -60,7 +60,7 @@ public sealed class EncryptedFileCredentialProvider : ICredentialProvider, IDisp
 
     /// <summary>
     /// Creates a new vault using the supplied passphrase. This is the only operation that
-    /// creates the parent directory; it never replaces an existing vault.
+    /// creates the parent directory; it never replaces an existing vault and requires a locked provider.
     /// </summary>
     public async Task InitializeAsync(
         CredentialSecret passphrase,
@@ -76,6 +76,11 @@ public sealed class EncryptedFileCredentialProvider : ICredentialProvider, IDisp
             if (File.Exists(_vaultPath))
             {
                 throw new IOException("A vault already exists at the selected path.");
+            }
+
+            if (_key is not null)
+            {
+                throw new InvalidOperationException("Lock the vault before initializing it again.");
             }
 
             ValidatePassphrase(passphrase.Reveal(), requireMinimumLength: true);
