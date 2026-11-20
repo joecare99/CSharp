@@ -52,20 +52,33 @@ public sealed class ResourceDependencyProjectExplorerSource(IProjectExplorerSour
             foreach (XElement element in document.Descendants().Where(e => e.Name.LocalName == "Compile"))
             {
                 token.ThrowIfCancellationRequested();
-                if (element.AncestorsAndSelf().Any(e => e.Attribute("Condition") is not null))
-                    continue;
                 string? include = (string?)element.Attribute("Update") ?? (string?)element.Attribute("Include");
                 XElement[] metadata = element.Elements().Where(e => e.Name.LocalName == "DependentUpon").ToArray();
-                if (metadata.Length != 1 || metadata[0].Attribute("Condition") is not null)
+                XAttribute? metadataAttribute = element.Attribute("DependentUpon");
+                if (!IsLiteral(include) || (metadata.Length == 0 && metadataAttribute is null))
                     continue;
-                string parentName = metadata[0].Value.Trim();
-                if (!IsLiteral(include) || !IsLiteral(parentName) ||
-                    !parentName.EndsWith(".resx", StringComparison.OrdinalIgnoreCase) ||
-                    parentName.IndexOfAny(['/', '\\']) >= 0)
-                    continue;
+
                 string child = Path.GetFullPath(Path.Combine(directory, include!.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar)));
                 if (!child.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
                     continue;
+                if (element.AncestorsAndSelf().Any(e => e.Attribute("Condition") is not null ||
+                    e.Name.LocalName is "Choose" or "Target") ||
+                    (element.Attribute("Update") is not null && element.Attribute("Include") is not null) ||
+                    (metadata.Length + (metadataAttribute is null ? 0 : 1)) != 1 ||
+                    (metadata.Length == 1 && (metadata[0].Attribute("Condition") is not null || metadata[0].HasElements)))
+                {
+                    ambiguous.Add(child);
+                    continue;
+                }
+
+                string parentName = (metadataAttribute?.Value ?? metadata[0].Value).Trim();
+                if (!IsLiteral(parentName) ||
+                    !parentName.EndsWith(".resx", StringComparison.OrdinalIgnoreCase) ||
+                    parentName.IndexOfAny(['/', '\\']) >= 0)
+                {
+                    ambiguous.Add(child);
+                    continue;
+                }
                 string parent = Path.Combine(Path.GetDirectoryName(child)!, parentName);
                 if (!dependencies.TryAdd(child, parent))
                     ambiguous.Add(child);
