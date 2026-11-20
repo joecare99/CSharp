@@ -10,6 +10,50 @@ The Workbench solution explorer additionally nests a C# file under a sibling
 `.resx` when the project declares a literal, unconditional `DependentUpon`.
 This is a read-only XML projection, not MSBuild evaluation: conditional,
 ambiguous, imported and computed metadata is intentionally not resolved.
+It does not attempt to model all MSBuild project items or nested-project
+ownership. To include the local AA05 fixture in the focused
+`ResourceDependencyProjectExplorerTests`, set `AA05_SOLUTION` to its `.slnx`
+path. The fixture is only read, never built. Run the tests through the isolated
+build wrappers with a fresh host-specific artifact root.
+
+The read-only AA05 inspection also found solution items, including an external
+`Solution.props`, and project references. The filesystem source already shows
+the declared solution items and a flat `References` list; reference entries
+are declarations, not evaluated MSBuild results. In particular AA05's test
+project contains a `$(UpDir)` project reference and imports project properties.
+No inferred file ownership, evaluated reference tree, or additional project
+membership is claimed from those declarations.
+
+The focused `--resource-explorer-only` window smoke requires `AA05_SOLUTION`
+and an interactive desktop. It drives rendered tree containers, selects and
+opens the designer with Enter, refreshes and switches projects, and compares
+the sample's file hashes and directory inventory before and after. It uses
+the null version-control service and detaches the workspace context before
+opening the C# file, avoiding MSBuild-backed semantic analysis of the sample;
+this is not a test of that analysis or physical input. The `.slnx` and project
+XML readers reject DTDs and documents over 1,000,000 characters.
+
+For example, from a physical (non-junction) working directory on Windows:
+
+```powershell
+$env:AA05_SOLUTION = (Resolve-Path '..\AA05_CommandParCalc\AA05_CommandParCalc.slnx').Path
+$root = Join-Path (Get-Location) 'artifacts\resource-explorer-smoke-win'
+.\tools\build\dotnet-isolated.ps1 run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj --framework net10.0 "-p:HostArtifactRoot=$root" -- --resource-explorer-only
+```
+
+In WSLg, use `AA05_SOLUTION="$PWD/../AA05_CommandParCalc/AA05_CommandParCalc.slnx"`
+and the equivalent `tools/build/dotnet-isolated.sh` command with a separate
+fresh Linux artifact root.
+
+The complementary `--resource-explorer-semantic-only` mode creates and restores
+two disposable SDK projects and solutions, with no package sources or project
+references and local `Directory.Build` files stopping parent imports. It retains
+the active workspace while exercising the same rendered tree, opening, refresh,
+and project-switch flow. A deliberate CS0029 in each designer file confirms
+that semantic analysis actually ran for the current fixture project. Only those
+fixtures and the installed SDK are evaluated; this mode does not open AA05.
+Thus the real-AA05 smoke tests the UI without active semantic analysis, while
+this synthetic smoke tests the active-workspace path.
 
 For preview pointer selection and resize cancellation only, pass `-- --pointer-only`.
 It opens an Avalonia window and uses the rendered input hit target with synthetic
@@ -34,9 +78,40 @@ The pointer smoke compares native Canvas/Grid rendering and input hits with prev
 rendered pixels and synthetic clicks, including occluded grips and stale resize
 cancellation; physical mouse and compositor acceptance remain separate.
 
-For the resource/focus check only, pass `-- --resources-only`. If the read-only
-AA05 calculator sample exists at its development path, this checks its visible
-button caption, local margin/padding and source focus in both real hosts.
+For the resource/focus check only, pass `-- --resources-only`. It uses
+`AA98_CALCULATOR_SAMPLE_ROOT` as the external, read-only AA05 project directory,
+or the original Windows development path when unset. If the sample is absent,
+the calculator check is skipped. When present, it checks the visible button
+caption, local margin/padding and source focus in both real hosts.
+
+The two host regressions and all `AxamlPreviewResourcesTests` can be run with
+the same sample and separate per-run artifact roots. From the repository root:
+
+```powershell
+$env:AA98_CALCULATOR_SAMPLE_ROOT = 'C:\path\to\AA05_CommandParCalc'
+$root = Join-Path (Get-Location).Path ("artifacts\aa05-windows-" + [guid]::NewGuid().ToString("N"))
+$filter = 'FullyQualifiedName~AxamlPreviewResourcesTests|FullyQualifiedName~StandaloneHost_ResolvesReportedCalculatorSample|FullyQualifiedName~Workbench_OpensReportedCalculatorUsingItsProjectContext'
+.\tools\build\dotnet-isolated.ps1 test .\AA98_AvlnCodeStudio.Tests\AA98_AvlnCodeStudio.Tests.csproj --framework net10.0 --filter $filter "-p:HostArtifactRoot=$root"
+```
+
+```bash
+export AA98_CALCULATOR_SAMPLE_ROOT=/path/to/AA05_CommandParCalc
+root="$(pwd)/artifacts/aa05-linux-$(date +%s%N)"
+filter='FullyQualifiedName~AxamlPreviewResourcesTests|FullyQualifiedName~StandaloneHost_ResolvesReportedCalculatorSample|FullyQualifiedName~Workbench_OpensReportedCalculatorUsingItsProjectContext'
+bash tools/build/dotnet-isolated.sh test AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj --framework net10.0 --filter "$filter" "-p:HostArtifactRoot=$root"
+```
+
+The sample-dependent tests are inconclusive if their view is absent. To run
+the optional programmatic window smoke on Windows, from a physical workspace
+path (not a junction), with the sample variable set:
+
+```powershell
+$root = Join-Path (Get-Location).Path ("artifacts\aa05-smoke-windows-" + [guid]::NewGuid().ToString("N"))
+.\tools\build\dotnet-isolated.ps1 run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj "-p:HostArtifactRoot=$root" -- --resources-only
+```
+
+An available desktop/display is required; this is not physical GUI acceptance.
+The smoke opens the sample without saving it.
 
 For the theme check, set `AVLN_THEME_SCREENSHOT_DIR` to an output directory and
 pass `-- --theme-only`. It captures the synthetic Workbench as `dark.png` and

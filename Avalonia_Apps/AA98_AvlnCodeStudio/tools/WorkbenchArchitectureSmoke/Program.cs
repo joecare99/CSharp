@@ -1,5 +1,6 @@
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.Controls;
 using AA98_AvlnCodeStudio.Base.Debugging.Models;
+using AA98_AvlnCodeStudio.Base.Versioning.Services;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.ViewModels;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.Views;
 using AA98_AvlnCodeStudio.Host.Mcp;
@@ -34,6 +35,7 @@ using AvaloniaEdit.Highlighting;
 using Code.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 using Project.Explorer.Avalonia.ViewModels;
+using Project.Explorer.Avalonia.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,6 +43,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,6 +56,8 @@ using Rectangle = Avalonia.Controls.Shapes.Rectangle;
 internal static class Program
 {
     private static string s_root = null!;
+    private static bool s_resourceExplorerOnly;
+    private static bool s_resourceExplorerSemanticOnly;
 
     [STAThread]
     private static int Main(string[] args)
@@ -62,6 +67,9 @@ internal static class Program
         bool compactOnly = args.Contains("--compact-only", StringComparer.Ordinal);
         bool themeOnly = args.Contains("--theme-only", StringComparer.Ordinal);
         bool pointerOnly = args.Contains("--pointer-only", StringComparer.Ordinal);
+        bool resourceExplorerOnly = s_resourceExplorerOnly = args.Contains("--resource-explorer-only", StringComparer.Ordinal);
+        bool resourceExplorerSemanticOnly = s_resourceExplorerSemanticOnly =
+            args.Contains("--resource-explorer-semantic-only", StringComparer.Ordinal);
         s_root = Directory.CreateDirectory(Path.Combine(
             themeOnly ? Path.GetTempPath() : Environment.CurrentDirectory,
             "AvlnWorkbenchArchitecture-" + Guid.NewGuid().ToString("N"))).FullName;
@@ -74,10 +82,23 @@ internal static class Program
             Environment.SetEnvironmentVariable("AVLN_CONFIG_GROUP_ID", null);
             Environment.SetEnvironmentVariable("MSBUILDDISABLENODEREUSE", "1");
             Environment.SetEnvironmentVariable("DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER", "1");
+            if (resourceExplorerSemanticOnly)
+            {
+                foreach (string name in new[] { "MSBuildSDKsPath", "MSBuildExtensionsPath", "DirectoryBuildPropsPath",
+                    "DirectoryBuildTargetsPath", "CustomAfterDirectoryBuildProps", "CustomAfterDirectoryBuildTargets",
+                    "CustomBeforeDirectoryBuildProps", "CustomBeforeDirectoryBuildTargets", "HostArtifactRoot" })
+                {
+                    Environment.SetEnvironmentVariable(name, null);
+                }
+            }
             string fixture = Path.Combine(s_root, "fixture");
             Directory.CreateDirectory(fixture);
             File.WriteAllText(Path.Combine(fixture, "Sample.csproj"),
                 "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+            if (resourceExplorerSemanticOnly)
+            {
+                PrepareSemanticExplorerFixture();
+            }
             if (quickInfoOnly || testMethodOnly)
             {
                 if (quickInfoOnly)
@@ -273,8 +294,8 @@ internal static class Program
 
             return AppBuilder.Configure<SmokeApplication>()
                 .UsePlatformDetect()
-                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly, compactOnly, themeOnly, pointerOnly)))
-                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly || compactOnly || themeOnly || pointerOnly ? [] : args);
+                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly, compactOnly, themeOnly, pointerOnly, resourceExplorerOnly, resourceExplorerSemanticOnly)))
+                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly || compactOnly || themeOnly || pointerOnly || resourceExplorerOnly || resourceExplorerSemanticOnly ? [] : args);
         }
         finally
         {
@@ -297,14 +318,22 @@ internal static class Program
         }
     }
 
-    private static async Task RunAsync(string fixture, bool resourcesOnly, bool quickInfoOnly, bool testMethodOnly, bool compactOnly, bool themeOnly, bool pointerOnly)
+    private static async Task RunAsync(string fixture, bool resourcesOnly, bool quickInfoOnly, bool testMethodOnly, bool compactOnly, bool themeOnly, bool pointerOnly, bool resourceExplorerOnly, bool resourceExplorerSemanticOnly)
     {
         IClassicDesktopStyleApplicationLifetime desktop =
             (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
         int exitCode = 0;
         try
         {
-            if (pointerOnly)
+            if (resourceExplorerSemanticOnly)
+            {
+                await VerifySemanticResourceExplorerAsync(desktop);
+            }
+            else if (resourceExplorerOnly)
+            {
+                await VerifyResourceExplorerAsync(desktop, fixture);
+            }
+            else if (pointerOnly)
             {
                 await VerifyPreviewPointerAsync();
             }
@@ -329,14 +358,14 @@ internal static class Program
                 await VerifyWorkbenchAsync(desktop, fixture);
                 await VerifyStandaloneAsync(desktop, fixture);
             }
-            if (!quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly)
+            if (!quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly && !resourceExplorerOnly && !resourceExplorerSemanticOnly)
             {
                 await VerifyReportedResourcePreviewAsync(desktop);
             }
             EditorDocumentWorkspace workspace = SmokeApplication.Services!.GetRequiredService<EditorDocumentWorkspace>();
             desktop.MainWindow!.Close();
             Check(workspace.Tabs.Count == 0, "Closing the workbench did not dispose its document tabs.");
-            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly)
+            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly && !resourceExplorerOnly && !resourceExplorerSemanticOnly)
             {
                 Console.WriteLine("Architecture: navigation, catalog control previews, structure and Grid editing, designer contributions, binary editor, drafts, safe files, standalone review/undo, MCP dispatch and screenshot verified.");
             }
@@ -758,6 +787,238 @@ internal static class Program
         double a = Luminance(first);
         double b = Luminance(second);
         return (Math.Max(a, b) + 0.05) / (Math.Min(a, b) + 0.05);
+    }
+
+    private static void PrepareSemanticExplorerFixture()
+    {
+        string root = Path.Combine(s_root, "semantic-explorer");
+        Directory.CreateDirectory(root);
+        File.WriteAllText(Path.Combine(root, "Directory.Build.props"), "<Project />");
+        File.WriteAllText(Path.Combine(root, "Directory.Build.targets"), "<Project />");
+        File.WriteAllText(Path.Combine(root, "Directory.Packages.props"), "<Project />");
+        string config = Path.Combine(root, "NuGet.Config");
+        File.WriteAllText(config, "<configuration><packageSources><clear /></packageSources></configuration>");
+        foreach (string name in new[] { "First", "Second" })
+        {
+            string directory = Path.Combine(root, name);
+            Directory.CreateDirectory(Path.Combine(directory, "Properties"));
+            string project = Path.Combine(directory, name + ".csproj");
+            File.WriteAllText(project, """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <TargetFramework>net10.0</TargetFramework>
+                    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+                  </PropertyGroup>
+                  <ItemGroup>
+                    <Compile Update="Properties/Resources.Designer.cs"><DependentUpon>Resources.resx</DependentUpon></Compile>
+                  </ItemGroup>
+                </Project>
+                """);
+            File.WriteAllText(Path.Combine(directory, "Properties", "Resources.resx"), "<root />");
+            File.WriteAllText(Path.Combine(directory, "Properties", "Resources.Designer.cs"),
+                name == "First"
+                    ? "public sealed class Designer { public int Value => \"invalid\"; }"
+                    : "public sealed class Designer { public int Value => false; }");
+            File.WriteAllText(Path.Combine(root, name + ".slnx"),
+                $"<Solution><Project Path=\"{name}/{name}.csproj\" /></Solution>");
+            ProcessStartInfo restore = new("dotnet")
+            {
+                WorkingDirectory = root,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+            };
+            foreach (string argument in new[] { "restore", project, "--configfile", config, "--disable-build-servers" })
+                restore.ArgumentList.Add(argument);
+            using Process process = Process.Start(restore) ?? throw new InvalidOperationException("Could not start fixture restore.");
+            Task<string> output = process.StandardOutput.ReadToEndAsync();
+            Task<string> error = process.StandardError.ReadToEndAsync();
+            if (!process.WaitForExit(120_000))
+            {
+                process.Kill(entireProcessTree: true);
+                throw new TimeoutException("Controlled fixture restore timed out.");
+            }
+            Check(process.ExitCode == 0, $"Controlled fixture restore failed: {output.Result} {error.Result}");
+        }
+    }
+
+    private static async Task VerifySemanticResourceExplorerAsync(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        string root = Path.Combine(s_root, "semantic-explorer");
+        Window window = desktop.MainWindow!;
+        MainWindowViewModel workbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
+        ProjectExplorerViewModel explorer = workbench.ProjectExplorer!;
+        ProjectExplorerView view = window.GetVisualDescendants().OfType<ProjectExplorerView>().Single();
+        TreeView tree = view.GetVisualDescendants().OfType<TreeView>().Single();
+
+        await OpenAndVerifyAsync("First", expectPreview: true);
+        ProjectExplorerItemViewModel selected = explorer.SelectedItem!;
+        await explorer.RefreshCommand.ExecuteAsync(null);
+        Check(explorer.SelectedItem?.Id == selected.Id, "Refresh lost the selected designer.");
+        ProjectExplorerItemViewModel refreshedResource = FindItem(explorer.RootItems,
+            Path.Combine(root, "First", "Properties", "Resources.resx"));
+        Check(refreshedResource.IsExpanded, "Refresh lost the resource expansion.");
+        Check((await ContainerAsync(refreshedResource.Children.Single())).IsEffectivelyVisible,
+            "The refreshed designer is not rendered.");
+
+        await OpenAndVerifyAsync("Second", expectPreview: true);
+        await OpenAndVerifyAsync("First", expectPreview: false);
+        Console.WriteLine("Semantic resource explorer: active workspace, rendered tree, preview, activation, refresh, project switches and CS0029 verified.");
+
+        async Task OpenAndVerifyAsync(string name, bool expectPreview)
+        {
+            string solution = Path.Combine(root, name + ".slnx");
+            await workbench.OpenWorkspaceFileAsync(solution);
+            Check(workbench.Workspace?.EntryPath == solution, "The fixture workspace is not active.");
+            Check(explorer.SelectedItem is null, "Project switch retained a stale selection.");
+            ProjectExplorerItemViewModel solutionItem = explorer.RootItems.Single();
+            ProjectExplorerItemViewModel project = solutionItem.Children.Single(i => i.Name == name);
+            ProjectExplorerItemViewModel properties = project.Children.Single(i => i.Name == "Properties");
+            ProjectExplorerItemViewModel resource = properties.Children.Single(i => i.Name == "Resources.resx");
+            ProjectExplorerItemViewModel designer = resource.Children.Single(i => i.Name == "Resources.Designer.cs");
+            foreach (ProjectExplorerItemViewModel item in new[] { solutionItem, project, properties, resource })
+            {
+                TreeViewItem container = await ContainerAsync(item);
+                container.IsExpanded = true;
+                await WaitUntilAsync(() => item.IsExpanded, $"expanded fixture item {item.Name}");
+            }
+            TreeViewItem designerContainer = await ContainerAsync(designer);
+            Check(designerContainer.IsEffectivelyVisible, "The fixture designer is not visible.");
+            designerContainer.IsSelected = true;
+            await WaitUntilAsync(() => ReferenceEquals(explorer.SelectedItem, designer), "fixture designer selection");
+            await WaitForActiveAsync(workbench, designer.Item.Path);
+            Check(workbench.ActiveEditorTab.IsPreview == expectPreview, "Unexpected fixture preview state.");
+            tree.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
+            await WaitUntilAsync(() => !workbench.ActiveEditorTab.IsPreview, "fixture designer activation");
+            Check(workbench.Editor.Text == File.ReadAllText(designer.Item.Path), "Fixture designer text differs.");
+            await WaitUntilAsync(() =>
+            {
+                if (workbench.Editor.NotificationText.StartsWith("C# analysis failed:", StringComparison.Ordinal))
+                    throw new InvalidOperationException(workbench.Editor.NotificationText);
+                return workbench.DiagnosticCollection.Items.Any(d =>
+                    d.Code == "CS0029" && d.SourcePath is { } path && WorkspacePathIdentity.AreEqual(path, designer.Item.Path));
+            }, $"semantic CS0029 for {name}");
+            Check(workbench.Workspace?.EntryPath == solution, "Workspace changed during semantic analysis.");
+        }
+
+        async Task<TreeViewItem> ContainerAsync(ProjectExplorerItemViewModel item)
+        {
+            await WaitUntilAsync(() => tree.GetVisualDescendants().OfType<TreeViewItem>()
+                .Any(container => ReferenceEquals(container.DataContext, item)), $"rendered fixture item {item.Name}");
+            return tree.GetVisualDescendants().OfType<TreeViewItem>()
+                .Single(container => ReferenceEquals(container.DataContext, item));
+        }
+    }
+
+    private static async Task VerifyResourceExplorerAsync(IClassicDesktopStyleApplicationLifetime desktop, string fixture)
+    {
+        string solution = Environment.GetEnvironmentVariable("AA05_SOLUTION")
+            ?? throw new InvalidOperationException("Set AA05_SOLUTION to the read-only AA05 .slnx.");
+        solution = Path.GetFullPath(solution);
+        string sampleRoot = Path.GetDirectoryName(solution)!;
+        Dictionary<string, string> before = CaptureSample(sampleRoot);
+        try
+        {
+            Window window = desktop.MainWindow!;
+            MainWindowViewModel workbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
+            ProjectExplorerViewModel explorer = workbench.ProjectExplorer!;
+            await workbench.OpenWorkspaceFileAsync(solution);
+            Check(workbench.Workspace?.EntryPath == solution, "Workbench did not open the requested solution.");
+
+            // Opening a C# file with a workspace schedules MSBuild-backed analysis.
+            // Retain the real explorer and opener, but detach that context for this read-only smoke.
+            workbench.Workspace = null;
+            ProjectExplorerView view = window.GetVisualDescendants().OfType<ProjectExplorerView>().Single();
+            TreeView tree = view.GetVisualDescendants().OfType<TreeView>().Single();
+            ProjectExplorerItemViewModel solutionItem = explorer.RootItems.Single();
+            ProjectExplorerItemViewModel project = solutionItem.Children.Single(i => i.Name == "AA05_CommandParCalc");
+            ProjectExplorerItemViewModel properties = project.Children.Single(i => i.Name == "Properties");
+            ProjectExplorerItemViewModel resource = properties.Children.Single(i => i.Name == "Resources.resx");
+            ProjectExplorerItemViewModel designer = resource.Children.Single(i => i.Name == "Resources.Designer.cs");
+            await ExpandAsync(solutionItem);
+            await ExpandAsync(project);
+            await ExpandAsync(properties);
+            TreeViewItem resourceContainer = await ExpandAsync(resource);
+            Check(resourceContainer.ItemCount > 0 && resource.IsExpanded,
+                "The resource file has no expandable child in the actual tree.");
+            TreeViewItem designerContainer = await ContainerAsync(designer);
+            Check(designerContainer.IsEffectivelyVisible, "The designer child is not visible in the tree.");
+            designerContainer.IsSelected = true;
+            await WaitUntilAsync(() => ReferenceEquals(explorer.SelectedItem, designer), "designer tree selection");
+            await WaitForActiveAsync(workbench, designer.Item.Path);
+            Check(workbench.ActiveEditorTab.IsPreview, "Selecting the designer did not open a preview.");
+            tree.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
+            await WaitUntilAsync(() => !workbench.ActiveEditorTab.IsPreview, "designer tree activation");
+            Check(workbench.Editor.Text == File.ReadAllText(designer.Item.Path),
+                "The opened editor does not contain the designer file.");
+
+            string designerId = designer.Id;
+            await explorer.RefreshCommand.ExecuteAsync(null);
+            Check(explorer.SelectedItem?.Id == designerId, "Refresh lost the designer selection.");
+            resource = FindItem(explorer.RootItems, resource.Item.Path);
+            Check(resource.IsExpanded, "Refresh lost resource expansion.");
+            designer = resource.Children.Single(i => i.Name == "Resources.Designer.cs");
+            designerContainer = await ContainerAsync(designer);
+            Check(designerContainer.IsEffectivelyVisible, "Refreshed designer child is not visible.");
+
+            Check(workbench.EditorWorkspace.TryClose(workbench.ActiveEditorTab), "Could not close the read-only designer tab.");
+            await workbench.OpenWorkspaceFileAsync(Path.Combine(fixture, "Sample.csproj"));
+            Check(explorer.SelectedItem is null && explorer.RootItems.Single().Item.Path != solution,
+                "Project switch retained the old explorer selection or root.");
+            await ContainerAsync(explorer.RootItems.Single());
+            await workbench.OpenWorkspaceFileAsync(solution);
+            Check(explorer.SelectedItem is null && explorer.RootItems.Single().Item.Path == solution,
+                "Returning to the solution retained a stale selection or root.");
+            resource = FindItem(explorer.RootItems, resource.Item.Path);
+            Check(resource.IsExpanded && resource.Children.Single(i => i.Name == "Resources.Designer.cs").Id == designerId,
+                "Returning to the solution did not restore its resource tree.");
+            designer = resource.Children.Single(i => i.Name == "Resources.Designer.cs");
+            Check((await ContainerAsync(designer)).IsEffectivelyVisible, "Returned designer child is not visible.");
+            Console.WriteLine("Resource explorer: rendered expansion, selection, preview, Enter activation, refresh and project switch verified.");
+
+            async Task<TreeViewItem> ContainerAsync(ProjectExplorerItemViewModel item)
+            {
+                await WaitUntilAsync(() => tree.GetVisualDescendants().OfType<TreeViewItem>()
+                    .Any(container => ReferenceEquals(container.DataContext, item)), $"rendered tree item {item.Name}");
+                return tree.GetVisualDescendants().OfType<TreeViewItem>()
+                    .Single(container => ReferenceEquals(container.DataContext, item));
+            }
+
+            async Task<TreeViewItem> ExpandAsync(ProjectExplorerItemViewModel item)
+            {
+                TreeViewItem container = await ContainerAsync(item);
+                container.IsExpanded = true;
+                await WaitUntilAsync(() => item.IsExpanded, $"expanded tree item {item.Name}");
+                return container;
+            }
+        }
+        finally
+        {
+            Dictionary<string, string> after = CaptureSample(sampleRoot);
+            Check(before.Count == after.Count && before.All(entry =>
+                after.TryGetValue(entry.Key, out string? hash) && hash == entry.Value),
+                "The sample directory or a sample file changed during the smoke.");
+            Console.WriteLine($"Read-only sample verification: {before.Count} file/directory entries unchanged.");
+        }
+    }
+
+    private static Dictionary<string, string> CaptureSample(string root)
+    {
+        EnumerationOptions options = new()
+        {
+            RecurseSubdirectories = true,
+            AttributesToSkip = FileAttributes.ReparsePoint,
+            IgnoreInaccessible = false,
+        };
+        Dictionary<string, string> result = new(StringComparer.Ordinal);
+        foreach (string directory in Directory.EnumerateDirectories(root, "*", options))
+            result.Add("D:" + Path.GetRelativePath(root, directory), string.Empty);
+        foreach (string file in Directory.EnumerateFiles(root, "*", options))
+        {
+            using FileStream stream = File.OpenRead(file);
+            result.Add("F:" + Path.GetRelativePath(root, file), Convert.ToHexString(SHA256.HashData(stream)));
+        }
+        return result;
     }
 
     private static async Task VerifyCompactWorkbenchAsync(IClassicDesktopStyleApplicationLifetime desktop, string fixture)
@@ -1185,7 +1446,8 @@ internal static class Program
 
     private static async Task VerifyReportedResourcePreviewAsync(IClassicDesktopStyleApplicationLifetime desktop)
     {
-        const string root = @"C:\Projekte\CSharp\Avalonia_Apps\AA05_CommandParCalc\AA05_CommandParCalc";
+        string root = Environment.GetEnvironmentVariable("AA98_CALCULATOR_SAMPLE_ROOT")
+            ?? @"C:\Projekte\CSharp\Avalonia_Apps\AA05_CommandParCalc\AA05_CommandParCalc";
         string path = Path.Combine(root, "Views", "CommandParCalculatorView.axaml");
         if (!File.Exists(path))
         {
@@ -3193,6 +3455,10 @@ internal static class Program
                 () => desktop.MainWindow,
                 userConfigRoot: Path.Combine(s_root, "config"),
                 systemConfigRoot: Path.Combine(s_root, "system"));
+            if (s_resourceExplorerOnly || s_resourceExplorerSemanticOnly)
+            {
+                services.AddSingleton<IVersionControlService, NullVersionControlService>();
+            }
             services.AddSingleton<IDocumentEditorFactory<EditorTabViewModel>>(new BinarySmokeFactory());
             Services = services.BuildServiceProvider(new ServiceProviderOptions
             {
