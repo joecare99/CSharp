@@ -770,18 +770,25 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                 }
             }
 
-            bool markupDataContext = root.Attribute("DataContext") is not null
-                || root.Elements().Any(element => element.Name.LocalName == "DataContext");
+            XObject? dataContextNode = root.Attributes().FirstOrDefault(static attribute =>
+                    !attribute.IsNamespaceDeclaration
+                    && (attribute.Name.LocalName == "DataContext"
+                        || attribute.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal)))
+                ?? (XObject?)root.Elements().FirstOrDefault(static element =>
+                    element.Name.LocalName == "DataContext"
+                    || element.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal));
+            bool markupDataContext = dataContextNode is not null;
+            bool matchingMarkupContext = markupDataContext
+                && declaredDataType is not null
+                && AxamlPreviewService.HasMatchingRootDataContext(root);
             List<INamedTypeSymbol> runtimeDataContexts = await FindRuntimeDataContextTypesAsync(
                 project,
                 compilation,
                 viewType,
                 cancellationToken).ConfigureAwait(false);
             bool runtimeDataContext = markupDataContext || runtimeDataContexts.Count > 0;
-            if (markupDataContext)
+            if (markupDataContext && (!allowExistingRuntimeDataContext || !matchingMarkupContext))
             {
-                XObject? dataContextNode = (XObject?)root.Attribute("DataContext")
-                    ?? root.Elements().FirstOrDefault(element => element.Name.LocalName == "DataContext");
                 diagnostics.Add(WithAxamlLocation(
                     "The AXAML root already defines DataContext; automatic runtime wiring is unsafe.",
                     dataContextNode));
