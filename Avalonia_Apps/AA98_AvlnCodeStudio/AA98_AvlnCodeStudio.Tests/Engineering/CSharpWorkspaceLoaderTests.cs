@@ -878,6 +878,155 @@ public sealed class CSharpWorkspaceLoaderTests
     }
 
     [TestMethod]
+    public async Task MainWindowViewModel_IncrementalGenerationRespectsNestedBindingBoundaries()
+    {
+        string root = Path.Combine(AppContext.BaseDirectory, $"MvvmBoundaryFixture-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string axamlPath = Path.Combine(root, "View.axaml");
+            string viewModelPath = Path.Combine(root, "ViewModel.cs");
+            const string project = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework><ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally></PropertyGroup>
+                  <ItemGroup><PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" /></ItemGroup>
+                </Project>
+                """;
+            const string codeBehind = "namespace Sample; public partial class View { }";
+            const string source = """
+                using CommunityToolkit.Mvvm.ComponentModel;
+                namespace Sample;
+                public partial class ViewModel : ObservableObject
+                {
+                }
+                """;
+            const string savedMarkup = """
+                <Window xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:vm="using:Sample" x:Class="Sample.View" x:DataType="vm:ViewModel">
+                  <Window.DataContext><vm:ViewModel /></Window.DataContext>
+                  <StackPanel />
+                </Window>
+                """;
+            File.WriteAllText(projectPath, project);
+            File.WriteAllText(Path.Combine(root, "View.axaml.cs"), codeBehind);
+            File.WriteAllText(viewModelPath, source);
+            File.WriteAllText(axamlPath, savedMarkup);
+            ProcessStartInfo buildInfo = new("dotnet")
+            {
+                WorkingDirectory = root,
+                ArgumentList = { "build", projectPath, "--verbosity", "quiet" },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
+            ClearInheritedMsBuildEnvironment(buildInfo);
+            using (Process build = Process.Start(buildInfo)
+                ?? throw new InvalidOperationException("Could not start the boundary fixture build."))
+            {
+                Task<string> output = build.StandardOutput.ReadToEndAsync();
+                Task<string> error = build.StandardError.ReadToEndAsync();
+                await build.WaitForExitAsync();
+                Assert.AreEqual(0, build.ExitCode, $"{await output}{await error}");
+            }
+
+            TestEditorComponentFactory factory = new();
+            IAvaloniaEditorComponent component = factory.Create();
+            using EditorDocumentWorkspace editorWorkspace = new(component, factory);
+            MainWindowViewModel viewModel = new(
+                component,
+                new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                new DiagnosticCollectionViewModel(),
+                null,
+                null,
+                editorWorkspace: editorWorkspace);
+            await viewModel.OpenWorkspaceFileAsync(projectPath);
+            await editorWorkspace.OpenOrActivateAsync(Path.Combine(root, "View.axaml.cs"));
+            EditorViewModel sourceEditor = viewModel.Editor;
+            string dirtySource = codeBehind + Environment.NewLine + "// unsaved user edit";
+            sourceEditor.Text = dirtySource;
+            await editorWorkspace.OpenOrActivateAsync(axamlPath);
+            int reviews = 0;
+            WorkspaceFileChangeProposal? proposal = null;
+            viewModel.ReviewWorkspaceFileChangesAsync = (candidate, _) =>
+            {
+                reviews++;
+                proposal = candidate;
+                return Task.FromResult(false);
+            };
+
+            foreach (string kind in new[] { "Binding", "CompiledBinding", "ReflectionBinding" })
+            {
+                foreach (string nested in new[]
+                {
+                    $"<TextBlock Text=\"{{{kind} ForeignOwner}}\"><TextBlock.DataContext><vm:Other /></TextBlock.DataContext></TextBlock>",
+                    $"<StackPanel><StackPanel.DataContext><vm:Other /></StackPanel.DataContext><TextBlock Text=\"{{{kind} ForeignChild}}\" /></StackPanel>",
+                    $"<StackPanel DataContext=\"{{StaticResource Other}}\"><TextBlock Text=\"{{{kind} ForeignAttribute}}\" /></StackPanel>",
+                    $"<StackPanel x:DataType=\"vm:Other\"><TextBlock Text=\"{{{kind} ForeignType}}\" /></StackPanel>",
+                    $"<ContentControl><ContentControl.ContentTemplate><DataTemplate><TextBlock Text=\"{{{kind} ForeignTemplate}}\" /></DataTemplate></ContentControl.ContentTemplate></ContentControl>",
+                })
+                {
+                    string draft = savedMarkup.Replace("<StackPanel />",
+                        $"<StackPanel><TextBlock Text=\"{{Binding RootBefore}}\" />{nested}</StackPanel>");
+                    viewModel.Editor.Text = draft;
+                    await viewModel.GenerateAxamlMvvmCommand.ExecuteAsync(null);
+                    Assert.AreEqual("MVVM generation failed.", viewModel.Editor.StatusText, nested);
+                    StringAssert.Contains(viewModel.Editor.NotificationText, "nested");
+                    Assert.AreEqual(0, reviews, nested);
+                    Assert.AreEqual(draft, viewModel.Editor.Text);
+                    Assert.IsTrue(viewModel.Editor.IsDirty);
+                    Assert.AreEqual(dirtySource, sourceEditor.Text);
+                    Assert.IsTrue(sourceEditor.IsDirty);
+                    Assert.AreEqual(savedMarkup, File.ReadAllText(axamlPath));
+                    Assert.AreEqual(source, File.ReadAllText(viewModelPath));
+                    Assert.AreEqual(project, File.ReadAllText(projectPath));
+                    Assert.AreEqual(codeBehind, File.ReadAllText(Path.Combine(root, "View.axaml.cs")));
+                }
+            }
+
+            string harmless = savedMarkup.Replace("<StackPanel />",
+                "<StackPanel><StackPanel.DataContext><vm:Other /></StackPanel.DataContext><TextBlock Text=\"literal\" /></StackPanel>");
+            viewModel.Editor.Text = harmless;
+            await viewModel.GenerateAxamlMvvmCommand.ExecuteAsync(null);
+            Assert.AreEqual(0, reviews);
+            StringAssert.Contains(viewModel.Editor.StatusText, "no changes were needed");
+            Assert.AreEqual(harmless, viewModel.Editor.Text);
+            Assert.IsTrue(viewModel.Editor.IsDirty);
+            Assert.AreEqual(dirtySource, sourceEditor.Text);
+            Assert.IsTrue(sourceEditor.IsDirty);
+            Assert.AreEqual(savedMarkup, File.ReadAllText(axamlPath));
+            Assert.AreEqual(source, File.ReadAllText(viewModelPath));
+
+            string positive = savedMarkup.Replace("<StackPanel />", """
+                <StackPanel>
+                  <TextBlock Text="{Binding RootCaption}" />
+                  <StackPanel><StackPanel.DataContext><vm:Other /></StackPanel.DataContext><TextBlock Text="literal" /></StackPanel>
+                </StackPanel>
+                """);
+            viewModel.Editor.Text = positive;
+            await viewModel.GenerateAxamlMvvmCommand.ExecuteAsync(null);
+            Assert.AreEqual(1, reviews, viewModel.Editor.NotificationText);
+            Assert.IsNotNull(proposal);
+            Assert.AreEqual(1, proposal.Changes.Count);
+            StringAssert.Contains(proposal.Changes.Single().ProposedContent, "RootCaption");
+            Assert.AreEqual("MVVM generation was cancelled; no files were changed.", viewModel.Editor.StatusText);
+            Assert.AreEqual(positive, viewModel.Editor.Text);
+            Assert.IsTrue(viewModel.Editor.IsDirty);
+            Assert.AreEqual(dirtySource, sourceEditor.Text);
+            Assert.IsTrue(sourceEditor.IsDirty);
+            Assert.AreEqual(savedMarkup, File.ReadAllText(axamlPath));
+            Assert.AreEqual(source, File.ReadAllText(viewModelPath));
+            Assert.AreEqual(project, File.ReadAllText(projectPath));
+            Assert.AreEqual(codeBehind, File.ReadAllText(Path.Combine(root, "View.axaml.cs")));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task MainWindowViewModel_ReviewsNewBindingAndViewModelMemberTogetherForDirtyAxaml()
     {
         await WithTemporaryDirectoryAsync(async root =>
