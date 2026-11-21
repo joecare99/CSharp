@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -126,6 +127,59 @@ public sealed class AssemblyDecompilationServiceTests
 
         string line = File.ReadAllLines(result.ArtifactPath)[result.NavigationLocation.Line!.Value - 1];
         Assert.IsTrue(line.Contains(declaration, StringComparison.Ordinal), $"Source:\n{result.Source}");
+    }
+
+    [TestMethod]
+    [DataRow(typeof(Navका), @"class Navक\u093e")]
+    [DataRow(typeof(Delका), @"delegate void Delक\u093e")]
+    public async Task DecompileTypeAsync_NavigatesToIdentifierEndingWithSpacingCombiningMark(Type type, string declaration)
+    {
+        using TemporaryDirectory artifacts = new();
+        AssemblyDecompilationService service = new(artifacts.Path);
+
+        DecompiledTypeArtifact result = await service.DecompileTypeAsync(
+            typeof(DecompilationFixture).Assembly.Location,
+            type.FullName!).ConfigureAwait(false);
+
+        string line = File.ReadAllLines(result.ArtifactPath)[result.NavigationLocation.Line!.Value - 1];
+        Assert.IsTrue(line.Contains(declaration, StringComparison.Ordinal), $"Source:\n{result.Source}");
+    }
+
+    [TestMethod]
+    public async Task DecompileTypeAsync_NavigatesToLongIdentifier()
+    {
+        using TemporaryDirectory artifacts = new();
+        AssemblyDecompilationService service = new(artifacts.Path);
+
+        DecompiledTypeArtifact result = await service.DecompileTypeAsync(
+            typeof(DecompilationFixture).Assembly.Location,
+            typeof(DeclarationNavigationWithAVeryLongIdentifierThatExceedsTheNonBacktrackingRegexAutomatonLimit).FullName!)
+            .ConfigureAwait(false);
+
+        string line = File.ReadAllLines(result.ArtifactPath)[result.NavigationLocation.Line!.Value - 1];
+        StringAssert.Contains(line, "class DeclarationNavigationWithAVeryLongIdentifierThatExceedsTheNonBacktrackingRegexAutomatonLimit");
+    }
+
+    [TestMethod]
+    public async Task DeclarationScan_SkipsDelegateReturnTypeBeforeNestedClass()
+    {
+        using TemporaryDirectory artifacts = new();
+        AssemblyDecompilationService service = new(artifacts.Path);
+
+        DecompiledTypeArtifact result = await service.DecompileTypeAsync(
+            typeof(DecompilationFixture).Assembly.Location,
+            typeof(DelegateReturnBoundary).FullName!).ConfigureAwait(false);
+
+        StringAssert.Contains(result.Source, "delegate ref C Other");
+        StringAssert.Contains(result.Source, "delegate C Plain");
+        Assert.IsTrue(
+            result.Source.IndexOf("delegate ref C Other", StringComparison.Ordinal) < result.Source.IndexOf("class C", StringComparison.Ordinal),
+            $"Source:\n{result.Source}");
+        MethodInfo findDeclaration = typeof(AssemblyDecompilationService).GetMethod(
+            "FindTypeDeclarationLine", BindingFlags.NonPublic | BindingFlags.Static)!;
+        int lineNumber = (int)findDeclaration.Invoke(null, [result.Source, "C"])!;
+        string line = File.ReadAllLines(result.ArtifactPath)[lineNumber - 1];
+        Assert.IsTrue(line.Contains("class C", StringComparison.Ordinal), $"Line {lineNumber}, source:\n{result.Source}");
     }
 
     [TestMethod]
@@ -248,3 +302,24 @@ public readonly struct NavigationStruct
 }
 
 public record NavigationRecord;
+
+public class Navका
+{
+}
+
+public delegate void Delका();
+
+public class DeclarationNavigationWithAVeryLongIdentifierThatExceedsTheNonBacktrackingRegexAutomatonLimit
+{
+}
+
+public class DelegateReturnBoundary
+{
+    public delegate ref C Other();
+
+    public delegate C Plain();
+
+    public class C
+    {
+    }
+}
