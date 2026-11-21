@@ -101,7 +101,7 @@ public sealed class AxamlPreviewService
             && node.SourceStartOffset >= 0
             && !(propertyName == "TextWrapping" && node.HasUnsafeTextWrappingSource)
             && !(propertyName == "TextAlignment" && node.HasUnsafeTextAlignmentSource)
-            && !(propertyName == "Orientation" && node.HasUnsafeWrapPanelOrientationSource)
+            && !(propertyName == "Orientation" && node.HasUnsafeOrientationSource)
             && (!node.Properties.TryGetValue(propertyName, out string? value)
                 || !IsMarkupExtensionValue(node.TypeName, propertyName, value))
             && !(propertyName == GetEditablePropertyName(node.TypeName) && node.HasInlineText)
@@ -1843,7 +1843,7 @@ public sealed class AxamlPreviewService
             HasTextPropertyElement = node.HasTextPropertyElement,
             HasUnsafeTextWrappingSource = node.HasUnsafeTextWrappingSource,
             HasUnsafeTextAlignmentSource = node.HasUnsafeTextAlignmentSource,
-            HasUnsafeWrapPanelOrientationSource = node.HasUnsafeWrapPanelOrientationSource,
+            HasUnsafeOrientationSource = node.HasUnsafeOrientationSource,
             HasInlineText = node.HasInlineText,
             HasChildElements = node.HasChildElements,
             CanAppendChildren = false,
@@ -2260,12 +2260,12 @@ public sealed class AxamlPreviewService
         {
             previewProperties.Remove("TextAlignment");
         }
-        bool unsafeWrapPanelOrientation = typeName == "WrapPanel"
+        bool unsafeOrientation = typeName is "StackPanel" or "Slider" or "ProgressBar" or "WrapPanel"
             && (element.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration
                     && (attribute.Name.LocalName == "Orientation" || attribute.Name.LocalName.EndsWith(".Orientation", StringComparison.Ordinal))
                     && (attribute.Name.Namespace != XNamespace.None || attribute.Name.LocalName != "Orientation"))
                 || element.Elements().Any(static child => child.Name.LocalName.EndsWith(".Orientation", StringComparison.Ordinal)));
-        if (unsafeWrapPanelOrientation)
+        if (unsafeOrientation)
         {
             previewProperties.Remove("Orientation");
         }
@@ -2302,7 +2302,7 @@ public sealed class AxamlPreviewService
             HasTextPropertyElement = hasTextPropertyElement,
             HasUnsafeTextWrappingSource = unsafeTextWrapping,
             HasUnsafeTextAlignmentSource = unsafeTextAlignment,
-            HasUnsafeWrapPanelOrientationSource = unsafeWrapPanelOrientation,
+            HasUnsafeOrientationSource = unsafeOrientation,
             HasInlineText = element.Nodes().OfType<XText>().Any(static value => !string.IsNullOrWhiteSpace(value.Value)),
             HasChildElements = element.HasElements,
             CanAppendChildren = canAppendChildren,

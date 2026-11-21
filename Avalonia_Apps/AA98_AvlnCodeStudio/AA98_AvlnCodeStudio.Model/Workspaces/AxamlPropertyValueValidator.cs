@@ -171,7 +171,7 @@ public static class AxamlPropertyValueValidator
         {
             value = value[2..];
         }
-        if (propertyName == "Orientation" && node.HasUnsafeWrapPanelOrientationSource)
+        if (propertyName == "Orientation" && node.HasUnsafeOrientationSource)
         {
             value = string.Empty;
         }
@@ -659,7 +659,7 @@ public static class AxamlPropertyValueValidator
 
     private static string? GetReadOnlyReason(AxamlPreviewNode node, string propertyName)
     {
-        if (propertyName == "Orientation" && node.HasUnsafeWrapPanelOrientationSource)
+        if (propertyName == "Orientation" && node.HasUnsafeOrientationSource)
         {
             return "Qualified or property-element Orientation is ambiguous and read-only.";
         }

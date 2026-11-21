@@ -232,7 +232,15 @@ selected. A preview replacement, selection change or visual detach cancels an
 active resize instead of applying it to a stale node.
 
 `AxamlDesignerSession` exposes the safe preview tree and document-local undo
-and redo independently of a host. An omitted `WrapPanel.Orientation` has
+and redo independently of a host. For `StackPanel`, `Slider` and `ProgressBar`,
+an omitted or invalid `Orientation` falls back in the inert preview to the
+native control default (vertical for StackPanel, horizontal for the range
+controls). Valid named literals can be edited with undo/redo; invalid numeric
+and other literals remain invalid in the inspector. Qualified attributes and
+orientation property elements are conservatively read-only and fall back to
+the default in the preview. Orientation bindings are neither evaluated nor
+editable by the binding editor; other edits preserve them and undo/redo.
+An omitted `WrapPanel.Orientation` has
 Avalonia's `Horizontal` baseline in the inspector and inert preview. Literal
 edits support undo/redo; invalid orientation literals fall back to horizontal
 in the preview and remain invalid in the inspector. Qualified attributes and

@@ -41,7 +41,14 @@ public sealed class AxamlPreviewNode
 
     public bool HasUnsafeTextAlignmentSource { get; init; }
 
-    public bool HasUnsafeWrapPanelOrientationSource { get; init; }
+    public bool HasUnsafeOrientationSource { get; init; }
+
+    /// <summary>The legacy WrapPanel-specific view of the orientation source flag.</summary>
+    public bool HasUnsafeWrapPanelOrientationSource
+    {
+        get => TypeName == "WrapPanel" && HasUnsafeOrientationSource;
+        init => HasUnsafeOrientationSource = value;
+    }
 
     public bool HasInlineText { get; init; }
 
