@@ -100,6 +100,7 @@ public sealed class AxamlPreviewService
             && GetEditableProperties(node).Contains(propertyName, StringComparer.Ordinal)
             && node.SourceStartOffset >= 0
             && !(propertyName == "TextWrapping" && node.HasUnsafeTextWrappingSource)
+            && !(propertyName == "TextTrimming" && node.HasUnsafeTextTrimmingSource)
             && !(propertyName == "TextAlignment" && node.HasUnsafeTextAlignmentSource)
             && !(propertyName == "Orientation" && node.HasUnsafeOrientationSource)
             && (!node.Properties.TryGetValue(propertyName, out string? value)
@@ -282,7 +283,8 @@ public sealed class AxamlPreviewService
             throw new InvalidDataException("The AXAML source changed; select the preview element again.");
         }
 
-        if (propertyName == "TextAlignment" && node.TypeName is "TextBox" or "TextBlock")
+        if (propertyName == "TextAlignment" && node.TypeName is "TextBox" or "TextBlock"
+            || propertyName == "TextTrimming" && node.TypeName == "TextBlock")
         {
             AxamlPreviewNode current = Parse(axaml);
             AxamlPreviewNode? FindNode(AxamlPreviewNode candidate) =>
@@ -1842,6 +1844,7 @@ public sealed class AxamlPreviewService
             HasUnsafeBindingScope = true,
             HasTextPropertyElement = node.HasTextPropertyElement,
             HasUnsafeTextWrappingSource = node.HasUnsafeTextWrappingSource,
+            HasUnsafeTextTrimmingSource = node.HasUnsafeTextTrimmingSource,
             HasUnsafeTextAlignmentSource = node.HasUnsafeTextAlignmentSource,
             HasUnsafeOrientationSource = node.HasUnsafeOrientationSource,
             HasInlineText = node.HasInlineText,
@@ -2251,6 +2254,15 @@ public sealed class AxamlPreviewService
         {
             previewProperties.Remove("TextWrapping");
         }
+        bool unsafeTextTrimming = typeName == "TextBlock"
+            && (element.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration
+                    && (attribute.Name.LocalName == "TextTrimming" || attribute.Name.LocalName.EndsWith(".TextTrimming", StringComparison.Ordinal))
+                    && (attribute.Name.Namespace != XNamespace.None || attribute.Name.LocalName != "TextTrimming"))
+                || element.Elements().Any(static child => child.Name.LocalName.EndsWith(".TextTrimming", StringComparison.Ordinal)));
+        if (unsafeTextTrimming)
+        {
+            previewProperties.Remove("TextTrimming");
+        }
         bool unsafeTextAlignment = typeName is "TextBlock" or "TextBox"
             && (element.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration
                     && (attribute.Name.LocalName == "TextAlignment" || attribute.Name.LocalName.EndsWith(".TextAlignment", StringComparison.Ordinal))
@@ -2301,6 +2313,7 @@ public sealed class AxamlPreviewService
                     .Select(static property => property.Name).ToArray(),
             HasTextPropertyElement = hasTextPropertyElement,
             HasUnsafeTextWrappingSource = unsafeTextWrapping,
+            HasUnsafeTextTrimmingSource = unsafeTextTrimming,
             HasUnsafeTextAlignmentSource = unsafeTextAlignment,
             HasUnsafeOrientationSource = unsafeOrientation,
             HasInlineText = element.Nodes().OfType<XText>().Any(static value => !string.IsNullOrWhiteSpace(value.Value)),

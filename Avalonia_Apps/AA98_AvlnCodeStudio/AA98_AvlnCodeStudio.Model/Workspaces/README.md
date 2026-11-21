@@ -259,6 +259,13 @@ undoable; qualified attributes and property elements are conservatively
 read-only and omitted from the inert preview rather than guessing precedence.
 Bindings and dynamic resources remain untouched. This does not resolve styles
 or execute the source document.
+For `TextBlock.TextTrimming`, the inspector and inert preview use Avalonia's
+`None` default when omitted. Named literal choices remain editable and
+undoable; invalid numeric or named literals stay invalid in the inspector and
+fall back to `None` in the preview. Qualified attributes and property elements
+are treated as ambiguous, read-only sources, including when a plain attribute
+is also present. Bindings are not evaluated or rewritten by the property
+editor. Styles and arbitrary source XAML are not executed.
 The shared Workbench and standalone binding editor accepts its supported simple
 paths and options only; empty binding arguments such as `{Binding Name,, Mode=TwoWay}`
 or a trailing comma are ambiguous and cannot be edited there. Their original
