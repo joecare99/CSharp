@@ -31,7 +31,8 @@ public static class Program
         ICodeStudioBuilderService? builderService = null,
         TextWriter? standardOutput = null,
         TextWriter? standardError = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IProjectRuntimeBuilder? runtimeBuilder = null)
     {
         ArgumentNullException.ThrowIfNull(args);
 
@@ -62,6 +63,12 @@ public static class Program
 
             if (string.Equals(command, "inspect", StringComparison.OrdinalIgnoreCase))
             {
+                if (HasFlag(args, "--refresh-runtime"))
+                {
+                    standardError.WriteLine("--refresh-runtime is only valid for build.");
+                    return 2;
+                }
+
                 BuilderProjectInspectionResult result = await builderService.InspectProjectAsync(new BuilderProjectInspectionRequest
                 {
                     ProjectPath = projectPath,
@@ -74,13 +81,26 @@ public static class Program
 
             if (string.Equals(command, "build", StringComparison.OrdinalIgnoreCase))
             {
-                BuilderBuildResult result = await builderService.BuildProjectAsync(new BuilderBuildRequest
+                bool refreshRuntime = HasFlag(args, "--refresh-runtime");
+                BuilderBuildRequest request = new()
                 {
                     ProjectPath = projectPath,
                     Configuration = configuration,
                     TargetFramework = targetFramework,
-                }, cancellationToken).ConfigureAwait(false);
+                };
+                BuilderBuildResult result = await builderService.BuildProjectAsync(request, cancellationToken).ConfigureAwait(false);
+                if (result.Succeeded && refreshRuntime)
+                {
+                    await (runtimeBuilder ?? new DotNetProjectRuntimeBuilder())
+                        .BuildAsync(request, cancellationToken).ConfigureAwait(false);
+                }
+
                 WriteBuildResult(standardOutput, result);
+                if (result.Succeeded && refreshRuntime)
+                {
+                    standardOutput.WriteLine("runtimeRefresh=Succeeded");
+                }
+
                 return result.Succeeded ? 0 : 1;
             }
 
@@ -102,7 +122,10 @@ public static class Program
         standardOutput.WriteLine("AA98 Builder Host");
         standardOutput.WriteLine("Usage:");
         standardOutput.WriteLine("  AA98.Builder.Host inspect <project.csproj> [--configuration Debug] [--framework net10.0]");
-        standardOutput.WriteLine("  AA98.Builder.Host build <project.csproj> [--configuration Debug] [--framework net10.0]");
+        standardOutput.WriteLine("  AA98.Builder.Host build <project.csproj> [--configuration Debug] [--framework net10.0] [--refresh-runtime]");
+        standardOutput.WriteLine("Build compiles the project but does not guarantee current runtime metadata.");
+        standardOutput.WriteLine("--refresh-runtime runs dotnet build --no-restore after a successful build, using the same configuration and framework.");
+        standardOutput.WriteLine("Restore dependencies first; SDK builds execute project targets and do not guarantee successful launch.");
     }
 
     private static void WriteInspectionResult(TextWriter standardOutput, BuilderProjectInspectionResult result)
@@ -166,5 +189,23 @@ public static class Program
         }
 
         return null;
+    }
+
+    private static bool HasFlag(IReadOnlyList<string> args, string optionName)
+    {
+        for (int index = 2; index < args.Count; index++)
+        {
+            if (string.Equals(args[index], "--configuration", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(args[index], "--framework", StringComparison.OrdinalIgnoreCase))
+            {
+                index++;
+            }
+            else if (string.Equals(args[index], optionName, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
