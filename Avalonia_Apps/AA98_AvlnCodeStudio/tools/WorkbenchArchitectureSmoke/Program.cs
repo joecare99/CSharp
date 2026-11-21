@@ -53,11 +53,12 @@ using PolygonShape = Avalonia.Controls.Shapes.Polygon;
 using PolylineShape = Avalonia.Controls.Shapes.Polyline;
 using Rectangle = Avalonia.Controls.Shapes.Rectangle;
 
-internal static class Program
+internal static partial class Program
 {
     private static string s_root = null!;
     private static bool s_resourceExplorerOnly;
     private static bool s_resourceExplorerSemanticOnly;
+    private static bool s_standaloneBindingOnly;
 
     [STAThread]
     private static int Main(string[] args)
@@ -67,6 +68,7 @@ internal static class Program
         bool compactOnly = args.Contains("--compact-only", StringComparer.Ordinal);
         bool themeOnly = args.Contains("--theme-only", StringComparer.Ordinal);
         bool pointerOnly = args.Contains("--pointer-only", StringComparer.Ordinal);
+        bool standaloneBindingOnly = s_standaloneBindingOnly = args.Contains("--standalone-binding-only", StringComparer.Ordinal);
         bool resourceExplorerOnly = s_resourceExplorerOnly = args.Contains("--resource-explorer-only", StringComparer.Ordinal);
         bool resourceExplorerSemanticOnly = s_resourceExplorerSemanticOnly =
             args.Contains("--resource-explorer-semantic-only", StringComparer.Ordinal);
@@ -294,8 +296,8 @@ internal static class Program
 
             return AppBuilder.Configure<SmokeApplication>()
                 .UsePlatformDetect()
-                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly, compactOnly, themeOnly, pointerOnly, resourceExplorerOnly, resourceExplorerSemanticOnly)))
-                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly || compactOnly || themeOnly || pointerOnly || resourceExplorerOnly || resourceExplorerSemanticOnly ? [] : args);
+                .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly, compactOnly, themeOnly, pointerOnly, resourceExplorerOnly, resourceExplorerSemanticOnly, standaloneBindingOnly)))
+                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly || compactOnly || themeOnly || pointerOnly || resourceExplorerOnly || resourceExplorerSemanticOnly || standaloneBindingOnly ? [] : args);
         }
         finally
         {
@@ -318,14 +320,18 @@ internal static class Program
         }
     }
 
-    private static async Task RunAsync(string fixture, bool resourcesOnly, bool quickInfoOnly, bool testMethodOnly, bool compactOnly, bool themeOnly, bool pointerOnly, bool resourceExplorerOnly, bool resourceExplorerSemanticOnly)
+    private static async Task RunAsync(string fixture, bool resourcesOnly, bool quickInfoOnly, bool testMethodOnly, bool compactOnly, bool themeOnly, bool pointerOnly, bool resourceExplorerOnly, bool resourceExplorerSemanticOnly, bool standaloneBindingOnly)
     {
         IClassicDesktopStyleApplicationLifetime desktop =
             (IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!;
         int exitCode = 0;
         try
         {
-            if (resourceExplorerSemanticOnly)
+            if (standaloneBindingOnly)
+            {
+                await VerifyStandaloneBindingsAsync(desktop);
+            }
+            else if (resourceExplorerSemanticOnly)
             {
                 await VerifySemanticResourceExplorerAsync(desktop);
             }
@@ -358,14 +364,14 @@ internal static class Program
                 await VerifyWorkbenchAsync(desktop, fixture);
                 await VerifyStandaloneAsync(desktop, fixture);
             }
-            if (!quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly && !resourceExplorerOnly && !resourceExplorerSemanticOnly)
+            if (!quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly && !resourceExplorerOnly && !resourceExplorerSemanticOnly && !standaloneBindingOnly)
             {
                 await VerifyReportedResourcePreviewAsync(desktop);
             }
             EditorDocumentWorkspace workspace = SmokeApplication.Services!.GetRequiredService<EditorDocumentWorkspace>();
             desktop.MainWindow!.Close();
             Check(workspace.Tabs.Count == 0, "Closing the workbench did not dispose its document tabs.");
-            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly && !resourceExplorerOnly && !resourceExplorerSemanticOnly)
+            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly && !resourceExplorerOnly && !resourceExplorerSemanticOnly && !standaloneBindingOnly)
             {
                 Console.WriteLine("Architecture: navigation, catalog control previews, structure and Grid editing, designer contributions, binary editor, drafts, safe files, standalone review/undo, MCP dispatch and screenshot verified.");
             }
@@ -3455,7 +3461,7 @@ internal static class Program
                 () => desktop.MainWindow,
                 userConfigRoot: Path.Combine(s_root, "config"),
                 systemConfigRoot: Path.Combine(s_root, "system"));
-            if (s_resourceExplorerOnly || s_resourceExplorerSemanticOnly)
+            if (s_resourceExplorerOnly || s_resourceExplorerSemanticOnly || s_standaloneBindingOnly)
             {
                 services.AddSingleton<IVersionControlService, NullVersionControlService>();
             }

@@ -6,6 +6,31 @@ Run in an interactive desktop session:
 dotnet run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj
 ```
 
+For the focused standalone binding smoke, run from a physical workspace path:
+
+```powershell
+$root = Join-Path (Get-Location).Path ("artifacts\standalone-binding-win-" + [guid]::NewGuid().ToString("N"))
+.\tools\build\dotnet-isolated.ps1 run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj --framework net10.0 "-p:HostArtifactRoot=$root" -- --standalone-binding-only
+```
+
+In WSL/Linux, ensure `dotnet` and `DOTNET_ROOT` refer to the Linux SDK, then:
+
+```bash
+root="$PWD/artifacts/standalone-binding-linux-$(date +%s%N)"
+bash tools/build/dotnet-isolated.sh run --project tools/WorkbenchArchitectureSmoke/WorkbenchArchitectureSmoke.csproj --framework net10.0 "-p:HostArtifactRoot=$root" -- --standalone-binding-only
+```
+
+The wrapper supplies the absolute isolation props path to external project
+references. Each host must use its own fresh artifact root. The smoke creates,
+restores and builds only its disposable synthetic project; its root DataContext
+and ViewModel come from the MVVM generator. It opens the real standalone window,
+programmatically cancels, then reviews and applies compiled property and reflection
+command bindings, checks source preservation and workspace undo/redo, and rejects nested
+DataContext, nested type, explicit source and foreign root contexts. It rebuilds
+the edited fixture and cleans it up. It does not execute fixture AXAML or claim
+physical input or accessibility acceptance. The standalone-only mode uses the
+null version-control service and does not open AA05.
+
 The Workbench solution explorer additionally nests a C# file under a sibling
 `.resx` when the project declares a literal, unconditional `DependentUpon`.
 This is a read-only XML projection, not MSBuild evaluation: conditional,
