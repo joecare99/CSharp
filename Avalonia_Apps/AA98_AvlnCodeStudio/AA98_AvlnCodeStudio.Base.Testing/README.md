@@ -24,8 +24,28 @@ Aborted discovery and canceled or aborted execution also reject partial results.
 When a request returns, caller cancellation is checked before publishing results;
 a VSTest abort or execution error without caller cancellation is a failure.
 Handler tests cover partial chunks; separate service tests cover pre-canceled
-requests. They do not prove active token propagation, timely shutdown of an
-uncooperative adapter or cancellation races during runner startup.
+requests.
+
+`VSTestCancellationIntegrationTests` also uses a generated, controlled adapter
+and an independently started worker. The adapter records a partial passed result
+for the selected case, then signals its own start and waits for cancellation.
+The test checks the selected ID, cancellation result, adapter callback, and exit
+of the identified worker, VSTest runner and test host. It also suppresses the
+start signal and injects termination after a bounded timeout, and terminates a
+worker before its launch gate is opened.
+
+On Windows the worker is assigned to a kill-on-close job before that gate; on
+Linux it runs as PID 1 in an isolated user, mount and PID namespace, with
+`unshare --kill-child` and pidfds. The tests check containment and shutdown of
+the identified processes; the namespace/job is owned solely by the fixture.
+Linux requires `/usr/bin/unshare` from util-linux 2.41.3 or newer built with
+`pidfd_open`, working user/PID namespaces and pidfds; unsupported configurations
+are reported inconclusive. Fixture builds and transitive references use a
+fresh artifact root and `tools/build/IsolatedArtifacts.props`.
+
+These tests do not guarantee timely cancellation of uncooperative adapters or
+cover every runner version and startup race. They do not promise cleanup if the
+outer test process or operating system itself fails.
 
 `VSTestErrorAdapterIntegrationTests` builds a controlled adapter and test source using
 `Microsoft.NET.Test.Sdk` 18.12.0. It verifies successful discovery and execution,
