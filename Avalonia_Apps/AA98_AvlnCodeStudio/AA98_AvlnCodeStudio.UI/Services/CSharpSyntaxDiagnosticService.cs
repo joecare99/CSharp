@@ -328,6 +328,10 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         }
     }
 
+    /// <summary>
+    /// Gets quick info from the selected project's open-buffer snapshot.
+    /// Cancellation is honored even when project ownership is unknown or ambiguous.
+    /// </summary>
     public async Task<string?> GetQuickInfoAsync(
         string source,
         string filePath,
@@ -345,6 +349,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             throw new ArgumentOutOfRangeException(nameof(position));
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
         string normalizedFilePath = Path.GetFullPath(filePath);
         var candidates = workspace.Projects
             .Select(project => new { Project = project, Directory = Path.GetDirectoryName(project.ProjectPath)! })
