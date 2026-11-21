@@ -1,6 +1,7 @@
 #if NET10_0
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using AA98.Builder.Host;
 using AA98_AvlnCodeStudio.Base.Building.Models;
@@ -137,6 +138,126 @@ public class BuilderHostProgramTests
         Assert.AreEqual(2, exitCode);
         StringAssert.Contains(standardError.ToString(), "Unknown command: unknown");
         StringAssert.Contains(standardOutput.ToString(), "AA98 Builder Host");
+    }
+
+    [TestMethod]
+    public async Task RunAsync_WithHelp_ExplainsRuntimeMetadataRequirement()
+    {
+        using StringWriter standardOutput = new();
+        using StringWriter standardError = new();
+
+        int exitCode = await Program.RunAsync(
+            ["--help"],
+            standardOutput: standardOutput,
+            standardError: standardError).ConfigureAwait(false);
+
+        Assert.AreEqual(0, exitCode);
+        StringAssert.Contains(standardOutput.ToString(), "does not guarantee current runtime metadata");
+        StringAssert.Contains(standardOutput.ToString(), "dotnet build --no-restore");
+        Assert.AreEqual(string.Empty, standardError.ToString());
+    }
+
+    [TestMethod]
+    public async Task RunAsync_WithRuntimeRefresh_UsesSameBuildRequest()
+    {
+        ICodeStudioBuilderService builder = Substitute.For<ICodeStudioBuilderService>();
+        IProjectRuntimeBuilder runtime = Substitute.For<IProjectRuntimeBuilder>();
+        builder.BuildProjectAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
+            .Returns(new BuilderBuildResult { ProjectPath = "sample.csproj", Succeeded = true });
+        using StringWriter output = new();
+        using StringWriter error = new();
+        using CancellationTokenSource cancellation = new();
+
+        int exitCode = await Program.RunAsync(
+            ["build", "sample.csproj", "--configuration", "Release", "--framework", "net10.0", "--refresh-runtime"],
+            builder, output, error, cancellation.Token, runtime);
+
+        Assert.AreEqual(0, exitCode);
+        StringAssert.Contains(output.ToString(), "runtimeRefresh=Succeeded");
+        Assert.AreEqual(string.Empty, error.ToString());
+        await runtime.Received(1).BuildAsync(
+            Arg.Is<BuilderBuildRequest>(request => request.ProjectPath == "sample.csproj"
+                && request.Configuration == "Release" && request.TargetFramework == "net10.0"),
+            cancellation.Token);
+    }
+
+    [TestMethod]
+    public async Task RunAsync_WithoutRefreshOrWithFailedBuild_DoesNotRefresh()
+    {
+        ICodeStudioBuilderService builder = Substitute.For<ICodeStudioBuilderService>();
+        IProjectRuntimeBuilder runtime = Substitute.For<IProjectRuntimeBuilder>();
+        builder.BuildProjectAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
+            .Returns(new BuilderBuildResult { ProjectPath = "sample.csproj", Succeeded = true },
+                new BuilderBuildResult { ProjectPath = "sample.csproj", Succeeded = false });
+
+        Assert.AreEqual(0, await Program.RunAsync(["build", "sample.csproj"], builder, new StringWriter(), new StringWriter(), runtimeBuilder: runtime));
+        Assert.AreEqual(1, await Program.RunAsync(["build", "sample.csproj", "--refresh-runtime"], builder, new StringWriter(), new StringWriter(), runtimeBuilder: runtime));
+        await runtime.DidNotReceive().BuildAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>());
+    }
+
+    [TestMethod]
+    public async Task RunAsync_WhenRefreshTextIsAnOptionValue_DoesNotRefresh()
+    {
+        ICodeStudioBuilderService builder = Substitute.For<ICodeStudioBuilderService>();
+        IProjectRuntimeBuilder runtime = Substitute.For<IProjectRuntimeBuilder>();
+        builder.BuildProjectAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
+            .Returns(new BuilderBuildResult { ProjectPath = "sample.csproj", Succeeded = true });
+
+        await Program.RunAsync(
+            ["build", "sample.csproj", "--configuration", "--refresh-runtime"],
+            builder, new StringWriter(), new StringWriter(), runtimeBuilder: runtime);
+
+        await runtime.DidNotReceive().BuildAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>());
+    }
+
+    [TestMethod]
+    public async Task RunAsync_WhenRuntimeRefreshFails_DoesNotReportSuccess()
+    {
+        ICodeStudioBuilderService builder = Substitute.For<ICodeStudioBuilderService>();
+        IProjectRuntimeBuilder runtime = Substitute.For<IProjectRuntimeBuilder>();
+        builder.BuildProjectAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
+            .Returns(new BuilderBuildResult { ProjectPath = "sample.csproj", Succeeded = true });
+        runtime.BuildAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
+            .Returns<Task>(_ => throw new InvalidOperationException("refresh failed"));
+        using StringWriter output = new();
+        using StringWriter error = new();
+
+        int exitCode = await Program.RunAsync(
+            ["build", "sample.csproj", "--refresh-runtime"], builder, output, error, runtimeBuilder: runtime);
+
+        Assert.AreEqual(1, exitCode);
+        Assert.AreEqual(string.Empty, output.ToString());
+        StringAssert.Contains(error.ToString(), "refresh failed");
+    }
+
+    [TestMethod]
+    public async Task RunAsync_WhenRuntimeRefreshIsCanceled_PropagatesCancellation()
+    {
+        ICodeStudioBuilderService builder = Substitute.For<ICodeStudioBuilderService>();
+        IProjectRuntimeBuilder runtime = Substitute.For<IProjectRuntimeBuilder>();
+        builder.BuildProjectAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
+            .Returns(new BuilderBuildResult { ProjectPath = "sample.csproj", Succeeded = true });
+        runtime.BuildAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
+            .Returns<Task>(_ => throw new OperationCanceledException());
+        using StringWriter output = new();
+        using StringWriter error = new();
+
+        await Assert.ThrowsExactlyAsync<OperationCanceledException>(() =>
+            Program.RunAsync(["build", "sample.csproj", "--refresh-runtime"], builder, output, error, runtimeBuilder: runtime));
+        Assert.AreEqual(string.Empty, output.ToString());
+        Assert.AreEqual(string.Empty, error.ToString());
+    }
+
+    [TestMethod]
+    public async Task RunAsync_WithRuntimeRefreshOnInspect_ReturnsUsageError()
+    {
+        ICodeStudioBuilderService builder = Substitute.For<ICodeStudioBuilderService>();
+        using StringWriter error = new();
+        int exitCode = await Program.RunAsync(
+            ["inspect", "sample.csproj", "--refresh-runtime"], builder, new StringWriter(), error);
+        Assert.AreEqual(2, exitCode);
+        StringAssert.Contains(error.ToString(), "only valid for build");
+        await builder.DidNotReceive().InspectProjectAsync(Arg.Any<BuilderProjectInspectionRequest>(), Arg.Any<CancellationToken>());
     }
 
     /// <summary>

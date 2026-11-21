@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.LogicalTree;
+using Avalonia.Layout;
 using Avalonia.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -17,6 +18,86 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 [TestClass]
 public sealed class AxamlPreviewResourcesTests
 {
+    [TestMethod]
+    public void WrapPanelOrientation_AmbiguousSourcesFallBackInInertPreview()
+    {
+        AxamlPreviewService service = new();
+        foreach (string markup in new[]
+        {
+            "<WrapPanel xmlns:e='urn:foreign' Orientation='Vertical' e:Orientation='Horizontal' />",
+            "<WrapPanel xmlns:a='https://github.com/avaloniaui' a:Orientation='Vertical' />",
+            "<WrapPanel xmlns:e='urn:foreign' e:Orientation='{Binding Direction}' />",
+            "<WrapPanel Orientation='Vertical' WrapPanel.Orientation='Horizontal' />",
+            "<WrapPanel Orientation='Vertical'><WrapPanel.Orientation>Horizontal</WrapPanel.Orientation></WrapPanel>",
+            "<WrapPanel Orientation='Vertical'><Other.Orientation>Horizontal</Other.Orientation></WrapPanel>",
+            "<WrapPanel Orientation='{Binding Direction}' />",
+            "<WrapPanel Orientation='{Binding Broken' />",
+        })
+        {
+            AxamlPreviewNode node = service.Parse(markup);
+            AxamlPreviewControl preview = new() { PreviewNode = node };
+            Grid wrapper = (Grid)preview.GetLogicalDescendants().OfType<Border>()
+                .Single(border => ReferenceEquals(border.Tag, node)).Child!;
+            Assert.AreEqual(Orientation.Horizontal, ((WrapPanel)wrapper.Children[0]).Orientation, markup);
+            Assert.IsFalse(service.CanEditProperty(node, "Orientation"), markup);
+            AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(node, "Orientation");
+            Assert.IsTrue(descriptor.IsReadOnly, markup);
+            if (node.HasUnsafeWrapPanelOrientationSource)
+            {
+                Assert.AreEqual(string.Empty, descriptor.Value, markup);
+                Assert.IsFalse(node.RenderProperties.ContainsKey("Orientation"), markup);
+            }
+            Assert.ThrowsExactly<InvalidOperationException>(
+                () => service.UpdateAttribute(markup, node, "Orientation", "Horizontal"), markup);
+        }
+    }
+
+    [TestMethod]
+    public void WrapPanelOrientation_RecoveryPreviewRetainsAmbiguityProtection()
+    {
+        const string markup = "<StackPanel xmlns='https://github.com/avaloniaui' xmlns:e='urn:foreign'>"
+            + "<WrapPanel Orientation='Vertical' e:Orientation='Horizontal' /><Button Content=broken /></StackPanel>";
+        AxamlPreviewNode root = new AxamlPreviewService().ParseForPreview(markup).Root!;
+        Assert.IsTrue(root.IsRecoveryRoot);
+        AxamlPreviewNode node = root.Children.Single(child => child.TypeName == "WrapPanel");
+        Assert.IsTrue(node.HasUnsafeWrapPanelOrientationSource);
+        AxamlPreviewControl preview = new() { PreviewNode = root };
+        Assert.AreEqual(Orientation.Horizontal, preview.GetLogicalDescendants().OfType<WrapPanel>().Single().Orientation);
+    }
+
+    [TestMethod]
+    public void WrapPanelOrientation_InspectorAndPreviewUseNativeDefaultAndRejectInvalidLiterals()
+    {
+        AxamlPreviewService service = new();
+        Orientation nativeDefault = new WrapPanel().Orientation;
+        Assert.AreEqual(Orientation.Horizontal, nativeDefault);
+        foreach ((string markup, Orientation expected) in new[]
+        {
+            ("<WrapPanel />", nativeDefault),
+            ("<WrapPanel Orientation='Vertical' />", Orientation.Vertical),
+            ("<WrapPanel Orientation='1' />", nativeDefault),
+            ("<WrapPanel Orientation='99' />", nativeDefault),
+            ("<WrapPanel Orientation='Diagonal' />", nativeDefault),
+        })
+        {
+            AxamlPreviewNode node = service.Parse(markup);
+            AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(node, "Orientation");
+            if (!node.Properties.ContainsKey("Orientation"))
+            {
+                Assert.AreEqual(nativeDefault.ToString(), descriptor.Value);
+            }
+            else if (node.Properties["Orientation"] is "1" or "99" or "Diagonal")
+            {
+                Assert.IsNotNull(descriptor.ValidationError, markup);
+            }
+
+            AxamlPreviewControl preview = new() { PreviewNode = node };
+            Grid wrapper = (Grid)preview.GetLogicalDescendants().OfType<Border>()
+                .Single(border => ReferenceEquals(border.Tag, node)).Child!;
+            Assert.AreEqual(expected, ((WrapPanel)wrapper.Children[0]).Orientation, markup);
+        }
+    }
+
     [TestMethod]
     public void TextAlignment_PreviewIgnoresAmbiguousSources()
     {

@@ -1884,6 +1884,75 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task WrapPanelOrientation_AmbiguousSourcesRemainUnchangedDuringOtherEdits()
+    {
+        foreach (string markup in new[]
+        {
+            "<WrapPanel xmlns:a='https://github.com/avaloniaui' a:Orientation='Vertical' />",
+            "<WrapPanel xmlns:e='urn:foreign' e:Orientation='{Binding Direction}' />",
+            "<WrapPanel xmlns:e='urn:foreign' Orientation='Vertical' e:Orientation='Horizontal' />",
+            "<WrapPanel Orientation='Vertical' WrapPanel.Orientation='Horizontal' />",
+            "<WrapPanel Orientation='Vertical'><WrapPanel.Orientation>Horizontal</WrapPanel.Orientation></WrapPanel>",
+            "<WrapPanel Orientation='Vertical'><Other.Orientation>Horizontal</Other.Orientation></WrapPanel>",
+            "<WrapPanel Orientation='{Binding Direction}' />",
+        })
+        {
+            AxamlDesignerViewModel viewModel = new();
+            string? published = null;
+            viewModel.MarkupChanged += (_, args) => published = args.Markup;
+            viewModel.LoadMarkup(markup);
+            viewModel.SelectedNode = viewModel.PreviewRoot;
+            Assert.IsTrue(viewModel.PropertyProvider.Properties.Any(row => row.Name == "Orientation"), markup);
+            var orientation = viewModel.PropertyProvider.Properties.Single(row => row.Name == "Orientation");
+            Assert.IsFalse(orientation.IsEditable, markup);
+            Assert.IsFalse(orientation.TrySetValue("Horizontal"), markup);
+            Assert.ThrowsExactly<InvalidOperationException>(() => viewModel.PropertyProvider.ApplyAsync(), markup);
+            Assert.IsNull(published, markup);
+            await viewModel.PropertyProvider.DiscardAsync();
+
+            var spacing = viewModel.PropertyProvider.Properties.Single(row => row.Name == "ItemSpacing");
+            Assert.IsTrue(spacing.TrySetValue("4"), markup);
+            await viewModel.PropertyProvider.ApplyAsync();
+            string edited = published!;
+            Assert.IsNotNull(edited, markup);
+            Assert.AreEqual(
+                markup.Replace(" />", "/>", StringComparison.Ordinal),
+                edited.Replace(" ItemSpacing=\"4\"", string.Empty, StringComparison.Ordinal)
+                    .Replace(" />", "/>", StringComparison.Ordinal));
+            viewModel.UndoCommand.Execute(null);
+            Assert.AreEqual(markup, published);
+            viewModel.RedoCommand.Execute(null);
+            Assert.AreEqual(edited, published);
+            viewModel.UndoCommand.Execute(null);
+            Assert.AreEqual(markup, published);
+        }
+    }
+
+    [TestMethod]
+    public async Task WrapPanelOrientation_DefaultAndEditSupportUndoRedo()
+    {
+        const string markup = "<WrapPanel xmlns='https://github.com/avaloniaui' />";
+        AxamlDesignerViewModel viewModel = new();
+        string? published = null;
+        viewModel.MarkupChanged += (_, args) => published = args.Markup;
+        viewModel.LoadMarkup(markup);
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        var orientation = viewModel.PropertyProvider.Properties.Single(row => row.Name == "Orientation");
+        Assert.AreEqual("Horizontal", AxamlPropertyValueValidator.Describe(viewModel.PreviewRoot!, "Orientation").Value);
+        Assert.IsFalse(orientation.TrySetValue("99"));
+        Assert.IsTrue(orientation.TrySetValue("Vertical"));
+        await viewModel.PropertyProvider.ApplyAsync();
+        string edited = published!;
+        Assert.AreEqual("Vertical", viewModel.PreviewRoot!.Properties["Orientation"]);
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(markup, published);
+        Assert.AreEqual("Horizontal", AxamlPropertyValueValidator.Describe(viewModel.PreviewRoot!, "Orientation").Value);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual(edited, published);
+        Assert.AreEqual("Vertical", viewModel.PreviewRoot!.Properties["Orientation"]);
+    }
+
+    [TestMethod]
     public async Task WrapPanelLayoutOptions_AreEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();

@@ -12,10 +12,14 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class DotNetProjectRuntimeBuilderTests
 {
     [TestMethod]
+    [DataRow(false)]
+#if NET10_0
+    [DataRow(true)]
+#endif
     [TestCategory("Integration")]
-    public async Task BuildAsync_RefreshesRuntimeMetadataAfterAddingProjectReference()
+    public async Task BuildAsync_RefreshesRuntimeMetadataAfterAddingProjectReference(bool useHostRefresh)
     {
-        string root = Path.Combine(Path.GetTempPath(), $"AA98_RuntimeBuilder_{Guid.NewGuid():N}");
+        string root = Path.Combine(AppContext.BaseDirectory, $"AA98_RuntimeBuilder_{Guid.NewGuid():N}");
         string appDirectory = Path.Combine(root, "App");
         string libraryDirectory = Path.Combine(root, "Library");
         Directory.CreateDirectory(appDirectory);
@@ -63,7 +67,7 @@ public sealed class DotNetProjectRuntimeBuilderTests
                 namespace Library;
                 public static class LibraryMarker
                 {
-                    public const string Value = "dependency-loaded";
+                    public static string Value() => "dependency-loaded";
                 }
                 """);
             File.WriteAllText(
@@ -81,16 +85,38 @@ public sealed class DotNetProjectRuntimeBuilderTests
                   </ItemGroup>
                 </Project>
                 """);
-            File.WriteAllText(Path.Combine(appDirectory, "Program.cs"), "Console.WriteLine(Library.LibraryMarker.Value);");
+            File.WriteAllText(Path.Combine(appDirectory, "Program.cs"), "Console.WriteLine(Library.LibraryMarker.Value());");
             await RunDotNetAsync(appDirectory, "restore", "App.csproj");
             Assert.IsFalse(File.ReadAllText(depsPath).Contains("Library.dll", StringComparison.Ordinal));
 
-            await new DotNetProjectRuntimeBuilder().BuildAsync(new BuilderBuildRequest
+#if NET10_0
+            await RunDotNetAsync(libraryDirectory, "build", "Library.csproj", "--no-restore", "--configuration", "Debug");
+            string hostPath = Path.Combine(AppContext.BaseDirectory, "AA98.Builder.Host.dll");
+            if (!useHostRefresh)
             {
-                ProjectPath = appProjectPath,
-                Configuration = "Debug",
-                TargetFramework = targetFramework,
-            });
+                string hostOutput = await RunDotNetAsync(appDirectory, hostPath, "build", appProjectPath, "--configuration", "Debug", "--framework", targetFramework);
+                StringAssert.Contains(hostOutput, "succeeded=True");
+            }
+#endif
+
+#if NET10_0
+            if (useHostRefresh)
+            {
+                string refreshOutput = await RunDotNetAsync(
+                    appDirectory, hostPath, "build", appProjectPath, "--configuration", "Debug",
+                    "--framework", targetFramework, "--refresh-runtime");
+                StringAssert.Contains(refreshOutput, "runtimeRefresh=Succeeded");
+            }
+            else
+#endif
+            {
+                await new DotNetProjectRuntimeBuilder().BuildAsync(new BuilderBuildRequest
+                {
+                    ProjectPath = appProjectPath,
+                    Configuration = "Debug",
+                    TargetFramework = targetFramework,
+                });
+            }
 
             StringAssert.Contains(File.ReadAllText(depsPath), "Library.dll");
             string output = await RunDotNetAsync(appDirectory, Path.Combine(appOutputDirectory, "App.dll"));
