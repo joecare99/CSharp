@@ -1484,6 +1484,10 @@ public partial class AxamlDesignerViewModel : ObservableObject
         {
             propertyNames.Add("Orientation");
         }
+        if (node.HasUnsafeTextTrimmingSource)
+        {
+            propertyNames.Add("TextTrimming");
+        }
         if (AxamlControlCatalog.TryGet(node.TypeName, out AxamlControlCapability capability))
         {
             propertyNames.UnionWith(_session.EditableProperties);

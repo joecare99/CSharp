@@ -1604,7 +1604,9 @@ public sealed class AxamlPreviewControl : ContentControl
             FontWeight = HasValidLiteralValue(node, "FontWeight") ? ParseFontWeight(node) : FontWeight.Normal,
             LineHeight = HasValidLiteralValue(node, "LineHeight") ? ParseLineHeight(node) : double.NaN,
             MaxLines = HasValidLiteralValue(node, "MaxLines") ? ParseInt(node, "MaxLines") : 0,
-            TextTrimming = HasValidLiteralValue(node, "TextTrimming") ? ParseTextTrimming(node) : TextTrimming.None,
+            TextTrimming = !node.HasUnsafeTextTrimmingSource && HasValidLiteralValue(node, "TextTrimming")
+                ? ParseTextTrimming(node)
+                : TextTrimming.None,
             TextWrapping = !node.HasUnsafeTextWrappingSource && HasValidLiteralValue(node, "TextWrapping")
                 ? ParseTextWrapping(node, TextWrapping.NoWrap)
                 : TextWrapping.NoWrap,
