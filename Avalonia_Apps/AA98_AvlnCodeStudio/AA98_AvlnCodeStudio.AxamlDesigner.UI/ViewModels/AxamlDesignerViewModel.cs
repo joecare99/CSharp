@@ -1480,7 +1480,7 @@ public partial class AxamlDesignerViewModel : ObservableObject
         }
 
         HashSet<string> propertyNames = new(node.Properties.Keys, StringComparer.Ordinal);
-        if (node.HasUnsafeWrapPanelOrientationSource)
+        if (node.HasUnsafeOrientationSource)
         {
             propertyNames.Add("Orientation");
         }
