@@ -23,6 +23,16 @@ real provider reload failure, then checks the displayed error, blocked Apply,
 retry, preservation and application of the unrelated draft, and a failed
 window-close discard followed by recovery.
 
+It also opens the actual shared Config dialog with in-memory fake layer stores:
+Apply and OK cancel after a confirmed write, Cancel and window-close cancel
+during discard, and a draft-reset cancellation is awaited directly (the shared
+dialog hides section actions). It then enables the actual `ConfigUiView`
+section actions and invokes Load, Reset and Save through their buttons while
+fake stores are suspended; it cancels the in-flight operation and checks the
+visible status, recovery and retry. It also checks direct `ExecuteAsync`
+propagation, shared and independent drafts, and cancellation of retry. These
+scenarios use no real credentials or configuration stores.
+
 Interaction is programmatic, including an Avalonia automation invocation for
 the recovery and dialog buttons. This is not a physical keyboard, screen-reader
 or accessibility acceptance test.

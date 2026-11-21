@@ -25,7 +25,7 @@ using Config.UI.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Property.Editor;
 
-internal static class Program
+internal static partial class Program
 {
     private static string s_root = null!;
 
@@ -186,6 +186,7 @@ internal static class Program
             Click(dialog, "Cancel");
             await showing.WaitAsync(TimeSpan.FromSeconds(30));
             await VerifyReloadRecoveryAsync(workbench, desktop, projectPath);
+            await VerifyLayeredCancellationAsync(desktop.MainWindow!);
             await VerifyReviewModesAsync(desktop.MainWindow!);
             Console.WriteLine("Project settings: single apply, undo/redo, decline, cancellation, conflict and context changes verified.");
             Console.WriteLine("Project settings: independent reload failure, retry, apply and failed close verified.");
