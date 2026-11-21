@@ -140,6 +140,12 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
             await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
             State = ConfigUiSectionState.Ready;
         }
+        catch (OperationCanceledException)
+        {
+            State = ConfigUiSectionState.Failed;
+            ErrorMessage = "Loading the section was cancelled; the draft may have changed.";
+            throw;
+        }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
             SetFailed(Unwrap(exception));
@@ -172,6 +178,14 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
             await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
             State = ConfigUiSectionState.Ready;
         }
+        catch (OperationCanceledException exception)
+        {
+            State = ConfigUiSectionState.Failed;
+            ErrorMessage = saved
+                ? $"Settings were saved, but refreshing the section was cancelled: {exception.Message}"
+                : "Saving was cancelled; settings may already have been saved.";
+            throw;
+        }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
             SetFailed(Unwrap(exception), saved);
@@ -191,14 +205,26 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
         State = ConfigUiSectionState.Resetting;
         ErrorMessage = null;
         bool saved = false;
+        bool saveAttempted = false;
         try
         {
             await _draftSession.LoadAsync(cancellationToken).ConfigureAwait(false);
             await RemoveEditableSectionOverridesAsync(cancellationToken).ConfigureAwait(false);
+            saveAttempted = true;
             await _draftSession.SaveAsync(cancellationToken).ConfigureAwait(false);
             saved = true;
             await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
             State = ConfigUiSectionState.Ready;
+        }
+        catch (OperationCanceledException)
+        {
+            State = ConfigUiSectionState.Failed;
+            ErrorMessage = saved
+                ? "The reset was saved, but refreshing the section was cancelled."
+                : saveAttempted
+                    ? "The reset was cancelled; settings may already have been saved and the draft may have changed."
+                    : "The reset was cancelled before saving; the draft may have changed.";
+            throw;
         }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
@@ -225,6 +251,12 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
             await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
             State = ConfigUiSectionState.Ready;
         }
+        catch (OperationCanceledException)
+        {
+            State = ConfigUiSectionState.Failed;
+            ErrorMessage = "The draft reset was cancelled; the draft may have changed.";
+            throw;
+        }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
             SetFailed(Unwrap(exception));
@@ -247,6 +279,12 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
             await _draftSession.ReloadAsync(cancellationToken).ConfigureAwait(false);
             await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
             State = ConfigUiSectionState.Ready;
+        }
+        catch (OperationCanceledException)
+        {
+            State = ConfigUiSectionState.Failed;
+            ErrorMessage = "Reloading the shared draft was cancelled; it may already have been replaced.";
+            throw;
         }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
