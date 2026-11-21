@@ -1709,7 +1709,9 @@ public sealed class AxamlPreviewControl : ContentControl
     {
         WrapPanel panel = new()
         {
-            Orientation = Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation orientation)
+            Orientation = !node.HasUnsafeWrapPanelOrientationSource
+                && HasValidLiteralValue(node, "Orientation")
+                && Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation orientation)
                 ? orientation
                 : Orientation.Horizontal,
             ItemHeight = ParseOptionalSizeConstraint(node, "ItemHeight") ?? double.NaN,
