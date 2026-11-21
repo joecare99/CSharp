@@ -11,16 +11,19 @@ them or changing the shared Roslyn workspace. Conflicting open buffer paths are
 omitted. A unique closest workspace project containing the active document must
 be available. Ambiguous or unlisted documents return no result.
 Unsaved buffers from referenced projects are included only when MSBuild loads
-those projects into the selected project's transitive project-reference graph
-and each source path identifies one document in that graph. Linked or duplicate
-source paths and projects outside that graph are not overlaid.
+those projects into the selected project's transitive project-reference graph.
+When a path occurs in multiple documents there, including linked files, the
+same unsaved text is applied to each document while retaining its project
+context. Projects outside that graph are not overlaid. Path comparison follows
+the platform's path identity rules.
 Language operations share one immutable snapshot for the active project and
 target framework. In the Project workflow, select and inspect a target framework
 to use it for language services; a multi-target project without an explicit
 selection is rejected rather than silently analyzed against a default target.
 Single-target projects retain their existing behavior. Project loading uses
 MSBuild and should only be used with trusted projects. Hover is mouse-only; the
-caret command remains available to keyboard users.
+caret command remains available to keyboard users. A canceled quick-info
+request throws even if project ownership is unknown or ambiguous.
 
 After project metadata changes, call `RefreshProjectContextAsync` with the
 changed project path. It drops cached contexts for that project and loaded
