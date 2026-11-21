@@ -254,7 +254,15 @@ public sealed partial class ConfigUiViewModel : ObservableObject
                 return;
             }
 
-            await section.SaveAsync();
+            try
+            {
+                await section.SaveAsync();
+            }
+            catch (OperationCanceledException)
+            {
+                OperationMessage = SaveCancellationMessage(section);
+                throw;
+            }
             if (section.State == ConfigUiSectionState.Ready)
             {
                 _sectionsWithUnsavedChanges.Remove(section);
@@ -389,6 +397,15 @@ public sealed partial class ConfigUiViewModel : ObservableObject
                 try
                 {
                     await section.SaveAsync();
+                }
+                catch (OperationCanceledException)
+                {
+                    OperationMessage = SaveCancellationMessage(section);
+                    if (savedSections.Count > 0)
+                    {
+                        OperationMessage += $"{Environment.NewLine}Sections confirmed saved and refreshed: {string.Join(", ", savedSections)}.";
+                    }
+                    throw;
                 }
                 catch (Exception exception) when (exception is not OperationCanceledException)
                 {
@@ -781,6 +798,10 @@ public sealed partial class ConfigUiViewModel : ObservableObject
             return $"Validation failed: {exception.Message}";
         }
     }
+
+    private static string SaveCancellationMessage(IConfigUiSection section) =>
+        $"{section.Section.DisplayName}: Saving was cancelled; settings may already have been saved. Runtime activation was not attempted."
+        + (string.IsNullOrWhiteSpace(section.ErrorMessage) ? string.Empty : $"{Environment.NewLine}{section.ErrorMessage}");
 
     private void DisplaySection(IConfigUiSection section)
     {
