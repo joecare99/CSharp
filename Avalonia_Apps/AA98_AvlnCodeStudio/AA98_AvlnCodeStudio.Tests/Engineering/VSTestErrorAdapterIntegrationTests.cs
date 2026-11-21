@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using AA98_AvlnCodeStudio.Base.Testing.Models;
 using AA98_AvlnCodeStudio.Base.Testing.Services;
@@ -76,6 +77,22 @@ public sealed class VSTestErrorAdapterIntegrationTests
             Assert.AreEqual(TestRunOutcome.Passed, passed.Outcome);
             StringAssert.Contains(await File.ReadAllTextAsync(trace), "run-result");
 
+            string depsPath = Path.ChangeExtension(assembly, ".deps.json");
+            JsonNode deps = JsonNode.Parse(await File.ReadAllTextAsync(depsPath))!;
+            string targetName = deps["runtimeTarget"]!["name"]!.GetValue<string>();
+            deps["targets"]![targetName]!["Microsoft.Testing.Platform/1.0"] = JsonNode.Parse(
+                """{"runtimeTargets":{"runtimes/other/lib/net10.0/Microsoft.Testing.Platform.dll":{"assetType":"runtime","rid":"other"}}}""");
+            await File.WriteAllTextAsync(depsPath, deps.ToJsonString());
+            await File.WriteAllTextAsync(mode, "empty");
+            TestDiscoveryResult empty = await service.DiscoverAsync(assembly, output);
+            Assert.AreEqual(0, empty.Cases.Count);
+            Assert.IsTrue(empty.Warnings.Any(warning => warning.Contains(
+                "possible RID-specific Microsoft.Testing.Platform runtime asset", StringComparison.Ordinal)));
+            await File.WriteAllTextAsync(mode, "normal");
+            discovery = await service.DiscoverAsync(assembly, output);
+            Assert.IsTrue(discovery.Cases.Any(test => test.FullyQualifiedName == "Controlled.Example"));
+            Assert.IsFalse(discovery.Warnings.Any(warning => warning.Contains("possible RID-specific", StringComparison.Ordinal)));
+
             await File.WriteAllTextAsync(trace, "");
             await File.WriteAllTextAsync(mode, "discovery-error");
             InvalidOperationException discoveryError = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
@@ -135,6 +152,8 @@ public sealed class VSTestErrorAdapterIntegrationTests
             {
                 foreach (string source in sources)
                 {
+                    if (File.ReadAllText(Path.Combine(Path.GetDirectoryName(source), "mode.txt")) == "empty")
+                        continue;
                     sink.SendTestCase(new TestCase("Controlled.Example", new Uri("executor://controlled/v1"), source));
                     File.AppendAllText(Path.Combine(Path.GetDirectoryName(source), "trace.txt"), "discovered\n");
                     if (File.ReadAllText(Path.Combine(Path.GetDirectoryName(source), "mode.txt")) == "discovery-error")

@@ -379,7 +379,9 @@ public sealed class AxamlPreviewControl : ContentControl
                     && Enum.IsDefined(tickPlacement)
                         ? tickPlacement
                         : TickPlacement.None,
-                Orientation = Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation sliderOrientation)
+                Orientation = !node.HasUnsafeOrientationSource
+                    && HasValidLiteralValue(node, "Orientation")
+                    && Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation sliderOrientation)
                     ? sliderOrientation
                     : Orientation.Horizontal,
                 IsEnabled = false,
@@ -879,7 +881,9 @@ public sealed class AxamlPreviewControl : ContentControl
             Value = ParseDouble(node, "Value", 50),
             IsIndeterminate = ParseBoolean(node, "IsIndeterminate") ?? false,
             ShowProgressText = ParseBoolean(node, "ShowProgressText") ?? false,
-            Orientation = Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation progressOrientation)
+            Orientation = !node.HasUnsafeOrientationSource
+                && HasValidLiteralValue(node, "Orientation")
+                && Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation progressOrientation)
                 ? progressOrientation
                 : Orientation.Horizontal,
             IsEnabled = false,
@@ -1692,7 +1696,9 @@ public sealed class AxamlPreviewControl : ContentControl
     {
         StackPanel panel = new()
         {
-            Orientation = Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation orientation)
+            Orientation = !node.HasUnsafeOrientationSource
+                && HasValidLiteralValue(node, "Orientation")
+                && Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation orientation)
                 ? orientation
                 : Orientation.Vertical,
             Spacing = ParseOptionalSizeConstraint(node, "Spacing") ?? 0,
@@ -1709,7 +1715,9 @@ public sealed class AxamlPreviewControl : ContentControl
     {
         WrapPanel panel = new()
         {
-            Orientation = Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation orientation)
+            Orientation = !node.HasUnsafeOrientationSource
+                && HasValidLiteralValue(node, "Orientation")
+                && Enum.TryParse(GetProperty(node, "Orientation"), ignoreCase: true, out Orientation orientation)
                 ? orientation
                 : Orientation.Horizontal,
             ItemHeight = ParseOptionalSizeConstraint(node, "ItemHeight") ?? double.NaN,

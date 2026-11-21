@@ -71,10 +71,11 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
             assemblyPath, projectDirectory, cancellationToken).ConfigureAwait(false);
         if (adapters.Length == 0)
         {
-            if (await ReferencesTestingPlatformAsync(assemblyPath, cancellationToken).ConfigureAwait(false))
+            PlatformAsset asset = await FindTestingPlatformAssetAsync(assemblyPath, cancellationToken).ConfigureAwait(false);
+            if (asset != PlatformAsset.None)
             {
                 throw new InvalidOperationException(
-                    "No VSTest adapter was found, and the dependency metadata includes a Microsoft.Testing.Platform runtime asset. "
+                    "No VSTest adapter was found, and " + DescribePlatformAsset(asset)
                     + "Microsoft.Testing.Platform-only projects are not supported by this VSTest service. "
                     + "Run the project with its Microsoft.Testing.Platform runner, or configure a VSTest adapter "
                     + "for a VSTest-compatible project.");
@@ -94,8 +95,13 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (discovery.Cases.Count != 0
-            || !await ReferencesTestingPlatformAsync(assemblyPath, cancellationToken).ConfigureAwait(false))
+        if (discovery.Cases.Count != 0)
+        {
+            return discovery;
+        }
+
+        PlatformAsset asset = await FindTestingPlatformAssetAsync(assemblyPath, cancellationToken).ConfigureAwait(false);
+        if (asset == PlatformAsset.None)
         {
             return discovery;
         }
@@ -103,14 +109,30 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
         return discovery with
         {
             Warnings = discovery.Warnings.Append(
-                "VSTest discovered no tests, and the dependency metadata includes a Microsoft.Testing.Platform runtime asset. "
+                "VSTest discovered no tests, and " + DescribePlatformAsset(asset)
                 + "Microsoft.Testing.Platform-only projects are not supported by this VSTest service. "
                 + "If this project uses Microsoft.Testing.Platform, run it with its own runner; "
                 + "otherwise check that the correct VSTest adapter is configured.").ToArray(),
         };
     }
 
-    private static async Task<bool> ReferencesTestingPlatformAsync(string assemblyPath, CancellationToken cancellationToken)
+    private enum PlatformAsset
+    {
+        None,
+        RuntimeTarget,
+        Runtime,
+    }
+
+    private static string DescribePlatformAsset(PlatformAsset asset) => asset == PlatformAsset.Runtime
+        ? "the dependency metadata includes a Microsoft.Testing.Platform runtime asset. "
+        : "the dependency metadata lists a possible RID-specific Microsoft.Testing.Platform runtime asset; "
+            + "its compatibility and selection are unknown. ";
+
+    private static bool IsPlatformDll(string path) =>
+        path.Equals("Microsoft.Testing.Platform.dll", StringComparison.OrdinalIgnoreCase)
+        || path.EndsWith("/Microsoft.Testing.Platform.dll", StringComparison.OrdinalIgnoreCase);
+
+    private static async Task<PlatformAsset> FindTestingPlatformAssetAsync(string assemblyPath, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         string depsPath = Path.ChangeExtension(assemblyPath, ".deps.json");
@@ -120,7 +142,7 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
             if (stream.Length > 16 * 1024 * 1024)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                return false;
+                return PlatformAsset.None;
             }
 
             using JsonDocument document = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken)
@@ -136,27 +158,51 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
                 || !targets.TryGetProperty(name.GetString()!, out JsonElement target)
                 || target.ValueKind != JsonValueKind.Object)
             {
-                return false;
+                return PlatformAsset.None;
             }
 
+            PlatformAsset result = PlatformAsset.None;
             foreach (JsonProperty library in target.EnumerateObject())
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 if (!library.Name.StartsWith("Microsoft.Testing.Platform/", StringComparison.OrdinalIgnoreCase)
-                    || library.Value.ValueKind != JsonValueKind.Object
-                    || !library.Value.TryGetProperty("runtime", out JsonElement runtime)
-                    || runtime.ValueKind != JsonValueKind.Object)
+                    || library.Value.ValueKind != JsonValueKind.Object)
                 {
                     continue;
                 }
 
-                if (runtime.EnumerateObject().Any(static asset =>
-                    asset.Name.Equals("Microsoft.Testing.Platform.dll", StringComparison.OrdinalIgnoreCase)
-                    || asset.Name.EndsWith("/Microsoft.Testing.Platform.dll", StringComparison.OrdinalIgnoreCase)))
+                if (library.Value.TryGetProperty("runtime", out JsonElement runtime)
+                    && runtime.ValueKind == JsonValueKind.Object
+                    && runtime.EnumerateObject().Any(static asset => IsPlatformDll(asset.Name)))
                 {
-                    return true;
+                    return PlatformAsset.Runtime;
+                }
+
+                if (!library.Value.TryGetProperty("runtimeTargets", out JsonElement runtimeTargets)
+                    || runtimeTargets.ValueKind != JsonValueKind.Object)
+                {
+                    continue;
+                }
+
+                foreach (JsonProperty asset in runtimeTargets.EnumerateObject())
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (IsPlatformDll(asset.Name)
+                        && asset.Value.ValueKind == JsonValueKind.Object
+                        && asset.Value.TryGetProperty("assetType", out JsonElement assetType)
+                        && assetType.ValueKind == JsonValueKind.String
+                        && string.Equals(assetType.GetString(), "runtime", StringComparison.OrdinalIgnoreCase)
+                        && asset.Value.TryGetProperty("rid", out JsonElement rid)
+                        && rid.ValueKind == JsonValueKind.String
+                        && !string.IsNullOrWhiteSpace(rid.GetString()))
+                    {
+                        result = PlatformAsset.RuntimeTarget;
+                    }
                 }
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            return result;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or JsonException)
         {
@@ -164,6 +210,6 @@ public sealed class DotNetTestDiscoveryService : ITestDiscoveryService, ITestCas
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        return false;
+        return PlatformAsset.None;
     }
 }

@@ -8,6 +8,9 @@ offered for review.
 
 Explicit binding sources, complex paths, and bindings in nested DataContext, x:DataType, or
 template scopes are rejected rather than assigned to the root ViewModel.
+This includes DataContext declared as a property element: its owning control and
+its descendants are a nested scope, not only the property element itself.
+Binding-free nested scopes remain untouched.
 Unsupported controls and non-binding markup are not planned. Creating a new
 root ViewModel refuses existing expressions of all three binding kinds to avoid
 redirecting their source; it also refuses named supported controls within a

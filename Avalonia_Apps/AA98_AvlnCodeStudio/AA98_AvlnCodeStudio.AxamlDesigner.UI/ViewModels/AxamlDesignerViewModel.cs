@@ -1480,6 +1480,10 @@ public partial class AxamlDesignerViewModel : ObservableObject
         }
 
         HashSet<string> propertyNames = new(node.Properties.Keys, StringComparer.Ordinal);
+        if (node.HasUnsafeOrientationSource)
+        {
+            propertyNames.Add("Orientation");
+        }
         if (AxamlControlCatalog.TryGet(node.TypeName, out AxamlControlCapability capability))
         {
             propertyNames.UnionWith(_session.EditableProperties);

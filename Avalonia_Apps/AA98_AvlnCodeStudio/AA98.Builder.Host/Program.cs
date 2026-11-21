@@ -31,7 +31,8 @@ public static class Program
         ICodeStudioBuilderService? builderService = null,
         TextWriter? standardOutput = null,
         TextWriter? standardError = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IProjectRuntimeBuilder? runtimeBuilder = null)
     {
         ArgumentNullException.ThrowIfNull(args);
 
@@ -46,8 +47,25 @@ public static class Program
 
         string command = args[0];
         string projectPath = args[1];
-        string? configuration = GetOptionValue(args, "--configuration");
-        string? targetFramework = GetOptionValue(args, "--framework");
+        if (!string.Equals(command, "inspect", StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(command, "build", StringComparison.OrdinalIgnoreCase))
+        {
+            standardError.WriteLine($"Unknown command: {command}");
+            WriteUsage(standardOutput);
+            return 2;
+        }
+
+        if (!TryParseOptions(args, out string? configuration, out string? targetFramework, out bool refreshRuntime, out string? parseError))
+        {
+            standardError.WriteLine(parseError);
+            return 2;
+        }
+
+        if (refreshRuntime && string.Equals(command, "inspect", StringComparison.OrdinalIgnoreCase))
+        {
+            standardError.WriteLine("--refresh-runtime is only valid for build.");
+            return 2;
+        }
 
         using ServiceProvider? serviceProvider = builderService is null
             ? new ServiceCollection()
@@ -74,13 +92,25 @@ public static class Program
 
             if (string.Equals(command, "build", StringComparison.OrdinalIgnoreCase))
             {
-                BuilderBuildResult result = await builderService.BuildProjectAsync(new BuilderBuildRequest
+                BuilderBuildRequest request = new()
                 {
                     ProjectPath = projectPath,
                     Configuration = configuration,
                     TargetFramework = targetFramework,
-                }, cancellationToken).ConfigureAwait(false);
+                };
+                BuilderBuildResult result = await builderService.BuildProjectAsync(request, cancellationToken).ConfigureAwait(false);
+                if (result.Succeeded && refreshRuntime)
+                {
+                    await (runtimeBuilder ?? new DotNetProjectRuntimeBuilder())
+                        .BuildAsync(request, cancellationToken).ConfigureAwait(false);
+                }
+
                 WriteBuildResult(standardOutput, result);
+                if (result.Succeeded && refreshRuntime)
+                {
+                    standardOutput.WriteLine("runtimeRefresh=Succeeded");
+                }
+
                 return result.Succeeded ? 0 : 1;
             }
 
@@ -102,7 +132,11 @@ public static class Program
         standardOutput.WriteLine("AA98 Builder Host");
         standardOutput.WriteLine("Usage:");
         standardOutput.WriteLine("  AA98.Builder.Host inspect <project.csproj> [--configuration Debug] [--framework net10.0]");
-        standardOutput.WriteLine("  AA98.Builder.Host build <project.csproj> [--configuration Debug] [--framework net10.0]");
+        standardOutput.WriteLine("  AA98.Builder.Host build <project.csproj> [--configuration Debug] [--framework net10.0] [--refresh-runtime]");
+        standardOutput.WriteLine("Options may appear once; configuration and framework require a separate non-option value.");
+        standardOutput.WriteLine("Build compiles the project but does not guarantee current runtime metadata.");
+        standardOutput.WriteLine("--refresh-runtime runs dotnet build --no-restore after a successful build, using the same configuration and framework.");
+        standardOutput.WriteLine("Restore dependencies first; SDK builds execute project targets and do not guarantee successful launch.");
     }
 
     private static void WriteInspectionResult(TextWriter standardOutput, BuilderProjectInspectionResult result)
@@ -155,16 +189,70 @@ public static class Program
             || string.Equals(value, "help", StringComparison.OrdinalIgnoreCase);
     }
 
-    private static string? GetOptionValue(IReadOnlyList<string> args, string optionName)
+    private static bool TryParseOptions(
+        IReadOnlyList<string> args,
+        out string? configuration,
+        out string? targetFramework,
+        out bool refreshRuntime,
+        out string? error)
     {
-        for (int index = 2; index < args.Count - 1; index++)
+        configuration = null;
+        targetFramework = null;
+        refreshRuntime = false;
+        error = null;
+
+        if (string.IsNullOrWhiteSpace(args[1]) || args[1].StartsWith("-", StringComparison.Ordinal))
         {
-            if (string.Equals(args[index], optionName, StringComparison.OrdinalIgnoreCase))
+            error = "A project path is required before options.";
+            return false;
+        }
+
+        for (int index = 2; index < args.Count; index++)
+        {
+            string option = args[index];
+            bool isConfiguration = string.Equals(option, "--configuration", StringComparison.OrdinalIgnoreCase);
+            bool isFramework = string.Equals(option, "--framework", StringComparison.OrdinalIgnoreCase);
+            if (isConfiguration || isFramework)
             {
-                return args[index + 1];
+                if ((isConfiguration ? configuration : targetFramework) is not null)
+                {
+                    error = $"Duplicate option: {option}";
+                    return false;
+                }
+
+                if (index + 1 >= args.Count || string.IsNullOrWhiteSpace(args[index + 1])
+                    || args[index + 1].StartsWith("-", StringComparison.Ordinal))
+                {
+                    error = $"Missing value for {option}.";
+                    return false;
+                }
+
+                if (isConfiguration)
+                {
+                    configuration = args[++index];
+                }
+                else
+                {
+                    targetFramework = args[++index];
+                }
+            }
+            else if (string.Equals(option, "--refresh-runtime", StringComparison.OrdinalIgnoreCase))
+            {
+                if (refreshRuntime)
+                {
+                    error = $"Duplicate option: {option}";
+                    return false;
+                }
+
+                refreshRuntime = true;
+            }
+            else
+            {
+                error = $"Unknown option or unexpected argument: {option}";
+                return false;
             }
         }
 
-        return null;
+        return true;
     }
 }

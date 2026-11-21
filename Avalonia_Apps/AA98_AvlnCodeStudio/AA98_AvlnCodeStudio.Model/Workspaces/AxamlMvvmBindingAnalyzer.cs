@@ -110,6 +110,8 @@ public sealed class AxamlMvvmBindingAnalyzer
 
         return element.Attribute(s_xamlNamespace + "DataType") is not null
             || element.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal)
+            || element.Elements().Any(static child =>
+                child.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal))
             || element.Attributes().Any(static attribute =>
                 attribute.Name.LocalName == "DataContext"
                 || attribute.Name.LocalName.EndsWith(".DataContext", StringComparison.Ordinal));

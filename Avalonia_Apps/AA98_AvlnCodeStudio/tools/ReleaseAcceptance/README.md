@@ -9,10 +9,10 @@ not replace keyboard, screen-reader, or other physical accessibility testing.
 
 As of November 11, 2026, Microsoft's support for .NET 8 and .NET 9 ended on
 November 10, 2026. .NET 10 LTS is supported through November 14, 2028. The
-net8.0/net9.0 results below are compatibility evidence only, not a claim that
-those runtimes remain security-supported. The project still targets all three;
-do not remove older targets until the product's compatibility policy is
-explicitly decided.
+net8.0/net9.0 historical results below are not evidence of current runtime
+acceptance or security support. The project still targets all three; do not
+remove older targets until the product's compatibility policy is explicitly
+decided.
 
 See the [official .NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core)
 and [Microsoft lifecycle table](https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-and-net-core).
@@ -126,10 +126,13 @@ not a pass.
   0 failed tests across five test assemblies. A first `--no-restore` attempt
   could not find cached Avalonia 12.1.4 for `AA98.Terminal.Host.Tests`; the
   normal restore-and-test run succeeded.
-- The four multi-target test projects completed on Windows net8.0 and net9.0
-  with 711 passed, 5 skipped, and 0 failed tests per framework.
-- .NET 8 and .NET 9 are end-of-support; their successful test runs demonstrate
-  compatibility only. Confirm the supported-target policy before release.
+- Earlier Windows net8.0/net9.0 runs reported 711 passed and 5 skipped per
+  framework, but those results were not reproduced with the subsequently
+  restored package graph. SDK 11 aborted during VSTest protocol negotiation;
+  SDK 10 timed out. See `findings.md` for the commands and graph details.
+  Current older-target runtime acceptance remains blocked.
+- .NET 8 and .NET 9 are end-of-support. Confirm the supported-target policy
+  before release; a successful compatibility run would not change that status.
 - The isolated WSLg/Linux .NET 10 solution run completed with 745 passed,
   7 skipped, and 0 failed tests across the same five test assemblies. Its
   artifacts were written under a separate `/tmp` root.

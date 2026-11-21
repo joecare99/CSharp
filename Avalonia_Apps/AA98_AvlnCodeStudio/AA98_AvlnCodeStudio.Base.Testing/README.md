@@ -55,7 +55,9 @@ the adapter's `IMessageLogger` and `IFrameworkHandle` reject null, empty and
 whitespace messages with `ArgumentException` before they reach the translation
 layer. The fallback for those messages is therefore covered by direct handler
 tests, not claimed as an adapter-to-translation-layer end-to-end case. This does
-not establish behavior for every adapter or VSTest version.
+not establish behavior for every adapter or VSTest version. The same controlled
+adapter also checks empty and nonempty discovery with a synthetic RID-specific
+MTP entry in the adjacent dependency metadata; it does not execute MTP.
 
 The fixture builds in a unique directory beside the test output's `bin` tree,
 with private output and intermediate paths and without inherited directory build
@@ -63,6 +65,6 @@ props. This avoids redirecting its outputs into the parent host artifact root
 and keeps its Windows paths shorter: a nested fixture with a 268-character
 intermediate DLL path reproduced MSB3030 with the SDK 11 compiler.
 
-The diagnostic reads the adjacent `.deps.json` (up to 16 MiB), selecting only the target named by `runtimeTarget.name`. It recognizes a `Microsoft.Testing.Platform/<version>` library whose `runtime` contains `Microsoft.Testing.Platform.dll` either as a root-level name or as the final path component. A missing adapter then produces an explicit diagnostic; if adapters exist but VSTest discovers no cases, discovery adds a warning with the same guidance. A runtime asset in dependency metadata does not establish a direct assembly reference or prove that a project is MTP-only: VSTest discovery is still attempted when adapters exist, and nonempty results are unchanged.
+The diagnostic reads the adjacent `.deps.json` (up to 16 MiB), selecting only the target named by `runtimeTarget.name`. It recognizes a `Microsoft.Testing.Platform/<version>` library whose `runtime` contains `Microsoft.Testing.Platform.dll` either as a root-level name or as the final path component. It also reports a possible RID-specific asset when `runtimeTargets` contains that DLL with `assetType` set to `runtime` and a nonempty `rid`. It does not resolve RID compatibility or establish whether that asset is selected. A missing adapter then produces an explicit diagnostic; if adapters exist but VSTest discovers no cases, discovery adds a warning with the same guidance. An asset in dependency metadata does not establish a direct assembly reference or prove that a project is MTP-only: VSTest discovery is still attempted when adapters exist, and nonempty results are unchanged.
 
-Missing, unreadable, malformed, oversized or inconclusive metadata leaves existing VSTest behavior unchanged. Dependency-only references and assets under `runtimeTargets` rather than `runtime` are not recognized; the diagnostic cannot detect every MTP-only project. No MTP execution is provided.
+Missing, unreadable, malformed, oversized or inconclusive metadata leaves existing VSTest behavior unchanged. Dependency-only references are not recognized; the diagnostic cannot detect every MTP-only project. No MTP execution is provided.

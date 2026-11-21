@@ -101,6 +101,7 @@ public sealed class AxamlPreviewService
             && node.SourceStartOffset >= 0
             && !(propertyName == "TextWrapping" && node.HasUnsafeTextWrappingSource)
             && !(propertyName == "TextAlignment" && node.HasUnsafeTextAlignmentSource)
+            && !(propertyName == "Orientation" && node.HasUnsafeOrientationSource)
             && (!node.Properties.TryGetValue(propertyName, out string? value)
                 || !IsMarkupExtensionValue(node.TypeName, propertyName, value))
             && !(propertyName == GetEditablePropertyName(node.TypeName) && node.HasInlineText)
@@ -1842,6 +1843,7 @@ public sealed class AxamlPreviewService
             HasTextPropertyElement = node.HasTextPropertyElement,
             HasUnsafeTextWrappingSource = node.HasUnsafeTextWrappingSource,
             HasUnsafeTextAlignmentSource = node.HasUnsafeTextAlignmentSource,
+            HasUnsafeOrientationSource = node.HasUnsafeOrientationSource,
             HasInlineText = node.HasInlineText,
             HasChildElements = node.HasChildElements,
             CanAppendChildren = false,
@@ -2258,6 +2260,15 @@ public sealed class AxamlPreviewService
         {
             previewProperties.Remove("TextAlignment");
         }
+        bool unsafeOrientation = typeName is "StackPanel" or "Slider" or "ProgressBar" or "WrapPanel"
+            && (element.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration
+                    && (attribute.Name.LocalName == "Orientation" || attribute.Name.LocalName.EndsWith(".Orientation", StringComparison.Ordinal))
+                    && (attribute.Name.Namespace != XNamespace.None || attribute.Name.LocalName != "Orientation"))
+                || element.Elements().Any(static child => child.Name.LocalName.EndsWith(".Orientation", StringComparison.Ordinal)));
+        if (unsafeOrientation)
+        {
+            previewProperties.Remove("Orientation");
+        }
         string? text = GetDisplayText(typeName, properties, element);
         if (GetEditablePropertyName(typeName) is string displayProperty
             && properties.TryGetValue(displayProperty, out string? sourceText)
@@ -2291,6 +2302,7 @@ public sealed class AxamlPreviewService
             HasTextPropertyElement = hasTextPropertyElement,
             HasUnsafeTextWrappingSource = unsafeTextWrapping,
             HasUnsafeTextAlignmentSource = unsafeTextAlignment,
+            HasUnsafeOrientationSource = unsafeOrientation,
             HasInlineText = element.Nodes().OfType<XText>().Any(static value => !string.IsNullOrWhiteSpace(value.Value)),
             HasChildElements = element.HasElements,
             CanAppendChildren = canAppendChildren,
