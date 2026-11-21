@@ -171,6 +171,66 @@ public sealed class AxamlMvvmBindingAnalyzerTests
     }
 
     [TestMethod]
+    public void Analyze_RejectsBindingsBesideNestedDataContextPropertyElement()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:vm="using:Sample">
+              <StackPanel>
+                <TextBox Text="{Binding WindowTitle}" />
+                <ContentControl>
+                  <ContentControl.DataContext><vm:ChildViewModel /></ContentControl.DataContext>
+                  <TextBox Text="{Binding ChildName}" />
+                </ContentControl>
+              </StackPanel>
+            </Window>
+            """;
+
+        foreach (string kind in new[] { "Binding", "CompiledBinding", "ReflectionBinding" })
+        {
+            InvalidDataException exception = Assert.ThrowsExactly<InvalidDataException>(() =>
+                new AxamlMvvmBindingAnalyzer().Analyze(markup.Replace("{Binding ChildName}", "{" + kind + " ChildName}")));
+            StringAssert.Contains(exception.Message, "DataContext");
+        }
+    }
+
+    [TestMethod]
+    public void Analyze_RejectsBindingOnNestedDataContextPropertyOwner()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:vm="using:Sample">
+              <TextBox Text="{Binding ChildName}">
+                <TextBox.DataContext><vm:ChildViewModel /></TextBox.DataContext>
+              </TextBox>
+            </Window>
+            """;
+
+        Assert.ThrowsExactly<InvalidDataException>(() =>
+            new AxamlMvvmBindingAnalyzer().Analyze(markup));
+    }
+
+    [TestMethod]
+    public void Analyze_AllowsRootDataContextPropertyAndBindingFreeNestedContext()
+    {
+        const string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:vm="using:Sample">
+              <Window.DataContext><vm:RootViewModel /></Window.DataContext>
+              <StackPanel>
+                <TextBox Text="{Binding WindowTitle}" />
+                <ContentControl>
+                  <ContentControl.DataContext><vm:ChildViewModel /></ContentControl.DataContext>
+                  <TextBox Text="literal" />
+                </ContentControl>
+              </StackPanel>
+            </Window>
+            """;
+
+        Assert.AreEqual("WindowTitle", new AxamlMvvmBindingAnalyzer().Analyze(markup).Single().Name);
+    }
+
+    [TestMethod]
     public void Analyze_RejectsBindingsWithExplicitSource()
     {
         const string markup = """

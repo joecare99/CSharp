@@ -198,8 +198,6 @@ public sealed class DotNetTestExecutionServiceTests
                 """{"runtimeTarget":{"name":"active"},"targets":{"other":{"Microsoft.Testing.Platform/1.0":{"runtime":{"lib/Microsoft.Testing.Platform.dll":{}}}},"active":{}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"other":{"Microsoft.Testing.Platform/1.0":{"runtime":{"Microsoft.Testing.Platform.dll":{}}}},"active":{}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"dependencies":{}}}}}""",
-                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"runtimes/win/lib/Microsoft.Testing.Platform.dll":{"assetType":"runtime","rid":"win"}}}}}}""",
-                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"Microsoft.Testing.Platform.dll":{"assetType":"runtime","rid":"other"}}}}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtime":{"NotMicrosoft.Testing.Platform.dll":{}}}}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform.Extensions/1.0":{"runtime":{"lib/Microsoft.Testing.Platform.dll":{}}}}}}""",
                 """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"resources":{"lib/Microsoft.Testing.Platform.dll":{}}}}}}""",
@@ -217,6 +215,78 @@ public sealed class DotNetTestExecutionServiceTests
                 error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => service.DiscoverAsync(assembly, root));
                 Assert.AreEqual("No VSTest adapter was found beside the built test assembly.", error.Message);
             }
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task Discovery_RidRuntimeTargetIsOnlyPossibleEvidence()
+    {
+        string root = Path.Combine(AppContext.BaseDirectory, $"PlatformRid_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string assembly = Path.Combine(root, "Sample.dll");
+            string deps = Path.ChangeExtension(assembly, ".deps.json");
+            await File.WriteAllTextAsync(assembly, string.Empty);
+            DotNetTestDiscoveryService service = new();
+            DiscoveredTestCase testCase = new("id", "executor://sample", assembly, "Sample.Test", "Test", null, null);
+            TestDiscoveryResult empty = new([], ["Existing"]);
+            TestDiscoveryResult nonempty = new([testCase], ["Existing"]);
+            const string ridAsset =
+                """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"runtimes/other/lib/net10.0/Microsoft.Testing.Platform.dll":{"assetType":"runtime","rid":"other"}}}}}}""";
+            await File.WriteAllTextAsync(deps, ridAsset);
+
+            InvalidOperationException error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+                () => service.DiscoverAsync(assembly, root));
+            StringAssert.Contains(error.Message, "possible RID-specific Microsoft.Testing.Platform runtime asset");
+            StringAssert.Contains(error.Message, "compatibility and selection are unknown");
+            error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => service.RunCaseAsync(assembly, root, testCase));
+            StringAssert.Contains(error.Message, "possible RID-specific");
+            error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+                () => service.DebugCaseAsync(assembly, root, testCase, (_, _) => throw new AssertFailedException("Unexpected attach")));
+            StringAssert.Contains(error.Message, "possible RID-specific");
+            TestDiscoveryResult warned = await DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, CancellationToken.None);
+            Assert.AreEqual(2, warned.Warnings.Count);
+            Assert.AreEqual("Existing", warned.Warnings[0]);
+            StringAssert.Contains(warned.Warnings[1], "compatibility and selection are unknown");
+            Assert.AreSame(nonempty, await DotNetTestDiscoveryService.AddPlatformWarningAsync(nonempty, assembly, CancellationToken.None));
+
+            await File.WriteAllTextAsync(deps, ridAsset.Replace(
+                "\"runtimeTargets\":", "\"runtime\":{\"Microsoft.Testing.Platform.dll\":{}},\"runtimeTargets\":"));
+            error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => service.DiscoverAsync(assembly, root));
+            StringAssert.Contains(error.Message, "dependency metadata includes a Microsoft.Testing.Platform runtime asset");
+
+            foreach (string metadata in new[]
+            {
+                            """{"runtimeTarget":{"name":"active"},"targets":{"other":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"Microsoft.Testing.Platform.dll":{"assetType":"runtime","rid":"win"}}}},"active":{}}}""",
+                            """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform.Extensions/1.0":{"runtimeTargets":{"Microsoft.Testing.Platform.dll":{"assetType":"runtime","rid":"win"}}}}}}""",
+                            """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"NotMicrosoft.Testing.Platform.dll":{"assetType":"runtime","rid":"win"}}}}}}""",
+                            """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"Microsoft.Testing.Platform.dll":{"assetType":"native","rid":"win"}}}}}}""",
+                            """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"Microsoft.Testing.Platform.dll":{"assetType":"runtime"}}}}}}""",
+                            """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"Microsoft.Testing.Platform.dll":{"assetType":"runtime","rid":" "}}}}}}""",
+                            """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"Microsoft.Testing.Platform.dll":{"assetType":"runtime","rid":42}}}}}}""",
+                            """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"Microsoft.Testing.Platform.dll":{}}}}}}""",
+                            """{"runtimeTarget":{"name":"active"},"targets":{"active":{"Microsoft.Testing.Platform/1.0":{"runtimeTargets":{"Microsoft.Testing.Platform.dll":"runtime"}}}}}""",
+                        })
+            {
+                await File.WriteAllTextAsync(deps, metadata);
+                error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => service.DiscoverAsync(assembly, root));
+                Assert.AreEqual("No VSTest adapter was found beside the built test assembly.", error.Message);
+                Assert.AreSame(empty, await DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, CancellationToken.None));
+            }
+
+            await File.WriteAllTextAsync(deps, ridAsset.Replace("runtimes/other/lib/net10.0/", ""));
+            error = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => service.DiscoverAsync(assembly, root));
+            StringAssert.Contains(error.Message, "possible RID-specific");
+            using CancellationTokenSource canceled = new();
+            canceled.Cancel();
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(() => service.DiscoverAsync(assembly, root, canceled.Token));
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(
+                () => DotNetTestDiscoveryService.AddPlatformWarningAsync(empty, assembly, canceled.Token));
         }
         finally
         {
