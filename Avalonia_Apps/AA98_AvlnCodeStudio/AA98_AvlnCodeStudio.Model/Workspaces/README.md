@@ -123,6 +123,8 @@ trusted MSBuild evaluation and restored dependencies.
 The separate **Build and Discover VSTest Cases** action builds the selected
 project without restoring packages, finds the VSTest runner in the SDK selected
 for that project and loads adapter DLLs copied next to its target assembly.
+Additional project-relative adapters can be configured explicitly through
+`vstest-adapters.json`; see the Base.Testing README for restrictions.
 It lists adapter-reported cases, including parameterized cases and their
 adapter-defined IDs, independently of source candidates and run results.
 Case IDs and qualified names are adapter-specific and are not assumed to be
@@ -130,7 +132,8 @@ stable or valid filters. **Run Selected Adapter Case** rebuilds the project,
 rediscovers the selected case, and executes the original adapter test object
 only when its identity matches exactly one current case. It refuses missing or
 ambiguous matches, reports a failure if the adapter returns a different number
-of results or a result with a different case ID, and retains adapter error messages.
+of results or a result whose case ID, executor URI, source or fully qualified
+name differs, and retains adapter error messages.
 The **Debug Selected Case at
 Editor Caret** action attaches NetCoreDbg to processes reported by VSTest and
 sets one breakpoint at the caret in the active saved C# file before the selected
@@ -143,8 +146,8 @@ changes cancel the debug run, stop its reported hosts and their child processes,
 and detach the debugger. Process termination is best-effort and can fail due to
 operating-system permissions or races.
 Only runners that launch the host and request debugger attach are supported.
-Adapters outside the output directory and Microsoft.Testing.Platform-only projects
-are not supported. Discovery can execute adapter code; build, discovery and
+Adapters outside the project directory and Microsoft.Testing.Platform-only
+projects are not supported. Discovery can execute adapter code; build, discovery and
 execution must only be used with trusted projects. Cancellation asks VSTest to
 cancel, but a stalled adapter or startup can delay completion.
 
@@ -229,7 +232,14 @@ selected. A preview replacement, selection change or visual detach cancels an
 active resize instead of applying it to a stale node.
 
 `AxamlDesignerSession` exposes the safe preview tree and document-local undo
-and redo independently of a host. For `TextBlock.TextWrapping` and
+and redo independently of a host. An omitted `WrapPanel.Orientation` has
+Avalonia's `Horizontal` baseline in the inspector and inert preview. Literal
+edits support undo/redo; invalid orientation literals fall back to horizontal
+in the preview and remain invalid in the inspector. Qualified attributes and
+orientation property elements are conservatively read-only, with horizontal
+preview fallback; bindings are not evaluated or edited. This does not resolve
+styles or evaluate source XAML.
+For `TextBlock.TextWrapping` and
 `TextBox.TextWrapping`, an omitted
 attribute has Avalonia's `NoWrap` baseline in both inspector and inert preview.
 Literal enum edits preserve the original source through undo/redo; bindings,

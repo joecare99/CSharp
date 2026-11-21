@@ -92,7 +92,7 @@ public static class AxamlPropertyValueValidator
                 "GroupName" when node.TypeName == "MenuItem" => string.Empty,
                 "ToggleType" when node.TypeName == "MenuItem" => "None",
                 "UseFloatingPlaceholder" when node.TypeName is "TextBox" or "CalendarDatePicker" => "False",
-                "Orientation" when node.TypeName is "ProgressBar" or "Slider" => "Horizontal",
+                "Orientation" when node.TypeName is "ProgressBar" or "Slider" or "WrapPanel" => "Horizontal",
                 "Orientation" => "Vertical",
                 "Spacing" when node.TypeName == "StackPanel" => "0",
                 "ItemSpacing" or "LineSpacing" when node.TypeName == "WrapPanel" => "0",
@@ -170,6 +170,10 @@ public static class AxamlPropertyValueValidator
         if (IsFormatProperty(node.TypeName, propertyName) && value.StartsWith("{}", StringComparison.Ordinal))
         {
             value = value[2..];
+        }
+        if (propertyName == "Orientation" && node.HasUnsafeWrapPanelOrientationSource)
+        {
+            value = string.Empty;
         }
 
         (AxamlPropertyEditorKind editor, string[] options) = GetEditor(node.TypeName, propertyName);
@@ -655,6 +659,11 @@ public static class AxamlPropertyValueValidator
 
     private static string? GetReadOnlyReason(AxamlPreviewNode node, string propertyName)
     {
+        if (propertyName == "Orientation" && node.HasUnsafeWrapPanelOrientationSource)
+        {
+            return "Qualified or property-element Orientation is ambiguous and read-only.";
+        }
+
         if (propertyName == "TextAlignment" && node.HasUnsafeTextAlignmentSource)
         {
             return "Qualified or property-element TextAlignment is ambiguous and read-only.";
