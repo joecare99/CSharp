@@ -2223,12 +2223,18 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
             Assert.IsNotNull(location);
             Assert.AreEqual(sourcePath, location.Path);
             Assert.IsNull(await service.FindDefinitionAsync(draft, sourcePath, position, ambiguous));
+            Assert.IsNull(await service.GetQuickInfoAsync(draft, sourcePath, position, ambiguous));
             Assert.AreEqual(savedSource, await File.ReadAllTextAsync(sourcePath));
 
             using CancellationTokenSource canceled = new();
             canceled.Cancel();
             await Assert.ThrowsExactlyAsync<OperationCanceledException>(() =>
                 service.FindDefinitionAsync(draft, sourcePath, position, ambiguous, canceled.Token));
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(() =>
+                service.GetQuickInfoAsync(draft, sourcePath, position, ambiguous, canceled.Token));
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(() =>
+                service.GetQuickInfoAsync(draft, Path.Combine(Path.GetDirectoryName(root)!, "outside", "Source.cs"),
+                    position, single, canceled.Token));
             SemaphoreSlim gate = (SemaphoreSlim)typeof(CSharpSyntaxDiagnosticService)
                 .GetField("_workspaceGate", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
                 .GetValue(service)!;
