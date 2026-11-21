@@ -1,5 +1,10 @@
 using Avalonia.Controls;
 using Avalonia;
+using Avalonia.Interactivity;
+using CommunityToolkit.Mvvm.Input;
+using Config.UI.Avalonia.ViewModels;
+using System;
+using System.Threading.Tasks;
 
 namespace Config.UI.Avalonia.Views;
 
@@ -30,6 +35,35 @@ public partial class ConfigUiView : UserControl
             {
                 SectionActionsPanel.IsVisible = value;
             }
+        }
+    }
+
+    private async void OnLoadClick(object? sender, RoutedEventArgs e) =>
+        await ExecuteUiCommandAsync((DataContext as ConfigUiViewModel)?.LoadCommand);
+
+    private async void OnResetClick(object? sender, RoutedEventArgs e) =>
+        await ExecuteUiCommandAsync((DataContext as ConfigUiViewModel)?.ResetCommand);
+
+    private async void OnSaveClick(object? sender, RoutedEventArgs e) =>
+        await ExecuteUiCommandAsync((DataContext as ConfigUiViewModel)?.SaveCommand);
+
+    private async void OnRetryClick(object? sender, RoutedEventArgs e) =>
+        await ExecuteUiCommandAsync((DataContext as ConfigUiViewModel)?.RetryFailedReloadsCommand);
+
+    private static async Task ExecuteUiCommandAsync(IAsyncRelayCommand? command)
+    {
+        if (command?.CanExecute(null) != true)
+        {
+            return;
+        }
+
+        try
+        {
+            await command.ExecuteAsync(null);
+        }
+        catch (OperationCanceledException)
+        {
+            // The view model retains the cancellation state for the user.
         }
     }
 }

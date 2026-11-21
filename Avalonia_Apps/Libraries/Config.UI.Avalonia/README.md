@@ -17,8 +17,20 @@ dialog reports this uncertainty, retains pending drafts and propagates the
 cancellation; runtime activation for that section was not attempted. The
 layered provider also reports a confirmed write if cancellation occurs during
 the subsequent refresh, and permits an explicit Apply retry or discard.
+The dialog handles cancellation at its async event boundaries: Apply, OK,
+Cancel and window-close discard keep the dialog open rather than allowing a
+cancelled operation to escape the UI dispatcher. Awaited view-model operations
+still propagate cancellation to their callers. The view's Load, Reset, Save and
+retry buttons also await their commands at the UI boundary and handle
+cancellation there; direct `ExecuteAsync` callers still receive it.
 
 A cancelled draft reset may already have changed the shared draft; recovery
 must discard/reload that group, while independent drafts remain intact. For a
 persistent layered reset, cancellation during the write leaves persistence
 uncertain, whereas cancellation after the write reports it as confirmed.
+
+The Workbench `tools\ProjectSettingsReviewSmoke` exercises the shared dialog
+with in-memory layer stores, including in-flight cancellation through the
+actual section buttons, post-save cancellation, draft-reset recovery,
+independent drafts and retry. Its interaction is programmatic, not physical
+keyboard or accessibility acceptance.

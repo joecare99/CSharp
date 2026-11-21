@@ -39,10 +39,17 @@ public partial class ConfigUiDialog : Window
             return;
         }
 
-        if (await viewModel.ApplyChangesAsync())
+        try
         {
-            _allowClose = true;
-            Close();
+            if (await viewModel.ApplyChangesAsync())
+            {
+                _allowClose = true;
+                Close();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // The view model reports cancellation; the dialog must remain open.
         }
     }
 
@@ -50,7 +57,13 @@ public partial class ConfigUiDialog : Window
     {
         if (DataContext is ConfigUiViewModel { IsBusy: false } viewModel && !_discardingOnClose)
         {
-            await viewModel.ApplyChangesAsync();
+            try
+            {
+                await viewModel.ApplyChangesAsync();
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
     }
 
@@ -61,10 +74,16 @@ public partial class ConfigUiDialog : Window
             return;
         }
 
-        if (DataContext is not ConfigUiViewModel viewModel || await viewModel.DiscardChangesAsync())
+        try
         {
-            _allowClose = true;
-            Close();
+            if (DataContext is not ConfigUiViewModel viewModel || await viewModel.DiscardChangesAsync())
+            {
+                _allowClose = true;
+                Close();
+            }
+        }
+        catch (OperationCanceledException)
+        {
         }
     }
 
@@ -85,6 +104,9 @@ public partial class ConfigUiDialog : Window
                     _allowClose = true;
                     Close();
                 }
+            }
+            catch (OperationCanceledException)
+            {
             }
             finally
             {

@@ -28,9 +28,9 @@
                   Orientation="Horizontal"
                   HorizontalAlignment="Right"
                   Spacing="6">
-        <Button Content="Load" Command="{Binding LoadCommand}" IsEnabled="{Binding !IsBusy}" />
-        <Button Content="Reset" Command="{Binding ResetCommand}" IsEnabled="{Binding CanSave}" />
-        <Button Content="Save" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}" />
+        <Button Content="Load" Click="OnLoadClick" IsEnabled="{Binding !IsBusy}" />
+        <Button Content="Reset" Click="OnResetClick" IsEnabled="{Binding CanSave}" />
+        <Button Content="Save" Click="OnSaveClick" IsEnabled="{Binding CanSave}" />
       </StackPanel>
       <StackPanel Grid.Row="3" Spacing="6">
         <TextBlock Text="{Binding OperationMessage}" TextWrapping="Wrap" />
@@ -38,7 +38,7 @@
                 HorizontalAlignment="Left"
                 IsVisible="{Binding NeedsReloadRecovery}"
                 IsEnabled="{Binding !IsBusy}"
-                Command="{Binding RetryFailedReloadsCommand}"
+                Click="OnRetryClick"
                 ToolTip.Tip="Retries failed discard and reload operations. Discarded changes cannot be recovered." />
       </StackPanel>
       <TextBlock Grid.Row="4"
