@@ -2586,6 +2586,59 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task TextBlockTrimming_EditorPreservesSourceAndHistory()
+    {
+        const string original = "<TextBlock TextTrimming='WordEllipsis' />";
+        AxamlDesignerViewModel editable = new();
+        string? published = null;
+        editable.MarkupChanged += (_, args) => published = args.Markup;
+        editable.LoadMarkup(original);
+        editable.SelectedNode = editable.PreviewRoot;
+        var trimming = editable.PropertyProvider.Properties.Single(row => row.Name == "TextTrimming");
+        Assert.IsFalse(trimming.TrySetValue("1"));
+        Assert.IsFalse(trimming.TrySetValue("Unknown"));
+        Assert.IsTrue(trimming.TrySetValue("CharacterEllipsis"));
+        await editable.PropertyProvider.ApplyAsync();
+        string edited = published!;
+        editable.UndoCommand.Execute(null);
+        Assert.AreEqual(original, published);
+        editable.RedoCommand.Execute(null);
+        Assert.AreEqual(edited, published);
+
+        foreach (string source in new[]
+        {
+            "<TextBlock TextTrimming='{Binding Trimming}' />",
+            "<TextBlock xmlns:a='https://github.com/avaloniaui' a:TextTrimming='WordEllipsis' />",
+            "<TextBlock xmlns:e='urn:foreign' TextTrimming='WordEllipsis' e:TextTrimming='None' />",
+            "<TextBlock TextTrimming='WordEllipsis'><TextBlock.TextTrimming>None</TextBlock.TextTrimming></TextBlock>",
+        })
+        {
+            AxamlDesignerViewModel viewModel = new();
+            string? changed = null;
+            viewModel.MarkupChanged += (_, args) => changed = args.Markup;
+            viewModel.LoadMarkup(source);
+            viewModel.SelectedNode = viewModel.PreviewRoot;
+            Assert.IsTrue(viewModel.PropertyProvider.Properties.Any(property => property.Name == "TextTrimming"),
+                $"{source}; root={viewModel.PreviewRoot?.TypeName}; selected={viewModel.SelectedNode?.TypeName}; error={viewModel.ErrorText}");
+            var row = viewModel.PropertyProvider.Properties.Single(property => property.Name == "TextTrimming");
+            Assert.IsFalse(row.IsEditable, source);
+            Assert.IsFalse(row.TrySetValue("None"), source);
+            await viewModel.PropertyProvider.DiscardAsync();
+            var width = viewModel.PropertyProvider.Properties.Single(property => property.Name == "Width");
+            Assert.IsTrue(width.TrySetValue("40"), source);
+            await viewModel.PropertyProvider.ApplyAsync();
+            string modified = changed!;
+            Assert.AreEqual(source.Replace(" />", "/>", StringComparison.Ordinal),
+                modified.Replace(" Width=\"40\"", string.Empty, StringComparison.Ordinal)
+                    .Replace(" />", "/>", StringComparison.Ordinal), source);
+            viewModel.UndoCommand.Execute(null);
+            Assert.AreEqual(source, changed, source);
+            viewModel.RedoCommand.Execute(null);
+            Assert.AreEqual(modified, changed, source);
+        }
+    }
+
+    [TestMethod]
     public async Task TextBoxAcceptsTab_IsEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();

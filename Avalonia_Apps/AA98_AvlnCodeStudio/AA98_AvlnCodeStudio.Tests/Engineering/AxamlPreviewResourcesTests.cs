@@ -19,6 +19,85 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class AxamlPreviewResourcesTests
 {
     [TestMethod]
+    public void TextBlockTrimming_UsesNativeDefaultAndRejectsAmbiguousSources()
+    {
+        AxamlPreviewService service = new();
+        TextTrimming nativeDefault = new TextBlock().TextTrimming;
+        Assert.AreSame(TextTrimming.None, nativeDefault);
+        foreach ((string markup, TextTrimming expected, bool readOnly, bool ambiguous, bool invalid) in new[]
+        {
+            ("<TextBlock />", nativeDefault, false, false, false),
+            ("<TextBlock TextTrimming='None' />", TextTrimming.None, false, false, false),
+            ("<TextBlock TextTrimming='characterellipsis' />", TextTrimming.CharacterEllipsis, false, false, false),
+            ("<TextBlock TextTrimming='WordEllipsis' />", TextTrimming.WordEllipsis, false, false, false),
+            ("<TextBlock TextTrimming='0' />", nativeDefault, false, false, true),
+            ("<TextBlock TextTrimming='1' />", nativeDefault, false, false, true),
+            ("<TextBlock TextTrimming='-1' />", nativeDefault, false, false, true),
+            ("<TextBlock TextTrimming='99' />", nativeDefault, false, false, true),
+            ("<TextBlock TextTrimming='Unknown' />", nativeDefault, false, false, true),
+            ("<TextBlock TextTrimming='{Binding Trimming}' />", nativeDefault, true, false, false),
+            ("<TextBlock TextTrimming='{DynamicResource Trimming}' />", nativeDefault, true, false, false),
+            ("<TextBlock TextTrimming='{Binding Broken' />", nativeDefault, true, false, false),
+            ("<TextBlock xmlns:a='https://github.com/avaloniaui' a:TextTrimming='WordEllipsis' />", nativeDefault, true, true, false),
+            ("<TextBlock xmlns:e='urn:foreign' e:TextTrimming='{Binding Trimming}' />", nativeDefault, true, true, false),
+            ("<TextBlock xmlns:e='urn:foreign' TextTrimming='WordEllipsis' e:TextTrimming='None' />", nativeDefault, true, true, false),
+            ("<TextBlock TextTrimming='WordEllipsis' TextBlock.TextTrimming='None' />", nativeDefault, true, true, false),
+            ("<TextBlock><TextBlock.TextTrimming>WordEllipsis</TextBlock.TextTrimming></TextBlock>", nativeDefault, true, true, false),
+            ("<TextBlock TextTrimming='WordEllipsis'><TextBlock.TextTrimming>None</TextBlock.TextTrimming></TextBlock>", nativeDefault, true, true, false),
+            ("<TextBlock xmlns:e='urn:foreign' TextTrimming='WordEllipsis'><e:Other.TextTrimming>None</e:Other.TextTrimming></TextBlock>", nativeDefault, true, true, false),
+        })
+        {
+            AxamlPreviewNode node = service.Parse(markup);
+            AxamlPreviewControl preview = new() { PreviewNode = node };
+            Grid wrapper = (Grid)preview.GetLogicalDescendants().OfType<Border>()
+                .Single(border => ReferenceEquals(border.Tag, node)).Child!;
+            Assert.AreSame(expected, ((TextBlock)wrapper.Children[0]).TextTrimming, markup);
+            AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(node, "TextTrimming");
+            Assert.AreEqual(readOnly, descriptor.IsReadOnly, markup);
+            Assert.AreEqual(invalid, descriptor.ValidationError is not null, markup);
+            if (markup == "<TextBlock />")
+            {
+                Assert.AreEqual("None", descriptor.Value);
+            }
+            if (ambiguous)
+            {
+                Assert.AreEqual(string.Empty, descriptor.Value, markup);
+                Assert.IsFalse(node.RenderProperties.ContainsKey("TextTrimming"), markup);
+            }
+            if (readOnly)
+            {
+                Assert.ThrowsExactly<InvalidOperationException>(
+                    () => service.UpdateAttribute(markup, node, "TextTrimming", "None"), markup);
+            }
+        }
+    }
+
+    [TestMethod]
+    public void TextBlockTrimming_RecoveryAndStalePropertyElementRemainSafe()
+    {
+        const string broken = "<StackPanel xmlns:e='urn:foreign'><TextBlock Text='recovery target' TextTrimming='WordEllipsis' e:TextTrimming='None' /><Button Content=broken /></StackPanel>";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode root = service.ParseForPreview(broken).Root!;
+        Assert.IsTrue(root.IsRecoveryRoot);
+        AxamlPreviewNode node = root.Children.Single(child => child.TypeName == "TextBlock");
+        Assert.IsTrue(node.HasUnsafeTextTrimmingSource);
+        AxamlPreviewControl preview = new() { PreviewNode = root };
+        TextBlock rendered = preview.GetLogicalDescendants().OfType<TextBlock>()
+            .Single(text => text.Text == "recovery target");
+        Assert.AreSame(new TextBlock().TextTrimming, rendered.TextTrimming);
+        Assert.IsFalse(service.CanEditProperty(node, "TextTrimming"));
+
+        const string original = "<TextBlock TextTrimming='None'></TextBlock>";
+        AxamlPreviewNode stale = service.Parse(original);
+        Assert.ThrowsExactly<InvalidDataException>(() => service.UpdateAttribute(
+            "<TextBlock TextTrimming='None'><TextBlock.TextTrimming>WordEllipsis</TextBlock.TextTrimming></TextBlock>",
+            stale, "TextTrimming", "CharacterEllipsis"));
+        Assert.ThrowsExactly<InvalidDataException>(() => service.UpdateAttribute(
+            "<TextBlock TextTrimming='{Binding Trimming}'></TextBlock>",
+            stale, "TextTrimming", "CharacterEllipsis"));
+    }
+
+    [TestMethod]
     public void OrientationSourceFlags_PreserveWrapPanelCompatibilityIncludingRecoveryAndInitializationOrder()
     {
         AxamlPreviewService service = new();
