@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -27,6 +28,15 @@ public sealed class AssemblyDecompilationService : IAssemblyDecompilationService
     private const int MaximumTypeCount = 50_000;
     private const int MaximumMembersPerType = 25_000;
     private static readonly UTF8Encoding s_utf8WithoutBom = new(false);
+    private static readonly Regex s_typeDeclarationPrefix = new(
+        @"^\s*(?:(?:public|internal|private|protected|unsafe|new|abstract|sealed|static|partial|readonly|ref|file)\s+)*(?:class|struct|interface|enum|record(?:\s+(?:class|struct))?)\s+",
+        RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
+    private static readonly Regex s_delegateDeclarationPrefix = new(
+        @"^\s*(?:(?:public|internal|private|protected|unsafe|new)\s+)*delegate\s+",
+        RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
+    private static readonly Regex s_unicodeEscape = new(
+        @"\\(?:u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8})",
+        RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
 
     private readonly string _artifactRoot;
 
@@ -418,23 +428,103 @@ public sealed class AssemblyDecompilationService : IAssemblyDecompilationService
 
     private static int FindTypeDeclarationLine(string source, string simpleTypeName)
     {
-        Regex declaration = new(
-            $@"^\s*(?:(?:public|internal|private|protected|unsafe|new|abstract|sealed|static|partial|readonly|ref|file)\s+)*(?:class|struct|interface|enum|record(?:\s+(?:class|struct))?)\s+@?{Regex.Escape(simpleTypeName)}\b"
-            + $@"|^\s*(?:(?:public|internal|private|protected|unsafe|new)\s+)*delegate\s+.*\s+@?{Regex.Escape(simpleTypeName)}\b",
-            RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
+        if (simpleTypeName.Length == 0)
+        {
+            return 1;
+        }
+
         using StringReader reader = new(source);
         int lineNumber = 0;
         string? line;
         while ((line = reader.ReadLine()) is not null)
         {
             lineNumber++;
-            if (declaration.IsMatch(line))
+            line = s_unicodeEscape.Replace(line, static match =>
+            {
+                uint value = uint.Parse(match.Value.AsSpan(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                return value <= 0xffff
+                    ? ((char)value).ToString()
+                    : value <= 0x10ffff ? char.ConvertFromUtf32((int)value) : match.Value;
+            });
+            Match typePrefix = s_typeDeclarationPrefix.Match(line);
+            if (typePrefix.Success && MatchesIdentifier(line, typePrefix.Length, simpleTypeName))
             {
                 return lineNumber;
+            }
+
+            Match delegatePrefix = s_delegateDeclarationPrefix.Match(line);
+            if (delegatePrefix.Success)
+            {
+                int index = delegatePrefix.Length;
+                while ((index = line.IndexOf(simpleTypeName, index, StringComparison.Ordinal)) >= 0)
+                {
+                    int start = index > 0 && line[index - 1] == '@' ? index - 1 : index;
+                    if (start > delegatePrefix.Length
+                        && char.IsWhiteSpace(line[start - 1])
+                        && MatchesIdentifier(line, start, simpleTypeName)
+                        && HasDelegateParameterList(line, index + simpleTypeName.Length))
+                    {
+                        return lineNumber;
+                    }
+
+                    index += simpleTypeName.Length;
+                }
             }
         }
 
         return 1;
+    }
+
+    private static bool HasDelegateParameterList(string line, int index)
+    {
+        while (index < line.Length && char.IsWhiteSpace(line[index]))
+        {
+            index++;
+        }
+
+        if (index < line.Length && line[index] == '<')
+        {
+            index = line.IndexOf('>', index + 1);
+            if (index < 0)
+            {
+                return false;
+            }
+
+            index++;
+            while (index < line.Length && char.IsWhiteSpace(line[index]))
+            {
+                index++;
+            }
+        }
+
+        return index < line.Length && line[index] == '(';
+    }
+
+    private static bool MatchesIdentifier(string line, int start, string name)
+    {
+        if (start < line.Length && line[start] == '@')
+        {
+            start++;
+        }
+
+        if (!line.AsSpan(start).StartsWith(name.AsSpan(), StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        int end = start + name.Length;
+        if (end == line.Length)
+        {
+            return true;
+        }
+
+        return char.GetUnicodeCategory(line, end) is not (
+            UnicodeCategory.UppercaseLetter or UnicodeCategory.LowercaseLetter
+            or UnicodeCategory.TitlecaseLetter or UnicodeCategory.ModifierLetter
+            or UnicodeCategory.OtherLetter or UnicodeCategory.LetterNumber
+            or UnicodeCategory.DecimalDigitNumber or UnicodeCategory.ConnectorPunctuation
+            or UnicodeCategory.NonSpacingMark or UnicodeCategory.SpacingCombiningMark
+            or UnicodeCategory.Format);
     }
 
     private static string FindSimpleTypeName(string typeFullName)
