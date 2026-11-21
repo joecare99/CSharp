@@ -31,3 +31,22 @@ the root `x:DataType`. Other root contexts and nested contexts remain
 read-only. Workspace member creation additionally resolves the declared type
 and checks recognized code-behind assignments. This is static validation, not
 proof that runtime code cannot later replace the DataContext.
+
+## Workbench boundary evidence
+
+`MainWindowViewModel_IncrementalGenerationRespectsNestedBindingBoundaries`
+uses a synthetic Toolkit project and invokes the Workbench incremental command
+with an existing root ViewModel constructed by `Window.DataContext`. For each
+of `Binding`, `CompiledBinding`, and `ReflectionBinding`, it rejects a binding
+on the owner of a nested DataContext property element, on its descendant, under
+a DataContext attribute, under a nested `x:DataType`, and inside a template.
+A preceding root binding does not result in a partial review. The AXAML and
+ViewModel files, project and code-behind files, and dirty AXAML and code-behind
+buffers remain unchanged.
+
+A binding-free nested DataContext produces no changes; a normal root binding
+alongside that nested scope produces a root ViewModel member proposal. Cancelling
+the review leaves both files and dirty buffers unchanged. These tests exercise
+static analysis, planning and Workbench review with a generated fixture; the
+fixture is not an Avalonia application and its AXAML is not compiled or run.
+They do not prove runtime DataContext behavior or cover every markup syntax.
