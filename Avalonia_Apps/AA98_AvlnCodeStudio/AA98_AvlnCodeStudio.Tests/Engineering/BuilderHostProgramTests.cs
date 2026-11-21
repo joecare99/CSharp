@@ -196,18 +196,52 @@ public class BuilderHostProgramTests
     }
 
     [TestMethod]
-    public async Task RunAsync_WhenRefreshTextIsAnOptionValue_DoesNotRefresh()
+    public async Task RunAsync_WithAmbiguousOrInvalidOptions_RejectsWithoutBuilding()
+    {
+        ICodeStudioBuilderService builder = Substitute.For<ICodeStudioBuilderService>();
+        IProjectRuntimeBuilder runtime = Substitute.For<IProjectRuntimeBuilder>();
+        string[][] invalidArguments =
+        [
+            ["build", "sample.csproj", "--configuration", "--refresh-runtime"],
+            ["build", "sample.csproj", "--configuration", "--framework", "--refresh-runtime"],
+            ["build", "sample.csproj", "--framework", "--configuration", "Release", "--refresh-runtime"],
+            ["build", "sample.csproj", "--unknown", "--refresh-runtime"],
+            ["build", "sample.csproj", "--configuration=Release", "--refresh-runtime"],
+            ["build", "sample.csproj", "--configuration", "Debug", "--configuration", "Release", "--refresh-runtime"],
+            ["build", "sample.csproj", "--refresh-runtime", "--refresh-runtime"],
+            ["build", "--refresh-runtime"],
+            ["inspect", "sample.csproj", "--framework", "--refresh-runtime"],
+        ];
+        foreach (string[] args in invalidArguments)
+        {
+            using StringWriter output = new();
+            using StringWriter error = new();
+            Assert.AreEqual(2, await Program.RunAsync(args, builder, output, error, runtimeBuilder: runtime));
+            Assert.AreEqual(string.Empty, output.ToString());
+            Assert.IsFalse(string.IsNullOrWhiteSpace(error.ToString()));
+        }
+
+        await builder.DidNotReceive().BuildProjectAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>());
+        await builder.DidNotReceive().InspectProjectAsync(Arg.Any<BuilderProjectInspectionRequest>(), Arg.Any<CancellationToken>());
+        await runtime.DidNotReceive().BuildAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>());
+    }
+
+    [TestMethod]
+    public async Task RunAsync_WithRefreshBeforeOptions_StillRefreshes()
     {
         ICodeStudioBuilderService builder = Substitute.For<ICodeStudioBuilderService>();
         IProjectRuntimeBuilder runtime = Substitute.For<IProjectRuntimeBuilder>();
         builder.BuildProjectAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
             .Returns(new BuilderBuildResult { ProjectPath = "sample.csproj", Succeeded = true });
 
-        await Program.RunAsync(
-            ["build", "sample.csproj", "--configuration", "--refresh-runtime"],
+        int exitCode = await Program.RunAsync(
+            ["build", "sample.csproj", "--REFRESH-RUNTIME", "--framework", "net10.0", "--configuration", "Release"],
             builder, new StringWriter(), new StringWriter(), runtimeBuilder: runtime);
 
-        await runtime.DidNotReceive().BuildAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>());
+        Assert.AreEqual(0, exitCode);
+        await runtime.Received(1).BuildAsync(
+            Arg.Is<BuilderBuildRequest>(request => request.Configuration == "Release" && request.TargetFramework == "net10.0"),
+            Arg.Any<CancellationToken>());
     }
 
     [TestMethod]

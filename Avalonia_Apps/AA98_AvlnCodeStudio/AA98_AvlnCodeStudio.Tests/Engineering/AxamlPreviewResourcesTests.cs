@@ -19,6 +19,140 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class AxamlPreviewResourcesTests
 {
     [TestMethod]
+    public void OrientationSourceFlags_PreserveWrapPanelCompatibilityIncludingRecoveryAndInitializationOrder()
+    {
+        AxamlPreviewService service = new();
+        foreach (string type in new[] { "StackPanel", "Slider", "ProgressBar", "WrapPanel" })
+        {
+            bool isWrapPanel = type == "WrapPanel";
+            string child = $"<{type} Orientation='Vertical' e:Orientation='Horizontal' />";
+            AxamlPreviewNode normal = service.Parse($"<{type} xmlns:e='urn:foreign' Orientation='Vertical' e:Orientation='Horizontal' />");
+            AxamlPreviewNode root = service.ParseForPreview(
+                $"<StackPanel xmlns:e='urn:foreign'>{child}<Button Content=broken /></StackPanel>").Root!;
+            Assert.IsTrue(root.IsRecoveryRoot, type);
+            AxamlPreviewNode recovery = root.Children.Single(node => node.TypeName == type);
+            foreach (AxamlPreviewNode node in new[] { normal, recovery })
+            {
+                Assert.IsTrue(node.HasUnsafeOrientationSource, type);
+                Assert.AreEqual(isWrapPanel, node.HasUnsafeWrapPanelOrientationSource, type);
+            }
+
+            AxamlPreviewNode safe = service.Parse($"<{type} Orientation='Vertical' />");
+            AxamlPreviewNode safeRoot = service.ParseForPreview(
+                $"<StackPanel><{type} Orientation='Vertical' /><Button Content=broken /></StackPanel>").Root!;
+            Assert.IsTrue(safeRoot.IsRecoveryRoot, type);
+            AxamlPreviewNode safeRecovery = safeRoot.Children.Single(node => node.TypeName == type);
+            foreach (AxamlPreviewNode node in new[] { safe, safeRecovery })
+            {
+                Assert.IsFalse(node.HasUnsafeOrientationSource, type);
+                Assert.IsFalse(node.HasUnsafeWrapPanelOrientationSource, type);
+            }
+
+            foreach (AxamlPreviewNode node in new[]
+            {
+                new AxamlPreviewNode { TypeName = type, HasUnsafeOrientationSource = true },
+                new AxamlPreviewNode { HasUnsafeOrientationSource = true, TypeName = type },
+                new AxamlPreviewNode { TypeName = type, HasUnsafeWrapPanelOrientationSource = true },
+                new AxamlPreviewNode { HasUnsafeWrapPanelOrientationSource = true, TypeName = type },
+            })
+            {
+                Assert.IsTrue(node.HasUnsafeOrientationSource, type);
+                Assert.AreEqual(isWrapPanel, node.HasUnsafeWrapPanelOrientationSource, type);
+            }
+        }
+    }
+
+    [TestMethod]
+    public void PanelAndRangeOrientation_UsesNativeDefaultForInvalidAndAmbiguousSources()
+    {
+        AxamlPreviewService service = new();
+        foreach ((string type, Orientation nativeDefault) in new[]
+        {
+            ("StackPanel", new StackPanel().Orientation),
+            ("Slider", new Slider().Orientation),
+            ("ProgressBar", new ProgressBar().Orientation),
+        })
+        {
+            Assert.AreEqual(type == "StackPanel" ? Orientation.Vertical : Orientation.Horizontal, nativeDefault);
+            foreach ((string attributes, string content, Orientation expected, bool readOnly) in new[]
+            {
+                ("", "", nativeDefault, false),
+                ("Orientation='Horizontal'", "", Orientation.Horizontal, false),
+                ("Orientation='vertical'", "", Orientation.Vertical, false),
+                ("Orientation='{Binding Direction}'", "", nativeDefault, true),
+                ("xmlns:a='https://github.com/avaloniaui' a:Orientation='Horizontal'", "", nativeDefault, true),
+                ("xmlns:e='urn:foreign' Orientation='Horizontal' e:Orientation='Vertical'", "", nativeDefault, true),
+                ("Orientation='Horizontal' Other.Orientation='Vertical'", "", nativeDefault, true),
+                ("Orientation='Horizontal'", "<Other.Orientation>Vertical</Other.Orientation>", nativeDefault, true),
+                ("", $"<{type}.Orientation>Horizontal</{type}.Orientation>", nativeDefault, true),
+                ("Orientation='Vertical'", $"<{type}.Orientation>Horizontal</{type}.Orientation>", nativeDefault, true),
+                ("Orientation='1'", "", nativeDefault, false),
+                ("Orientation='0'", "", nativeDefault, false),
+                ("Orientation='99'", "", nativeDefault, false),
+                ("Orientation='Diagonal'", "", nativeDefault, false),
+            })
+            {
+                string markup = $"<{type} {attributes}>{content}</{type}>";
+                AxamlPreviewNode node = service.Parse(markup);
+                AxamlPreviewControl preview = new() { PreviewNode = node };
+                Grid wrapper = (Grid)preview.GetLogicalDescendants().OfType<Border>()
+                    .Single(border => ReferenceEquals(border.Tag, node)).Child!;
+                Orientation actual = wrapper.Children[0] switch
+                {
+                    StackPanel stack => stack.Orientation,
+                    Slider slider => slider.Orientation,
+                    ProgressBar progress => progress.Orientation,
+                    _ => throw new InvalidOperationException(type),
+                };
+                Assert.AreEqual(expected, actual, markup);
+                AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(node, "Orientation");
+                Assert.AreEqual(readOnly, descriptor.IsReadOnly, markup);
+                if (attributes.Length == 0 && content.Length == 0)
+                {
+                    Assert.AreEqual(nativeDefault.ToString(), descriptor.Value, markup);
+                }
+                if (node.HasUnsafeOrientationSource)
+                {
+                    Assert.AreEqual(string.Empty, descriptor.Value, markup);
+                    Assert.IsFalse(node.RenderProperties.ContainsKey("Orientation"), markup);
+                    Assert.ThrowsExactly<InvalidOperationException>(
+                        () => service.UpdateAttribute(markup, node, "Orientation", "Vertical"), markup);
+                }
+                if (attributes.Contains("'1'", StringComparison.Ordinal) || attributes.Contains("'0'", StringComparison.Ordinal)
+                    || attributes.Contains("'99'", StringComparison.Ordinal)
+                    || attributes.Contains("'Diagonal'", StringComparison.Ordinal))
+                {
+                    Assert.IsNotNull(descriptor.ValidationError, markup);
+                }
+            }
+        }
+    }
+
+    [TestMethod]
+    public void PanelAndRangeOrientation_RecoveryPreservesAmbiguityProtection()
+    {
+        foreach (string type in new[] { "StackPanel", "Slider", "ProgressBar" })
+        {
+            string markup = $"<StackPanel xmlns:e='urn:foreign'><{type} Orientation='Horizontal' e:Orientation='Vertical' />"
+                + "<Button Content=broken /></StackPanel>";
+            AxamlPreviewNode root = new AxamlPreviewService().ParseForPreview(markup).Root!;
+            Assert.IsTrue(root.IsRecoveryRoot, markup);
+            AxamlPreviewNode node = root.Children.Single(child => child.TypeName == type);
+            Assert.IsTrue(node.HasUnsafeOrientationSource, markup);
+            Assert.IsFalse(new AxamlPreviewService().CanEditProperty(node, "Orientation"), markup);
+            AxamlPreviewControl preview = new() { PreviewNode = node };
+            Orientation actual = type switch
+            {
+                "StackPanel" => preview.GetLogicalDescendants().OfType<StackPanel>().Single().Orientation,
+                "Slider" => preview.GetLogicalDescendants().OfType<Slider>().Single().Orientation,
+                "ProgressBar" => preview.GetLogicalDescendants().OfType<ProgressBar>().Single().Orientation,
+                _ => throw new InvalidOperationException(type),
+            };
+            Assert.AreEqual(type == "StackPanel" ? Orientation.Vertical : Orientation.Horizontal, actual, markup);
+        }
+    }
+
+    [TestMethod]
     public void WrapPanelOrientation_AmbiguousSourcesFallBackInInertPreview()
     {
         AxamlPreviewService service = new();

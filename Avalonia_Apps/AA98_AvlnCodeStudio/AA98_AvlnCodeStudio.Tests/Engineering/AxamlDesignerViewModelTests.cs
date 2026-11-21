@@ -514,6 +514,60 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task PanelAndRangeOrientation_EditorPreservesAmbiguityAndHistory()
+    {
+        foreach (string type in new[] { "StackPanel", "Slider", "ProgressBar" })
+        {
+            string original = $"<{type} />";
+            AxamlDesignerViewModel editable = new();
+            string? published = null;
+            editable.MarkupChanged += (_, args) => published = args.Markup;
+            editable.LoadMarkup(original);
+            editable.SelectedNode = editable.PreviewRoot;
+            var orientation = editable.PropertyProvider.Properties.Single(row => row.Name == "Orientation");
+            Assert.IsFalse(orientation.TrySetValue("99"), type);
+            Assert.IsFalse(orientation.TrySetValue("1"), type);
+            Assert.IsTrue(orientation.TrySetValue(type == "StackPanel" ? "Horizontal" : "Vertical"), type);
+            await editable.PropertyProvider.ApplyAsync();
+            string edited = published!;
+            editable.UndoCommand.Execute(null);
+            Assert.AreEqual(original, published, type);
+            editable.RedoCommand.Execute(null);
+            Assert.AreEqual(edited, published, type);
+
+            foreach (string source in new[]
+            {
+                $"<{type} xmlns:a='https://github.com/avaloniaui' a:Orientation='Horizontal' />",
+                $"<{type} xmlns:e='urn:foreign' Orientation='Horizontal' e:Orientation='Vertical' />",
+                $"<{type} Orientation='Horizontal'><{type}.Orientation>Vertical</{type}.Orientation></{type}>",
+                $"<{type} Orientation='{{Binding Direction}}' />",
+            })
+            {
+                AxamlDesignerViewModel viewModel = new();
+                string? changed = null;
+                viewModel.MarkupChanged += (_, args) => changed = args.Markup;
+                viewModel.LoadMarkup(source);
+                viewModel.SelectedNode = viewModel.PreviewRoot;
+                var row = viewModel.PropertyProvider.Properties.Single(property => property.Name == "Orientation");
+                Assert.IsFalse(row.IsEditable, source);
+                Assert.IsFalse(row.TrySetValue("Vertical"), source);
+                await viewModel.PropertyProvider.DiscardAsync();
+                var width = viewModel.PropertyProvider.Properties.Single(property => property.Name == "Width");
+                Assert.IsTrue(width.TrySetValue("40"), source);
+                await viewModel.PropertyProvider.ApplyAsync();
+                string modified = changed!;
+                Assert.AreEqual(source.Replace(" />", "/>", StringComparison.Ordinal),
+                    modified.Replace(" Width=\"40\"", string.Empty, StringComparison.Ordinal)
+                        .Replace(" />", "/>", StringComparison.Ordinal), source);
+                viewModel.UndoCommand.Execute(null);
+                Assert.AreEqual(source, changed, source);
+                viewModel.RedoCommand.Execute(null);
+                Assert.AreEqual(modified, changed, source);
+            }
+        }
+    }
+
+    [TestMethod]
     public async Task RangeControlBounds_AreEditableAndUndoable()
     {
         foreach (string controlType in new[] { "NumericUpDown", "ProgressBar", "Slider" })

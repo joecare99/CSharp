@@ -4,13 +4,139 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+#if NET10_0
+using AA98.Builder.Host;
+using NSubstitute;
+#endif
 
 namespace AA98_AvlnCodeStudio.Tests.Engineering;
 
 [TestClass]
 public sealed class DotNetProjectRuntimeBuilderTests
 {
+#if NET10_0
+    [TestMethod]
+    [TestCategory("Integration")]
+    public async Task HostRefresh_WithRealSdkFailures_ReportsErrorWithoutSuccess()
+    {
+        string root = Path.Combine(AppContext.BaseDirectory, $"AA98_RuntimeFailure_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        string projectPath = Path.Combine(root, "Fixture.csproj");
+        try
+        {
+            File.WriteAllText(projectPath, """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+                  <Target Name="FailFixture" BeforeTargets="CoreCompile">
+                    <Error Text="OWNED_RUNTIME_REFRESH_FAILURE" />
+                  </Target>
+                </Project>
+                """);
+            File.WriteAllText(Path.Combine(root, "Marker.cs"), "public class Marker { }");
+
+            ICodeStudioBuilderService builder = Substitute.For<ICodeStudioBuilderService>();
+            builder.BuildProjectAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
+                .Returns(new BuilderBuildResult { ProjectPath = projectPath, Succeeded = true });
+            using StringWriter missingOutput = new();
+            using StringWriter missingError = new();
+            int missingExit = await Program.RunAsync(
+                ["build", projectPath, "--refresh-runtime"], builder, missingOutput, missingError);
+            Assert.AreEqual(1, missingExit);
+            Assert.AreEqual(string.Empty, missingOutput.ToString());
+            StringAssert.Contains(missingError.ToString(), "AA98_BUILDER_HOST_ERROR");
+            StringAssert.Contains(missingError.ToString(), "NETSDK1004");
+
+            await RunDotNetAsync(root, "restore", projectPath);
+            using StringWriter targetOutput = new();
+            using StringWriter targetError = new();
+            int targetExit = await Program.RunAsync(
+                ["build", projectPath, "--refresh-runtime"], builder, targetOutput, targetError);
+            Assert.AreEqual(1, targetExit);
+            Assert.AreEqual(string.Empty, targetOutput.ToString());
+            StringAssert.Contains(targetError.ToString(), "AA98_BUILDER_HOST_ERROR");
+            StringAssert.Contains(targetError.ToString(), "OWNED_RUNTIME_REFRESH_FAILURE");
+            StringAssert.Contains(targetError.ToString(), "exit code");
+
+            string hostPath = Path.Combine(AppContext.BaseDirectory, "AA98.Builder.Host.dll");
+            (int defaultExit, string defaultOutput, _) = await RunDotNetProcessAsync(root, hostPath, "build", projectPath);
+            Assert.AreEqual(0, defaultExit);
+            StringAssert.Contains(defaultOutput, "succeeded=True");
+            Assert.IsFalse(defaultOutput.Contains("runtimeRefresh=Succeeded", StringComparison.Ordinal));
+
+            (int refreshExit, string refreshOutput, string refreshError) =
+                await RunDotNetProcessAsync(root, hostPath, "build", projectPath, "--refresh-runtime");
+            Assert.AreEqual(1, refreshExit);
+            Assert.AreEqual(string.Empty, refreshOutput);
+            StringAssert.Contains(refreshError, "AA98_BUILDER_HOST_ERROR");
+            StringAssert.Contains(refreshError, "OWNED_RUNTIME_REFRESH_FAILURE");
+            Assert.IsFalse(refreshError.Contains("runtimeRefresh=Succeeded", StringComparison.Ordinal));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    [TestCategory("Integration")]
+    public async Task HostRefresh_WhenRealSdkProcessIsCanceled_DoesNotReportSuccess()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            Assert.Inconclusive("The owned cancellation fixture uses Windows ping.");
+        }
+
+        string root = Path.Combine(AppContext.BaseDirectory, $"AA98_RuntimeCancel_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        string projectPath = Path.Combine(root, "Fixture.csproj");
+        string markerPath = Path.Combine(root, "started.txt");
+        using CancellationTokenSource cancellation = new(TimeSpan.FromSeconds(45));
+        Task<int>? run = null;
+        try
+        {
+            File.WriteAllText(projectPath, """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+                  <Target Name="WaitFixture" BeforeTargets="CoreCompile">
+                    <WriteLinesToFile File="started.txt" Lines="started" Overwrite="true" />
+                    <Exec Command="ping 127.0.0.1 -n 31 &gt; nul" />
+                  </Target>
+                </Project>
+                """);
+            await RunDotNetAsync(root, "restore", projectPath);
+            ICodeStudioBuilderService builder = Substitute.For<ICodeStudioBuilderService>();
+            builder.BuildProjectAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
+                .Returns(new BuilderBuildResult { ProjectPath = projectPath, Succeeded = true });
+            using StringWriter output = new();
+            using StringWriter error = new();
+            run = Program.RunAsync(["build", projectPath, "--refresh-runtime"], builder, output, error, cancellation.Token);
+            while (!File.Exists(markerPath) && !run.IsCompleted && !cancellation.IsCancellationRequested)
+            {
+                await Task.Delay(100);
+            }
+
+            Assert.IsTrue(File.Exists(markerPath), "The SDK target did not start.");
+            cancellation.Cancel();
+            await Assert.ThrowsAsync<OperationCanceledException>(async () => await run);
+            Assert.AreEqual(string.Empty, output.ToString());
+            Assert.AreEqual(string.Empty, error.ToString());
+        }
+        finally
+        {
+            cancellation.Cancel();
+            if (run is not null)
+            {
+                try { await run; }
+                catch (OperationCanceledException) { }
+            }
+
+            Directory.Delete(root, recursive: true);
+        }
+    }
+#endif
+
     [TestMethod]
     [DataRow(false)]
 #if NET10_0
@@ -130,6 +256,19 @@ public sealed class DotNetProjectRuntimeBuilderTests
 
     private static async Task<string> RunDotNetAsync(string workingDirectory, params string[] arguments)
     {
+        (int exitCode, string output, string error) = await RunDotNetProcessAsync(workingDirectory, arguments);
+        if (exitCode != 0)
+        {
+            throw new InvalidOperationException(
+                $"dotnet {string.Join(' ', arguments)} failed (exit code {exitCode}):{Environment.NewLine}{output}{Environment.NewLine}{error}");
+        }
+
+        return output;
+    }
+
+    private static async Task<(int ExitCode, string Output, string Error)> RunDotNetProcessAsync(
+        string workingDirectory, params string[] arguments)
+    {
         ProcessStartInfo startInfo = new("dotnet")
         {
             WorkingDirectory = workingDirectory,
@@ -156,12 +295,6 @@ public sealed class DotNetProjectRuntimeBuilderTests
         await process.WaitForExitAsync();
         string output = await outputTask;
         string error = await errorTask;
-        if (process.ExitCode != 0)
-        {
-            throw new InvalidOperationException(
-                $"dotnet {string.Join(' ', arguments)} failed (exit code {process.ExitCode}):{Environment.NewLine}{output}{Environment.NewLine}{error}");
-        }
-
-        return output;
+        return (process.ExitCode, output, error);
     }
 }
