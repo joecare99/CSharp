@@ -1603,7 +1603,7 @@ public sealed class AxamlPreviewControl : ContentControl
             FontStyle = HasValidLiteralValue(node, "FontStyle") ? ParseFontStyle(node) : FontStyle.Normal,
             FontWeight = HasValidLiteralValue(node, "FontWeight") ? ParseFontWeight(node) : FontWeight.Normal,
             LineHeight = HasValidLiteralValue(node, "LineHeight") ? ParseLineHeight(node) : double.NaN,
-            MaxLines = HasValidLiteralValue(node, "MaxLines") ? ParseInt(node, "MaxLines") : 0,
+            MaxLines = !node.HasUnsafeMaxLinesSource && HasValidLiteralValue(node, "MaxLines") ? ParseInt(node, "MaxLines") : 0,
             TextTrimming = !node.HasUnsafeTextTrimmingSource && HasValidLiteralValue(node, "TextTrimming")
                 ? ParseTextTrimming(node)
                 : TextTrimming.None,

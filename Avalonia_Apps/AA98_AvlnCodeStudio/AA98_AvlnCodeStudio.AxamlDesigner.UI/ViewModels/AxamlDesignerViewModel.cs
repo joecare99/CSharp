@@ -1488,6 +1488,10 @@ public partial class AxamlDesignerViewModel : ObservableObject
         {
             propertyNames.Add("TextTrimming");
         }
+        if (node.HasUnsafeMaxLinesSource)
+        {
+            propertyNames.Add("MaxLines");
+        }
         if (AxamlControlCatalog.TryGet(node.TypeName, out AxamlControlCapability capability))
         {
             propertyNames.UnionWith(_session.EditableProperties);
