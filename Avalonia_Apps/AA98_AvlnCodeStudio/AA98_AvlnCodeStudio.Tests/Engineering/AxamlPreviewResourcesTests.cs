@@ -19,6 +19,79 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class AxamlPreviewResourcesTests
 {
     [TestMethod]
+    public void TextBlockMaxLines_UsesNativeDefaultAndProtectsSources()
+    {
+        AxamlPreviewService service = new();
+        int nativeDefault = new TextBlock().MaxLines;
+        foreach ((string markup, int expected, bool readOnly, bool ambiguous, bool invalid) in new[]
+        {
+            ("<TextBlock />", nativeDefault, false, false, false),
+            ("<TextBlock MaxLines='0' />", 0, false, false, false),
+            ("<TextBlock MaxLines='003' />", 3, false, false, false),
+            ("<TextBlock MaxLines='2147483647' />", int.MaxValue, false, false, false),
+            ("<TextBlock MaxLines='-1' />", nativeDefault, false, false, true),
+            ("<TextBlock MaxLines='1.5' />", nativeDefault, false, false, true),
+            ("<TextBlock MaxLines='2147483648' />", nativeDefault, false, false, true),
+            ("<TextBlock MaxLines='many' />", nativeDefault, false, false, true),
+            ("<TextBlock MaxLines='{Binding Count}' />", nativeDefault, true, false, false),
+            ("<TextBlock MaxLines='{DynamicResource Count}' />", nativeDefault, true, false, false),
+            ("<TextBlock MaxLines='{Binding Broken' />", nativeDefault, true, false, false),
+            ("<TextBlock xmlns:a='https://github.com/avaloniaui' a:MaxLines='3' />", nativeDefault, true, true, false),
+            ("<TextBlock xmlns:e='urn:foreign' e:MaxLines='3' />", nativeDefault, true, true, false),
+            ("<TextBlock xmlns:e='urn:foreign' MaxLines='3' e:MaxLines='2' />", nativeDefault, true, true, false),
+            ("<TextBlock MaxLines='3' TextBlock.MaxLines='2' />", nativeDefault, true, true, false),
+            ("<TextBlock><TextBlock.MaxLines>3</TextBlock.MaxLines></TextBlock>", nativeDefault, true, true, false),
+            ("<TextBlock MaxLines='3'><TextBlock.MaxLines>2</TextBlock.MaxLines></TextBlock>", nativeDefault, true, true, false),
+            ("<TextBlock xmlns:e='urn:foreign' MaxLines='3'><e:Other.MaxLines>2</e:Other.MaxLines></TextBlock>", nativeDefault, true, true, false),
+        })
+        {
+            AxamlPreviewNode node = service.Parse(markup);
+            AxamlPreviewControl preview = new() { PreviewNode = node };
+            Grid wrapper = (Grid)preview.GetLogicalDescendants().OfType<Border>()
+                .Single(border => ReferenceEquals(border.Tag, node)).Child!;
+            Assert.AreEqual(expected, ((TextBlock)wrapper.Children[0]).MaxLines, markup);
+            AxamlPropertyDescriptor descriptor = AxamlPropertyValueValidator.Describe(node, "MaxLines");
+            Assert.AreEqual(readOnly, descriptor.IsReadOnly, markup);
+            Assert.AreEqual(invalid, descriptor.ValidationError is not null, markup);
+            if (markup == "<TextBlock />")
+            {
+                Assert.AreEqual(nativeDefault.ToString(CultureInfo.InvariantCulture), descriptor.Value);
+            }
+            if (ambiguous)
+            {
+                Assert.AreEqual(string.Empty, descriptor.Value, markup);
+                Assert.IsFalse(node.RenderProperties.ContainsKey("MaxLines"), markup);
+            }
+            if (readOnly)
+            {
+                Assert.ThrowsExactly<InvalidOperationException>(
+                    () => service.UpdateAttribute(markup, node, "MaxLines", "2"), markup);
+            }
+        }
+    }
+
+    [TestMethod]
+    public void TextBlockMaxLines_RecoveryAndStaleSourcesRemainSafe()
+    {
+        const string broken = "<StackPanel xmlns:e='urn:foreign'><TextBlock Text='recovery target' MaxLines='3' e:MaxLines='2' /><Button Content=broken /></StackPanel>";
+        AxamlPreviewService service = new();
+        AxamlPreviewNode root = service.ParseForPreview(broken).Root!;
+        Assert.IsTrue(root.IsRecoveryRoot);
+        AxamlPreviewNode node = root.Children.Single(child => child.TypeName == "TextBlock");
+        AxamlPreviewControl preview = new() { PreviewNode = root };
+        TextBlock rendered = preview.GetLogicalDescendants().OfType<TextBlock>()
+            .Single(text => text.Text == "recovery target");
+        Assert.AreEqual(new TextBlock().MaxLines, rendered.MaxLines);
+        Assert.IsFalse(service.CanEditProperty(node, "MaxLines"));
+
+        const string original = "<TextBlock MaxLines='1'></TextBlock>";
+        AxamlPreviewNode stale = service.Parse(original);
+        Assert.ThrowsExactly<InvalidDataException>(() => service.UpdateAttribute(
+            "<TextBlock MaxLines='1'><TextBlock.MaxLines>2</TextBlock.MaxLines></TextBlock>",
+            stale, "MaxLines", "3"));
+    }
+
+    [TestMethod]
     public void TextBlockTrimming_UsesNativeDefaultAndRejectsAmbiguousSources()
     {
         AxamlPreviewService service = new();

@@ -2552,6 +2552,57 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task TextBlockMaxLines_EditorPreservesAmbiguousSourcesAndHistory()
+    {
+        const string original = "<TextBlock MaxLines='003' />";
+        AxamlDesignerViewModel editable = new();
+        string? published = null;
+        editable.MarkupChanged += (_, args) => published = args.Markup;
+        editable.LoadMarkup(original);
+        editable.SelectedNode = editable.PreviewRoot;
+        var maxLines = editable.PropertyProvider.Properties.Single(row => row.Name == "MaxLines");
+        Assert.IsFalse(maxLines.TrySetValue("-1"));
+        Assert.IsFalse(maxLines.TrySetValue("1.5"));
+        Assert.IsTrue(maxLines.TrySetValue("5"));
+        await editable.PropertyProvider.ApplyAsync();
+        string edited = published!;
+        editable.UndoCommand.Execute(null);
+        Assert.AreEqual(original, published);
+        editable.RedoCommand.Execute(null);
+        Assert.AreEqual(edited, published);
+
+        foreach (string source in new[]
+        {
+            "<TextBlock MaxLines='{Binding Count}' />",
+            "<TextBlock xmlns:a='https://github.com/avaloniaui' a:MaxLines='3' />",
+            "<TextBlock xmlns:e='urn:foreign' MaxLines='3' e:MaxLines='2' />",
+            "<TextBlock MaxLines='3'><TextBlock.MaxLines>2</TextBlock.MaxLines></TextBlock>",
+        })
+        {
+            AxamlDesignerViewModel viewModel = new();
+            string? changed = null;
+            viewModel.MarkupChanged += (_, args) => changed = args.Markup;
+            viewModel.LoadMarkup(source);
+            viewModel.SelectedNode = viewModel.PreviewRoot;
+            var row = viewModel.PropertyProvider.Properties.Single(property => property.Name == "MaxLines");
+            Assert.IsFalse(row.IsEditable, source);
+            Assert.IsFalse(row.TrySetValue("5"), source);
+            await viewModel.PropertyProvider.DiscardAsync();
+            var width = viewModel.PropertyProvider.Properties.Single(property => property.Name == "Width");
+            Assert.IsTrue(width.TrySetValue("40"), source);
+            await viewModel.PropertyProvider.ApplyAsync();
+            string modified = changed!;
+            Assert.AreEqual(source.Replace(" />", "/>", StringComparison.Ordinal),
+                modified.Replace(" Width=\"40\"", string.Empty, StringComparison.Ordinal)
+                    .Replace(" />", "/>", StringComparison.Ordinal), source);
+            viewModel.UndoCommand.Execute(null);
+            Assert.AreEqual(source, changed, source);
+            viewModel.RedoCommand.Execute(null);
+            Assert.AreEqual(modified, changed, source);
+        }
+    }
+
+    [TestMethod]
     public async Task TextBlockLineHeight_IsEditableAndUndoable()
     {
         AxamlDesignerViewModel viewModel = new();
