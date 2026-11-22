@@ -102,6 +102,7 @@ public sealed class AxamlPreviewService
             && !(propertyName == "TextWrapping" && node.HasUnsafeTextWrappingSource)
             && !(propertyName == "TextTrimming" && node.HasUnsafeTextTrimmingSource)
             && !(propertyName == "TextAlignment" && node.HasUnsafeTextAlignmentSource)
+            && !(propertyName == "MaxLines" && node.HasUnsafeMaxLinesSource)
             && !(propertyName == "Orientation" && node.HasUnsafeOrientationSource)
             && (!node.Properties.TryGetValue(propertyName, out string? value)
                 || !IsMarkupExtensionValue(node.TypeName, propertyName, value))
@@ -284,7 +285,7 @@ public sealed class AxamlPreviewService
         }
 
         if (propertyName == "TextAlignment" && node.TypeName is "TextBox" or "TextBlock"
-            || propertyName == "TextTrimming" && node.TypeName == "TextBlock")
+            || propertyName is "TextTrimming" or "MaxLines" && node.TypeName == "TextBlock")
         {
             AxamlPreviewNode current = Parse(axaml);
             AxamlPreviewNode? FindNode(AxamlPreviewNode candidate) =>
@@ -1846,6 +1847,7 @@ public sealed class AxamlPreviewService
             HasUnsafeTextWrappingSource = node.HasUnsafeTextWrappingSource,
             HasUnsafeTextTrimmingSource = node.HasUnsafeTextTrimmingSource,
             HasUnsafeTextAlignmentSource = node.HasUnsafeTextAlignmentSource,
+            HasUnsafeMaxLinesSource = node.HasUnsafeMaxLinesSource,
             HasUnsafeOrientationSource = node.HasUnsafeOrientationSource,
             HasInlineText = node.HasInlineText,
             HasChildElements = node.HasChildElements,
@@ -2272,6 +2274,15 @@ public sealed class AxamlPreviewService
         {
             previewProperties.Remove("TextAlignment");
         }
+        bool unsafeMaxLines = typeName == "TextBlock"
+            && (element.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration
+                    && (attribute.Name.LocalName == "MaxLines" || attribute.Name.LocalName.EndsWith(".MaxLines", StringComparison.Ordinal))
+                    && (attribute.Name.Namespace != XNamespace.None || attribute.Name.LocalName != "MaxLines"))
+                || element.Elements().Any(static child => child.Name.LocalName.EndsWith(".MaxLines", StringComparison.Ordinal)));
+        if (unsafeMaxLines)
+        {
+            previewProperties.Remove("MaxLines");
+        }
         bool unsafeOrientation = typeName is "StackPanel" or "Slider" or "ProgressBar" or "WrapPanel"
             && (element.Attributes().Any(static attribute => !attribute.IsNamespaceDeclaration
                     && (attribute.Name.LocalName == "Orientation" || attribute.Name.LocalName.EndsWith(".Orientation", StringComparison.Ordinal))
@@ -2315,6 +2326,7 @@ public sealed class AxamlPreviewService
             HasUnsafeTextWrappingSource = unsafeTextWrapping,
             HasUnsafeTextTrimmingSource = unsafeTextTrimming,
             HasUnsafeTextAlignmentSource = unsafeTextAlignment,
+            HasUnsafeMaxLinesSource = unsafeMaxLines,
             HasUnsafeOrientationSource = unsafeOrientation,
             HasInlineText = element.Nodes().OfType<XText>().Any(static value => !string.IsNullOrWhiteSpace(value.Value)),
             HasChildElements = element.HasElements,

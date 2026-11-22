@@ -43,6 +43,8 @@ public sealed class AxamlPreviewNode
 
     public bool HasUnsafeTextAlignmentSource { get; init; }
 
+    public bool HasUnsafeMaxLinesSource { get; init; }
+
     public bool HasUnsafeOrientationSource { get; init; }
 
     /// <summary>The legacy WrapPanel-specific view of the orientation source flag.</summary>

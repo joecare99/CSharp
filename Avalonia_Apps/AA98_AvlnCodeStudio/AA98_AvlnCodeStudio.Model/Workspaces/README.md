@@ -266,6 +266,12 @@ fall back to `None` in the preview. Qualified attributes and property elements
 are treated as ambiguous, read-only sources, including when a plain attribute
 is also present. Bindings are not evaluated or rewritten by the property
 editor. Styles and arbitrary source XAML are not executed.
+For `TextBlock.MaxLines`, an omitted value uses Avalonia's `0` default.
+Non-negative whole-number literals are editable with undo/redo; invalid values
+remain visible as validation errors and fall back to `0` in the inert preview.
+Qualified attributes and property elements are conservatively read-only and
+fall back to the default even alongside a plain attribute. Bindings and dynamic
+resources are not evaluated or rewritten; other edits preserve the source.
 The shared Workbench and standalone binding editor accepts its supported simple
 paths and options only; empty binding arguments such as `{Binding Name,, Mode=TwoWay}`
 or a trailing comma are ambiguous and cannot be edited there. Their original

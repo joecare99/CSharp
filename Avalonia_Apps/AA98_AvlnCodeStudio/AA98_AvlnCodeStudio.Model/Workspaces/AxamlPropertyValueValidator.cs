@@ -172,7 +172,8 @@ public static class AxamlPropertyValueValidator
             value = value[2..];
         }
         if (propertyName == "Orientation" && node.HasUnsafeOrientationSource
-            || propertyName == "TextTrimming" && node.HasUnsafeTextTrimmingSource)
+            || propertyName == "TextTrimming" && node.HasUnsafeTextTrimmingSource
+            || propertyName == "MaxLines" && node.HasUnsafeMaxLinesSource)
         {
             value = string.Empty;
         }
@@ -660,6 +661,11 @@ public static class AxamlPropertyValueValidator
 
     private static string? GetReadOnlyReason(AxamlPreviewNode node, string propertyName)
     {
+        if (propertyName == "MaxLines" && node.HasUnsafeMaxLinesSource)
+        {
+            return "Qualified or property-element MaxLines is ambiguous and read-only.";
+        }
+
         if (propertyName == "TextTrimming" && node.HasUnsafeTextTrimmingSource)
         {
             return "Qualified or property-element TextTrimming is ambiguous and read-only.";
