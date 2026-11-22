@@ -28,6 +28,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -1019,6 +1020,162 @@ public sealed class CSharpWorkspaceLoaderTests
             Assert.AreEqual(source, File.ReadAllText(viewModelPath));
             Assert.AreEqual(project, File.ReadAllText(projectPath));
             Assert.AreEqual(codeBehind, File.ReadAllText(Path.Combine(root, "View.axaml.cs")));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task MainWindowViewModel_RejectsChangedBindingRequestDuringWorkspacePlanning()
+    {
+        string root = Path.Combine(AppContext.BaseDirectory, $"BindingReviewFixture-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string projectPath = Path.Combine(root, "Sample.csproj");
+            string axamlPath = Path.Combine(root, "View.axaml");
+            string codeBehindPath = Path.Combine(root, "View.axaml.cs");
+            string viewModelPath = Path.Combine(root, "ViewModel.cs");
+            const string project = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework><ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally></PropertyGroup>
+                  <ItemGroup><PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" /></ItemGroup>
+                </Project>
+                """;
+            const string codeBehind = "namespace Sample; public partial class View { }";
+            const string source = """
+                using CommunityToolkit.Mvvm.ComponentModel;
+                namespace Sample;
+                public partial class ViewModel : ObservableObject
+                {
+                }
+                """;
+            const string savedMarkup = """
+                <Window xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:vm="using:Sample" x:Class="Sample.View" x:DataType="vm:ViewModel">
+                  <Window.DataContext><vm:ViewModel /></Window.DataContext>
+                  <TextBox Text="saved" />
+                </Window>
+                """;
+            string dirtyMarkup = savedMarkup.Replace("Text=\"saved\"", "Text=\"unsaved\"");
+            File.WriteAllText(projectPath, project);
+            File.WriteAllText(codeBehindPath, codeBehind);
+            File.WriteAllText(viewModelPath, source);
+            File.WriteAllText(axamlPath, savedMarkup);
+
+            ProcessStartInfo buildInfo = new("dotnet")
+            {
+                WorkingDirectory = root,
+                ArgumentList = { "build", projectPath, "--verbosity", "quiet" },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
+            ClearInheritedMsBuildEnvironment(buildInfo);
+            using (Process build = Process.Start(buildInfo)
+                ?? throw new InvalidOperationException("Could not start the binding review fixture build."))
+            {
+                Task<string> output = build.StandardOutput.ReadToEndAsync();
+                Task<string> error = build.StandardError.ReadToEndAsync();
+                await build.WaitForExitAsync();
+                Assert.AreEqual(0, build.ExitCode, $"{await output}{await error}");
+            }
+
+            TestEditorComponentFactory factory = new();
+            IAvaloniaEditorComponent component = factory.Create();
+            using EditorDocumentWorkspace editorWorkspace = new(component, factory);
+            using CSharpSyntaxDiagnosticService syntaxService = new();
+            MainWindowViewModel viewModel = new(
+                component,
+                new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                new DiagnosticCollectionViewModel(),
+                null,
+                null,
+                editorWorkspace: editorWorkspace,
+                csharpSyntaxDiagnosticService: syntaxService);
+            await viewModel.OpenWorkspaceFileAsync(projectPath);
+            await editorWorkspace.OpenOrActivateAsync(codeBehindPath);
+            EditorViewModel sourceEditor = viewModel.Editor;
+            string dirtySource = codeBehind + Environment.NewLine + "// unsaved user edit";
+            sourceEditor.Text = dirtySource;
+            await editorWorkspace.OpenOrActivateAsync(axamlPath);
+            viewModel.Editor.Text = dirtyMarkup;
+            viewModel.AxamlDesigner.SelectedNode = viewModel.AxamlDesigner.PreviewRoot;
+            viewModel.AxamlDesigner.SetBindingContext([]);
+
+            int reviews = 0;
+            WorkspaceFileChangeProposal? proposal = null;
+            viewModel.ReviewWorkspaceFileChangesAsync = (candidate, _) =>
+            {
+                reviews++;
+                proposal = candidate;
+                return Task.FromResult(false);
+            };
+            // Hold the real service gate so the Workbench captures the request before analysis resumes.
+            SemaphoreSlim gate = (SemaphoreSlim)(typeof(CSharpSyntaxDiagnosticService)
+                .GetField("_workspaceGate", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .GetValue(syntaxService)!);
+
+            foreach (string change in new[] { "member", "mode", "trigger", "unchanged" })
+            {
+                viewModel.AxamlDesigner.SetBindingContext([]);
+                AxamlBindingRowViewModel row = viewModel.AxamlDesigner.BindingRows.Single();
+                row.NewMemberName = "Caption";
+                row.BindingMode = AxamlBindingMode.TwoWay;
+                row.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.Default;
+                await gate.WaitAsync();
+                Task apply;
+                try
+                {
+                    apply = viewModel.AxamlDesigner.ApplyBindingRowAsync(row);
+                    Assert.IsFalse(apply.IsCompleted, change);
+                    if (change == "member")
+                    {
+                        row.NewMemberName = "DifferentMember";
+                    }
+                    else if (change == "mode")
+                    {
+                        row.BindingMode = AxamlBindingMode.OneWay;
+                    }
+                    else if (change == "trigger")
+                    {
+                        row.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.LostFocus;
+                    }
+                }
+                finally
+                {
+                    gate.Release();
+                }
+                await apply;
+
+                if (change == "unchanged")
+                {
+                    Assert.AreEqual(1, reviews, $"{row.Diagnostic} {viewModel.Editor.NotificationText}");
+                    Assert.IsNotNull(proposal);
+                    Assert.AreEqual(2, proposal.Changes.Count);
+                    Assert.AreEqual(dirtyMarkup, proposal.Changes.Single(c => c.RelativePath == "View.axaml").OriginalOpenDocumentContent);
+                    StringAssert.Contains(proposal.Changes.Single(c => c.RelativePath == "View.axaml").ProposedContent, "{Binding Caption, Mode=TwoWay}");
+                    StringAssert.Contains(proposal.Changes.Single(c => c.RelativePath == "ViewModel.cs").ProposedContent, "Caption");
+                }
+                else
+                {
+                    Assert.AreEqual(0, reviews, change);
+                    StringAssert.Contains(row.Diagnostic, "binding request changed during member planning");
+                }
+                Assert.AreEqual(dirtyMarkup, viewModel.Editor.Text, change);
+                Assert.IsTrue(viewModel.Editor.IsDirty, change);
+                Assert.AreEqual(dirtySource, sourceEditor.Text, change);
+                Assert.IsTrue(sourceEditor.IsDirty, change);
+                Assert.AreEqual(savedMarkup, File.ReadAllText(axamlPath), change);
+                Assert.AreEqual(source, File.ReadAllText(viewModelPath), change);
+                Assert.AreEqual(codeBehind, File.ReadAllText(codeBehindPath), change);
+                Assert.AreEqual(project, File.ReadAllText(projectPath), change);
+                Assert.IsFalse(viewModel.AxamlDesigner.CanUndo, change);
+                Assert.IsFalse(viewModel.WorkspaceFileChangeService.CanUndo, change);
+            }
         }
         finally
         {
