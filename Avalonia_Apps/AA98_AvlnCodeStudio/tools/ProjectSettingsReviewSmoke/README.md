@@ -36,3 +36,22 @@ scenarios use no real credentials or configuration stores.
 Interaction is programmatic, including an Avalonia automation invocation for
 the recovery and dialog buttons. This is not a physical keyboard, screen-reader
 or accessibility acceptance test.
+
+## Linux/net10 evidence (2026-11-22)
+
+On WSL Ubuntu 26.04, SDK 10.0.404 and WSLg, the existing
+`SharedConfigDraftIntegrationTests` passed 20/20; the shared
+`Config.UI.ConfigService.Tests` and `Config.UI.Avalonia.Tests` passed 28/28
+and 46/46 respectively. The window smoke completed successfully, including
+button and direct-command cancellation, close/discard, post-save refresh,
+reset, recovery and independent-draft checks. Stores and projects were
+synthetic; no real credentials were used.
+
+Runs used `tools/build/dotnet-isolated.sh`, `-p:RestoreFallbackFolders=`,
+the existing Linux NuGet cache as the restore source, and fresh roots under
+`artifacts/fleet-config-linux-1122-84671c27`. Graph checks propagated
+`VerifyIsolation` to every node: 185 for the integration test project, 20
+each for the shared test projects, and 152 for the smoke. The full smoke build
+log is in that root's `smoke/smoke.log`. Warnings were not suppressed:
+NU1701, unsupported-TFM package warnings and compiler warnings remain.
+These results do not validate physical input, accessibility or other runtimes.
