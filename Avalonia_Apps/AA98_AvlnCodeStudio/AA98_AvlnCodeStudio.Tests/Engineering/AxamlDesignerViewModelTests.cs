@@ -3394,6 +3394,104 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public async Task BindingRows_RejectChangedRequestDuringMemberPlanning()
+    {
+        foreach (string change in new[] { "member", "mode", "trigger" })
+        {
+            string original = "<TextBox Text='{CompiledBinding Caption}' />";
+            AxamlDesignerViewModel viewModel = new();
+            string? snapshot = null;
+            viewModel.MarkupChanged += (_, e) => snapshot = e.Markup;
+            viewModel.LoadMarkup(original);
+            viewModel.SelectedNode = viewModel.PreviewRoot;
+            AxamlBindingRowViewModel row = viewModel.BindingRows.Single();
+            row.NewMemberName = "PlannedMember";
+            TaskCompletionSource planningStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource resumePlanning = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            bool reviewed = false;
+            viewModel.ApplyMissingBindingAsync = async requested =>
+            {
+                string plannedMember = requested.GetRequestedMember()!;
+                planningStarted.SetResult();
+                await resumePlanning.Task;
+                string proposedMarkup = viewModel.CreateBindingMarkupForRow(requested);
+                StringAssert.Contains(proposedMarkup, "{CompiledBinding " + plannedMember);
+                reviewed = true;
+                return false;
+            };
+            Task apply = viewModel.ApplyBindingRowAsync(row);
+            await planningStarted.Task;
+            await viewModel.ApplyBindingRowAsync(row);
+            StringAssert.Contains(row.Diagnostic, "already being planned");
+            if (change == "member")
+            {
+                row.NewMemberName = "DifferentMember";
+            }
+            else if (change == "mode")
+            {
+                row.BindingMode = AxamlBindingMode.TwoWay;
+            }
+            else
+            {
+                row.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.LostFocus;
+            }
+            viewModel.ApplyBindingRow(row);
+            Assert.IsFalse(viewModel.CanUndo, change);
+            resumePlanning.SetResult();
+            await apply;
+
+            Assert.IsFalse(reviewed, change);
+            Assert.IsNotNull(row.Diagnostic);
+            Assert.IsNull(snapshot);
+            Assert.AreEqual("{CompiledBinding Caption}", viewModel.PreviewRoot!.Properties["Text"]);
+
+            viewModel.ApplyBindingRow(row);
+            string edited = snapshot!;
+            StringAssert.Contains(edited, "{CompiledBinding ");
+            viewModel.UndoCommand.Execute(null);
+            Assert.AreEqual(original, snapshot);
+            viewModel.RedoCommand.Execute(null);
+            Assert.AreEqual(edited, snapshot);
+        }
+    }
+
+    [TestMethod]
+    public async Task BindingRows_RejectRowFromPreviouslySelectedControl()
+    {
+        const string original = "<StackPanel><TextBox Text='{Binding Caption}' /><TextBox Text='{Binding Caption}' /></StackPanel>";
+        AxamlDesignerViewModel viewModel = new();
+        string? snapshot = null;
+        viewModel.MarkupChanged += (_, e) => snapshot = e.Markup;
+        viewModel.LoadMarkup(original);
+        viewModel.SelectedNode = viewModel.PreviewRoot!.Children[0];
+        AxamlBindingRowViewModel oldRow = viewModel.BindingRows.Single();
+        oldRow.NewMemberName = "WrongTarget";
+
+        viewModel.SelectedNode = viewModel.PreviewRoot.Children[1];
+        AxamlBindingRowViewModel currentRow = viewModel.BindingRows.Single();
+        Assert.AreNotSame(oldRow, currentRow);
+        Assert.AreEqual("Caption", currentRow.NewMemberName);
+        bool reviewed = false;
+        viewModel.ApplyMissingBindingAsync = _ => { reviewed = true; return Task.FromResult(true); };
+        await viewModel.ApplyBindingRowAsync(oldRow);
+        viewModel.ApplyBindingRow(oldRow);
+        Assert.ThrowsExactly<InvalidOperationException>(() => viewModel.CreateBindingMarkupForRow(oldRow));
+        Assert.IsFalse(reviewed);
+        Assert.IsNull(snapshot);
+        Assert.IsFalse(viewModel.CanUndo);
+
+        currentRow.NewMemberName = "CorrectTarget";
+        viewModel.ApplyBindingRow(currentRow);
+        string edited = snapshot!;
+        StringAssert.Contains(edited, "Text='{Binding Caption}'");
+        StringAssert.Contains(edited, "Text='{Binding CorrectTarget}'");
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual(original, snapshot);
+        viewModel.RedoCommand.Execute(null);
+        Assert.AreEqual(edited, snapshot);
+    }
+
+    [TestMethod]
     public async Task BindingRows_PreserveAmbiguousEmptyBindingArguments()
     {
         foreach ((string control, string property, string expression) in new[]
