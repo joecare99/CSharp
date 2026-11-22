@@ -4116,6 +4116,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 .Single();
             if (memberPlan.Action == AxamlMvvmMemberPlanAction.Reuse)
             {
+                designer.CreateBindingMarkupForRow(row);
                 designer.ApplyBindingRow(row);
                 return true;
             }
