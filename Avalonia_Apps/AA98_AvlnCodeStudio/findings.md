@@ -302,3 +302,25 @@ dotnet format whitespace .\AA98_AvlnCodeStudio.Tests\AA98_AvlnCodeStudio.Tests.c
 The isolated wrapper's final `HostArtifactRoot` overrides its default. Both host and test transitive graphs passed `VerifyIsolation`; fixture restore/build outputs stayed inside their own generated directories under that root. Formatter checks passed. NU1701 and unsupported-TFM package warnings remain. Linux was not tested: the available WSL distribution has no `dotnet` on its path. Cancellation is tested at a controlled in-flight point, not at every completion race. The runtime builder truncates SDK error detail at 8192 characters and runs user-defined SDK targets; arbitrary target output is not a trusted status signal. Success means only that both requested operations completed, not that launch was verified; artifacts listed are still from the first builder. No external builder sources or shared settings were changed.
 
 The manual `standalone-owned` fixture's files were removed, but Windows initially held its now-empty directory open; no unidentifiable shared process was terminated. A later retry removed the empty directory.
+
+### Standalone builder Linux verification (2026-11-22)
+
+The earlier Linux availability note above is superseded: WSL Ubuntu 26.04, SDK 10.0.404 and runtime 10.0.15 were available with `$HOME/.dotnet` on `PATH`. The physical workspace was `/mnt/d/Projekte/CSharp/Avalonia_Apps/AA98_AvlnCodeStudio`. A unique `HostArtifactRoot` under `artifacts/fleet-builder-linux-1122-84671c27` was used. Before building, `dotnet-isolated.sh msbuild ... -t:VerifyIsolation -graphBuild` checked the host and test graphs, using a temporary target importing `VerifyIsolation.targets` and mapping `ProjectReferenceTargets` so the target ran on every transitive node. Owned fixture graphs were checked similarly, including the added project reference. The wrapper injects `IsolatedArtifacts.props`; `-p:RestoreFallbackFolders=` was used. An initial incorrectly quoted WSL invocation ran a solution graph verification without the intended properties and failed without building; the correctly passed script then performed the checks above. The wrapper also creates its default Linux artifact directory before the final root argument overrides it; no shared directory was removed.
+
+The focused command was:
+
+```bash
+export PATH="$HOME/.dotnet:$PATH"
+cd /mnt/d/Projekte/CSharp/Avalonia_Apps/AA98_AvlnCodeStudio
+root="$PWD/artifacts/fleet-builder-linux-1122-84671c27"
+bash tools/build/dotnet-isolated.sh test AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj \
+  "-p:HostArtifactRoot=$root" -p:RestoreFallbackFolders= -f net10.0 \
+  --filter 'FullyQualifiedName~BuilderHostProgramTests|FullyQualifiedName~DotNetProjectRuntimeBuilderTests|FullyQualifiedName~WorkbenchCodeStudioBuilderServiceTests' \
+  --logger 'console;verbosity=normal'
+```
+
+Result: 18 passed, one skipped. The skipped real SDK cancellation test explicitly requires Windows `ping`; the passing mocked cancellation test does not establish Linux process cancellation. Existing package/TFM and compiler warnings were not suppressed. The real SDK tests covered missing assets, a deliberate SDK target failure and runtime metadata refresh.
+
+Independently, owned net10 app and library fixtures were built and restored with the wrapper and their own isolated output root. After adding and calling the library, `dotnet AA98.Builder.Host.dll inspect <app> --framework net10.0` returned 0; `build <app> --configuration Debug --framework net10.0` returned 0 while the old `.deps.json` remained stale and the real app launch failed with `FileNotFoundException` (exit 134). Adding `--refresh-runtime` returned 0 and `runtimeRefresh=Succeeded`, updated the manifest, and the real app printed `dependency-loaded` (exit 0). An owned project with a deliberately failing `BeforeTargets="CoreCompile"` target returned 0 without refresh, but refresh returned 1 with `AA98_BUILDER_HOST_ERROR` and the target error, with no success output. Actual CLI invocations for missing value, duplicate refresh, unknown option, refresh on inspect and an option in project position each returned 2 without success output. Host child processes inherited fixture-local `HostArtifactRoot` and `CustomAfterDirectoryBuildProps`; fixture sources, outputs and the temporary graph target were removed afterward.
+
+No Linux-specific product defect was reproduced and no product code or tests were changed. These checks do not prove Linux cancellation behavior, other dependency-change forms, or launch success for arbitrary projects.
