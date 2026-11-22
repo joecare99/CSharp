@@ -24,6 +24,10 @@ the original binding kind through review, apply, undo and redo. Unsupported
 options, empty arguments, explicit or nested sources, ambiguous properties,
 nested binding scopes and stale source snapshots are read-only. New bindings
 use `Binding`; editing may normalize the supported expression's formatting.
+During asynchronous member planning, a changed member, mode, trigger or
+selection invalidates the pending binding request before markup can be created
+or directly applied. Retry with the current row; a second request for the same
+row is not planned concurrently.
 
 The generated root `Window.DataContext` (or corresponding root control
 property) is accepted only when it constructs one empty `using:` type matching
