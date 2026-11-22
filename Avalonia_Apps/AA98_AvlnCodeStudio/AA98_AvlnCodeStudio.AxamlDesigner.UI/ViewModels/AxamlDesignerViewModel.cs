@@ -19,11 +19,18 @@ public partial class AxamlDesignerViewModel : ObservableObject
 {
     private readonly AxamlDesignerSession _session;
     private readonly Dictionary<string, GridTrackTarget> _gridTrackTargets = new(StringComparer.Ordinal);
+    private readonly Dictionary<AxamlBindingRowViewModel, BindingRequest> _pendingBindingRequests = [];
     private bool _synchronizing;
     private string _currentMarkup = string.Empty;
     private AxamlSourceSelection? _sourceSelection;
     private AxamlPreviewNode? _sourceSelectionRoot;
     private string? _sourceSelectionMarkup;
+
+    private sealed record BindingRequest(
+        AxamlPreviewNode SelectedNode,
+        string MemberName,
+        AxamlBindingMode BindingMode,
+        AxamlBindingUpdateSourceTrigger UpdateSourceTrigger);
 
     public Func<AxamlBindingRowViewModel, Task<bool>>? ApplyMissingBindingAsync { get; set; }
 
@@ -643,6 +650,13 @@ public partial class AxamlDesignerViewModel : ObservableObject
             string.Equals(member.Name, memberName, StringComparison.Ordinal));
         if (!memberExists && ApplyMissingBindingAsync is { } applyMissingBindingAsync)
         {
+            if (!_pendingBindingRequests.TryAdd(row, new BindingRequest(
+                SelectedNode!, memberName, row.BindingMode, row.UpdateSourceTrigger)))
+            {
+                row.Diagnostic = "A binding request for this row is already being planned.";
+                return;
+            }
+
             try
             {
                 if (!await applyMissingBindingAsync(row))
@@ -661,6 +675,10 @@ public partial class AxamlDesignerViewModel : ObservableObject
             {
                 row.Diagnostic = exception.Message;
                 StatusText = $"AXAML binding change failed: {exception.Message}";
+            }
+            finally
+            {
+                _pendingBindingRequests.Remove(row);
             }
 
             return;
@@ -710,6 +728,17 @@ public partial class AxamlDesignerViewModel : ObservableObject
             return false;
         }
         memberName = requestedMemberName;
+
+        if (_pendingBindingRequests.TryGetValue(row, out BindingRequest? request)
+            && (!ReferenceEquals(request.SelectedNode, SelectedNode)
+                || !string.Equals(request.MemberName, memberName, StringComparison.Ordinal)
+                || request.BindingMode != row.BindingMode
+                || request.UpdateSourceTrigger != row.UpdateSourceTrigger))
+        {
+            row.Diagnostic = "The binding request changed during member planning. Retry the binding.";
+            memberName = string.Empty;
+            return false;
+        }
 
         if (AxamlControlCatalog.TryGet(row.ControlType, out AxamlControlCapability capability)
             && capability.BindableProperties.FirstOrDefault(property => property.Name == row.PropertyName) is { } bindableProperty
