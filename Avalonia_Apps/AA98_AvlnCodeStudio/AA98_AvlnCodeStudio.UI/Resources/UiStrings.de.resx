@@ -27,4 +27,9 @@
   <data name="DecompilePickerErrorFormat" xml:space="preserve"><value>Assembly kann nicht ausgewählt werden: {0}</value></data>
   <data name="DecompileDialogErrorFormat" xml:space="preserve"><value>Dekompilierungsdialog kann nicht geöffnet werden: {0}</value></data>
   <data name="DecompileNavigationErrorFormat" xml:space="preserve"><value>Dekompilierter Quelltext kann nicht geöffnet werden: {0}</value></data>
+  <data name="ImageSavePickerTitle" xml:space="preserve"><value>Als neue PNG-Datei speichern (Metadaten gehen verloren)</value></data>
+  <data name="ImageSavePickerFilter" xml:space="preserve"><value>PNG-Bild</value></data>
+  <data name="ImageSaveUnavailableText" xml:space="preserve"><value>Speichern ist ohne geöffnetes Fenster nicht verfügbar.</value></data>
+  <data name="ImageSaveLocalOnlyText" xml:space="preserve"><value>Wählen Sie ein lokales PNG-Ziel aus.</value></data>
+  <data name="ImageSaveExistingText" xml:space="preserve"><value>Wählen Sie eine neue PNG-Datei; vorhandene Dateien werden nicht überschrieben.</value></data>
 </root>

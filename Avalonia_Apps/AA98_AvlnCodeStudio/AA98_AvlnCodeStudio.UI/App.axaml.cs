@@ -255,6 +255,8 @@ namespace AA98_AvlnCodeStudio.UI
             services.AddSingleton<UI.Components.IAvaloniaEditorComponentFactory>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.AvaloniaEditorComponentFactory>());
             services.AddSingleton<IEditorComponentFactory>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.AvaloniaEditorComponentFactory>());
             services.AddSingleton<UI.Components.IAvaloniaEditorComponent>(serviceProvider => serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponentFactory>().Create());
+            services.AddSingleton<IDocumentEditorFactory<EditorTabViewModel>>(
+                new UI.Components.ImageDocumentEditorFactory(topLevelProvider));
             services.AddSingleton<UI.ViewModels.EditorDocumentWorkspace>(serviceProvider => new UI.ViewModels.EditorDocumentWorkspace(
                 serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponent>(),
                 serviceProvider.GetRequiredService<UI.Components.IAvaloniaEditorComponentFactory>(),

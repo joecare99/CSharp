@@ -35,6 +35,11 @@
   <data name="DecompilePickerErrorFormat" xml:space="preserve"><value>Cannot choose assembly: {0}</value></data>
   <data name="DecompileDialogErrorFormat" xml:space="preserve"><value>Cannot open decompilation dialog: {0}</value></data>
   <data name="DecompileNavigationErrorFormat" xml:space="preserve"><value>Cannot open decompiled source: {0}</value></data>
+  <data name="ImageSavePickerTitle" xml:space="preserve"><value>Save as a new PNG (metadata is not preserved)</value></data>
+  <data name="ImageSavePickerFilter" xml:space="preserve"><value>PNG image</value></data>
+  <data name="ImageSaveUnavailableText" xml:space="preserve"><value>Saving is unavailable without an open window.</value></data>
+  <data name="ImageSaveLocalOnlyText" xml:space="preserve"><value>Choose a local PNG destination.</value></data>
+  <data name="ImageSaveExistingText" xml:space="preserve"><value>Choose a new PNG file; existing files are not overwritten.</value></data>
   <data name="ApplicationTitle" xml:space="preserve">
     <value>Code Studio</value>
   </data>

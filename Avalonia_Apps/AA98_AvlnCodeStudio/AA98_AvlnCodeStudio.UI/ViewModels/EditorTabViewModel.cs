@@ -290,7 +290,9 @@ public sealed partial class EditorTabViewModel : ObservableObject, IDisposable
                 throw new InvalidOperationException("The document is no longer open.");
             }
 
-            string? path = saveAs ? null : _session!.FilePath;
+            string? path = saveAs || _session is IDocumentSavePathPolicy { RequiresSaveAs: true }
+                ? null
+                : _session!.FilePath;
             if (string.IsNullOrWhiteSpace(path))
             {
                 path = await _selectSavePathAsync!(cancellationToken);

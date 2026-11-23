@@ -72,6 +72,12 @@ public static class UiStrings
     public static string DecompileDialogErrorFormat => GetString(nameof(DecompileDialogErrorFormat));
     public static string DecompileNavigationErrorFormat => GetString(nameof(DecompileNavigationErrorFormat));
 
+    public static string ImageSavePickerTitle => GetString(nameof(ImageSavePickerTitle));
+    public static string ImageSavePickerFilter => GetString(nameof(ImageSavePickerFilter));
+    public static string ImageSaveUnavailableText => GetString(nameof(ImageSaveUnavailableText));
+    public static string ImageSaveLocalOnlyText => GetString(nameof(ImageSaveLocalOnlyText));
+    public static string ImageSaveExistingText => GetString(nameof(ImageSaveExistingText));
+
     public static string SaveCommandText => GetString(nameof(SaveCommandText));
 
     public static string SaveAsCommandText => GetString(nameof(SaveAsCommandText));
