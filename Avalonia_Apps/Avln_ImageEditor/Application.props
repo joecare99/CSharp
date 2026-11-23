@@ -1,8 +1,11 @@
 <Project>
+  <PropertyGroup>
+	<_ImageEditorHasArtifactRoot Condition="'$(HostArtifactRoot)' != ''">true</_ImageEditorHasArtifactRoot>
+  </PropertyGroup>
   <Import Project="..\Solution.props" />
   <PropertyGroup>
 	<UpDir>..\$(UpDir)</UpDir>
-	<BaseOutputPath>$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
-	<BaseIntermediateOutputPath>$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+	<BaseOutputPath Condition="'$(_ImageEditorHasArtifactRoot)' != 'true'">$(UpDir)\..\bin\$(MSBuildProjectName)\</BaseOutputPath>
+	<BaseIntermediateOutputPath Condition="'$(_ImageEditorHasArtifactRoot)' != 'true'">$(UpDir)\..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
   </PropertyGroup>
 </Project>

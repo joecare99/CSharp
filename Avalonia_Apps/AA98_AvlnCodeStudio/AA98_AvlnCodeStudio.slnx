@@ -41,6 +41,9 @@
     <Project Path="AA98_AvlnCodeStudio.Versioning.Svn/AA98_AvlnCodeStudio.Versioning.Svn.csproj" />
     <Project Path="AA98_AxamlDesigner.Host/AA98_AxamlDesigner.Host.csproj" />
   </Folder>
+  <Folder Name="/ImageEditor/">
+    <Project Path="..\Avln_ImageEditor\Avln_ImageEditor.Controls\Avln_ImageEditor.Controls.csproj" />
+  </Folder>
   <Folder Name="/Libraries/">
     <Project Path="../Libraries/AppKomponentBaseLib/AppKomponentBaseLib.csproj" />
     <Project Path="../Libraries/Avln_BaseLib/Avln_BaseLib.csproj" />

@@ -120,6 +120,10 @@ not a pass.
 
 ## Release evidence and open gates
 
+- The counts and smoke results below are historical evidence from earlier
+  revisions of the working copy. Subsequent changes were tested separately;
+  rerun the complete applicable matrix on the release candidate before
+  treating any of these results as release acceptance.
 - Record OS, SDK, target framework, adapter version (for DAP), command, exit
   status, and test counts for each run. Keep Windows and Linux results separate.
 - The Windows .NET 10 solution run completed with 747 passed, 5 skipped, and
