@@ -22,6 +22,7 @@ public sealed class ImageEditorDocument : IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentNullException.ThrowIfNull(bitmap);
 
+        ImageDecodeLimits.ValidateSize(bitmap.PixelSize.Width, bitmap.PixelSize.Height);
         Name = name;
         _bitmap = bitmap;
         PixelSize = bitmap.PixelSize;
@@ -30,7 +31,11 @@ public sealed class ImageEditorDocument : IDisposable
     /// <summary>
     /// Gets the display name of the image document.
     /// </summary>
-    public string Name { get; }
+    public string Name { get; private set; }
+
+    internal Bitmap Bitmap => _bitmap;
+
+    internal void Rename(string name) => Name = name;
 
     /// <summary>
     /// Gets the decoded image used by Avalonia controls.

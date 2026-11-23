@@ -25,16 +25,19 @@
 				  Content="Select" />
 		  <Button Command="{Binding SelectToolCommand}"
 				  CommandParameter="{x:Static models:ImageEditorTool.Brush}"
-				  Content="Brush" />
+				  Content="Brush*" IsEnabled="False" />
 		  <Button Command="{Binding SelectToolCommand}"
 				  CommandParameter="{x:Static models:ImageEditorTool.Eraser}"
-				  Content="Eraser" />
+				  Content="Eraser*" IsEnabled="False" />
 		  <Button Command="{Binding SelectToolCommand}"
 				  CommandParameter="{x:Static models:ImageEditorTool.Fill}"
-				  Content="Fill" />
+				  Content="Fill*" IsEnabled="False" />
 		  <Button Command="{Binding SelectToolCommand}"
 				  CommandParameter="{x:Static models:ImageEditorTool.Crop}"
-				  Content="Crop" />
+				  Content="Crop*" IsEnabled="False" />
+		  <Button Command="{Binding RotateRightCommand}" Content="Rotate 90° right" />
+		  <Button Command="{Binding UndoCommand}" Content="Undo" />
+		  <Button Command="{Binding RedoCommand}" Content="Redo" />
 		</StackPanel>
 
 		<StackPanel DockPanel.Dock="Right"
@@ -63,7 +66,7 @@
 					 Text="{Binding DocumentSummary}" />
 		  <TextBlock VerticalAlignment="Center"
 					 Foreground="#9EA3B0"
-					 Text="{Binding SelectedTool, StringFormat='Tool: {0}'}" />
+					 Text="* Not implemented" />
 		</StackPanel>
 	  </DockPanel>
 	</Border>
