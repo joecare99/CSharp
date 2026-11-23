@@ -35,8 +35,8 @@ The Workbench composes `Avln_ImageEditor.Controls` as a document editor for
 PNG, JPEG and BMP. `Avln_ImageEditor.Host` is a separate standalone application;
 neither the shared control nor its host depends on the Workbench. The Workbench
 build requires the sibling `Avln_ImageEditor` source tree. The shared
-editor currently supports zoom, clockwise 90-degree rotation, horizontal
-flipping and undo/redo; brush, eraser, fill and crop are not implemented.
+editor currently supports zoom, clockwise 90-degree rotation, horizontal and
+vertical flipping and undo/redo; brush, eraser, fill and crop are not implemented.
 
 The Workbench reads at most 32 MiB of encoded data. The shared component checks
 image headers before decoding, limiting each dimension to 8192 and the total
