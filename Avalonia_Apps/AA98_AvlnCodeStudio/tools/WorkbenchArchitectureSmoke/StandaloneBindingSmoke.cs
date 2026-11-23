@@ -29,6 +29,7 @@ internal static partial class Program
               </PropertyGroup>
             </Project>
             """);
+        File.WriteAllText(Path.Combine(directory, "Directory.Build.targets"), "<Project />");
         File.WriteAllText(project, """
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup><TargetFramework>net10.0</TargetFramework><ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally></PropertyGroup>
@@ -69,6 +70,7 @@ internal static partial class Program
         window.Show();
         Check(host.OpenDocument(markupPath) && host.SetWorkspaceEntry(project), "Standalone fixture could not be opened.");
         await WaitUntilAsync(() => host.Designer.PreviewRoot is not null, "standalone binding preview");
+        await VerifyStandalonePendingBindingAsync(desktop, host, markupPath, modelPath);
         await VerifyStandaloneBindingEditAsync(desktop, host, markupPath, modelPath, "NameTextBox", "Text", "CompiledBinding", "VisualName", "Name");
         await VerifyStandaloneBindingEditAsync(desktop, host, markupPath, modelPath, "SubmitButton", "Command", "ReflectionBinding", "VisualCommand", "SubmitCommand");
         Check(File.ReadAllText(codePath) == originalCode && File.ReadAllText(sentinelPath) == "preserve",
@@ -113,6 +115,56 @@ internal static partial class Program
         window.DataContext = null;
         window.Close();
         Console.WriteLine("Standalone binding: 2 reviewed binding kinds, source preservation, undo/redo and 4 unsafe contexts verified.");
+    }
+
+    private static async Task VerifyStandalonePendingBindingAsync(
+        IClassicDesktopStyleApplicationLifetime desktop, AxamlDesignerHostViewModel host,
+        string markupPath, string modelPath)
+    {
+        string beforeMarkup = File.ReadAllText(markupPath);
+        string beforeModel = File.ReadAllText(modelPath);
+        host.Designer.SelectedNode = host.Designer.PreviewRoot!.Children.Single(node => node.StableName == "NameTextBox");
+        await WaitUntilAsync(() => host.Designer.BindingRows.Single(row => row.PropertyName == "Text")
+            .AvailableMembers.Contains("Name"), "standalone pending request semantic context");
+        var row = host.Designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+        row.NewMemberName = "PendingName";
+        var originalHandler = host.Designer.ApplyMissingBindingAsync
+            ?? throw new InvalidOperationException("Standalone binding handler is missing.");
+        TaskCompletionSource started = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource resume = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        host.Designer.ApplyMissingBindingAsync = async requested =>
+        {
+            started.SetResult();
+            await resume.Task;
+            return await originalHandler(requested);
+        };
+        try
+        {
+            Task applying = host.Designer.ApplyBindingRowAsync(row);
+            await started.Task.WaitAsync(TimeSpan.FromMinutes(2));
+            await host.Designer.ApplyBindingRowAsync(row);
+            Check(row.Diagnostic?.Contains("already being planned", StringComparison.Ordinal) == true,
+                "Standalone did not reject a duplicate pending request.");
+            row.NewMemberName = "ChangedName";
+            host.Designer.ApplyBindingRow(row);
+            Check(host.Markup == beforeMarkup && !host.IsDirty,
+                "A direct apply changed the document while a different request was pending.");
+            resume.SetResult();
+            await applying.WaitAsync(TimeSpan.FromMinutes(2));
+            Check(row.Diagnostic?.Contains("binding request changed during member planning", StringComparison.OrdinalIgnoreCase) == true,
+                $"Standalone did not reject the changed request after planning: {row.Diagnostic}; {host.StatusText}");
+            Check(!desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Any()
+                && host.Markup == beforeMarkup && !host.IsDirty
+                && File.ReadAllText(markupPath) == beforeMarkup && File.ReadAllText(modelPath) == beforeModel
+                && !host.WorkspaceFileChangeService.CanUndo,
+                "Changed standalone request reached review or modified source/history.");
+        }
+        finally
+        {
+            resume.TrySetResult();
+            host.Designer.ApplyMissingBindingAsync = originalHandler;
+        }
+        Console.WriteLine("Standalone pending binding: changed member and duplicate request rejected before review.");
     }
 
     private static async Task VerifyStandaloneBindingEditAsync(

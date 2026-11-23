@@ -31,6 +31,43 @@ the edited fixture and cleans it up. It does not execute fixture AXAML or claim
 physical input or accessibility acceptance. The standalone-only mode uses the
 null version-control service and does not open AA05.
 
+For the focused image-editor smoke, use a physical workspace path and an
+interactive Windows desktop:
+
+```powershell
+$root = Join-Path (Get-Location).Path ("artifacts\image-smoke-win-" + [guid]::NewGuid().ToString("N"))
+.\tools\build\dotnet-isolated.ps1 run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj --framework net10.0 "-p:HostArtifactRoot=$root" -- --image-only
+```
+
+This mode opens synthetic PNG, JPEG and BMP images through the Workbench explorer
+and shared image control. It checks command bindings, rotation and PNG export
+for all three, and undo/redo, preview pinning and dirty-close for PNG. It then
+exercises updating an unchanged output, an external-change conflict and Save As. It checks corrupt
+input, source preservation, an edit during a delayed write and a document switch
+during a delayed write. Only disposable fixture files are changed. The save
+picker is replaced with a controlled path; neither the native picker nor physical
+input, accessibility or all decoder behavior is covered. The standalone image
+host has its own Avalonia Headless window tests in `Avln_ImageEditor.Controls.Tests`.
+On Windows/net10 the image-only smoke and the full Workbench/standalone
+architecture smoke passed; the latter skipped the optional AA05 sample. The
+standalone image tests passed on Windows/net8, net9 and net10. Linux has not
+been verified for this integration. The Workbench build retains package and
+compiler warnings, including NU1701. The new image smoke file passes the
+whitespace check; unrelated existing whitespace diagnostics remain in
+`Program.cs`.
+
+The standalone smoke also gates the real host's missing-member handler before
+it starts: while a request is pending, it retries the row, changes the member
+name and attempts direct apply, then releases the host for actual semantic
+analysis and source planning. It checks rejection before review and unchanged
+buffer, fixture files and workspace history. This gate is before host analysis,
+not inside Roslyn or the review dialog; it does not establish behavior for
+every possible scheduling point or physical interaction. On Windows/net10.0,
+the standalone-only smoke passed from a physical workspace path with a fresh
+isolated artifact root, including its programmatic cancel/apply and fixture
+rebuild. The build emitted existing NU1701 compatibility warnings (including
+Microsoft.Build and Microsoft.IO.Redist).
+
 The Workbench solution explorer additionally nests a C# file under a sibling
 `.resx` when the project declares a literal, unconditional `DependentUpon`.
 This is a read-only XML projection, not MSBuild evaluation: conditional,

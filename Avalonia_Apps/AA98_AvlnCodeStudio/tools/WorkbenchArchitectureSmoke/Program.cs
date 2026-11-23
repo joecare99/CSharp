@@ -7,6 +7,7 @@ using AA98_AvlnCodeStudio.Host.Mcp;
 using AA98_AvlnCodeStudio.Model.Documents;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.UI;
+using AA98_AvlnCodeStudio.UI.Components;
 using AA98_AvlnCodeStudio.UI.Controls;
 using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.UI.ViewModels;
@@ -34,6 +35,7 @@ using Avalonia.VisualTree;
 using AvaloniaEdit.Highlighting;
 using Code.Navigation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Project.Explorer.Avalonia.ViewModels;
 using Project.Explorer.Avalonia.Views;
 using System;
@@ -59,6 +61,8 @@ internal static partial class Program
     private static bool s_resourceExplorerOnly;
     private static bool s_resourceExplorerSemanticOnly;
     private static bool s_standaloneBindingOnly;
+    private static bool s_imageOnly;
+    private static string? s_imageSavePath;
 
     [STAThread]
     private static int Main(string[] args)
@@ -69,6 +73,7 @@ internal static partial class Program
         bool themeOnly = args.Contains("--theme-only", StringComparer.Ordinal);
         bool pointerOnly = args.Contains("--pointer-only", StringComparer.Ordinal);
         bool standaloneBindingOnly = s_standaloneBindingOnly = args.Contains("--standalone-binding-only", StringComparer.Ordinal);
+        s_imageOnly = args.Contains("--image-only", StringComparer.Ordinal);
         bool resourceExplorerOnly = s_resourceExplorerOnly = args.Contains("--resource-explorer-only", StringComparer.Ordinal);
         bool resourceExplorerSemanticOnly = s_resourceExplorerSemanticOnly =
             args.Contains("--resource-explorer-semantic-only", StringComparer.Ordinal);
@@ -288,6 +293,28 @@ internal static partial class Program
                 ? "using System;\n\nnamespace Sample;\n\n/// <summary>Syntax contrast.</summary>\npublic class Example\n{\n    // TODO HACK: Check syntax colors.\n    public string Message => $\"Hello, {Count}!\";\n    public int Count => 42;\n}\n"
                 : "namespace Sample; public class Example { }");
             File.WriteAllBytes(Path.Combine(fixture, "Image.png"), [0x89, 0x50, 0x4e, 0x47, 0x00]);
+            if (s_imageOnly)
+            {
+                File.WriteAllBytes(Path.Combine(fixture, "Editable.png"), Convert.FromBase64String(
+                    "iVBORw0KGgoAAAANSUhEUgAAAAIAAAADCAYAAAC56t6BAAAAGUlEQVR4nGP4z8DwHwwZGP7//w9hgqj/DgCwqg4zd5fIJgAAAABJRU5ErkJggg=="));
+                File.WriteAllBytes(Path.Combine(fixture, "Editable.bmp"), Convert.FromBase64String(
+                    "Qk1OAAAAAAAAADYAAAAoAAAAAgAAAAMAAAABACAAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAAAAAA/wD/////AAD//////wAA//8AgAD/"));
+                File.WriteAllBytes(Path.Combine(fixture, "Editable.jpg"), Convert.FromBase64String(
+                    "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwg"
+                    + "JC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIy"
+                    + "MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAADAAIDASIAAhEBAxEB/8QA"
+                    + "HwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIh"
+                    + "MUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVW"
+                    + "V1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXG"
+                    + "x8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQF"
+                    + "BgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAV"
+                    + "YnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOE"
+                    + "hYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq"
+                    + "8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDuvCOkaVc+C9Cnn0nTpZpdOt3kkktI2Z2MakkkrkknvRRRX5Bi"
+                    + "cwxarTSqy3f2n39TtVGk1dxX3H//2Q=="));
+                File.WriteAllText(Path.Combine(fixture, "Directory.Build.props"), "<Project />");
+                File.WriteAllText(Path.Combine(fixture, "Directory.Build.targets"), "<Project />");
+            }
             if (!testMethodOnly)
             {
                 File.WriteAllBytes(Path.Combine(fixture, "Binary.cs"), [0x41, 0x00, 0x42]);
@@ -297,7 +324,7 @@ internal static partial class Program
             return AppBuilder.Configure<SmokeApplication>()
                 .UsePlatformDetect()
                 .AfterSetup(_ => Dispatcher.UIThread.Post(async () => await RunAsync(fixture, resourcesOnly, quickInfoOnly, testMethodOnly, compactOnly, themeOnly, pointerOnly, resourceExplorerOnly, resourceExplorerSemanticOnly, standaloneBindingOnly)))
-                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly || compactOnly || themeOnly || pointerOnly || resourceExplorerOnly || resourceExplorerSemanticOnly || standaloneBindingOnly ? [] : args);
+                .StartWithClassicDesktopLifetime(resourcesOnly || quickInfoOnly || testMethodOnly || compactOnly || themeOnly || pointerOnly || resourceExplorerOnly || resourceExplorerSemanticOnly || standaloneBindingOnly || s_imageOnly ? [] : args);
         }
         finally
         {
@@ -327,7 +354,11 @@ internal static partial class Program
         int exitCode = 0;
         try
         {
-            if (standaloneBindingOnly)
+            if (s_imageOnly)
+            {
+                await VerifyImageEditorAsync(desktop, fixture);
+            }
+            else if (standaloneBindingOnly)
             {
                 await VerifyStandaloneBindingsAsync(desktop);
             }
@@ -364,14 +395,14 @@ internal static partial class Program
                 await VerifyWorkbenchAsync(desktop, fixture);
                 await VerifyStandaloneAsync(desktop, fixture);
             }
-            if (!quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly && !resourceExplorerOnly && !resourceExplorerSemanticOnly && !standaloneBindingOnly)
+            if (!quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly && !resourceExplorerOnly && !resourceExplorerSemanticOnly && !standaloneBindingOnly && !s_imageOnly)
             {
                 await VerifyReportedResourcePreviewAsync(desktop);
             }
             EditorDocumentWorkspace workspace = SmokeApplication.Services!.GetRequiredService<EditorDocumentWorkspace>();
             desktop.MainWindow!.Close();
             Check(workspace.Tabs.Count == 0, "Closing the workbench did not dispose its document tabs.");
-            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly && !resourceExplorerOnly && !resourceExplorerSemanticOnly && !standaloneBindingOnly)
+            if (!resourcesOnly && !quickInfoOnly && !testMethodOnly && !compactOnly && !themeOnly && !pointerOnly && !resourceExplorerOnly && !resourceExplorerSemanticOnly && !standaloneBindingOnly && !s_imageOnly)
             {
                 Console.WriteLine("Architecture: navigation, catalog control previews, structure and Grid editing, designer contributions, binary editor, drafts, safe files, standalone review/undo, MCP dispatch and screenshot verified.");
             }
@@ -1933,8 +1964,8 @@ internal static partial class Program
         explorer.SelectedItem = image;
         await WaitForActiveAsync(workbench, image.Item.Path);
         Check(workbench.ActiveEditorTab.IsDiagnostic && !workbench.CanEditActiveDocument,
-            "An unsupported image did not show a read-only diagnostic.");
-        Check(File.ReadAllBytes(image.Item.Path).SequenceEqual(imageBytes), "The unsupported file was modified.");
+            "A corrupt image did not show a read-only diagnostic.");
+        Check(File.ReadAllBytes(image.Item.Path).SequenceEqual(imageBytes), "The corrupt image file was modified.");
         byte[] binaryBytes = File.ReadAllBytes(binary.Item.Path);
         explorer.SelectedItem = binary;
         await WaitForActiveAsync(workbench, binary.Item.Path);
@@ -3461,9 +3492,15 @@ internal static partial class Program
                 () => desktop.MainWindow,
                 userConfigRoot: Path.Combine(s_root, "config"),
                 systemConfigRoot: Path.Combine(s_root, "system"));
-            if (s_resourceExplorerOnly || s_resourceExplorerSemanticOnly || s_standaloneBindingOnly)
+            if (s_resourceExplorerOnly || s_resourceExplorerSemanticOnly || s_standaloneBindingOnly || s_imageOnly)
             {
                 services.AddSingleton<IVersionControlService, NullVersionControlService>();
+            }
+            if (s_imageOnly)
+            {
+                services.RemoveAll<IDocumentEditorFactory<EditorTabViewModel>>();
+                services.AddSingleton<IDocumentEditorFactory<EditorTabViewModel>>(
+                    new ImageDocumentEditorFactory(() => desktop.MainWindow, _ => Task.FromResult(s_imageSavePath)));
             }
             services.AddSingleton<IDocumentEditorFactory<EditorTabViewModel>>(new BinarySmokeFactory());
             Services = services.BuildServiceProvider(new ServiceProviderOptions
