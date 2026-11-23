@@ -71,6 +71,7 @@ internal static partial class Program
         Check(host.OpenDocument(markupPath) && host.SetWorkspaceEntry(project), "Standalone fixture could not be opened.");
         await WaitUntilAsync(() => host.Designer.PreviewRoot is not null, "standalone binding preview");
         await VerifyStandalonePendingBindingAsync(desktop, host, markupPath, modelPath);
+        await VerifyStandaloneSemanticBindingRacesAsync(desktop, host, markupPath, modelPath);
         await VerifyStandaloneBindingEditAsync(desktop, host, markupPath, modelPath, "NameTextBox", "Text", "CompiledBinding", "VisualName", "Name");
         await VerifyStandaloneBindingEditAsync(desktop, host, markupPath, modelPath, "SubmitButton", "Command", "ReflectionBinding", "VisualCommand", "SubmitCommand");
         Check(File.ReadAllText(codePath) == originalCode && File.ReadAllText(sentinelPath) == "preserve",
@@ -165,6 +166,102 @@ internal static partial class Program
             host.Designer.ApplyMissingBindingAsync = originalHandler;
         }
         Console.WriteLine("Standalone pending binding: changed member and duplicate request rejected before review.");
+    }
+
+    private static async Task VerifyStandaloneSemanticBindingRacesAsync(
+        IClassicDesktopStyleApplicationLifetime desktop, AxamlDesignerHostViewModel host,
+        string markupPath, string modelPath)
+    {
+        string beforeMarkup = File.ReadAllText(markupPath);
+        string beforeModel = File.ReadAllText(modelPath);
+        foreach (string scenario in new[] { "member", "document", "unchanged" })
+        {
+            host.Designer.SelectedNode = host.Designer.PreviewRoot!.Children.Single(node => node.StableName == "NameTextBox");
+            await WaitUntilAsync(() => host.Designer.BindingRows.Single(row => row.PropertyName == "Text")
+                .AvailableMembers.Contains("Name"), $"standalone {scenario} semantic context");
+            var row = host.Designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+            row.NewMemberName = "SemanticName";
+            TaskCompletionSource analyzed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource resume = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            host.BindingAnalysisAwaiter = async analysis =>
+            {
+                var resolution = await analysis;
+                Check(resolution.IsSuccessful && resolution.HasRuntimeDataContext,
+                    $"Standalone {scenario} semantic analysis did not resolve the runtime context.");
+                analyzed.SetResult();
+                await resume.Task;
+                return resolution;
+            };
+            try
+            {
+                Task applying = host.Designer.ApplyBindingRowAsync(row);
+                await analyzed.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                Check(!applying.IsCompleted && !desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Any(),
+                    $"Standalone {scenario} request did not wait after semantic analysis.");
+                if (scenario == "member")
+                {
+                    await host.Designer.ApplyBindingRowAsync(row);
+                    Check(row.Diagnostic?.Contains("already being planned", StringComparison.Ordinal) == true,
+                        "A concurrent standalone binding request was not rejected.");
+                    row.NewMemberName = "ChangedSemanticName";
+                    host.Designer.ApplyBindingRow(row);
+                    Check(host.Markup == beforeMarkup && !host.IsDirty,
+                        "A competing direct apply changed the pending binding.");
+                }
+                else if (scenario == "document")
+                {
+                    host.Markup = beforeMarkup + Environment.NewLine + "<!-- user edit -->";
+                }
+
+                string expectedBuffer = host.Markup;
+                bool expectedDesignerUndo = host.Designer.CanUndo;
+                bool expectedDesignerRedo = host.Designer.CanRedo;
+                resume.SetResult();
+                if (scenario == "unchanged")
+                {
+                    await WaitUntilAsync(() => applying.IsCompleted || desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Any(),
+                        "unchanged standalone semantic binding review");
+                    var review = desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().SingleOrDefault();
+                    Check(review is not null, $"Unchanged semantic request did not reach review: {row.Diagnostic}; {host.StatusText}");
+                    Click(review!, "Apply 2 change(s)");
+                }
+                await applying.WaitAsync(TimeSpan.FromMinutes(2));
+                if (scenario == "unchanged")
+                {
+                    string appliedMarkup = beforeMarkup.Replace("{CompiledBinding Name,", "{CompiledBinding SemanticName,", StringComparison.Ordinal);
+                    Check(File.ReadAllText(markupPath) == appliedMarkup && host.Markup == appliedMarkup
+                        && File.ReadAllText(modelPath).Contains("SemanticName", StringComparison.Ordinal)
+                        && !host.IsDirty && host.WorkspaceFileChangeService.CanUndo,
+                        "Unchanged semantic request was not applied to source and buffer.");
+                    Check(host.WorkspaceFileChangeService.Undo()
+                        && host.Markup == beforeMarkup && !host.IsDirty
+                        && File.ReadAllText(markupPath) == beforeMarkup && File.ReadAllText(modelPath) == beforeModel
+                        && !host.WorkspaceFileChangeService.CanUndo && host.WorkspaceFileChangeService.CanRedo,
+                        "Unchanged semantic request could not be undone.");
+                }
+                else
+                {
+                    string expectedDiagnostic = scenario == "member" ? "binding request changed" : "changed during binding analysis";
+                    Check(row.Diagnostic?.Contains(expectedDiagnostic, StringComparison.OrdinalIgnoreCase) == true,
+                        $"Standalone {scenario} stale request was not rejected: {row.Diagnostic}; {host.StatusText}");
+                    Check(host.Markup == expectedBuffer && host.IsDirty == (scenario == "document")
+                        && File.ReadAllText(markupPath) == beforeMarkup && File.ReadAllText(modelPath) == beforeModel
+                        && !host.WorkspaceFileChangeService.CanUndo && !host.WorkspaceFileChangeService.CanRedo
+                        && host.Designer.CanUndo == expectedDesignerUndo && host.Designer.CanRedo == expectedDesignerRedo,
+                        $"Standalone {scenario} semantic request changed source, buffer or workspace history.");
+                }
+                Check(!desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Any(),
+                    $"Standalone {scenario} semantic request left a review open.");
+            }
+            finally
+            {
+                resume.TrySetResult();
+                host.BindingAnalysisAwaiter = null;
+            }
+            if (scenario == "document")
+                host.Markup = beforeMarkup;
+        }
+        Console.WriteLine("Standalone semantic binding: member/document races rejected, duplicate rejected, unchanged request applied and undone.");
     }
 
     private static async Task VerifyStandaloneBindingEditAsync(
