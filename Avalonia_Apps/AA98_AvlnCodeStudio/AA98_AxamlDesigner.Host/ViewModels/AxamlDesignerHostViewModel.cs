@@ -71,6 +71,8 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
     /// <summary>Reviews and applies a proposal; returns true only after successful application.</summary>
     public Func<WorkspaceFileChangeProposal, CancellationToken, Task<bool>>? ReviewWorkspaceFileChangesAsync { get; set; }
 
+    internal Func<Task<AxamlMvvmSemanticResolution>, Task<AxamlMvvmSemanticResolution>>? BindingAnalysisAwaiter { get; set; }
+
     public bool IsDirty => !string.Equals(_markup, _savedMarkup, StringComparison.Ordinal);
 
     public bool HasUnsavedChanges => IsDirty || Designer.HasUnappliedPropertyDrafts;
@@ -553,12 +555,12 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
         try
         {
             _bindingContextRefresh?.Cancel();
-            AxamlMvvmSemanticResolution resolution =
-                await _csharpSyntaxDiagnosticService.AnalyzeAxamlMvvmAsync(
-                    markup,
-                    filePath,
-                    workspace,
-                    allowExistingRuntimeDataContext: true);
+            Task<AxamlMvvmSemanticResolution> analysis = _csharpSyntaxDiagnosticService.AnalyzeAxamlMvvmAsync(
+                markup,
+                filePath,
+                workspace,
+                allowExistingRuntimeDataContext: true);
+            AxamlMvvmSemanticResolution resolution = await (BindingAnalysisAwaiter?.Invoke(analysis) ?? analysis);
             if (!IsTargetCurrent())
             {
                 throw new InvalidOperationException("The selected control, document, or workspace changed during binding analysis. Retry the binding.");
