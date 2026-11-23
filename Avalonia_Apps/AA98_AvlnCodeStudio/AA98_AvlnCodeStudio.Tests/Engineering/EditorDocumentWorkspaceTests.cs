@@ -309,6 +309,48 @@ public sealed class EditorDocumentWorkspaceTests
     }
 
     [TestMethod]
+    public async Task BinaryEditor_RequiredSaveAsPreservesSourceAndUsesSelectedDestination()
+    {
+        string root = Path.Combine(Path.GetTempPath(), $"AA98_BinarySavePolicy_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            string source = Path.Combine(root, "Original.bin");
+            string destination = Path.Combine(root, "Edited.bin");
+            await File.WriteAllBytesAsync(source, [0x01]);
+            TestEditorComponentFactory components = new();
+            BinaryDocumentFactory factory = new() { ConfigureSession = session => session.RequiresSaveAs = true };
+            using EditorDocumentWorkspace workspace = new(components.Create(), components, [factory]);
+            await workspace.OpenOrActivateAsync(source);
+            EditorTabViewModel tab = workspace.ActiveTab;
+            BinaryDocumentSession session = factory.Sessions.Single();
+            session.ReplaceContent([0x02]);
+
+            int selections = 0;
+            factory.SelectSavePathAsync = _ =>
+            {
+                selections++;
+                return Task.FromResult<string?>(null);
+            };
+            await tab.SaveCommand.ExecuteAsync(null);
+            Assert.AreEqual(1, selections);
+            Assert.IsTrue(tab.IsDirty);
+            CollectionAssert.AreEqual(new byte[] { 0x01 }, await File.ReadAllBytesAsync(source));
+
+            factory.SelectSavePathAsync = _ => Task.FromResult<string?>(destination);
+            await tab.SaveCommand.ExecuteAsync(null);
+            Assert.IsFalse(tab.IsDirty);
+            Assert.AreEqual(destination, tab.FilePath);
+            CollectionAssert.AreEqual(new byte[] { 0x01 }, await File.ReadAllBytesAsync(source));
+            CollectionAssert.AreEqual(new byte[] { 0x02 }, await File.ReadAllBytesAsync(destination));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task BinaryEditor_SaveAsCoordinatesOpenTargetsAndConcurrentWrites()
     {
         string root = Path.Combine(Path.GetTempPath(), $"AA98_BinarySave_{Guid.NewGuid():N}");
@@ -1252,7 +1294,7 @@ public sealed class EditorDocumentWorkspaceTests
         }
     }
 
-    private sealed class BinaryDocumentSession : IDocumentEditorSession
+    private sealed class BinaryDocumentSession : IDocumentEditorSession, IDocumentSavePathPolicy
     {
         private byte[] _savedContent = [];
 
@@ -1260,6 +1302,7 @@ public sealed class EditorDocumentWorkspaceTests
         public string DisplayName => Path.GetFileName(FilePath) ?? "Untitled.bin";
         public byte[] Content { get; private set; } = [];
         public bool IsDirty => !Content.SequenceEqual(_savedContent);
+        public bool RequiresSaveAs { get; set; }
         public bool IsDisposed { get; private set; }
         public string? OpenedPathOverride { get; set; }
         public Func<CancellationToken, Task>? BeforeReadAsync { get; set; }
@@ -1291,6 +1334,7 @@ public sealed class EditorDocumentWorkspaceTests
             await File.WriteAllBytesAsync(filePath, snapshot, cancellationToken);
             _savedContent = snapshot;
             FilePath = filePath;
+            RequiresSaveAs = false;
             StateChanged?.Invoke(this, EventArgs.Empty);
         }
 
