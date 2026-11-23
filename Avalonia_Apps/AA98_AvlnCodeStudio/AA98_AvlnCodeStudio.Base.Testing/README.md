@@ -18,6 +18,15 @@ Discovery, single-case execution and debugging use VSTest; Microsoft.Testing.Pla
 
 Before single-case execution, rediscovery must match exactly one case by adapter ID, executor URI, source and fully qualified name. The returned result must match the same identity; display names may differ. Missing, ambiguous or mismatched cases are rejected rather than attributed to the selection.
 
+`VSTestIdentityAdapterIntegrationTests` exercises a controlled adapter through
+discovery and a real selected-case run. Its normal result passes; a second run
+returns a passed result with the selected ID, executor and source but a different
+fully qualified name. The adapter traces both names and the ID, and the service
+rejects the result as a different case. This reproduces no product defect for
+that scenario; it does not cover every adapter, identity mutation or runner.
+The Windows net10.0 run used SDK 11.0.100 and Microsoft.NET.Test.Sdk 18.12.0
+for the fixture. It does not execute MTP or validate debugger attach.
+
 An error-level VSTest event makes discovery or selected-case execution fail, even if cases or a result were reported; partial results are not presented as successful. An event with no usable message receives an English fallback diagnostic, consistent with the component's other diagnostics.
 
 Aborted discovery and canceled or aborted execution also reject partial results.
