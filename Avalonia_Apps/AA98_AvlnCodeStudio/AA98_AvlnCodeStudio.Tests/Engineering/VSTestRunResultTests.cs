@@ -141,6 +141,32 @@ public sealed class VSTestRunResultTests
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
+    public void LateCanceledRunCallbacks_DoNotChangeAnotherRun(bool finalChunk)
+    {
+        TestCase oldCase = CreateCase(Guid.NewGuid());
+        TestCase currentCase = CreateCase(Guid.NewGuid());
+        VSTestDiscoveryService.RunHandler oldHandler = new(oldCase);
+        VSTestDiscoveryService.RunHandler currentHandler = new(currentCase);
+        Complete(currentHandler, new TestResult(currentCase) { Outcome = TestOutcome.Passed });
+
+        TestRunChangedEventArgs late = new(null!, [new TestResult(oldCase) { Outcome = TestOutcome.Passed }], null!);
+        if (!finalChunk)
+        {
+            oldHandler.HandleTestRunStatsChange(late);
+        }
+        oldHandler.HandleTestRunComplete(
+            new TestRunCompleteEventArgs(null!, true, false, null!, null!, TimeSpan.Zero),
+            finalChunk ? late : null, null, null);
+
+        Assert.ThrowsExactly<InvalidOperationException>(() => oldHandler.GetResult());
+        TestRunSummary current = currentHandler.GetResult();
+        Assert.AreEqual(TestRunOutcome.Passed, current.Outcome);
+        Assert.AreEqual(currentCase.Id.ToString(), current.Cases.Single().TestId);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
     public void AbortedDiscoveryWithPartialCases_IsRejected(bool finalChunk)
     {
         TestCase[] cases = [CreateCase(Guid.NewGuid())];

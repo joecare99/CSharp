@@ -63,9 +63,10 @@ public sealed class VSTestCancellationIntegrationTests
             string assembly = Path.Combine(output, "C.TestAdapter.dll");
             string workerAssembly = Path.Combine(artifacts, "bin", "W", "Debug", "net10.0", "W.dll");
 
-            await RunScenarioAsync(workerAssembly, assembly, suppressStart: false, beforeGate: false);
-            await RunScenarioAsync(workerAssembly, assembly, suppressStart: true, beforeGate: false);
-            await RunScenarioAsync(workerAssembly, assembly, suppressStart: false, beforeGate: true);
+            await RunScenarioAsync(workerAssembly, assembly, suppressStart: false, beforeGate: false, lateResult: false);
+            await RunScenarioAsync(workerAssembly, assembly, suppressStart: false, beforeGate: false, lateResult: true);
+            await RunScenarioAsync(workerAssembly, assembly, suppressStart: true, beforeGate: false, lateResult: false);
+            await RunScenarioAsync(workerAssembly, assembly, suppressStart: false, beforeGate: true, lateResult: false);
         }
         finally
         {
@@ -73,16 +74,20 @@ public sealed class VSTestCancellationIntegrationTests
         }
     }
 
-    private static async Task RunScenarioAsync(string workerAssembly, string assembly, bool suppressStart, bool beforeGate)
+    private static async Task RunScenarioAsync(string workerAssembly, string assembly, bool suppressStart, bool beforeGate, bool lateResult)
     {
         string directory = Path.GetDirectoryName(assembly)!;
-        foreach (string name in new[] { "boot", "gate", "host", "ready", "cancel", "result", "selected", "no-start", "adapter-canceled" })
+        foreach (string name in new[] { "boot", "gate", "host", "ready", "cancel", "result", "selected", "no-start", "adapter-canceled", "late-mode", "late-result" })
         {
             File.Delete(Path.Combine(directory, name));
         }
         if (suppressStart)
         {
             await File.WriteAllTextAsync(Path.Combine(directory, "no-start"), "1");
+        }
+        if (lateResult)
+        {
+            await File.WriteAllTextAsync(Path.Combine(directory, "late-mode"), "1");
         }
 
         await using OwnedWorker worker = await OwnedWorker.StartAsync(workerAssembly, assembly);
@@ -119,6 +124,10 @@ public sealed class VSTestCancellationIntegrationTests
             }
             Assert.AreEqual("canceled", await File.ReadAllTextAsync(Path.Combine(directory, "result")));
             Assert.IsTrue(File.Exists(Path.Combine(directory, "adapter-canceled")), "The adapter did not receive Cancel.");
+            if (lateResult)
+            {
+                Assert.AreEqual("recorded", await File.ReadAllTextAsync(Path.Combine(directory, "late-result")));
+            }
         }
         await worker.AssertStoppedAsync();
     }
@@ -682,14 +691,23 @@ public sealed class VSTestCancellationIntegrationTests
                 foreach (TestCase test in tests)
                 {
                     string directory = Path.GetDirectoryName(test.Source);
-                    handle.RecordResult(new TestResult(test) { Outcome = TestOutcome.Passed });
+                    bool late = File.Exists(Path.Combine(directory, "late-mode"));
+                    if (!late)
+                        handle.RecordResult(new TestResult(test) { Outcome = TestOutcome.Passed });
                     string pending = Path.Combine(directory, "host.pending");
                     File.WriteAllText(pending, Environment.ProcessId + "\n" + test.Id + "\n" + test.ExecutorUri + "\n" + test.Source + "\n" + test.FullyQualifiedName);
                     File.Move(pending, Path.Combine(directory, "host"));
                     if (!File.Exists(Path.Combine(directory, "no-start")))
                         File.WriteAllText(Path.Combine(directory, "ready"), "1");
                     if (canceled.Wait(TimeSpan.FromSeconds(120)))
+                    {
                         File.WriteAllText(Path.Combine(directory, "adapter-canceled"), "1");
+                        if (late)
+                        {
+                            handle.RecordResult(new TestResult(test) { Outcome = TestOutcome.Passed });
+                            File.WriteAllText(Path.Combine(directory, "late-result"), "recorded");
+                        }
+                    }
                 }
             }
         }
