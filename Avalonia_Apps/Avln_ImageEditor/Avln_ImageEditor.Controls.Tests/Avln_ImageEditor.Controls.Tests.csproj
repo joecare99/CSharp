@@ -18,8 +18,10 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="MSTest" />
     <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Avalonia.Headless" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Avln_ImageEditor.Controls\Avln_ImageEditor.Controls.csproj" />
+    <ProjectReference Include="..\Avln_ImageEditor.Host\Avln_ImageEditor.Host.csproj" />
   </ItemGroup>
 </Project>
