@@ -35,8 +35,8 @@ The Workbench composes `Avln_ImageEditor.Controls` as a document editor for
 PNG, JPEG and BMP. `Avln_ImageEditor.Host` is a separate standalone application;
 neither the shared control nor its host depends on the Workbench. The Workbench
 build requires the sibling `Avln_ImageEditor` source tree. The shared
-editor currently supports zoom, clockwise 90-degree rotation and undo/redo;
-brush, eraser, fill and crop are not implemented.
+editor currently supports zoom, clockwise 90-degree rotation, horizontal
+flipping and undo/redo; brush, eraser, fill and crop are not implemented.
 
 The Workbench reads at most 32 MiB of encoded data. The shared component checks
 image headers before decoding, limiting each dimension to 8192 and the total
@@ -61,10 +61,11 @@ an interrupted process can leave its temporary file behind.
 
 On Windows the shared image component and standalone host tests passed for
 net8, net9 and net10, and the Workbench image/document tests and programmatic
-image window smoke passed for net10. The Workbench UI builds for all three
-frameworks with package and compiler warnings, including NU1701. Linux, native
-file pickers and physical accessibility have not been verified for this
-integration.
+image window smoke passed for net10. On Linux/net10 the standalone tests,
+Workbench image/document tests on a case-sensitive temporary filesystem, and
+programmatic WSLg image window smoke passed. Builds retain package and compiler
+warnings, including NU1701. Native file pickers and physical accessibility
+have not been verified for this integration.
 
 The Workbench owns one client view with multiple tabs and at most one
 replaceable, unprotected preview. `WorkspacePathIdentity` supplies the
