@@ -32,4 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Avln_ImageEditor.Controls\Avln_ImageEditor.Controls.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Avln_ImageEditor.Controls.Tests" />
+  </ItemGroup>
 </Project>

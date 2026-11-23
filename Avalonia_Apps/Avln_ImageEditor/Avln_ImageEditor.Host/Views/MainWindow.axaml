@@ -20,10 +20,11 @@
 			BorderBrush="#3C3F48"
 			BorderThickness="0,0,0,1">
 	  <DockPanel LastChildFill="True">
-		<Button x:Name="btnOpenImage"
-				DockPanel.Dock="Left"
-				Click="OpenImage_Click"
-				Content="Open image" />
+		<StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="8">
+		  <Button Click="OpenImage_Click" Content="Open image" />
+		  <Button Click="ExportPng_Click" Content="Export PNG to new file" />
+		  <TextBlock VerticalAlignment="Center" Text="{Binding Editor.IsDirty, StringFormat='Unsaved changes: {0}'}" />
+		</StackPanel>
 		<TextBlock Margin="12,0,0,0"
 				   VerticalAlignment="Center"
 				   Foreground="#D7D9E0"
