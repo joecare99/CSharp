@@ -52,9 +52,28 @@ Linux requires `/usr/bin/unshare` from util-linux 2.41.3 or newer built with
 are reported inconclusive. Fixture builds and transitive references use a
 fresh artifact root and `tools/build/IsolatedArtifacts.props`.
 
+The same fixture also has the controlled adapter record a passed result only
+after its `Cancel` callback, then return normally. A marker confirms
+`RecordResult` returned; the service must still throw cancellation rather than
+return a successful summary. This does not establish that VSTest forwarded that
+late result or delivered a successful completion callback. Separate direct
+handler tests deliver a late passed result as either a stats chunk or final
+chunk with a canceled completion, and verify another handler's selected-case
+result remains unchanged. These tests found no product defect in those
+scenarios; they do not exercise the UI or prove UI context isolation.
+The tests can be rerun from the repository root with a fresh artifact root:
+
+```powershell
+$root = Join-Path (Get-Location) ("artifacts\vstest-cancel-" + [guid]::NewGuid().ToString("N"))
+$props = Join-Path (Get-Location) "tools\build\IsolatedArtifacts.props"
+dotnet test AA98_AvlnCodeStudio.Tests\AA98_AvlnCodeStudio.Tests.csproj -f net10.0 "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$props" --filter "FullyQualifiedName~VSTestRunResultTests|FullyQualifiedName~VSTestCancellationIntegrationTests"
+```
+
 These tests do not guarantee timely cancellation of uncooperative adapters or
-cover every runner version and startup race. They do not promise cleanup if the
-outer test process or operating system itself fails.
+cover every runner version, callback ordering or startup race. The late-result
+fixture is cooperative: an adapter that never returns or does not respond to
+cancellation is not covered. They do not promise cleanup if the outer test
+process or operating system itself fails.
 
 `VSTestErrorAdapterIntegrationTests` builds a controlled adapter and test source using
 `Microsoft.NET.Test.Sdk` 18.12.0. It verifies successful discovery and execution,
