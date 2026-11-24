@@ -73,6 +73,8 @@ public partial class AxamlDesignerHostViewModel : ObservableObject, IWorkspaceOp
 
     internal Func<Task<AxamlMvvmSemanticResolution>, Task<AxamlMvvmSemanticResolution>>? BindingAnalysisAwaiter { get; set; }
 
+    internal CSharpSyntaxDiagnosticService BindingAnalysisService => _csharpSyntaxDiagnosticService;
+
     public bool IsDirty => !string.Equals(_markup, _savedMarkup, StringComparison.Ordinal);
 
     public bool HasUnsavedChanges => IsDirty || Designer.HasUnappliedPropertyDrafts;
