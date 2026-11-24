@@ -61,6 +61,15 @@ handler tests deliver a late passed result as either a stats chunk or final
 chunk with a canceled completion, and verify another handler's selected-case
 result remains unchanged. These tests found no product defect in those
 scenarios; they do not exercise the UI or prove UI context isolation.
+
+`ProjectWorkflowViewModelTests.RunDiscoveredTestCase_LateResultRespectsWorkbenchContext`
+uses a controllable fake execution service that returns a failed selected-case
+summary after cancellation, project selection change, or opening another
+workspace. It verifies cancellation was signaled and that the late result,
+diagnostics and status do not replace the current context; the unchanged-context
+control publishes the same result and diagnostic. No product defect was
+reproduced in these cases. This tests the workbench with a fake, not a real
+adapter, and does not cover every callback ordering or diagnostic refresh race.
 The tests can be rerun from the repository root with a fresh artifact root:
 
 ```powershell
@@ -68,6 +77,10 @@ $root = Join-Path (Get-Location) ("artifacts\vstest-cancel-" + [guid]::NewGuid()
 $props = Join-Path (Get-Location) "tools\build\IsolatedArtifacts.props"
 dotnet test AA98_AvlnCodeStudio.Tests\AA98_AvlnCodeStudio.Tests.csproj -f net10.0 "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$props" --filter "FullyQualifiedName~VSTestRunResultTests|FullyQualifiedName~VSTestCancellationIntegrationTests"
 ```
+
+Use the same isolated-root command with
+`--filter "FullyQualifiedName~RunDiscoveredTestCase_LateResultRespectsWorkbenchContext"`
+for the workbench regression.
 
 These tests do not guarantee timely cancellation of uncooperative adapters or
 cover every runner version, callback ordering or startup race. The late-result
