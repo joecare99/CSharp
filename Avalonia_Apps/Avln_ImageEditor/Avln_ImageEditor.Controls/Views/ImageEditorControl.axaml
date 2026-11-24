@@ -16,10 +16,9 @@
 			Background="#2B2D33"
 			BorderBrush="#40424A"
 			BorderThickness="0,0,0,1">
-	  <DockPanel LastChildFill="True">
-		<StackPanel DockPanel.Dock="Left"
-					Orientation="Horizontal"
-					Spacing="8">
+	  <StackPanel Spacing="8">
+		<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+		  <StackPanel Orientation="Horizontal" Spacing="8">
 		  <Button Command="{Binding SelectToolCommand}"
 				  CommandParameter="{x:Static models:ImageEditorTool.Select}"
 				  Content="Select" />
@@ -37,10 +36,13 @@
 				  Content="Crop*" IsEnabled="False" />
 		  <Button Command="{Binding RotateRightCommand}" Content="Rotate 90° right" />
 		  <Button Command="{Binding FlipHorizontalCommand}" Content="Flip horizontal" />
+		  <Button Command="{Binding FlipVerticalCommand}" Content="Flip vertical" />
 		  <Button Command="{Binding UndoCommand}" Content="Undo" />
 		  <Button Command="{Binding RedoCommand}" Content="Redo" />
-		</StackPanel>
+		  </StackPanel>
+		</ScrollViewer>
 
+		<DockPanel LastChildFill="True">
 		<StackPanel DockPanel.Dock="Right"
 					Orientation="Horizontal"
 					Spacing="8">
@@ -69,7 +71,8 @@
 					 Foreground="#9EA3B0"
 					 Text="* Not implemented" />
 		</StackPanel>
-	  </DockPanel>
+		</DockPanel>
+	  </StackPanel>
 	</Border>
 
 	<Grid Grid.Row="1">

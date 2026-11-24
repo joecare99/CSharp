@@ -127,17 +127,23 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(DocumentSummary));
     }
 
-    [RelayCommand(CanExecute = nameof(CanRotate))]
-    public void RotateRight() => TransformPixels(rotate: true);
+    [RelayCommand(CanExecute = nameof(CanTransform))]
+    public void RotateRight() => TransformPixels(PixelTransform.RotateRight);
 
-    [RelayCommand(CanExecute = nameof(CanRotate))]
-    public void FlipHorizontal() => TransformPixels(rotate: false);
+    [RelayCommand(CanExecute = nameof(CanTransform))]
+    public void FlipHorizontal() => TransformPixels(PixelTransform.FlipHorizontal);
 
-    private void TransformPixels(bool rotate)
+    [RelayCommand(CanExecute = nameof(CanTransform))]
+    public void FlipVertical() => TransformPixels(PixelTransform.FlipVertical);
+
+    private enum PixelTransform { RotateRight, FlipHorizontal, FlipVertical }
+
+    private void TransformPixels(PixelTransform transform)
     {
         var source = ActiveDocument;
         if (source is null) return;
         int width = source.PixelSize.Width, height = source.PixelSize.Height;
+        bool rotate = transform == PixelTransform.RotateRight;
         int targetWidth = rotate ? height : width, targetHeight = rotate ? width : height;
         using var pixels = new WriteableBitmap(source.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
         byte[] before = new byte[checked(width * height * 4)];
@@ -151,8 +157,8 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
             {
-                int targetX = rotate ? height - 1 - y : width - 1 - x;
-                int targetY = rotate ? x : y;
+                int targetX = rotate ? height - 1 - y : transform == PixelTransform.FlipHorizontal ? width - 1 - x : x;
+                int targetY = rotate ? x : transform == PixelTransform.FlipVertical ? height - 1 - y : y;
                 Buffer.BlockCopy(before, (y * width + x) * 4, after, (targetY * targetWidth + targetX) * 4, 4);
             }
         if (width == targetWidth && height == targetHeight && before.AsSpan().SequenceEqual(after)) return;
@@ -175,7 +181,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         catch { transformed.Dispose(); throw; }
     }
 
-    private bool CanRotate() => HasDocument;
+    private bool CanTransform() => HasDocument;
     private bool CanUndo() => HasDocument && _index > 0;
     private bool CanRedo() => HasDocument && _index + 1 < _history.Count;
     private bool CanClear() => AllowClear && HasDocument;
@@ -221,6 +227,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(IsDirty));
         RotateRightCommand.NotifyCanExecuteChanged();
         FlipHorizontalCommand.NotifyCanExecuteChanged();
+        FlipVerticalCommand.NotifyCanExecuteChanged();
         UndoCommand.NotifyCanExecuteChanged();
         RedoCommand.NotifyCanExecuteChanged();
         ClearDocumentCommand.NotifyCanExecuteChanged();
