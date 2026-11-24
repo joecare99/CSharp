@@ -35,6 +35,7 @@
 				  CommandParameter="{x:Static models:ImageEditorTool.Crop}"
 				  Content="Crop*" IsEnabled="False" />
 		  <Button Command="{Binding RotateRightCommand}" Content="Rotate 90° right" />
+		  <Button Command="{Binding RotateLeftCommand}" Content="Rotate left" />
 		  <Button Command="{Binding FlipHorizontalCommand}" Content="Flip horizontal" />
 		  <Button Command="{Binding FlipVerticalCommand}" Content="Flip vertical" />
 		  <Button Command="{Binding UndoCommand}" Content="Undo" />

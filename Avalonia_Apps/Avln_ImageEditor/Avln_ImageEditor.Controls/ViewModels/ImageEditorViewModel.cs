@@ -131,19 +131,22 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     public void RotateRight() => TransformPixels(PixelTransform.RotateRight);
 
     [RelayCommand(CanExecute = nameof(CanTransform))]
+    public void RotateLeft() => TransformPixels(PixelTransform.RotateLeft);
+
+    [RelayCommand(CanExecute = nameof(CanTransform))]
     public void FlipHorizontal() => TransformPixels(PixelTransform.FlipHorizontal);
 
     [RelayCommand(CanExecute = nameof(CanTransform))]
     public void FlipVertical() => TransformPixels(PixelTransform.FlipVertical);
 
-    private enum PixelTransform { RotateRight, FlipHorizontal, FlipVertical }
+    private enum PixelTransform { RotateRight, RotateLeft, FlipHorizontal, FlipVertical }
 
     private void TransformPixels(PixelTransform transform)
     {
         var source = ActiveDocument;
         if (source is null) return;
         int width = source.PixelSize.Width, height = source.PixelSize.Height;
-        bool rotate = transform == PixelTransform.RotateRight;
+        bool rotate = transform is PixelTransform.RotateRight or PixelTransform.RotateLeft;
         int targetWidth = rotate ? height : width, targetHeight = rotate ? width : height;
         using var pixels = new WriteableBitmap(source.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
         byte[] before = new byte[checked(width * height * 4)];
@@ -157,8 +160,10 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
             {
-                int targetX = rotate ? height - 1 - y : transform == PixelTransform.FlipHorizontal ? width - 1 - x : x;
-                int targetY = rotate ? x : transform == PixelTransform.FlipVertical ? height - 1 - y : y;
+                int targetX = transform == PixelTransform.RotateRight ? height - 1 - y :
+                    transform == PixelTransform.RotateLeft ? y : transform == PixelTransform.FlipHorizontal ? width - 1 - x : x;
+                int targetY = transform == PixelTransform.RotateRight ? x :
+                    transform == PixelTransform.RotateLeft ? width - 1 - x : transform == PixelTransform.FlipVertical ? height - 1 - y : y;
                 Buffer.BlockCopy(before, (y * width + x) * 4, after, (targetY * targetWidth + targetX) * 4, 4);
             }
         if (width == targetWidth && height == targetHeight && before.AsSpan().SequenceEqual(after)) return;
@@ -226,6 +231,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     {
         OnPropertyChanged(nameof(IsDirty));
         RotateRightCommand.NotifyCanExecuteChanged();
+        RotateLeftCommand.NotifyCanExecuteChanged();
         FlipHorizontalCommand.NotifyCanExecuteChanged();
         FlipVerticalCommand.NotifyCanExecuteChanged();
         UndoCommand.NotifyCanExecuteChanged();
