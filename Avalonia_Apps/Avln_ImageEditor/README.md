@@ -1,6 +1,6 @@
 # Avln Image Editor
 
-The reusable Avalonia control and the standalone host implement 90° clockwise rotation and horizontal (left/right) and vertical (top/bottom) flipping, with undo/redo. Brush, eraser, fill and crop are disabled and marked as unimplemented; this is not a full image editor. Select and zoom do not change pixels.
+The reusable Avalonia control and the standalone host implement 90° clockwise and counterclockwise rotation (the **Rotate left** button) and horizontal (left/right) and vertical (top/bottom) flipping, with undo/redo. Brush, eraser, fill and crop are disabled and marked as unimplemented; this is not a full image editor. Select and zoom do not change pixels.
 
 ## Run and test
 
@@ -17,7 +17,7 @@ $artifacts = '-p:HostArtifactRoot=C:\Projekte\CSharp\Avalonia_Apps\Avln_ImageEdi
 
 The projects also target net8.0 and net9.0, which require their corresponding runtimes/test hosts; net10.0 is the primary tested target. Restore may report NU1701 dependency compatibility warnings; these are distinct from a missing or incompatible test runtime.
 
-The image tests use `HeadlessUnitTestSession` with `AppBuilder.Configure<App>().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).UseSkia()`, and dispatch image/window work to its UI thread. Their asymmetric transparent fixture is encoded as a real PNG and decoded again. Integration tests can check `editor.ActiveDocument!.PixelSize`, call `editor.RotateRight()`/`FlipHorizontal()`/`FlipVertical()`/`Undo()`/`Redo()` or execute their corresponding commands after `CanExecute(null)`, and compare pixel buffers via `Bitmap.CopyPixels` into a locked `WriteableBitmap`. The headless standalone-window test clicks the editing buttons, tests dirty-close cancellation, and exports programmatically; it does not automate the native file pickers.
+The image tests use `HeadlessUnitTestSession` with `AppBuilder.Configure<App>().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).UseSkia()`, and dispatch image/window work to its UI thread. Their asymmetric transparent fixture is encoded as a real PNG and decoded again. Integration tests can check `editor.ActiveDocument!.PixelSize`, call `editor.RotateRight()`/`RotateLeft()`/`FlipHorizontal()`/`FlipVertical()`/`Undo()`/`Redo()` or execute their corresponding commands after `CanExecute(null)`, and compare pixel buffers via `Bitmap.CopyPixels` into a locked `WriteableBitmap`. The headless standalone-window test clicks the editing buttons, tests dirty-close cancellation, and exports programmatically; it does not automate the native file pickers.
 
 In the host, open a PNG, JPEG or BMP, rotate or flip horizontally or vertically, undo/redo and select **Export PNG to new file**. The host asks before replacing or closing a dirty document. Clear is disabled in this host. Save/export is PNG only, including for JPEG and BMP inputs; original JPEG/BMP formats are never written. **PNG re-encoding may discard metadata**, color profiles, EXIF orientation and other ancillary information. It is not a metadata-preserving conversion. The PNG export is available even without editing and *always re-encodes*, including on an unmodified original PNG.
 
