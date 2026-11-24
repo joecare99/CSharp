@@ -42,12 +42,25 @@ internal static partial class Program
         Check(imageButtons.Any(button => ReferenceEquals(button.Command, image.UndoCommand))
             && imageButtons.Any(button => ReferenceEquals(button.Command, image.RedoCommand)),
             "The image editor did not expose its undo and redo commands.");
+        Button rotateLeft = imageButtons.Single(button => ReferenceEquals(button.Command, image.RotateLeftCommand));
         Button flip = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipHorizontalCommand));
         Button flipVertical = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipVerticalCommand));
         Check(!image.AllowClear && !tab.IsDirty && ImageSize(image) == (2, 3),
             "The shared editor did not open the original image as a clean document.");
 
         byte[] initial = image.CapturePngSnapshot().Bytes;
+        Check(rotateLeft.IsEnabled, "The counterclockwise rotation button is not available.");
+        Invoke(tab.View, "Rotate left");
+        byte[] leftRotated = image.CapturePngSnapshot().Bytes;
+        Check(!tab.IsPreview && tab.IsDirty && ImageSize(image) == (3, 2)
+            && !leftRotated.SequenceEqual(initial), "Counterclockwise rotation did not update the image.");
+        image.UndoCommand.Execute(null);
+        Check(!tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(initial),
+            "Undo did not restore the image before counterclockwise rotation.");
+        image.RedoCommand.Execute(null);
+        Check(tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(leftRotated),
+            "Redo did not restore the counterclockwise rotation.");
+        image.UndoCommand.Execute(null);
         image.RotateRightCommand.Execute(null);
         Check(!tab.IsPreview && tab.IsDirty && ImageSize(image) == (3, 2),
             "Rotation did not pin the preview and change its dimensions.");

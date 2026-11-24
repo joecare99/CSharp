@@ -71,6 +71,7 @@ internal static partial class Program
         Check(host.OpenDocument(markupPath) && host.SetWorkspaceEntry(project), "Standalone fixture could not be opened.");
         await WaitUntilAsync(() => host.Designer.PreviewRoot is not null, "standalone binding preview");
         await VerifyStandalonePendingBindingAsync(desktop, host, markupPath, modelPath);
+        await VerifyStandaloneInFlightAnalysisAsync(desktop, host, markupPath, modelPath);
         await VerifyStandaloneSemanticBindingRacesAsync(desktop, host, markupPath, modelPath);
         await VerifyStandaloneBindingEditAsync(desktop, host, markupPath, modelPath, "NameTextBox", "Text", "CompiledBinding", "VisualName", "Name");
         await VerifyStandaloneBindingEditAsync(desktop, host, markupPath, modelPath, "SubmitButton", "Command", "ReflectionBinding", "VisualCommand", "SubmitCommand");
@@ -166,6 +167,83 @@ internal static partial class Program
             host.Designer.ApplyMissingBindingAsync = originalHandler;
         }
         Console.WriteLine("Standalone pending binding: changed member and duplicate request rejected before review.");
+    }
+
+    private static async Task VerifyStandaloneInFlightAnalysisAsync(
+        IClassicDesktopStyleApplicationLifetime desktop, AxamlDesignerHostViewModel host,
+        string markupPath, string modelPath)
+    {
+        string beforeMarkup = File.ReadAllText(markupPath);
+        string beforeModel = File.ReadAllText(modelPath);
+        foreach (string scenario in new[] { "selection", "document", "unchanged" })
+        {
+            host.Designer.SelectedNode = host.Designer.PreviewRoot!.Children.Single(node => node.StableName == "NameTextBox");
+            await WaitUntilAsync(() => host.Designer.BindingRows.Single(row => row.PropertyName == "Text")
+                .AvailableMembers.Contains("Name"), $"in-flight {scenario} semantic context");
+            var row = host.Designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+            row.NewMemberName = "InFlightName";
+            TaskCompletionSource entered = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource resume = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            host.BindingAnalysisService.BeforeAxamlCompilationAsync = async cancellationToken =>
+            {
+                if (!cancellationToken.CanBeCanceled)
+                {
+                    entered.TrySetResult();
+                    await resume.Task;
+                }
+            };
+            try
+            {
+                Task applying = host.Designer.ApplyBindingRowAsync(row);
+                await entered.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                Check(!applying.IsCompleted && !desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Any(),
+                    $"In-flight {scenario} analysis did not wait before compilation.");
+                if (scenario == "selection")
+                {
+                    await host.Designer.ApplyBindingRowAsync(row);
+                    Check(row.Diagnostic?.Contains("already being planned", StringComparison.Ordinal) == true,
+                        "A concurrent in-flight request was not rejected.");
+                    host.Designer.SelectedNode = host.Designer.PreviewRoot!.Children.Single(node => node.StableName == "SubmitButton");
+                }
+                else if (scenario == "document")
+                {
+                    host.Markup = beforeMarkup + Environment.NewLine + "<!-- in-flight user edit -->";
+                }
+
+                string expectedBuffer = host.Markup;
+                bool expectedDesignerUndo = host.Designer.CanUndo;
+                bool expectedDesignerRedo = host.Designer.CanRedo;
+                resume.SetResult();
+                if (scenario == "unchanged")
+                {
+                    await WaitUntilAsync(() => applying.IsCompleted || desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Any(),
+                        "unchanged in-flight analysis review");
+                    var review = desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().SingleOrDefault();
+                    Check(review is not null, $"Unchanged in-flight request did not reach review: {row.Diagnostic}; {host.StatusText}");
+                    Click(review!, "Cancel");
+                }
+                await applying.WaitAsync(TimeSpan.FromMinutes(2));
+                if (scenario != "unchanged")
+                {
+                    Check(row.Diagnostic?.Contains("changed during binding analysis", StringComparison.OrdinalIgnoreCase) == true,
+                        $"In-flight {scenario} request was not rejected: {row.Diagnostic}; {host.StatusText}");
+                }
+                Check(!desktop.Windows.OfType<WorkspaceFileChangeReviewDialog>().Any()
+                    && host.Markup == expectedBuffer && host.IsDirty == (scenario == "document")
+                    && File.ReadAllText(markupPath) == beforeMarkup && File.ReadAllText(modelPath) == beforeModel
+                    && !host.WorkspaceFileChangeService.CanUndo && !host.WorkspaceFileChangeService.CanRedo
+                    && host.Designer.CanUndo == expectedDesignerUndo && host.Designer.CanRedo == expectedDesignerRedo,
+                    $"In-flight {scenario} request changed source, buffer or history.");
+            }
+            finally
+            {
+                resume.TrySetResult();
+                host.BindingAnalysisService.BeforeAxamlCompilationAsync = null;
+            }
+            if (scenario == "document")
+                host.Markup = beforeMarkup;
+        }
+        Console.WriteLine("Standalone in-flight analysis: selection/document and duplicate rejected; unchanged request reached review.");
     }
 
     private static async Task VerifyStandaloneSemanticBindingRacesAsync(

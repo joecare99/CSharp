@@ -40,8 +40,8 @@ $root = Join-Path (Get-Location).Path ("artifacts\image-smoke-win-" + [guid]::Ne
 ```
 
 This mode opens synthetic PNG, JPEG and BMP images through the Workbench explorer
-and shared image control. It checks command bindings, rotation and PNG export
-for all three, and both flip buttons, undo/redo, preview pinning and
+and shared image control. It checks command bindings, clockwise rotation and PNG export
+for all three, and counterclockwise rotation, both flip buttons, undo/redo, preview pinning and
 dirty-close for PNG. It exercises updating an unchanged output, an
 external-change conflict, Save As, corrupt input, source preservation, an edit
 during a delayed write and a document switch during a delayed write. Only
@@ -49,11 +49,12 @@ disposable fixture files are changed. The save
 picker is replaced with a controlled path; neither the native picker nor physical
 input, accessibility or all decoder behavior is covered. The standalone image
 host has its own Avalonia Headless window tests in `Avln_ImageEditor.Controls.Tests`.
-On Windows/net10 the image-only smoke and the full Workbench/standalone
-architecture smoke passed; the latter skipped the optional AA05 sample. The
+On Windows/net10 the image-only smoke passed including counterclockwise rotation;
+an earlier full Workbench/standalone architecture smoke passed and skipped the optional AA05 sample. The
 image-only smoke also passed on WSLg/net10, including both flip buttons,
-undo/redo and export. The standalone image tests passed 17/17 on Windows/net8,
-net9 and net10 and Linux/net10; an earlier Linux Workbench image/document
+undo/redo and export, before counterclockwise rotation was added. The standalone
+image tests passed 19/19 on Windows/net8, net9 and net10 including that rotation; the
+earlier vertical-flip tests passed 17/17 on Linux/net10. An earlier Linux Workbench image/document
 selection passed 36/36 with a case-sensitive temporary filesystem. The
 Linux smoke build reported 373 warnings, including package compatibility and
 compiler warnings. The builds retain warnings,
@@ -72,10 +73,19 @@ Both stale requests are rejected without review, disk writes, buffer loss or
 workspace undo/redo entries, and preserve the designer undo/redo availability
 observed after the simulated edit. An unchanged request reaches review, is applied,
 and is undone. This tests a delayed service result after real analysis has
-completed, not a pause inside Roslyn, source planning or an open review dialog;
-it does not cover every scheduling point or physical interaction. On
+completed. A separate per-service test hook pauses the actual analysis method
+after it acquires the workspace gate and resolves the project, immediately
+before requesting its Roslyn compilation. While that service call is pending,
+the smoke changes the selection or document and rejects a duplicate request;
+stale requests must not reach review or alter files, buffer, or history. An
+unchanged request reaches review and is cancelled. This does not pause or prove
+concurrent execution inside Roslyn itself: the hook holds the service before
+`GetCompilationAsync`, and the project or compilation may already be cached.
+Neither test pauses source planning or an open review dialog, covers every
+scheduling point, or exercises physical interaction. On
 Windows/net10.0, the standalone-only smoke passed from a physical workspace
-path with an isolated artifact root, including fixture rebuild. The build
+path with an isolated artifact root, including the in-flight cases and fixture
+rebuild; the focused semantic-resolution test also passed (1/1). The build
 emitted existing NU1701 and target-framework support warnings. WSL was present
 but `dotnet` was not available on its PATH, so Linux was not tested.
 
