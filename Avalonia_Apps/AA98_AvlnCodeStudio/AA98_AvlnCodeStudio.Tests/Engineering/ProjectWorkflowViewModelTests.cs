@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AppKomponentBaseLib.Diagnostics;
 using AA98_AvlnCodeStudio.Base.Building.Models;
 using AA98_AvlnCodeStudio.Base.Building.Services;
 using AA98_AvlnCodeStudio.Base.Debugging.Models;
@@ -529,6 +530,86 @@ public sealed class ProjectWorkflowViewModelTests
     }
 
     [TestMethod]
+    [DataRow("unchanged")]
+    [DataRow("cancel")]
+    [DataRow("project")]
+    [DataRow("workspace")]
+    public async Task RunDiscoveredTestCase_LateResultRespectsWorkbenchContext(string scenario)
+    {
+        using Fixture fixture = await Fixture.CreateAsync(useOutputDirectory: true);
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        DiscoveredTestCase selected = new("id", "executor", "assembly", "Example.Late", "Late", null, null);
+        vm.DiscoveredTestCases.Add(selected);
+        vm.SelectedDiscoveredTestCase = selected;
+        TaskCompletionSource<CancellationToken> entered = NewCompletion<CancellationToken>();
+        TaskCompletionSource<TestRunSummary> completed = NewCompletion<TestRunSummary>();
+        fixture.CaseExecution.RunCaseAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DiscoveredTestCase>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                entered.TrySetResult(call.Arg<CancellationToken>());
+                return completed.Task;
+            });
+
+        Task operation = vm.RunDiscoveredTestCaseCommand.ExecuteAsync(null);
+        CancellationToken token = await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        switch (scenario)
+        {
+            case "cancel":
+                vm.CancelProjectWorkflowCommand.Execute(null);
+                break;
+            case "project":
+                vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
+                break;
+            case "workspace":
+                string otherSolution = Path.Combine(fixture.Root, "Other.slnx");
+                await File.WriteAllTextAsync(otherSolution, "<Solution><Project Path=\"first\\App.csproj\" /></Solution>");
+                await vm.OpenWorkspaceFileAsync(otherSolution);
+                Assert.AreEqual(otherSolution, vm.Workspace?.EntryPath);
+                break;
+        }
+
+        Assert.AreEqual(scenario != "unchanged", token.IsCancellationRequested);
+        vm.Editor.StatusText = "Current editor status";
+        vm.Editor.NotificationText = "Current notification";
+        if (scenario != "unchanged")
+        {
+            vm.ProjectTestResults.Add(new TestResultNode("Current result", []));
+            vm.DiagnosticCollection.Items.Add(new Diagnostic { Message = "Current diagnostic" });
+        }
+        string previousWorkflowStatus = vm.ProjectWorkflowStatus;
+        var previousDiagnostics = vm.DiagnosticCollection.Items.ToArray();
+        completed.SetResult(new TestRunSummary
+        {
+            Outcome = TestRunOutcome.Failed,
+            TotalCount = 1,
+            FailedCount = 1,
+            Failures = { new TestRunFailure { TestName = "Late", Message = "late failure", SourcePath = Path.Combine(fixture.Root, "Tests.cs"), LineNumber = 7 } },
+            Cases = { new TestCaseResult("Late", "Failed", null, "Example", "Example.Late", "id", null) },
+            Messages = { "late adapter message" },
+        });
+        await operation.WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
+        if (scenario == "unchanged")
+        {
+            Assert.AreEqual("Failed: Late", vm.ProjectTestResults.Single().Children.Single().Label);
+            Assert.IsTrue(vm.DiagnosticCollection.Items.Any(item => item.Message.Contains("late failure", StringComparison.Ordinal)));
+            StringAssert.Contains(vm.ProjectWorkflowStatus, "late adapter message");
+            Assert.AreEqual(vm.ProjectWorkflowStatus, vm.Editor.StatusText);
+        }
+        else
+        {
+            Assert.AreEqual("Current result", vm.ProjectTestResults.Single().Label);
+            CollectionAssert.AreEqual(previousDiagnostics, vm.DiagnosticCollection.Items.ToArray());
+            Assert.AreEqual(scenario == "cancel" ? "Project action canceled." : previousWorkflowStatus, vm.ProjectWorkflowStatus);
+            Assert.AreEqual(scenario == "cancel" ? "Project action canceled." : "Current editor status", vm.Editor.StatusText);
+        }
+        Assert.AreEqual("Current notification", vm.Editor.NotificationText);
+    }
+
+    [TestMethod]
     public async Task TestSelectedMethod_UsesExactFilterAndInvalidatesLateResult()
     {
         using Fixture fixture = await Fixture.CreateAsync();
@@ -876,9 +957,9 @@ public sealed class ProjectWorkflowViewModelTests
         public ITestCaseExecutionService CaseExecution { get; }
         public MainWindowViewModel ViewModel { get; }
 
-        public static async Task<Fixture> CreateAsync()
+        public static async Task<Fixture> CreateAsync(bool useOutputDirectory = false)
         {
-            string root = Path.Combine(Path.GetTempPath(), $"AA98_WorkflowTests_{Guid.NewGuid():N}");
+            string root = Path.Combine(useOutputDirectory ? AppContext.BaseDirectory : Path.GetTempPath(), $"AA98_WorkflowTests_{Guid.NewGuid():N}");
             Directory.CreateDirectory(root);
             Fixture fixture = new(root);
             await fixture.ViewModel.OpenWorkspaceFileAsync(fixture.Solution);
