@@ -43,6 +43,12 @@ public sealed class ImageEditingTests
         255, 255, 255, 255, 0, 128, 128, 128, 255, 0, 0, 255
     };
 
+    private static readonly byte[] VerticallyFlippedPixels =
+    {
+        255, 0, 0, 255, 0, 128, 128, 128, 255, 255, 255, 255,
+        0, 0, 255, 255, 0, 255, 0, 255, 0, 0, 0, 0
+    };
+
     private static ImageEditorDocument MakeDocument()
     {
         var bitmap = new WriteableBitmap(new PixelSize(3, 2), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
@@ -125,6 +131,84 @@ public sealed class ImageEditingTests
         Assert.IsFalse(editor.IsDirty);
         CollectionAssert.AreEqual(FlippedPixels, ReadPixels(editor.ActiveDocument!));
         Assert.AreEqual(3, events);
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task VerticalFlipPreservesPixelsHistoryAndSnapshotIdentity() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        Assert.IsFalse(editor.FlipVerticalCommand.CanExecute(null));
+        editor.FlipVertical();
+        editor.LoadDocument(MakeDocument());
+        Assert.IsTrue(editor.FlipVerticalCommand.CanExecute(null));
+        var original = editor.CapturePngSnapshot();
+        int events = 0;
+        editor.ContentChanging += (_, _) =>
+        {
+            CollectionAssert.AreEqual(events == 1 ? VerticallyFlippedPixels : Pixels, ReadPixels(editor.ActiveDocument!));
+            events++;
+        };
+        editor.FlipVerticalCommand.Execute(null);
+        Assert.AreEqual(new PixelSize(3, 2), editor.ActiveDocument!.PixelSize);
+        CollectionAssert.AreEqual(VerticallyFlippedPixels, ReadPixels(editor.ActiveDocument));
+        Assert.IsTrue(editor.IsDirty);
+        Assert.IsTrue(editor.IsCurrentDocument(original));
+        var flipped = editor.CapturePngSnapshot();
+        using (var decoded = new ImageEditorViewModel())
+        {
+            decoded.LoadDocument(flipped.Bytes, "flipped.png");
+            CollectionAssert.AreEqual(VerticallyFlippedPixels, ReadPixels(decoded.ActiveDocument!));
+        }
+        editor.MarkSaved(original);
+        Assert.IsTrue(editor.IsDirty);
+        editor.Undo();
+        Assert.IsFalse(editor.IsDirty);
+        editor.MarkSaved(flipped);
+        Assert.IsTrue(editor.IsDirty);
+        editor.Redo();
+        Assert.IsFalse(editor.IsDirty);
+        CollectionAssert.AreEqual(VerticallyFlippedPixels, ReadPixels(editor.ActiveDocument!));
+        Assert.AreEqual(3, events);
+        editor.LoadDocument(MakeDocument());
+        Assert.IsFalse(editor.IsCurrentDocument(flipped));
+        editor.MarkSaved(flipped);
+        Assert.IsFalse(editor.IsDirty);
+        editor.ClearDocument();
+        Assert.IsFalse(editor.FlipVerticalCommand.CanExecute(null));
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task SymmetricVerticalFlipIsNoOpAndPreservesRedo() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        var image = new WriteableBitmap(new PixelSize(3, 3), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        byte[] symmetric = {
+            0,0,255,255, 0,255,0,255, 0,0,0,0,
+            255,0,0,255, 0,128,128,128, 255,255,255,255,
+            0,0,255,255, 0,255,0,255, 0,0,0,0
+        };
+        using (var buffer = image.Lock())
+            for (int y = 0; y < 3; y++)
+                Marshal.Copy(symmetric, y * 12, IntPtr.Add(buffer.Address, y * buffer.RowBytes), 12);
+        editor.LoadDocument(new ImageEditorDocument("symmetric.png", image));
+        editor.FlipHorizontal();
+        editor.Undo();
+        int events = 0;
+        editor.ContentChanging += (_, _) => events++;
+        editor.FlipVertical();
+        Assert.AreEqual(0, events);
+        Assert.IsFalse(editor.IsDirty);
+        Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+        CollectionAssert.AreEqual(symmetric, ReadPixels(editor.ActiveDocument!));
+
+        using var row = new ImageEditorViewModel();
+        row.LoadDocument(new ImageEditorDocument("row.png",
+            new WriteableBitmap(new PixelSize(2, 1), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul)));
+        row.FlipVertical();
+        Assert.IsFalse(row.IsDirty);
+        Assert.IsFalse(row.UndoCommand.CanExecute(null));
     }, CancellationToken.None);
 
     [TestMethod]
@@ -367,9 +451,12 @@ public sealed class ImageEditingTests
                 using var fixture = MakeDocument();
                 using var png = new MemoryStream();
                 ((Bitmap)fixture.Image).Save(png, new PngBitmapEncoderOptions());
+                string sourcePath = Path.Combine(directory, "fixture.png");
+                byte[] sourceBytes = png.ToArray();
+                File.WriteAllBytes(sourcePath, sourceBytes);
                 var host = new MainWindowViewModel();
-                host.Editor.LoadDocument(png.ToArray(), "fixture.png");
-                window = new MainWindow { DataContext = host };
+                host.Editor.LoadDocument(File.ReadAllBytes(sourcePath), "fixture.png");
+                window = new MainWindow { DataContext = host, Width = 980 };
                 window.Show();
                 window.UpdateLayout();
                 Click(window, "Rotate 90° right");
@@ -396,6 +483,16 @@ public sealed class ImageEditingTests
                 Click(window, "Undo");
                 Click(window, "Redo");
                 CollectionAssert.AreEqual(expected, ReadPixels(host.Editor.ActiveDocument!));
+                Click(window, "Flip vertical");
+                expected = new byte[] {
+                    0,0,0,0, 255,255,255,255,
+                    0,255,0,255, 0,128,128,128,
+                    0,0,255,255, 255,0,0,255
+                };
+                CollectionAssert.AreEqual(expected, ReadPixels(host.Editor.ActiveDocument!));
+                Click(window, "Undo");
+                Click(window, "Redo");
+                CollectionAssert.AreEqual(expected, ReadPixels(host.Editor.ActiveDocument!));
                 window.Close();
                 Assert.IsTrue(window.IsVisible);
                 var dialog = window.OwnedWindows.Single();
@@ -407,6 +504,7 @@ public sealed class ImageEditingTests
                 string path = Path.Combine(directory, "export.png");
                 await host.ExportPngToNewFileAsync(path);
                 Assert.IsTrue(File.Exists(path));
+                CollectionAssert.AreEqual(sourceBytes, File.ReadAllBytes(sourcePath));
                 Assert.IsFalse(host.Editor.IsDirty);
                 using (var exported = new ImageEditorViewModel())
                 {
