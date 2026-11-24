@@ -51,10 +51,9 @@ input, accessibility or all decoder behavior is covered. The standalone image
 host has its own Avalonia Headless window tests in `Avln_ImageEditor.Controls.Tests`.
 On Windows/net10 the image-only smoke passed including counterclockwise rotation;
 an earlier full Workbench/standalone architecture smoke passed and skipped the optional AA05 sample. The
-image-only smoke also passed on WSLg/net10, including both flip buttons,
-undo/redo and export, before counterclockwise rotation was added. The standalone
-image tests passed 19/19 on Windows/net8, net9 and net10 including that rotation; the
-earlier vertical-flip tests passed 17/17 on Linux/net10. An earlier Linux Workbench image/document
+image-only smoke also passed on WSLg/net10, including counterclockwise rotation,
+both flip buttons, undo/redo and export. The standalone image tests passed
+19/19 on Windows/net8, net9 and net10 and Linux/net10. An earlier Linux Workbench image/document
 selection passed 36/36 with a case-sensitive temporary filesystem. The
 Linux smoke build reported 373 warnings, including package compatibility and
 compiler warnings. The builds retain warnings,
@@ -86,8 +85,32 @@ scheduling point, or exercises physical interaction. On
 Windows/net10.0, the standalone-only smoke passed from a physical workspace
 path with an isolated artifact root, including the in-flight cases and fixture
 rebuild; the focused semantic-resolution test also passed (1/1). The build
-emitted existing NU1701 and target-framework support warnings. WSL was present
-but `dotnet` was not available on its PATH, so Linux was not tested.
+emitted existing NU1701 and target-framework support warnings. Linux was not
+tested in that initial Windows run; the subsequent WSLg validation is below.
+
+#### WSLg standalone binding race validation (2026-11-24)
+
+Ubuntu 26.04, Linux SDK 10.0.404 and WSLg/net10: the standalone-only smoke
+completed successfully on retry. At the pre-`GetCompilationAsync` gate it
+rejected the duplicate and stale selection/document requests; the unchanged
+request reached review and was cancelled. The other pending and post-analysis
+races, both binding kinds, unsafe contexts, undo/redo and fixture rebuild also
+passed. The smoke does not report a numeric test count or skips. This gate
+does not demonstrate active concurrent Roslyn execution or physical UI input.
+
+The first smoke run passed the race checks but failed its final fixture rebuild
+with MSB4018 because `Avalonia/resources` was reported in use on the mounted
+workspace; a no-build retry passed. The focused
+`AnalyzeAxamlMvvmAsync_ResolvesViewModelFromBuiltCommunityToolkitProject` test
+passed 1/1, skipped 0 on retry. Its first run failed NU1008 because the isolated
+temporary fixture inherited repository central package management; an empty
+`Directory.Packages.props` in the owned temporary root prevented that.
+Initial smoke/test logs contained 257/281 warning lines respectively; successful
+retry logs contained 1/2, including package compatibility (NU1701), framework
+support and compiler warnings. Counts are log lines, not unique warnings.
+Logs `binding-linux-{smoke,semantic}[-retry].log` are in this run's session
+`files` directory. Linux build outputs and temporary files used separate owned
+roots and were removed after validation.
 
 The Workbench solution explorer additionally nests a C# file under a sibling
 `.resx` when the project declares a literal, unconditional `DependentUpon`.
