@@ -43,6 +43,7 @@ internal static partial class Program
             && imageButtons.Any(button => ReferenceEquals(button.Command, image.RedoCommand)),
             "The image editor did not expose its undo and redo commands.");
         Button flip = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipHorizontalCommand));
+        Button flipVertical = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipVerticalCommand));
         Check(!image.AllowClear && !tab.IsDirty && ImageSize(image) == (2, 3),
             "The shared editor did not open the original image as a clean document.");
 
@@ -69,6 +70,18 @@ internal static partial class Program
         Check(image.CapturePngSnapshot().Bytes.SequenceEqual(flipped),
             "Redo did not restore the flipped image.");
         image.UndoCommand.Execute(null);
+
+        Check(flipVertical.IsEnabled, "The vertical image flip button is not available.");
+        Invoke(tab.View, "Flip vertical");
+        byte[] verticallyFlipped = image.CapturePngSnapshot().Bytes;
+        Check(tab.IsDirty && ImageSize(image) == (3, 2) && !verticallyFlipped.SequenceEqual(rotated),
+            "The vertical image flip button did not change the image.");
+        image.UndoCommand.Execute(null);
+        Check(image.CapturePngSnapshot().Bytes.SequenceEqual(rotated),
+            "Undo did not restore the image before vertical flipping.");
+        image.RedoCommand.Execute(null);
+        Check(image.CapturePngSnapshot().Bytes.SequenceEqual(verticallyFlipped),
+            "Redo did not restore the vertically flipped image.");
 
         Button close = window.GetVisualDescendants().OfType<Button>()
             .Single(button => ReferenceEquals(button.DataContext, tab)

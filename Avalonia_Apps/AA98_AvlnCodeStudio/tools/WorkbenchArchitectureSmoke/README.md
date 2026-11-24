@@ -41,7 +41,7 @@ $root = Join-Path (Get-Location).Path ("artifacts\image-smoke-win-" + [guid]::Ne
 
 This mode opens synthetic PNG, JPEG and BMP images through the Workbench explorer
 and shared image control. It checks command bindings, rotation and PNG export
-for all three, and the horizontal flip button, undo/redo, preview pinning and
+for all three, and both flip buttons, undo/redo, preview pinning and
 dirty-close for PNG. It exercises updating an unchanged output, an
 external-change conflict, Save As, corrupt input, source preservation, an edit
 during a delayed write and a document switch during a delayed write. Only
@@ -51,10 +51,12 @@ input, accessibility or all decoder behavior is covered. The standalone image
 host has its own Avalonia Headless window tests in `Avln_ImageEditor.Controls.Tests`.
 On Windows/net10 the image-only smoke and the full Workbench/standalone
 architecture smoke passed; the latter skipped the optional AA05 sample. The
-image-only smoke also passed on WSLg/net10, including the flip button. The
-standalone image tests passed on Windows/net8, net9 and net10 and Linux/net10;
-the Linux Workbench image/document selection passed 36/36 with a case-sensitive
-temporary filesystem. The builds retain package and compiler warnings,
+image-only smoke also passed on WSLg/net10, including both flip buttons,
+undo/redo and export. The standalone image tests passed 17/17 on Windows/net8,
+net9 and net10 and Linux/net10; an earlier Linux Workbench image/document
+selection passed 36/36 with a case-sensitive temporary filesystem. The
+Linux smoke build reported 373 warnings, including package compatibility and
+compiler warnings. The builds retain warnings,
 including NU1701. The new image smoke file passes the whitespace check;
 unrelated existing whitespace diagnostics remain in `Program.cs`.
 
