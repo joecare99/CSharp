@@ -49,6 +49,13 @@ public sealed class ImageEditingTests
         0, 0, 255, 255, 0, 255, 0, 255, 0, 0, 0, 0
     };
 
+    private static readonly byte[] LeftRotatedPixels =
+    {
+        0, 0, 0, 0, 255, 255, 255, 255,
+        0, 255, 0, 255, 0, 128, 128, 128,
+        0, 0, 255, 255, 255, 0, 0, 255
+    };
+
     private static ImageEditorDocument MakeDocument()
     {
         var bitmap = new WriteableBitmap(new PixelSize(3, 2), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
@@ -92,6 +99,82 @@ public sealed class ImageEditingTests
         editor.Redo();
         Assert.IsTrue(editor.IsDirty);
         Assert.AreEqual(3, events);
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task RotateLeftPreservesPixelsHistoryAndSnapshotRevision() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        Assert.IsFalse(editor.RotateLeftCommand.CanExecute(null));
+        editor.RotateLeft();
+        editor.LoadDocument(MakeDocument());
+        Assert.IsTrue(editor.RotateLeftCommand.CanExecute(null));
+        var original = editor.CapturePngSnapshot();
+        int events = 0;
+        editor.ContentChanging += (_, _) =>
+        {
+            CollectionAssert.AreEqual(events == 1 ? LeftRotatedPixels : Pixels, ReadPixels(editor.ActiveDocument!));
+            events++;
+        };
+        editor.RotateLeftCommand.Execute(null);
+        Assert.AreEqual(new PixelSize(2, 3), editor.ActiveDocument!.PixelSize);
+        CollectionAssert.AreEqual(LeftRotatedPixels, ReadPixels(editor.ActiveDocument));
+        Assert.IsTrue(editor.IsDirty);
+        var rotated = editor.CapturePngSnapshot();
+        using (var decoded = new ImageEditorViewModel())
+        {
+            decoded.LoadDocument(rotated.Bytes, "left.png");
+            Assert.AreEqual(new PixelSize(2, 3), decoded.ActiveDocument!.PixelSize);
+            CollectionAssert.AreEqual(LeftRotatedPixels, ReadPixels(decoded.ActiveDocument));
+        }
+        editor.MarkSaved(original);
+        Assert.IsTrue(editor.IsDirty);
+        editor.Undo();
+        Assert.IsFalse(editor.IsDirty);
+        editor.MarkSaved(rotated);
+        Assert.IsTrue(editor.IsDirty);
+        editor.Redo();
+        Assert.IsFalse(editor.IsDirty);
+        CollectionAssert.AreEqual(LeftRotatedPixels, ReadPixels(editor.ActiveDocument!));
+        Assert.AreEqual(3, events);
+        editor.ClearDocument();
+        Assert.IsFalse(editor.RotateLeftCommand.CanExecute(null));
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task LeftRotationInverseAndSymmetricNoOpPreserveRedo() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        editor.LoadDocument(MakeDocument());
+        editor.RotateLeft();
+        editor.RotateRight();
+        Assert.AreEqual(new PixelSize(3, 2), editor.ActiveDocument!.PixelSize);
+        CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument));
+
+        using var symmetric = new ImageEditorViewModel();
+        var image = new WriteableBitmap(new PixelSize(4, 4), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        byte[] pixels = new byte[4 * 4 * 4];
+        foreach (int i in new[] { 1, 7, 14, 8 })
+        {
+            pixels[i * 4 + 2] = 255;
+            pixels[i * 4 + 3] = 255;
+        }
+        using (var buffer = image.Lock())
+            for (int y = 0; y < 4; y++)
+                Marshal.Copy(pixels, y * 16, IntPtr.Add(buffer.Address, y * buffer.RowBytes), 16);
+        symmetric.LoadDocument(new ImageEditorDocument("symmetric.png", image));
+        symmetric.FlipHorizontal();
+        symmetric.Undo();
+        int events = 0;
+        symmetric.ContentChanging += (_, _) => events++;
+        symmetric.RotateLeft();
+        Assert.IsFalse(symmetric.IsDirty);
+        Assert.IsFalse(symmetric.UndoCommand.CanExecute(null));
+        Assert.IsTrue(symmetric.RedoCommand.CanExecute(null));
+        CollectionAssert.AreEqual(pixels, ReadPixels(symmetric.ActiveDocument!));
+        Assert.AreEqual(0, events);
     }, CancellationToken.None);
 
     [TestMethod]
@@ -377,12 +460,18 @@ public sealed class ImageEditingTests
             {
                 using var host = new MainWindowViewModel();
                 host.Editor.LoadDocument(MakeDocument());
-                host.Editor.RotateRight();
+                host.Editor.RotateLeft();
                 string path = Path.Combine(directory, "export.png");
                 await host.ExportPngToNewFileAsync(path);
                 Assert.IsFalse(host.Editor.IsDirty);
                 Assert.IsTrue(host.Editor.DocumentSummary.StartsWith("export.png", StringComparison.Ordinal));
                 byte[] written = File.ReadAllBytes(path);
+                using (var decoded = new ImageEditorViewModel())
+                {
+                    decoded.LoadDocument(written, "export.png");
+                    Assert.AreEqual(new PixelSize(2, 3), decoded.ActiveDocument!.PixelSize);
+                    CollectionAssert.AreEqual(LeftRotatedPixels, ReadPixels(decoded.ActiveDocument));
+                }
                 host.Editor.RotateRight();
                 await Assert.ThrowsAsync<IOException>(() => host.ExportPngToNewFileAsync(path));
                 CollectionAssert.AreEqual(written, File.ReadAllBytes(path));
@@ -456,9 +545,14 @@ public sealed class ImageEditingTests
                 File.WriteAllBytes(sourcePath, sourceBytes);
                 var host = new MainWindowViewModel();
                 host.Editor.LoadDocument(File.ReadAllBytes(sourcePath), "fixture.png");
-                window = new MainWindow { DataContext = host, Width = 980 };
+                window = new MainWindow { DataContext = host, Width = 1500 };
                 window.Show();
                 window.UpdateLayout();
+                Click(window, "Rotate left");
+                Assert.AreEqual(new PixelSize(2, 3), host.Editor.ActiveDocument!.PixelSize);
+                CollectionAssert.AreEqual(LeftRotatedPixels, ReadPixels(host.Editor.ActiveDocument));
+                Click(window, "Undo");
+                Assert.IsFalse(host.Editor.IsDirty);
                 Click(window, "Rotate 90° right");
                 Assert.AreEqual(new PixelSize(2, 3), host.Editor.ActiveDocument!.PixelSize);
                 byte[] expected = {
