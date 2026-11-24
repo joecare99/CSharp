@@ -38,6 +38,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
     private readonly Dictionary<ProjectContextKey, ProjectContext> _projectContexts = new();
     private readonly Dictionary<string, string[]> _projectTargetFrameworks = new(WorkspacePathIdentity.Comparer);
     private readonly SemaphoreSlim _workspaceGate = new(1, 1);
+    internal Func<CancellationToken, Task>? BeforeAxamlCompilationAsync { get; set; }
     private static readonly object MsBuildLocatorLock = new();
     private static bool _msBuildLocatorRegistered;
 
@@ -725,6 +726,11 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                 return AxamlMvvmSemanticResolution.Failure(
                     projectPath,
                     "The selected project does not provide a C# compilation for semantic view-model analysis.");
+            }
+
+            if (BeforeAxamlCompilationAsync is { } beforeCompilation)
+            {
+                await beforeCompilation(cancellationToken).ConfigureAwait(false);
             }
 
             Compilation compilation = await project.GetCompilationAsync(cancellationToken)
