@@ -52,6 +52,7 @@
 				<StackPanel><TextBlock Foreground="#F2F2F2" Text="Width (px)" /><TextBox x:Name="CropWidthInput" Width="90" AutomationProperties.Name="Crop width in pixels" Text="{Binding CropWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
 				<StackPanel><TextBlock Foreground="#F2F2F2" Text="Height (px)" /><TextBox x:Name="CropHeightInput" Width="90" AutomationProperties.Name="Crop height in pixels" Text="{Binding CropHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
 				<Button VerticalAlignment="Bottom" Command="{Binding ApplyCropCommand}" Content="Apply crop" />
+				<Button x:Name="ResetCropCoordinatesButton" VerticalAlignment="Bottom" Command="{Binding ResetCropCoordinatesCommand}" Content="Reset crop coordinates" />
 			  </StackPanel>
 			</ScrollViewer>
 			<TextBlock Foreground="#FFB4AB" Text="{Binding CropError}" TextWrapping="Wrap" />

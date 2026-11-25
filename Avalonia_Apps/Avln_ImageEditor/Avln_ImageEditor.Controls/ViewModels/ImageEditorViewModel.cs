@@ -45,6 +45,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(DocumentSummary));
             if (oldSize != value?.PixelSize) ResetCrop();
             NotifyCropState();
+            ResetCropCoordinatesCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -118,6 +119,13 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     }
 
     private bool CanApplyCrop() => TryGetCrop(out _, out _, out _, out _);
+
+    /// <summary>Resets only the crop coordinates to the current image's full extent.</summary>
+    [RelayCommand(CanExecute = nameof(CanTransform))]
+    public void ResetCropCoordinates()
+    {
+        if (HasDocument) ResetCrop();
+    }
 
     /// <summary>Crops to the validated pixel rectangle; invalid and whole-image rectangles do nothing.</summary>
     [RelayCommand(CanExecute = nameof(CanApplyCrop))]
