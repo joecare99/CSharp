@@ -7,7 +7,9 @@ using AA98.MarkDown.Host.ViewModels;
 using AA98.MarkDown.Host.Views;
 using AA98.MarkDown.UI.Controls;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using AvaloniaEdit;
@@ -130,7 +132,38 @@ internal static partial class Program
                 "Second buffer was lost after switching tabs.");
             Check(File.ReadAllText(fixture) == original && File.ReadAllText(secondFixture) == secondOriginal,
                 "An unsaved edit changed a fixture on disk.");
-            Console.WriteLine("Markdown host: rendering, live unsaved edits, undo/redo and two-tab switching verified.");
+
+            const string external = "# External change\n";
+            File.WriteAllText(fixture, external);
+            vm.OpenDocument(fixture);
+            Check(ReferenceEquals(vm.SelectedDocument, first) && first.Text == original + addition && first.IsDirty,
+                "Reopening an already open file replaced its unsaved buffer.");
+
+            Menu menu = window.GetVisualDescendants().OfType<Menu>().Single();
+            MenuItem fileMenu = menu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, "_File"));
+            MenuItem closeTab = fileMenu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, "Close Tab"));
+            closeTab.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            await WaitUntilAsync(() => desktop.Windows.OfType<UnsavedChangesDialog>().Any(), "dirty tab close dialog");
+            Click(desktop.Windows.OfType<UnsavedChangesDialog>().Single(), "Abbrechen");
+            await WaitUntilAsync(() => !desktop.Windows.OfType<UnsavedChangesDialog>().Any(), "cancelled tab close dialog");
+            Check(vm.Documents.Contains(first) && ReferenceEquals(vm.SelectedDocument, first)
+                && first.IsDirty && first.Text == original + addition && File.ReadAllText(fixture) == external,
+                "Cancelling tab close did not preserve the dirty buffer and external file.");
+
+            window.Close();
+            await WaitUntilAsync(() => desktop.Windows.OfType<UnsavedChangesDialog>().Any(), "dirty window close dialog");
+            Click(desktop.Windows.OfType<UnsavedChangesDialog>().Single(), "Abbrechen");
+            await WaitUntilAsync(() => !desktop.Windows.OfType<UnsavedChangesDialog>().Any(), "cancelled window close dialog");
+            Check(window.IsVisible && vm.Documents.Contains(first) && vm.Documents.Contains(second)
+                && first.IsDirty && first.Text == original + addition && second.IsDirty
+                && second.Text == secondOriginal + secondAddition && File.ReadAllText(fixture) == external
+                && File.ReadAllText(secondFixture) == secondOriginal,
+                "Cancelling window close did not preserve both dirty buffers and their files.");
+
+            vm.SelectedDocument = first;
+            vm.SaveCommand.Execute(null);
+            Console.WriteLine($"External-change observation: disk equals buffer={File.ReadAllText(fixture) == first.Text}, dirty={first.IsDirty}.");
+            Console.WriteLine("Markdown host: rendering, dirty buffers, undo/redo, tab switching and close cancellation verified.");
         }
         catch (Exception exception)
         {

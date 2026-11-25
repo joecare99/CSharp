@@ -52,6 +52,8 @@ internal static partial class Program
         Button resetCrop = imageButtons.Single(button => ReferenceEquals(button.Command, image.ResetCropCoordinatesCommand));
         Button flip = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipHorizontalCommand));
         Button flipVertical = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipVerticalCommand));
+        Button invert = imageButtons.Single(button => ReferenceEquals(button.Command, image.InvertColorsCommand));
+        Button grayscale = imageButtons.Single(button => ReferenceEquals(button.Command, image.ConvertToGrayscaleCommand));
         Check(!image.AllowClear && !tab.IsDirty && ImageSize(image) == (2, 3),
             "The shared editor did not open the original image as a clean document.");
 
@@ -59,6 +61,30 @@ internal static partial class Program
         await VerifyImageDpiRenderingAsync(window, tab.View, image, initial);
         Check(!tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(initial),
             "The DPI rendering probe did not restore the clean image.");
+        Check(grayscale.IsEnabled, "The grayscale button is not available.");
+        Invoke(tab.View, "Convert to grayscale");
+        byte[] gray = image.CapturePngSnapshot().Bytes;
+        Check(tab.IsDirty && ImageSize(image) == (2, 3) && !gray.SequenceEqual(initial),
+            "Grayscale did not update the image.");
+        image.UndoCommand.Execute(null);
+        Check(!tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(initial),
+            "Undo did not restore the image before grayscale.");
+        image.RedoCommand.Execute(null);
+        Check(tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(gray),
+            "Redo did not restore the grayscale image.");
+        image.UndoCommand.Execute(null);
+        Check(invert.IsEnabled, "The invert colors button is not available.");
+        Invoke(tab.View, "Invert colors");
+        byte[] inverted = image.CapturePngSnapshot().Bytes;
+        Check(tab.IsDirty && ImageSize(image) == (2, 3) && !inverted.SequenceEqual(initial),
+            "Invert colors did not update the image.");
+        image.UndoCommand.Execute(null);
+        Check(!tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(initial),
+            "Undo did not restore the image before inversion.");
+        image.RedoCommand.Execute(null);
+        Check(tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(inverted),
+            "Redo did not restore the inverted image.");
+        image.UndoCommand.Execute(null);
         Check(rotateLeft.IsEnabled, "The counterclockwise rotation button is not available.");
         Invoke(tab.View, "Rotate left");
         byte[] leftRotated = image.CapturePngSnapshot().Bytes;
