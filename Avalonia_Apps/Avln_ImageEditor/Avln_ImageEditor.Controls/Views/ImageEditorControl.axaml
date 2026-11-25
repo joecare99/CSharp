@@ -101,9 +101,6 @@
 					  VerticalScrollBarVisibility="Auto">
 		  <Grid MinWidth="640"
 				MinHeight="420">
-			<Border Width="32"
-					Height="32"
-					Background="#272A31" />
 			<LayoutTransformControl HorizontalAlignment="Center"
 									VerticalAlignment="Center"
 									UseLayoutRounding="False">
@@ -114,7 +111,21 @@
 			  <Grid x:Name="ImageSurface" UseLayoutRounding="False"
 					Width="{Binding ActiveDocument.PixelSize.Width, TargetNullValue=0, FallbackValue=0}"
 					Height="{Binding ActiveDocument.PixelSize.Height, TargetNullValue=0, FallbackValue=0}">
-				<Image x:Name="EditorImage" Source="{Binding ActiveDocument.Image}" Stretch="Fill" />
+				<Border x:Name="TransparencyBackground"
+						IsHitTestVisible="False"
+						IsVisible="{Binding HasDocument}">
+				  <Border.Background>
+					<DrawingBrush TileMode="Tile" DestinationRect="0,0,16,16">
+					  <DrawingBrush.Drawing>
+						<DrawingGroup>
+						  <GeometryDrawing Brush="#383B42" Geometry="M0,0 H16 V16 H0 Z" />
+						  <GeometryDrawing Brush="#4A4D55" Geometry="M0,0 H8 V8 H0 Z M8,8 H16 V16 H8 Z" />
+						</DrawingGroup>
+					  </DrawingBrush.Drawing>
+					</DrawingBrush>
+				  </Border.Background>
+				</Border>
+				<Image x:Name="EditorImage" Source="{Binding ActiveDocument.DisplayImage}" Stretch="Fill" />
 				<views:CropPreviewOverlay x:Name="CropPreviewOutline"
 										  IsHitTestVisible="False"
 										  IsVisible="{Binding ShowCropPreview}"

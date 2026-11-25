@@ -26,6 +26,7 @@ public sealed class ImageEditorDocument : IDisposable
         Name = name;
         _bitmap = bitmap;
         PixelSize = bitmap.PixelSize;
+        DisplayImage = new PixelCoordinateImage(bitmap);
     }
 
     /// <summary>
@@ -42,6 +43,9 @@ public sealed class ImageEditorDocument : IDisposable
     /// </summary>
     public IImage Image => _bitmap;
 
+    /// <summary>Image view whose logical coordinates correspond to the document's pixels.</summary>
+    public IImage DisplayImage { get; }
+
     /// <summary>
     /// Gets the document size in physical pixels.
     /// </summary>
@@ -56,5 +60,16 @@ public sealed class ImageEditorDocument : IDisposable
     public void Dispose()
     {
         _bitmap.Dispose();
+    }
+
+    private sealed class PixelCoordinateImage(Bitmap bitmap) : IImage
+    {
+        public Size Size => new(bitmap.PixelSize.Width, bitmap.PixelSize.Height);
+
+        public void Draw(DrawingContext context, Rect sourceRect, Rect destRect)
+        {
+            // The editor uses one logical unit per image pixel, independent of bitmap DPI.
+            ((IImage)bitmap).Draw(context, sourceRect, destRect);
+        }
     }
 }
