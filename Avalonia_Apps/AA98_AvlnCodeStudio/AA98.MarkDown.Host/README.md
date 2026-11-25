@@ -15,6 +15,22 @@ AA98.MarkDown.Host is a lightweight Avalonia desktop host for editing multiple M
 - File open/save is path-based in this first host slice.
 - HTTP/HTTPS links are intentionally not opened by this host.
 
+## Save and external changes
+
+The host tracks dirty state by comparing the buffer with its last loaded or
+saved text. Reopening an already open path selects its existing tab rather than
+reloading it. Closing a dirty tab or window asks to save, discard or cancel;
+cancelling leaves the remaining tabs open. These close prompts are not
+external-file conflict checks.
+
+There is currently no documented or implemented external-change detection,
+comparison, warning or conflict resolution for Save or Save As. In a disposable
+fixture on 2026-11-25, after a dirty buffer's file was changed externally,
+Save wrote the buffer over that change and marked the tab clean. The choice of
+future conflict handling is open; do not rely on the host to protect external
+changes. The low-level `CloseSelectedDocument` view-model method explicitly
+closes without the window's save checks.
+
 ## Package compatibility
 
 AA98 imports the shared `..\Packages.props` and locally overrides only
@@ -51,9 +67,18 @@ between the two tabs checks each dirty buffer and its rendered paragraph, with
 both files still unchanged on disk. Fixture files are created with unique names
 in the working directory and deleted when the host exits.
 
+The smoke then changes the first fixture on disk while its buffer is dirty,
+reopens its path and verifies the existing buffer is retained. It cancels the
+actual dirty-tab and dirty-window prompts and verifies both buffers and disk
+files remain intact. Finally it reports the observed Save outcome without
+asserting an external-conflict policy.
+The extended cancellation and Save observation passed on Windows and WSLg
+with net10 on 2026-11-25 using isolated outputs and the regular package graph.
+
 The smoke uses document API edits and view-model selection, not physical
 keyboard or mouse input; it does not check undo history across tab switches,
-save dialogs, syntax colors, links, images, accessibility or all Markdown
+save-picker cancellation, discard or save decisions, Save As conflicts,
+syntax colors, links, images, accessibility or all Markdown
 syntax. On 2026-11-25 the extended mode passed on Windows and WSLg with net10,
 Avalonia 12.2.0, Avalonia.AvaloniaEdit 12.0.0 and Markdown.Avalonia 12.0.2,
 using the regular package graph and isolated build outputs. Build warnings
