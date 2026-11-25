@@ -467,6 +467,45 @@ public sealed class WorkspaceFileChangeServiceTests
     }
 
     [TestMethod]
+    public void Redo_RollbackPreservesExternallyModifiedNewFile()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string newPath = Path.Combine(root, "Generated", "New.txt");
+            string openPath = Path.Combine(root, "Open.txt");
+            File.WriteAllText(openPath, "before");
+            ToggleSynchronizationProvider documents = new(openPath);
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.CreateNew(Path.Combine("Generated", "New.txt"), "generated"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Open.txt", "before", "after"),
+            ]);
+            service.Apply(proposal, confirmed: true);
+            Assert.IsTrue(service.Undo());
+            Assert.IsFalse(Directory.Exists(Path.GetDirectoryName(newPath)));
+            documents.OnNextChange = () =>
+            {
+                File.WriteAllText(newPath, "external edit");
+                throw new IOException("Simulated editor synchronization failure.");
+            };
+
+            AggregateException exception = Assert.ThrowsExactly<AggregateException>(() => service.Redo());
+
+            StringAssert.Contains(exception.Message, "rollback was incomplete");
+            StringAssert.Contains(exception.ToString(), "created by another process");
+            Assert.AreEqual("external edit", File.ReadAllText(newPath));
+            Assert.AreEqual("before", File.ReadAllText(openPath));
+            Assert.AreEqual("before", documents.Content);
+            Assert.AreEqual("before", documents.SavedContent);
+            Assert.IsFalse(service.CanUndo);
+            Assert.IsTrue(service.CanRedo);
+            Assert.ThrowsExactly<WorkspaceFileChangeConflictException>(() => service.Redo());
+            Assert.AreEqual("external edit", File.ReadAllText(newPath));
+        });
+    }
+
+    [TestMethod]
     public void ApplyAfterUndo_ClearsRedoHistoryAndResetClearsUndoHistory()
     {
         WithTemporaryDirectory(root =>
