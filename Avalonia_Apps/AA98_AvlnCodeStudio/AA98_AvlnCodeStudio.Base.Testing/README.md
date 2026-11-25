@@ -196,6 +196,28 @@ inject an adapter error after abort or exercise the workbench UI; the fake
 workbench tests do not establish how a real host forwards a late error. A real
 late-error-after-abort scenario and full DAP/UI acceptance remain unverified.
 
+For a narrower cancellation-error probe on Windows, a temporary copy of the
+controlled adapter/owned-worker fixture used real VSTest runner and host
+processes and the real debug execution service, with a simulated debugger
+lease. A file gate held each selected case until the host and runner were
+identified. Without cancellation, the adapter sent an error after recording a
+passed result: `SendMessage` returned and the debug service reported that error.
+This control establishes delivery for that non-canceled ordering only.
+
+In three debug-cancellation attempts, the worker requested cancellation after
+the adapter recorded the partial result. An error was to be sent only after
+the adapter's `Cancel` callback, with separate markers before and after
+`SendMessage`. None of the callback or send markers was observed; each worker
+reported cancellation, the simulated lease was disposed, and the identified
+worker, runner and host exited. The product requests termination of its known
+hosts before scheduling VSTest `AbortTestRun`; neither host termination nor
+abort guarantees that the adapter's `Cancel` callback can send an error. The
+missing markers do not prove that no callback began, nor that every adapter or
+ordering behaves identically. No post-abort error send or forwarding was
+observed in these attempts, so they cannot establish handling by VSTest,
+the debugger, or the workbench. The temporary experiment was not added as a
+permanent test.
+
 The tests can be rerun from the repository root with a fresh artifact root:
 
 ```powershell
