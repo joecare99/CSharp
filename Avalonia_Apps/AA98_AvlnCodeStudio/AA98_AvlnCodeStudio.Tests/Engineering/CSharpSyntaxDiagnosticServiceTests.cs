@@ -1596,6 +1596,95 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
     }
 
     [TestMethod]
+    public async Task LanguageOperations_UpdateReferencedProjectOverlayWithoutSaving()
+    {
+        string fixtureRoot = Path.Combine(AppContext.BaseDirectory, "Fixtures", "LanguageReferenceOverlay");
+        string root = Path.Combine(
+            Environment.GetEnvironmentVariable("AA98_LANGUAGE_TEST_ROOT") ?? AppContext.BaseDirectory,
+            $"LanguageReferenceOverlay_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            foreach (string project in new[] { "Consumer", "Library" })
+            {
+                string destination = Path.Combine(root, project);
+                Directory.CreateDirectory(destination);
+                foreach (string file in new[] { $"{project}.csproj", $"{project}.cs" })
+                {
+                    File.Copy(Path.Combine(fixtureRoot, project, file), Path.Combine(destination, file));
+                }
+            }
+
+            string consumerProject = Path.Combine(root, "Consumer", "Consumer.csproj");
+            string consumerPath = Path.Combine(root, "Consumer", "Consumer.cs");
+            string libraryPath = Path.Combine(root, "Library", "Library.cs");
+            string savedConsumer = await File.ReadAllTextAsync(consumerPath);
+            string savedLibrary = await File.ReadAllTextAsync(libraryPath);
+            await RunFixtureAsync("restore", consumerProject);
+            CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(consumerProject);
+            using CSharpSyntaxDiagnosticService service = new();
+            const string consumerDraft = "public class Consumer { public int Read() => new ReferenceLibrary.LibraryType().DraftMember; }";
+            const string firstDraft = """
+                namespace ReferenceLibrary;
+                public sealed class LibraryType
+                {
+                    public int DraftMember => 42;
+                }
+                """;
+            const string secondDraft = """
+                namespace ReferenceLibrary;
+
+                public sealed class LibraryType
+                {
+
+                    public string DraftMember => "";
+                }
+                """;
+            Dictionary<string, string> openDocuments = new()
+            {
+                [consumerPath] = consumerDraft,
+                [libraryPath] = firstDraft,
+            };
+            int position = consumerDraft.IndexOf("DraftMember", StringComparison.Ordinal);
+
+            Assert.IsNull(await service.FindDefinitionAsync(consumerDraft, consumerPath, position, workspace));
+            var diskDiagnostics = await service.AnalyzeAsync(consumerDraft, consumerPath, workspace);
+            Assert.IsTrue(diskDiagnostics.Any(diagnostic => diagnostic.Code == "CS1061"));
+
+            var firstDefinition = await service.FindDefinitionAsync(
+                consumerDraft, consumerPath, position, workspace, openDocumentTexts: openDocuments);
+            Assert.AreEqual(libraryPath, firstDefinition?.Path);
+            Assert.AreEqual(4, firstDefinition?.Line);
+            var firstDiagnostics = await service.AnalyzeAsync(
+                consumerDraft, consumerPath, workspace, openDocumentTexts: openDocuments);
+            Assert.IsFalse(firstDiagnostics.Any(diagnostic => diagnostic.Code is "CS1061" or "CS0029"));
+
+            openDocuments[libraryPath] = secondDraft;
+            var secondDefinition = await service.FindDefinitionAsync(
+                consumerDraft, consumerPath, position, workspace, openDocumentTexts: openDocuments);
+            Assert.AreEqual(libraryPath, secondDefinition?.Path);
+            Assert.AreEqual(6, secondDefinition?.Line);
+            var secondDiagnostics = await service.AnalyzeAsync(
+                consumerDraft, consumerPath, workspace, openDocumentTexts: openDocuments);
+            Assert.IsTrue(secondDiagnostics.Any(diagnostic => diagnostic.Code == "CS0029" && diagnostic.SourcePath == consumerPath));
+            Assert.IsFalse(secondDiagnostics.Any(diagnostic => diagnostic.Code == "CS1061"));
+
+            openDocuments.Remove(libraryPath);
+            Assert.IsNull(await service.FindDefinitionAsync(
+                consumerDraft, consumerPath, position, workspace, openDocumentTexts: openDocuments));
+            var removedDiagnostics = await service.AnalyzeAsync(
+                consumerDraft, consumerPath, workspace, openDocumentTexts: openDocuments);
+            Assert.IsTrue(removedDiagnostics.Any(diagnostic => diagnostic.Code == "CS1061"));
+            Assert.AreEqual(savedConsumer, await File.ReadAllTextAsync(consumerPath));
+            Assert.AreEqual(savedLibrary, await File.ReadAllTextAsync(libraryPath));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task RefreshProjectContextAsync_PreservesReferencedOpenBuffersInFreshSnapshots()
     {
         string fixtureRoot = Path.Combine(AppContext.BaseDirectory, "Fixtures", "LanguageReferenceOverlay");
