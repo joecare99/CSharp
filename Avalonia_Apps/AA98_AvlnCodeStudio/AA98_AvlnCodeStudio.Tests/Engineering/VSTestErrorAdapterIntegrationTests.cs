@@ -114,10 +114,37 @@ public sealed class VSTestErrorAdapterIntegrationTests
             StringAssert.Contains(runTrace, "run-rejected-null");
             StringAssert.Contains(runTrace, "run-rejected-empty");
             StringAssert.Contains(runTrace, "run-rejected-whitespace");
+
+            await File.WriteAllTextAsync(trace, "");
+            int attachedPid = 0;
+            CountingLease lease = new();
+            InvalidOperationException debugError = await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+                () => service.DebugCaseAsync(assembly, output, selected, (pid, token) =>
+                {
+                    token.ThrowIfCancellationRequested();
+                    attachedPid = pid;
+                    return Task.FromResult<IAsyncDisposable>(lease);
+                }));
+            Assert.IsTrue(attachedPid > 0);
+            Assert.AreEqual(1, lease.Disposals);
+            StringAssert.Contains(debugError.ToString(), "Controlled execution failure.");
+            StringAssert.Contains(await File.ReadAllTextAsync(trace), "run-result");
         }
+
         finally
         {
             Directory.Delete(root, recursive: true);
+        }
+    }
+
+    private sealed class CountingLease : IAsyncDisposable
+    {
+        public int Disposals { get; private set; }
+
+        public ValueTask DisposeAsync()
+        {
+            Disposals++;
+            return ValueTask.CompletedTask;
         }
     }
 

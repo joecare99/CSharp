@@ -65,6 +65,7 @@ public sealed class VSTestCancellationIntegrationTests
 
             await RunScenarioAsync(workerAssembly, assembly, suppressStart: false, beforeGate: false, lateResult: false);
             await RunScenarioAsync(workerAssembly, assembly, suppressStart: false, beforeGate: false, lateResult: true);
+            await RunScenarioAsync(workerAssembly, assembly, suppressStart: false, beforeGate: false, lateResult: false, debug: true);
             await RunScenarioAsync(workerAssembly, assembly, suppressStart: true, beforeGate: false, lateResult: false);
             await RunScenarioAsync(workerAssembly, assembly, suppressStart: false, beforeGate: true, lateResult: false);
         }
@@ -74,10 +75,10 @@ public sealed class VSTestCancellationIntegrationTests
         }
     }
 
-    private static async Task RunScenarioAsync(string workerAssembly, string assembly, bool suppressStart, bool beforeGate, bool lateResult)
+    private static async Task RunScenarioAsync(string workerAssembly, string assembly, bool suppressStart, bool beforeGate, bool lateResult, bool debug = false)
     {
         string directory = Path.GetDirectoryName(assembly)!;
-        foreach (string name in new[] { "boot", "gate", "host", "ready", "cancel", "result", "selected", "no-start", "adapter-canceled", "late-mode", "late-result" })
+        foreach (string name in new[] { "boot", "gate", "host", "ready", "cancel", "result", "selected", "no-start", "adapter-canceled", "late-mode", "late-result", "debug-mode", "attached", "detached", "partial-result" })
         {
             File.Delete(Path.Combine(directory, name));
         }
@@ -88,6 +89,10 @@ public sealed class VSTestCancellationIntegrationTests
         if (lateResult)
         {
             await File.WriteAllTextAsync(Path.Combine(directory, "late-mode"), "1");
+        }
+        if (debug)
+        {
+            await File.WriteAllTextAsync(Path.Combine(directory, "debug-mode"), "1");
         }
 
         await using OwnedWorker worker = await OwnedWorker.StartAsync(workerAssembly, assembly);
@@ -105,6 +110,11 @@ public sealed class VSTestCancellationIntegrationTests
         Assert.AreEqual(5, marker.Length);
         int innerHostPid = int.Parse(marker[0]);
         Assert.AreEqual(await File.ReadAllTextAsync(Path.Combine(directory, "selected")), string.Join('\n', marker.Skip(1)), "The adapter ran a different case.");
+        if (debug)
+        {
+            Assert.AreEqual(innerHostPid.ToString(), await File.ReadAllTextAsync(Path.Combine(directory, "attached")));
+            Assert.AreEqual("recorded", await File.ReadAllTextAsync(Path.Combine(directory, "partial-result")));
+        }
         await worker.TrackHostAndRunnerAsync(innerHostPid);
 
         if (suppressStart)
@@ -123,7 +133,14 @@ public sealed class VSTestCancellationIntegrationTests
                 Assert.Fail($"Worker failed: {await worker.DiagnosticsAsync().WaitAsync(TimeSpan.FromSeconds(10))}");
             }
             Assert.AreEqual("canceled", await File.ReadAllTextAsync(Path.Combine(directory, "result")));
-            Assert.IsTrue(File.Exists(Path.Combine(directory, "adapter-canceled")), "The adapter did not receive Cancel.");
+            if (debug)
+            {
+                Assert.AreEqual("detached\n", await File.ReadAllTextAsync(Path.Combine(directory, "detached")));
+            }
+            else
+            {
+                Assert.IsTrue(File.Exists(Path.Combine(directory, "adapter-canceled")), "The adapter did not receive Cancel.");
+            }
             if (lateResult)
             {
                 Assert.AreEqual("recorded", await File.ReadAllTextAsync(Path.Combine(directory, "late-result")));
@@ -693,7 +710,10 @@ public sealed class VSTestCancellationIntegrationTests
                     string directory = Path.GetDirectoryName(test.Source);
                     bool late = File.Exists(Path.Combine(directory, "late-mode"));
                     if (!late)
+                    {
                         handle.RecordResult(new TestResult(test) { Outcome = TestOutcome.Passed });
+                        File.WriteAllText(Path.Combine(directory, "partial-result"), "recorded");
+                    }
                     string pending = Path.Combine(directory, "host.pending");
                     File.WriteAllText(pending, Environment.ProcessId + "\n" + test.Id + "\n" + test.ExecutorUri + "\n" + test.Source + "\n" + test.FullyQualifiedName);
                     File.Move(pending, Path.Combine(directory, "host"));
@@ -734,7 +754,14 @@ public sealed class VSTestCancellationIntegrationTests
         var selected = discovery.Cases.Single(test => test.FullyQualifiedName == "Controlled.Example");
         File.WriteAllText(Path.Combine(directory, "selected"), selected.Id + "\n" + selected.ExecutorUri + "\n" + selected.Source + "\n" + selected.FullyQualifiedName);
         using CancellationTokenSource cancellation = new();
-        Task run = service.RunCaseAsync(assembly, directory, selected, cancellation.Token);
+        Task run = File.Exists(Path.Combine(directory, "debug-mode"))
+            ? service.DebugCaseAsync(assembly, directory, selected, (pid, token) =>
+            {
+                token.ThrowIfCancellationRequested();
+                File.WriteAllText(Path.Combine(directory, "attached"), pid.ToString());
+                return Task.FromResult<IAsyncDisposable>(new Lease(directory));
+            }, cancellation.Token)
+            : service.RunCaseAsync(assembly, directory, selected, cancellation.Token);
         while (!File.Exists(Path.Combine(directory, "cancel")) && !run.IsCompleted)
             await Task.Delay(50);
         cancellation.Cancel();
@@ -746,6 +773,15 @@ public sealed class VSTestCancellationIntegrationTests
         catch (OperationCanceledException error) when (error.CancellationToken == cancellation.Token)
         {
             File.WriteAllText(Path.Combine(directory, "result"), "canceled");
+        }
+
+        sealed class Lease(string directory) : IAsyncDisposable
+        {
+            public ValueTask DisposeAsync()
+            {
+                File.AppendAllText(Path.Combine(directory, "detached"), "detached\n");
+                return ValueTask.CompletedTask;
+            }
         }
         """;
 }

@@ -1596,6 +1596,100 @@ public sealed class CSharpSyntaxDiagnosticServiceTests
     }
 
     [TestMethod]
+    public async Task RefreshProjectContextAsync_PreservesReferencedOpenBuffersInFreshSnapshots()
+    {
+        string fixtureRoot = Path.Combine(AppContext.BaseDirectory, "Fixtures", "LanguageReferenceOverlay");
+        string root = Path.Combine(
+            Environment.GetEnvironmentVariable("AA98_LANGUAGE_TEST_ROOT") ?? AppContext.BaseDirectory,
+            $"LanguageOverlayRefresh_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            foreach (string project in new[] { "Consumer", "Library" })
+            {
+                string destination = Path.Combine(root, project);
+                Directory.CreateDirectory(destination);
+                foreach (string file in new[] { $"{project}.csproj", $"{project}.cs" })
+                {
+                    File.Copy(Path.Combine(fixtureRoot, project, file), Path.Combine(destination, file));
+                }
+            }
+
+            string consumerProject = Path.Combine(root, "Consumer", "Consumer.csproj");
+            string consumerPath = Path.Combine(root, "Consumer", "Consumer.cs");
+            string libraryProject = Path.Combine(root, "Library", "Library.csproj");
+            string libraryPath = Path.Combine(root, "Library", "Library.cs");
+            string savedConsumer = await File.ReadAllTextAsync(consumerPath);
+            string savedLibrary = await File.ReadAllTextAsync(libraryPath);
+            string projectBefore = (await File.ReadAllTextAsync(libraryProject))
+                .Replace("<Nullable>enable</Nullable>", "<Nullable>enable</Nullable><DefineConstants>BEFORE</DefineConstants>", StringComparison.Ordinal);
+            await File.WriteAllTextAsync(libraryProject, projectBefore);
+            await RunFixtureAsync("restore", consumerProject);
+            CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(consumerProject);
+            using CSharpSyntaxDiagnosticService service = new();
+            const string consumerDraft = "public class Consumer { public int Read() => new ReferenceLibrary.LibraryType().DraftMember; }";
+            const string libraryDraft = """
+                namespace ReferenceLibrary;
+                public sealed class LibraryType
+                {
+                #if BEFORE
+                    public int DraftMember => 42;
+                #else
+                    public string DraftMember => "";
+                #endif
+                }
+                """;
+            Dictionary<string, string> openDocuments = new()
+            {
+                [consumerPath] = consumerDraft,
+                [libraryPath] = libraryDraft,
+            };
+            int position = consumerDraft.IndexOf("DraftMember", StringComparison.Ordinal);
+            string? before = await service.GetQuickInfoAsync(
+                consumerDraft, consumerPath, position, workspace, openDocumentTexts: openDocuments);
+            StringAssert.Contains(before, "int ReferenceLibrary.LibraryType.DraftMember");
+            var beforeDefinition = await service.FindDefinitionAsync(
+                consumerDraft, consumerPath, position, workspace, openDocumentTexts: openDocuments);
+            Assert.AreEqual(libraryPath, beforeDefinition?.Path);
+            Assert.AreEqual(5, beforeDefinition?.Line);
+            var beforeDiagnostics = await service.AnalyzeAsync(
+                consumerDraft, consumerPath, workspace, openDocumentTexts: openDocuments);
+            Assert.IsFalse(beforeDiagnostics.Any(diagnostic => diagnostic.Code is "CS1061" or "CS0029"));
+
+            await File.WriteAllTextAsync(libraryProject, projectBefore.Replace("BEFORE", "AFTER", StringComparison.Ordinal));
+            string? cached = await service.GetQuickInfoAsync(
+                consumerDraft, consumerPath, position, workspace, openDocumentTexts: openDocuments);
+            StringAssert.Contains(cached, "int ReferenceLibrary.LibraryType.DraftMember");
+            await service.RefreshProjectContextAsync(libraryProject);
+            string? after = await service.GetQuickInfoAsync(
+                consumerDraft, consumerPath, position, workspace, openDocumentTexts: openDocuments);
+            StringAssert.Contains(after, "string ReferenceLibrary.LibraryType.DraftMember");
+            var afterDefinition = await service.FindDefinitionAsync(
+                consumerDraft, consumerPath, position, workspace, openDocumentTexts: openDocuments);
+            Assert.AreEqual(libraryPath, afterDefinition?.Path);
+            Assert.AreEqual(7, afterDefinition?.Line);
+            var afterDiagnostics = await service.AnalyzeAsync(
+                consumerDraft, consumerPath, workspace, openDocumentTexts: openDocuments);
+            Assert.IsTrue(afterDiagnostics.Any(diagnostic => diagnostic.Code == "CS0029"));
+            Assert.IsFalse(afterDiagnostics.Any(diagnostic => diagnostic.Code == "CS1061"));
+
+            openDocuments[libraryPath] = "namespace ReferenceLibrary; public sealed class LibraryType { public bool DraftMember => true; }";
+            string? edited = await service.GetQuickInfoAsync(
+                consumerDraft, consumerPath, position, workspace, openDocumentTexts: openDocuments);
+            StringAssert.Contains(edited, "bool ReferenceLibrary.LibraryType.DraftMember");
+            Assert.IsNull(await service.GetQuickInfoAsync(consumerDraft, consumerPath, position, workspace));
+            var savedDiagnostics = await service.AnalyzeAsync(consumerDraft, consumerPath, workspace);
+            Assert.IsTrue(savedDiagnostics.Any(diagnostic => diagnostic.Code == "CS1061"));
+            Assert.AreEqual(savedConsumer, await File.ReadAllTextAsync(consumerPath));
+            Assert.AreEqual(savedLibrary, await File.ReadAllTextAsync(libraryPath));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public async Task FindTestMethodCandidatesAsync_UsesSemanticAttributesAndSelectedConfiguration()
     {
         string root = Path.Combine(Path.GetTempPath(), $"AA98_TestCandidates_{Guid.NewGuid():N}");
