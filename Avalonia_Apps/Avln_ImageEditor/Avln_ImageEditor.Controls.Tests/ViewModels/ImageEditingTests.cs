@@ -14,6 +14,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Avln_ImageEditor.Controls.Models;
 using Avln_ImageEditor.Controls.ViewModels;
+using Avln_ImageEditor.Controls.Views;
 using Avln_ImageEditor.Host.ViewModels;
 using Avln_ImageEditor.Host.Views;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -204,6 +205,129 @@ public sealed class ImageEditingTests
         editor.CropX = "2"; editor.CropY = "0"; editor.CropWidth = "1"; editor.CropHeight = "1";
         editor.ApplyCrop();
         CollectionAssert.AreEqual(new byte[] { 0, 0, 0, 0 }, ReadPixels(editor.ActiveDocument!));
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task CropPreviewTracksImageGeometryZoomScrollAndDimensions() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        var window = new Window { Width = 800, Height = 650, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show();
+            window.UpdateLayout();
+            var outline = window.GetVisualDescendants().OfType<CropPreviewOverlay>().Single(c => c.Name == "CropPreviewOutline");
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var image = window.GetVisualDescendants().OfType<Image>().Single(c => c.Name == "EditorImage");
+            var scroll = window.GetVisualDescendants().OfType<ScrollViewer>().Single(c => c.Name == "ImageScrollViewer");
+            Assert.IsFalse(outline.IsVisible);
+            Assert.IsFalse(outline.IsHitTestVisible);
+
+            var bitmap = new WriteableBitmap(new PixelSize(1000, 800), new Vector(192, 192), PixelFormats.Bgra8888, AlphaFormat.Premul);
+            editor.LoadDocument(new ImageEditorDocument("large.png", bitmap));
+            editor.ZoomPercentage = 125;
+            editor.CropX = "999"; editor.CropY = "799"; editor.CropWidth = "1"; editor.CropHeight = "1";
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.IsTrue(outline.IsVisible);
+            Assert.AreEqual(new Rect(999, 799, 1, 1), outline.CropRectangle);
+            Assert.AreEqual(new Size(1000, 800), image.Bounds.Size);
+            var imageOrigin = image.TranslatePoint(new Point(0, 0), scroll)!.Value;
+            var imageEnd = image.TranslatePoint(new Point(1000, 800), scroll)!.Value;
+            Assert.AreEqual(1250, imageEnd.X - imageOrigin.X, 0.01);
+            Assert.AreEqual(1000, imageEnd.Y - imageOrigin.Y, 0.01);
+            var beforeScroll = outline.TranslatePoint(outline.CropRectangle.Position, scroll)!.Value;
+            Assert.AreEqual(999 * 1.25, beforeScroll.X - imageOrigin.X, 0.01);
+            Assert.AreEqual(799 * 1.25, beforeScroll.Y - imageOrigin.Y, 0.01);
+            scroll.Offset = new Vector(150, 100);
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var afterScroll = outline.TranslatePoint(outline.CropRectangle.Position, scroll)!.Value;
+            Assert.AreEqual(150, beforeScroll.X - afterScroll.X, 0.01);
+            Assert.AreEqual(100, beforeScroll.Y - afterScroll.Y, 0.01);
+            var outlineEnd = outline.TranslatePoint(new Point(1000, 800), scroll)!.Value;
+            Assert.AreEqual(1.25, outlineEnd.X - afterScroll.X, 0.01);
+            Assert.AreEqual(1.25, outlineEnd.Y - afterScroll.Y, 0.01);
+
+            editor.CropWidth = "2";
+            Assert.IsFalse(outline.IsVisible);
+            editor.CropX = "0"; editor.CropY = "0"; editor.CropWidth = "1000"; editor.CropHeight = "800";
+            Assert.IsFalse(outline.IsVisible);
+            editor.CropWidth = "999";
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.IsTrue(outline.IsVisible);
+            Assert.AreEqual(new Rect(0, 0, 999, 800), outline.CropRectangle);
+            Assert.AreEqual(new Size(1000, 800), surface.Bounds.Size);
+            using (var rendered = new RenderTargetBitmap(new PixelSize(1000, 800)))
+            using (var copy = new WriteableBitmap(new PixelSize(1000, 800), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul))
+            {
+                rendered.Render(outline);
+                using var buffer = copy.Lock();
+                rendered.CopyPixels(buffer);
+                Assert.AreNotEqual(0, Marshal.ReadByte(buffer.Address, 500 * 4 + 3));
+                Assert.AreEqual(0, Marshal.ReadByte(buffer.Address, 400 * buffer.RowBytes + 500 * 4 + 3));
+            }
+            editor.ZoomPercentage = 10;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var smallOrigin = outline.TranslatePoint(new Point(0, 0), scroll)!.Value;
+            var smallEnd = outline.TranslatePoint(new Point(999, 800), scroll)!.Value;
+            Assert.AreEqual(99.9, smallEnd.X - smallOrigin.X, 0.01);
+            Assert.AreEqual(80, smallEnd.Y - smallOrigin.Y, 0.01);
+            Assert.AreEqual(0.1, outline.Zoom, 0.0001);
+            editor.ZoomPercentage = 125;
+            editor.RotateRight();
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.IsFalse(outline.IsVisible);
+            Assert.AreEqual(new Size(800, 1000), image.Bounds.Size);
+            editor.CropX = "799"; editor.CropY = "999"; editor.CropWidth = "1"; editor.CropHeight = "1";
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.IsTrue(outline.IsVisible);
+            Assert.AreEqual(new Rect(799, 999, 1, 1), outline.CropRectangle);
+            editor.ClearDocument();
+            Assert.IsFalse(outline.IsVisible);
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task CropPreviewDoesNotChangePngPixelsDirtyOrHistory() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        editor.LoadDocument(MakeDocument());
+        editor.FlipHorizontal();
+        editor.Undo();
+        var document = editor.ActiveDocument;
+        var png = editor.CapturePngSnapshot().Bytes;
+        int changes = 0;
+        editor.ContentChanging += (_, _) => changes++;
+        var window = new Window { Width = 800, Height = 650, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show();
+            editor.CropX = "-1";
+            editor.CropX = "1"; editor.CropY = "1"; editor.CropWidth = "2"; editor.CropHeight = "1";
+            editor.ZoomPercentage = 175;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var outline = window.GetVisualDescendants().OfType<CropPreviewOverlay>().Single(c => c.Name == "CropPreviewOutline");
+            Assert.IsTrue(outline.IsVisible);
+            Assert.AreSame(document, editor.ActiveDocument);
+            Assert.IsFalse(editor.IsDirty);
+            Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            Assert.AreEqual(0, changes);
+            CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!));
+            CollectionAssert.AreEqual(png, editor.CapturePngSnapshot().Bytes);
+            editor.Redo();
+            CollectionAssert.AreEqual(FlippedPixels, ReadPixels(editor.ActiveDocument!));
+        }
+        finally { window.Close(); }
     }, CancellationToken.None);
 
     [TestMethod]
