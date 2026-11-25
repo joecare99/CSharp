@@ -208,6 +208,59 @@ public sealed class ImageEditingTests
     }, CancellationToken.None);
 
     [TestMethod]
+    public async Task ResetCropCoordinatesPreservesDocumentAndHistory() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        editor.CropX = "invalid";
+        Assert.IsFalse(editor.ResetCropCoordinatesCommand.CanExecute(null));
+        editor.ResetCropCoordinates();
+        Assert.AreEqual("invalid", editor.CropX);
+        editor.LoadDocument(MakeDocument());
+        editor.RotateRight();
+        var rotated = editor.ActiveDocument;
+        var png = editor.CapturePngSnapshot().Bytes;
+        int changes = 0;
+        editor.ContentChanging += (_, _) => changes++;
+        editor.CropX = "-1"; editor.CropY = "invalid"; editor.CropWidth = ""; editor.CropHeight = "999";
+        Assert.IsTrue(editor.ResetCropCoordinatesCommand.CanExecute(null));
+        Assert.IsFalse(editor.ApplyCropCommand.CanExecute(null));
+        editor.ResetCropCoordinatesCommand.Execute(null);
+        Assert.AreEqual("0", editor.CropX);
+        Assert.AreEqual("0", editor.CropY);
+        Assert.AreEqual("2", editor.CropWidth);
+        Assert.AreEqual("3", editor.CropHeight);
+        Assert.AreEqual("", editor.CropError);
+        Assert.IsTrue(editor.ApplyCropCommand.CanExecute(null));
+        Assert.IsFalse(editor.ShowCropPreview);
+        Assert.AreSame(rotated, editor.ActiveDocument);
+        Assert.IsTrue(editor.IsDirty);
+        Assert.IsTrue(editor.UndoCommand.CanExecute(null));
+        Assert.IsFalse(editor.RedoCommand.CanExecute(null));
+        CollectionAssert.AreEqual(png, editor.CapturePngSnapshot().Bytes);
+        Assert.AreEqual(0, changes);
+
+        editor.Undo();
+        var original = editor.ActiveDocument;
+        editor.CropX = "1"; editor.CropY = "1"; editor.CropWidth = "1"; editor.CropHeight = "1";
+        Assert.IsTrue(editor.ShowCropPreview);
+        editor.ResetCropCoordinates();
+        Assert.AreEqual("3", editor.CropWidth);
+        Assert.AreEqual("2", editor.CropHeight);
+        Assert.IsFalse(editor.ShowCropPreview);
+        Assert.AreSame(original, editor.ActiveDocument);
+        Assert.IsFalse(editor.IsDirty);
+        Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+        Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+        Assert.AreEqual(1, changes);
+        CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!));
+        editor.Redo();
+        Assert.AreSame(rotated, editor.ActiveDocument);
+        editor.ClearDocument();
+        Assert.IsFalse(editor.ResetCropCoordinatesCommand.CanExecute(null));
+    }, CancellationToken.None);
+
+    [TestMethod]
     public async Task CropPreviewTracksImageGeometryZoomScrollAndDimensions() =>
         await _session.Dispatch(() =>
     {
@@ -338,12 +391,16 @@ public sealed class ImageEditingTests
         var window = new MainWindow { DataContext = host, Width = 1500, Height = 900 };
         try
         {
-            host.Editor.LoadDocument(MakeDocument());
             window.Show();
             window.UpdateLayout();
             var inputs = window.GetVisualDescendants().OfType<TextBox>().Where(t => t.Name?.StartsWith("Crop", StringComparison.Ordinal) == true).ToArray();
             Assert.AreEqual(4, inputs.Length);
             var button = window.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "Apply crop"));
+            var reset = window.GetVisualDescendants().OfType<Button>().Single(b => b.Name == "ResetCropCoordinatesButton");
+            Assert.IsFalse(reset.IsEffectivelyEnabled);
+            host.Editor.LoadDocument(MakeDocument());
+            Dispatcher.UIThread.RunJobs();
+            Assert.IsTrue(reset.IsEffectivelyEnabled);
             inputs.Single(t => t.Name == "CropXInput").SetCurrentValue(TextBox.TextProperty, "-1");
             Dispatcher.UIThread.RunJobs();
             Assert.AreEqual("-1", host.Editor.CropX);
@@ -351,6 +408,10 @@ public sealed class ImageEditingTests
             Assert.IsFalse(button.IsEffectivelyEnabled);
             Assert.IsFalse(string.IsNullOrEmpty(host.Editor.CropError));
             Assert.IsTrue(window.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == host.Editor.CropError && t.IsVisible));
+            Click(window, "Reset crop coordinates");
+            Assert.AreEqual("0", inputs.Single(t => t.Name == "CropXInput").Text);
+            Assert.IsTrue(button.IsEffectivelyEnabled);
+            Assert.AreEqual("", host.Editor.CropError);
             inputs.Single(t => t.Name == "CropXInput").SetCurrentValue(TextBox.TextProperty, "1");
             inputs.Single(t => t.Name == "CropYInput").SetCurrentValue(TextBox.TextProperty, "1");
             inputs.Single(t => t.Name == "CropWidthInput").SetCurrentValue(TextBox.TextProperty, "1");
