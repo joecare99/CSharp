@@ -539,7 +539,14 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
             catch (Exception exception) when (IsProjectWorkflowException(exception))
             {
-                ReportProjectFailure(workspace, revision, "Adapter case execution", exception);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    ReportProjectCancellation(workspace, revision);
+                }
+                else
+                {
+                    ReportProjectFailure(workspace, revision, "Adapter case execution", exception);
+                }
             }
             finally
             {
