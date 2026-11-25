@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using Avalonia;
@@ -37,10 +38,13 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
 
     private void SetActiveDocument(ImageEditorDocument? value)
     {
+        var oldSize = _activeDocument?.PixelSize;
         if (SetProperty(ref _activeDocument, value, nameof(ActiveDocument)))
         {
             OnPropertyChanged(nameof(HasDocument));
             OnPropertyChanged(nameof(DocumentSummary));
+            if (oldSize != value?.PixelSize) ResetCrop();
+            NotifyCropState();
         }
     }
 
@@ -55,6 +59,83 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ClearDocumentCommand))]
     private bool _allowClear = true;
+
+    [ObservableProperty]
+    private string _cropX = "0";
+    [ObservableProperty]
+    private string _cropY = "0";
+    [ObservableProperty]
+    private string _cropWidth = "0";
+    [ObservableProperty]
+    private string _cropHeight = "0";
+
+    partial void OnCropXChanged(string value) => NotifyCropState();
+    partial void OnCropYChanged(string value) => NotifyCropState();
+    partial void OnCropWidthChanged(string value) => NotifyCropState();
+    partial void OnCropHeightChanged(string value) => NotifyCropState();
+
+    /// <summary>Explains why the current coordinate inputs cannot be applied, or is empty when valid.</summary>
+    public string CropError => !HasDocument ? "Load an image to crop." :
+        TryGetCrop(out _, out _, out _, out _) ? "" :
+        "Enter whole numbers: X and Y must be nonnegative; width and height must be positive and fit within the image.";
+
+    private void ResetCrop()
+    {
+        CropX = "0";
+        CropY = "0";
+        CropWidth = (ActiveDocument?.PixelSize.Width ?? 0).ToString(CultureInfo.InvariantCulture);
+        CropHeight = (ActiveDocument?.PixelSize.Height ?? 0).ToString(CultureInfo.InvariantCulture);
+    }
+
+    private void NotifyCropState()
+    {
+        OnPropertyChanged(nameof(CropError));
+        ApplyCropCommand.NotifyCanExecuteChanged();
+    }
+
+    private bool TryGetCrop(out int x, out int y, out int width, out int height)
+    {
+        x = y = width = height = 0;
+        var size = ActiveDocument?.PixelSize;
+        return size.HasValue &&
+            int.TryParse(CropX, NumberStyles.Integer, CultureInfo.InvariantCulture, out x) &&
+            int.TryParse(CropY, NumberStyles.Integer, CultureInfo.InvariantCulture, out y) &&
+            int.TryParse(CropWidth, NumberStyles.Integer, CultureInfo.InvariantCulture, out width) &&
+            int.TryParse(CropHeight, NumberStyles.Integer, CultureInfo.InvariantCulture, out height) &&
+            x >= 0 && y >= 0 && width > 0 && height > 0 &&
+            x < size.Value.Width && y < size.Value.Height &&
+            width <= size.Value.Width - x && height <= size.Value.Height - y;
+    }
+
+    private bool CanApplyCrop() => TryGetCrop(out _, out _, out _, out _);
+
+    /// <summary>Crops to the validated pixel rectangle; invalid and whole-image rectangles do nothing.</summary>
+    [RelayCommand(CanExecute = nameof(CanApplyCrop))]
+    public void ApplyCrop()
+    {
+        if (!TryGetCrop(out int x, out int y, out int width, out int height)) return;
+        var source = ActiveDocument!;
+        if (x == 0 && y == 0 && width == source.PixelSize.Width && height == source.PixelSize.Height) return;
+
+        using var pixels = new WriteableBitmap(source.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        var cropped = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        try
+        {
+            using (var input = pixels.Lock())
+            using (var output = cropped.Lock())
+            {
+                source.Bitmap.CopyPixels(input);
+                byte[] row = new byte[checked(width * 4)];
+                for (int rowIndex = 0; rowIndex < height; rowIndex++)
+                {
+                    Marshal.Copy(IntPtr.Add(input.Address, checked((y + rowIndex) * input.RowBytes + x * 4)), row, 0, row.Length);
+                    Marshal.Copy(row, 0, IntPtr.Add(output.Address, rowIndex * output.RowBytes), row.Length);
+                }
+            }
+            CommitPixels(source, cropped);
+        }
+        catch { cropped.Dispose(); throw; }
+    }
 
     public bool HasDocument => ActiveDocument is not null;
     public bool IsDirty => ActiveDocument is not null && !ReferenceEquals(ActiveDocument, _savedRevision);
@@ -87,6 +168,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         _documentIdentity = new object();
         _savedRevision = document;
         SetActiveDocument(document);
+        ResetCrop();
         ZoomPercentage = 100;
         RefreshState();
         foreach (var item in old) item.Dispose();
@@ -177,16 +259,21 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
             using (var buffer = transformed.Lock())
                 for (int y = 0; y < targetHeight; y++)
                     Marshal.Copy(after, y * targetWidth * 4, IntPtr.Add(buffer.Address, y * buffer.RowBytes), targetWidth * 4);
-            var next = new ImageEditorDocument(source.Name, transformed);
-            ContentChanging?.Invoke(this, EventArgs.Empty);
-            for (int i = _history.Count - 1; i > _index; i--) { _history[i].Dispose(); _history.RemoveAt(i); }
-            _history.Add(next);
-            _index++;
-            if (_history.Count > MaxHistoryStates) { _history[0].Dispose(); _history.RemoveAt(0); _index--; }
-            SetActiveDocument(next);
-            RefreshState();
+            CommitPixels(source, transformed);
         }
         catch { transformed.Dispose(); throw; }
+    }
+
+    private void CommitPixels(ImageEditorDocument source, WriteableBitmap pixels)
+    {
+        var next = new ImageEditorDocument(source.Name, pixels);
+        ContentChanging?.Invoke(this, EventArgs.Empty);
+        for (int i = _history.Count - 1; i > _index; i--) { _history[i].Dispose(); _history.RemoveAt(i); }
+        _history.Add(next);
+        _index++;
+        if (_history.Count > MaxHistoryStates) { _history[0].Dispose(); _history.RemoveAt(0); _index--; }
+        SetActiveDocument(next);
+        RefreshState();
     }
 
     private bool CanTransform() => HasDocument;
