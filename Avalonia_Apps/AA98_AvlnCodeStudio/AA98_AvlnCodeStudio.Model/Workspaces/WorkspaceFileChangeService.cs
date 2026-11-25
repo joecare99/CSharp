@@ -15,6 +15,8 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 /// Invalid Unicode is rejected before review rather than silently replaced.
 /// If undo fails after deleting a generated file, rollback does not overwrite a file recreated at that path,
 /// even when it is empty; it reports incomplete rollback and leaves the history entry available.
+/// If redo fails after recreating a generated file, rollback likewise preserves externally modified contents.
+/// These checks and the subsequent file operations are not atomic against concurrent external changes.
 /// </remarks>
 public sealed class WorkspaceFileChangeService
 {
