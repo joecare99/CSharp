@@ -134,12 +134,15 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     public void RotateLeft() => TransformPixels(PixelTransform.RotateLeft);
 
     [RelayCommand(CanExecute = nameof(CanTransform))]
+    public void Rotate180() => TransformPixels(PixelTransform.Rotate180);
+
+    [RelayCommand(CanExecute = nameof(CanTransform))]
     public void FlipHorizontal() => TransformPixels(PixelTransform.FlipHorizontal);
 
     [RelayCommand(CanExecute = nameof(CanTransform))]
     public void FlipVertical() => TransformPixels(PixelTransform.FlipVertical);
 
-    private enum PixelTransform { RotateRight, RotateLeft, FlipHorizontal, FlipVertical }
+    private enum PixelTransform { RotateRight, RotateLeft, Rotate180, FlipHorizontal, FlipVertical }
 
     private void TransformPixels(PixelTransform transform)
     {
@@ -161,9 +164,9 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
             for (int x = 0; x < width; x++)
             {
                 int targetX = transform == PixelTransform.RotateRight ? height - 1 - y :
-                    transform == PixelTransform.RotateLeft ? y : transform == PixelTransform.FlipHorizontal ? width - 1 - x : x;
+                    transform == PixelTransform.RotateLeft ? y : transform is PixelTransform.Rotate180 or PixelTransform.FlipHorizontal ? width - 1 - x : x;
                 int targetY = transform == PixelTransform.RotateRight ? x :
-                    transform == PixelTransform.RotateLeft ? width - 1 - x : transform == PixelTransform.FlipVertical ? height - 1 - y : y;
+                    transform == PixelTransform.RotateLeft ? width - 1 - x : transform is PixelTransform.Rotate180 or PixelTransform.FlipVertical ? height - 1 - y : y;
                 Buffer.BlockCopy(before, (y * width + x) * 4, after, (targetY * targetWidth + targetX) * 4, 4);
             }
         if (width == targetWidth && height == targetHeight && before.AsSpan().SequenceEqual(after)) return;
@@ -232,6 +235,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(IsDirty));
         RotateRightCommand.NotifyCanExecuteChanged();
         RotateLeftCommand.NotifyCanExecuteChanged();
+        Rotate180Command.NotifyCanExecuteChanged();
         FlipHorizontalCommand.NotifyCanExecuteChanged();
         FlipVerticalCommand.NotifyCanExecuteChanged();
         UndoCommand.NotifyCanExecuteChanged();
