@@ -66,6 +66,7 @@
     </Project>
   </Folder>
   <Folder Name="/AA15_Labyrinth/">
+    <File Path="AA15_Labyrinth/Application.props" />
     <File Path="AA15_Labyrinth/Directory.Packages.props" />
     <Project Path="AA15_Labyrinth/AA15a_Treppen/AA15a_Treppen.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Debug" />
@@ -226,6 +227,8 @@
     </Project>
   </Folder>
   <Folder Name="/Avln_ImageEditor/">
+    <File Path="Avln_ImageEditor/Application.props" />
+    <File Path="Avln_ImageEditor/Directory.Packages.props" />
     <Project Path="Avln_ImageEditor/Avln_ImageEditor.Controls.Tests/Avln_ImageEditor.Controls.Tests.csproj">
       <BuildType Solution="DesktopOnly|*" Project="Release" />
     </Project>
