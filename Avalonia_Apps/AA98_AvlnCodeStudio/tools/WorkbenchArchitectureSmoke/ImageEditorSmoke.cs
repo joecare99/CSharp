@@ -44,6 +44,7 @@ internal static partial class Program
             "The image editor did not expose its undo and redo commands.");
         Button rotateLeft = imageButtons.Single(button => ReferenceEquals(button.Command, image.RotateLeftCommand));
         Button rotate180 = imageButtons.Single(button => ReferenceEquals(button.Command, image.Rotate180Command));
+        Button crop = imageButtons.Single(button => ReferenceEquals(button.Command, image.ApplyCropCommand));
         Button flip = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipHorizontalCommand));
         Button flipVertical = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipVerticalCommand));
         Check(!image.AllowClear && !tab.IsDirty && ImageSize(image) == (2, 3),
@@ -74,6 +75,30 @@ internal static partial class Program
         image.RedoCommand.Execute(null);
         Check(tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(halfTurn),
             "Redo did not restore the 180-degree rotation.");
+        image.UndoCommand.Execute(null);
+
+        TextBox[] cropInputs = tab.View.GetVisualDescendants().OfType<TextBox>()
+            .Where(input => input.Name?.StartsWith("Crop", StringComparison.Ordinal) == true).ToArray();
+        Check(cropInputs.Length == 4, "The image crop fields were not available.");
+        cropInputs.Single(input => input.Name == "CropXInput").SetCurrentValue(TextBox.TextProperty, "-1");
+        await WaitUntilAsync(() => image.CropX == "-1" && !crop.IsEffectivelyEnabled, "invalid image crop");
+        Check(!string.IsNullOrEmpty(image.CropError) && !tab.IsDirty,
+            "Invalid image crop input was not rejected.");
+        cropInputs.Single(input => input.Name == "CropXInput").SetCurrentValue(TextBox.TextProperty, "1");
+        cropInputs.Single(input => input.Name == "CropYInput").SetCurrentValue(TextBox.TextProperty, "1");
+        cropInputs.Single(input => input.Name == "CropWidthInput").SetCurrentValue(TextBox.TextProperty, "1");
+        cropInputs.Single(input => input.Name == "CropHeightInput").SetCurrentValue(TextBox.TextProperty, "1");
+        await WaitUntilAsync(() => image.CropX == "1" && image.CropY == "1"
+            && image.CropWidth == "1" && image.CropHeight == "1" && crop.IsEffectivelyEnabled, "valid image crop");
+        Invoke(tab.View, "Apply crop");
+        byte[] cropped = image.CapturePngSnapshot().Bytes;
+        Check(tab.IsDirty && ImageSize(image) == (1, 1), "Crop did not update the image.");
+        image.UndoCommand.Execute(null);
+        Check(!tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(initial),
+            "One undo did not restore the image before crop.");
+        image.RedoCommand.Execute(null);
+        Check(tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(cropped),
+            "Redo did not restore the cropped image.");
         image.UndoCommand.Execute(null);
         image.RotateRightCommand.Execute(null);
         Check(!tab.IsPreview && tab.IsDirty && ImageSize(image) == (3, 2),
