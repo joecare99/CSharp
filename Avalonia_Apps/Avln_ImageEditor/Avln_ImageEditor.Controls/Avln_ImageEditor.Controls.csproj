@@ -1,20 +1,23 @@
 <Project>
   <Import Project="..\Application.props" />
   <PropertyGroup>
-	<TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
-	<AssemblyName>Avln_ImageEditor.Controls</AssemblyName>
-	<RootNamespace>Avln_ImageEditor.Controls</RootNamespace>
-	<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <AssemblyName>Avln_ImageEditor.Controls</AssemblyName>
+    <RootNamespace>Avln_ImageEditor.Controls</RootNamespace>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '11.0.100'))">
+    <TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
+  </PropertyGroup>
   <ItemGroup>
-	<Compile Remove="obj\**" />
-	<EmbeddedResource Remove="obj\**" />
-	<None Remove="obj\**" />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
   </ItemGroup>
   <ItemGroup>
-	<PackageReference Include="Avalonia" />
-	<PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
   </ItemGroup>
 </Project>

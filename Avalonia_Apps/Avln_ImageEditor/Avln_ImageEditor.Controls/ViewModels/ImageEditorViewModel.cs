@@ -79,6 +79,14 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         TryGetCrop(out _, out _, out _, out _) ? "" :
         "Enter whole numbers: X and Y must be nonnegative; width and height must be positive and fit within the image.";
 
+    /// <summary>Valid crop rectangle in image-pixel coordinates, or an empty rectangle.</summary>
+    public Rect CropPreview => TryGetCrop(out int x, out int y, out int width, out int height)
+        ? new Rect(x, y, width, height) : default;
+
+    /// <summary>Whether the crop preview is shown. Whole-image crops are not outlined.</summary>
+    public bool ShowCropPreview => TryGetCrop(out int x, out int y, out int width, out int height) &&
+        (x != 0 || y != 0 || width != ActiveDocument!.PixelSize.Width || height != ActiveDocument.PixelSize.Height);
+
     private void ResetCrop()
     {
         CropX = "0";
@@ -90,6 +98,8 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     private void NotifyCropState()
     {
         OnPropertyChanged(nameof(CropError));
+        OnPropertyChanged(nameof(CropPreview));
+        OnPropertyChanged(nameof(ShowCropPreview));
         ApplyCropCommand.NotifyCanExecuteChanged();
     }
 

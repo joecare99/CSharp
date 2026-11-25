@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:models="using:Avln_ImageEditor.Controls.Models"
 			 xmlns:vm="using:Avln_ImageEditor.Controls.ViewModels"
+			 xmlns:views="using:Avln_ImageEditor.Controls.Views"
 			 x:Class="Avln_ImageEditor.Controls.Views.ImageEditorControl"
 			 x:DataType="vm:ImageEditorViewModel"
 			 d:DesignHeight="720"
@@ -95,22 +96,30 @@
 			  Background="#15161A"
 			  BorderBrush="#343741"
 			  BorderThickness="1">
-		<ScrollViewer HorizontalScrollBarVisibility="Auto"
+		<ScrollViewer x:Name="ImageScrollViewer" HorizontalScrollBarVisibility="Auto"
 					  VerticalScrollBarVisibility="Auto">
 		  <Grid MinWidth="640"
 				MinHeight="420">
 			<Border Width="32"
 					Height="32"
 					Background="#272A31" />
-			<Image HorizontalAlignment="Center"
-				   VerticalAlignment="Center"
-				   Source="{Binding ActiveDocument.Image}"
-				   Stretch="None">
-			  <Image.RenderTransform>
+			<LayoutTransformControl HorizontalAlignment="Center"
+									VerticalAlignment="Center"
+									UseLayoutRounding="False">
+			  <LayoutTransformControl.LayoutTransform>
 				<ScaleTransform ScaleX="{Binding ZoomFactor}"
 								ScaleY="{Binding ZoomFactor}" />
-			  </Image.RenderTransform>
-			</Image>
+			  </LayoutTransformControl.LayoutTransform>
+			  <Grid x:Name="ImageSurface" UseLayoutRounding="False"
+					Width="{Binding ActiveDocument.PixelSize.Width, TargetNullValue=0, FallbackValue=0}"
+					Height="{Binding ActiveDocument.PixelSize.Height, TargetNullValue=0, FallbackValue=0}">
+				<Image x:Name="EditorImage" Source="{Binding ActiveDocument.Image}" Stretch="Fill" />
+				<views:CropPreviewOverlay x:Name="CropPreviewOutline"
+										  IsHitTestVisible="False"
+										  IsVisible="{Binding ShowCropPreview}"
+										  CropRectangle="{Binding CropPreview}" Zoom="{Binding ZoomFactor}" />
+			  </Grid>
+			</LayoutTransformControl>
 		  </Grid>
 		</ScrollViewer>
 	  </Border>
