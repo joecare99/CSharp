@@ -7,7 +7,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.VisualTree;
+using Avln_ImageEditor.Controls.Models;
 using Avln_ImageEditor.Controls.ViewModels;
 using Avln_ImageEditor.Controls.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,7 @@ using Project.Explorer.Avalonia.ViewModels;
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 internal static partial class Program
@@ -35,7 +38,7 @@ internal static partial class Program
             "The image was not opened as an image-editor preview.");
         ImageEditorViewModel image = (ImageEditorViewModel)tab.View.DataContext!;
         await WaitUntilAsync(() => window.GetVisualDescendants().Contains(tab.View)
-            && tab.View.GetVisualDescendants().OfType<Image>().Any(element => element.Source is Bitmap)
+            && tab.View.GetVisualDescendants().OfType<Image>().Any(element => element.Name == "EditorImage" && element.Source is not null)
             && tab.View.GetVisualDescendants().OfType<Button>()
                 .Any(button => ReferenceEquals(button.Command, image.RotateRightCommand)),
             "the rendered image editor");
@@ -53,6 +56,9 @@ internal static partial class Program
             "The shared editor did not open the original image as a clean document.");
 
         byte[] initial = image.CapturePngSnapshot().Bytes;
+        await VerifyImageDpiRenderingAsync(window, tab.View, image, initial);
+        Check(!tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(initial),
+            "The DPI rendering probe did not restore the clean image.");
         Check(rotateLeft.IsEnabled, "The counterclockwise rotation button is not available.");
         Invoke(tab.View, "Rotate left");
         byte[] leftRotated = image.CapturePngSnapshot().Bytes;
@@ -311,6 +317,74 @@ internal static partial class Program
         using MemoryStream stream = new(image.CapturePngSnapshot().Bytes);
         using Bitmap bitmap = new(stream);
         return (bitmap.PixelSize.Width, bitmap.PixelSize.Height);
+    }
+
+    private static async Task VerifyImageDpiRenderingAsync(Window window, Control view, ImageEditorViewModel editor, byte[] original)
+    {
+        try
+        {
+            foreach (int dpi in new[] { 96, 192 })
+            {
+                var bitmap = new WriteableBitmap(new PixelSize(64, 48), new Vector(dpi, dpi), PixelFormats.Bgra8888, AlphaFormat.Premul);
+                using (var buffer = bitmap.Lock())
+                {
+                    for (int y = 0; y < 48; y++)
+                    {
+                        byte[] row = new byte[64 * 4];
+                        for (int x = 0; x < 64; x++)
+                        {
+                            if (y >= 24) { row[x * 4 + 1] = 255; row[x * 4 + 3] = 255; }
+                            else if (x >= 40) { row[x * 4] = 255; row[x * 4 + 3] = 255; }
+                            else if (x >= 24) { row[x * 4 + 2] = 128; row[x * 4 + 3] = 128; }
+                        }
+                        Marshal.Copy(row, 0, IntPtr.Add(buffer.Address, y * buffer.RowBytes), row.Length);
+                    }
+                }
+                editor.LoadDocument(new ImageEditorDocument("dpi.png", bitmap));
+                Grid surface = view.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+                Border background = view.GetVisualDescendants().OfType<Border>().Single(c => c.Name == "TransparencyBackground");
+                await WaitUntilAsync(() => surface.Bounds.Size == new Size(64, 48) && background.IsVisible,
+                    $"{dpi}-DPI image layout");
+                window.UpdateLayout();
+                byte[] SnapshotPixel(Bitmap image, int x, int y)
+                {
+                    using var copy = new WriteableBitmap(image.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+                    using var buffer = copy.Lock();
+                    image.CopyPixels(buffer);
+                    byte[] value = new byte[4];
+                    Marshal.Copy(IntPtr.Add(buffer.Address, y * buffer.RowBytes + x * 4), value, 0, 4);
+                    return value;
+                }
+                using (var stream = new MemoryStream(editor.CapturePngSnapshot().Bytes))
+                using (var decoded = new Bitmap(stream))
+                {
+                    Check(decoded.PixelSize == new PixelSize(64, 48)
+                        && SnapshotPixel(decoded, 28, 4).SequenceEqual(new byte[] { 0, 0, 128, 128 })
+                        && SnapshotPixel(decoded, 44, 36).SequenceEqual(new byte[] { 0, 255, 0, 255 }),
+                        $"{dpi}-DPI PNG pixels were not retained.");
+                }
+                using (var rendered = new RenderTargetBitmap(new PixelSize(64, 48)))
+                {
+                    rendered.Render(surface);
+                    Check(SnapshotPixel(rendered, 44, 4).SequenceEqual(new byte[] { 255, 0, 0, 255 })
+                        && SnapshotPixel(rendered, 44, 36).SequenceEqual(new byte[] { 0, 255, 0, 255 }),
+                        $"{dpi}-DPI image did not render its right and bottom pixels.");
+                }
+                background.SetCurrentValue(Visual.IsVisibleProperty, false);
+                using (var rendered = new RenderTargetBitmap(new PixelSize(64, 48)))
+                {
+                    rendered.Render(surface);
+                    Check(SnapshotPixel(rendered, 4, 4).SequenceEqual(new byte[] { 0, 0, 0, 0 })
+                        && SnapshotPixel(rendered, 28, 4).SequenceEqual(new byte[] { 0, 0, 128, 128 }),
+                        $"{dpi}-DPI image alpha was not rendered without the checkerboard.");
+                }
+                background.SetCurrentValue(Visual.IsVisibleProperty, true);
+            }
+        }
+        finally
+        {
+            editor.LoadDocument(original, "Editable.png");
+        }
     }
 
     private static async Task VerifyImageSaveRacesAsync(string source, byte[] sourceBytes, string fixture)
