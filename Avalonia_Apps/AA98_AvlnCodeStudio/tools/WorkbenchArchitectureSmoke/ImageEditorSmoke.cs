@@ -2,6 +2,7 @@ using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.UI.Components;
 using AA98_AvlnCodeStudio.UI.ViewModels;
 using AA98_AvlnCodeStudio.UI.Views;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
@@ -79,17 +80,52 @@ internal static partial class Program
 
         TextBox[] cropInputs = tab.View.GetVisualDescendants().OfType<TextBox>()
             .Where(input => input.Name?.StartsWith("Crop", StringComparison.Ordinal) == true).ToArray();
+        CropPreviewOverlay cropPreview = tab.View.GetVisualDescendants().OfType<CropPreviewOverlay>().Single();
+        ScrollViewer imageScroll = tab.View.GetVisualDescendants().OfType<ScrollViewer>()
+            .Single(element => element.Name == "ImageScrollViewer");
+        Image renderedImage = tab.View.GetVisualDescendants().OfType<Image>()
+            .Single(element => element.Name == "EditorImage");
+        var originalDocument = image.ActiveDocument;
+        int previewChanges = 0;
+        EventHandler previewChanging = (_, _) => previewChanges++;
+        image.ContentChanging += previewChanging;
         Check(cropInputs.Length == 4, "The image crop fields were not available.");
         cropInputs.Single(input => input.Name == "CropXInput").SetCurrentValue(TextBox.TextProperty, "-1");
-        await WaitUntilAsync(() => image.CropX == "-1" && !crop.IsEffectivelyEnabled, "invalid image crop");
-        Check(!string.IsNullOrEmpty(image.CropError) && !tab.IsDirty,
+        await WaitUntilAsync(() => image.CropX == "-1" && !crop.IsEffectivelyEnabled
+            && !cropPreview.IsVisible, "invalid image crop");
+        Check(!string.IsNullOrEmpty(image.CropError) && !tab.IsDirty
+            && ReferenceEquals(image.ActiveDocument, originalDocument)
+            && image.RedoCommand.CanExecute(null) && !image.UndoCommand.CanExecute(null)
+            && image.CapturePngSnapshot().Bytes.SequenceEqual(initial) && previewChanges == 0,
             "Invalid image crop input was not rejected.");
         cropInputs.Single(input => input.Name == "CropXInput").SetCurrentValue(TextBox.TextProperty, "1");
         cropInputs.Single(input => input.Name == "CropYInput").SetCurrentValue(TextBox.TextProperty, "1");
         cropInputs.Single(input => input.Name == "CropWidthInput").SetCurrentValue(TextBox.TextProperty, "1");
         cropInputs.Single(input => input.Name == "CropHeightInput").SetCurrentValue(TextBox.TextProperty, "1");
         await WaitUntilAsync(() => image.CropX == "1" && image.CropY == "1"
-            && image.CropWidth == "1" && image.CropHeight == "1" && crop.IsEffectivelyEnabled, "valid image crop");
+            && image.CropWidth == "1" && image.CropHeight == "1" && crop.IsEffectivelyEnabled
+            && cropPreview.IsVisible && cropPreview.CropRectangle == new Avalonia.Rect(1, 1, 1, 1), "valid image crop");
+        Check(!cropPreview.IsHitTestVisible && !tab.IsDirty && image.RedoCommand.CanExecute(null)
+            && image.CapturePngSnapshot().Bytes.SequenceEqual(initial),
+            "The crop preview changed the image or its history.");
+        image.ZoomPercentage = 175;
+        await WaitUntilAsync(() =>
+        {
+            Avalonia.Point? start = cropPreview.TranslatePoint(new Avalonia.Point(1, 1), imageScroll);
+            Avalonia.Point? end = cropPreview.TranslatePoint(new Avalonia.Point(2, 2), imageScroll);
+            Avalonia.Point? origin = renderedImage.TranslatePoint(new Avalonia.Point(0, 0), imageScroll);
+            return cropPreview.Zoom == 1.75 && start.HasValue && end.HasValue && origin.HasValue
+                && Math.Abs(start.Value.X - origin.Value.X - 1.75) < 0.01
+                && Math.Abs(start.Value.Y - origin.Value.Y - 1.75) < 0.01
+                && Math.Abs(end.Value.X - start.Value.X - 1.75) < 0.01
+                && Math.Abs(end.Value.Y - start.Value.Y - 1.75) < 0.01;
+        }, "zoomed image crop preview geometry");
+        Check(!tab.IsDirty && ReferenceEquals(image.ActiveDocument, originalDocument)
+            && image.RedoCommand.CanExecute(null) && !image.UndoCommand.CanExecute(null)
+            && image.CapturePngSnapshot().Bytes.SequenceEqual(initial) && previewChanges == 0,
+            "The zoomed crop preview changed pixels, history or dirty state.");
+        image.ZoomPercentage = 100;
+        image.ContentChanging -= previewChanging;
         Invoke(tab.View, "Apply crop");
         byte[] cropped = image.CapturePngSnapshot().Bytes;
         Check(tab.IsDirty && ImageSize(image) == (1, 1), "Crop did not update the image.");
