@@ -85,6 +85,242 @@ public sealed class ImageEditingTests
     }
 
     [TestMethod]
+    public async Task TransparencyBackgroundRendersOnlyBehindImageAndPreservesState() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        var window = new Window { Width = 800, Height = 650, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show();
+            window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var background = window.GetVisualDescendants().OfType<Border>().Single(c => c.Name == "TransparencyBackground");
+            var image = window.GetVisualDescendants().OfType<Image>().Single(c => c.Name == "EditorImage");
+            var outline = window.GetVisualDescendants().OfType<CropPreviewOverlay>().Single(c => c.Name == "CropPreviewOutline");
+            var scroll = window.GetVisualDescendants().OfType<ScrollViewer>().Single(c => c.Name == "ImageScrollViewer");
+            Assert.IsFalse(background.IsVisible);
+            Assert.IsFalse(background.IsHitTestVisible);
+
+            var bitmap = new WriteableBitmap(new PixelSize(64, 48), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+            using (var buffer = bitmap.Lock())
+            {
+                var row = new byte[64 * 4];
+                for (int x = 24; x < 64; x++)
+                {
+                    row[x * 4] = x >= 40 ? (byte)255 : (byte)0;
+                    row[x * 4 + 2] = x < 40 ? (byte)128 : (byte)0;
+                    row[x * 4 + 3] = x < 40 ? (byte)128 : (byte)255;
+                }
+                for (int y = 0; y < 48; y++)
+                    Marshal.Copy(row, 0, IntPtr.Add(buffer.Address, y * buffer.RowBytes), row.Length);
+            }
+            editor.LoadDocument(new ImageEditorDocument("alpha.png", bitmap));
+            var original = editor.ActiveDocument;
+            var pixels = ReadPixels(original!);
+            CollectionAssert.AreEqual(new byte[] { 0, 0, 128, 128 }, Pixel(pixels, 64, 28, 4));
+            CollectionAssert.AreEqual(new byte[] { 255, 0, 0, 255 }, Pixel(pixels, 64, 44, 4));
+            var png = editor.CapturePngSnapshot().Bytes;
+            int changes = 0;
+            editor.ContentChanging += (_, _) => changes++;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.IsTrue(background.IsVisible);
+            Assert.AreSame(original!.DisplayImage, image.Source);
+            Assert.AreEqual(image.Bounds.Size, background.Bounds.Size);
+            Assert.AreEqual(new Size(64, 48), surface.Bounds.Size);
+            var origin = surface.TranslatePoint(new Point(0, 0), window)!.Value;
+            using var rendered = window.CaptureRenderedFrame();
+            Assert.IsNotNull(rendered);
+            using var renderedCopy = new WriteableBitmap(rendered.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+            using var frameBuffer = renderedCopy.Lock();
+            rendered.CopyPixels(frameBuffer);
+            var frame = new byte[rendered.PixelSize.Width * rendered.PixelSize.Height * 4];
+            for (int y = 0; y < rendered.PixelSize.Height; y++)
+                Marshal.Copy(IntPtr.Add(frameBuffer.Address, y * frameBuffer.RowBytes), frame, y * rendered.PixelSize.Width * 4, rendered.PixelSize.Width * 4);
+            byte[] Sample(int x, int y) => Pixel(frame, rendered.PixelSize.Width, (int)origin.X + x, (int)origin.Y + y);
+            byte[] light = Sample(4, 4);
+            byte[] dark = Sample(12, 4);
+            CollectionAssert.AreNotEqual(light, Sample(-4, 4));
+            CollectionAssert.AreNotEqual(dark, Sample(68, 4));
+            CollectionAssert.AreNotEqual(light, dark);
+            CollectionAssert.AreEqual(light, Sample(20, 4));
+            CollectionAssert.AreEqual(dark, Sample(4, 12));
+            Assert.AreEqual((byte)255, light[3]);
+            Assert.AreEqual((byte)255, dark[3]);
+            var partial = Sample(28, 4);
+            Assert.AreEqual((byte)255, partial[3]);
+            Assert.AreEqual(dark[0] / 2, partial[0], 2);
+            Assert.AreEqual(128 + dark[2] / 2, partial[2], 2);
+            CollectionAssert.AreEqual(new byte[] { 255, 0, 0, 255 }, Sample(44, 4));
+
+            editor.CropWidth = "63";
+            editor.ZoomPercentage = 175;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.IsTrue(outline.IsVisible);
+            var imageOrigin = image.TranslatePoint(new Point(0, 0), scroll)!.Value;
+            var backgroundOrigin = background.TranslatePoint(new Point(0, 0), scroll)!.Value;
+            var backgroundEnd = background.TranslatePoint(new Point(64, 48), scroll)!.Value;
+            Assert.AreEqual(imageOrigin, backgroundOrigin);
+            Assert.AreEqual(112, backgroundEnd.X - backgroundOrigin.X, 0.01);
+            Assert.AreEqual(84, backgroundEnd.Y - backgroundOrigin.Y, 0.01);
+            Assert.AreSame(original, editor.ActiveDocument);
+            Assert.IsFalse(editor.IsDirty);
+            Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+            Assert.AreEqual(0, changes);
+            CollectionAssert.AreEqual(pixels, ReadPixels(editor.ActiveDocument!));
+            CollectionAssert.AreEqual(png, editor.CapturePngSnapshot().Bytes);
+
+            editor.ApplyCrop();
+            Assert.IsTrue(editor.IsDirty);
+            Assert.AreEqual(63, editor.ActiveDocument!.PixelSize.Width);
+            editor.Undo();
+            Assert.IsFalse(editor.IsDirty);
+            CollectionAssert.AreEqual(pixels, ReadPixels(editor.ActiveDocument!));
+            CollectionAssert.AreEqual(png, editor.CapturePngSnapshot().Bytes);
+            editor.Redo();
+            using var decoded = new ImageEditorViewModel();
+            decoded.LoadDocument(editor.CapturePngSnapshot().Bytes, "export.png");
+            CollectionAssert.AreEqual(ReadPixels(editor.ActiveDocument!), ReadPixels(decoded.ActiveDocument!));
+            Assert.AreEqual(3, changes);
+            editor.ClearDocument();
+            Assert.IsFalse(background.IsVisible);
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    private static byte[] Pixel(byte[] pixels, int width, int x, int y) =>
+        pixels.Skip((y * width + x) * 4).Take(4).ToArray();
+
+    [TestMethod]
+    [DataRow(96)]
+    [DataRow(192)]
+    public async Task ImageDpiPixelMapping(int dpi) =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        var bitmap = new WriteableBitmap(new PixelSize(64, 48), new Vector(dpi, dpi), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        using (var buffer = bitmap.Lock())
+        {
+            for (int y = 0; y < 48; y++)
+            {
+                var row = new byte[64 * 4];
+                for (int x = 0; x < 64; x++)
+                {
+                    if (y >= 24) { row[x * 4 + 1] = 255; row[x * 4 + 3] = 255; }
+                    else if (x >= 40) { row[x * 4] = 255; row[x * 4 + 3] = 255; }
+                    else if (x >= 24) { row[x * 4 + 2] = 128; row[x * 4 + 3] = 128; }
+                }
+                Marshal.Copy(row, 0, IntPtr.Add(buffer.Address, y * buffer.RowBytes), row.Length);
+            }
+        }
+        editor.LoadDocument(new ImageEditorDocument("dpi.png", bitmap));
+        var originalPixels = ReadPixels(editor.ActiveDocument!);
+        using var exported = new ImageEditorViewModel();
+        exported.LoadDocument(editor.CapturePngSnapshot().Bytes, "export.png");
+        CollectionAssert.AreEqual(originalPixels, ReadPixels(exported.ActiveDocument!));
+        var window = new Window { Width = 800, Height = 650, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var background = window.GetVisualDescendants().OfType<Border>().Single(c => c.Name == "TransparencyBackground");
+            var image = window.GetVisualDescendants().OfType<Image>().Single(c => c.Name == "EditorImage");
+            var withChecker = RenderPixels(surface, 64, 48);
+            background.IsVisible = false;
+            var withoutChecker = RenderPixels(surface, 64, 48);
+            var plain = RenderPixels(image, 64, 48);
+            CollectionAssert.AreEqual(new byte[] { 0, 0, 0, 0 }, Pixel(withoutChecker, 64, 4, 4));
+            CollectionAssert.AreEqual(new byte[] { 0, 0, 128, 128 }, Pixel(withoutChecker, 64, 28, 4));
+            CollectionAssert.AreEqual(new byte[] { 255, 0, 0, 255 }, Pixel(withoutChecker, 64, 44, 4));
+            CollectionAssert.AreEqual(new byte[] { 0, 255, 0, 255 }, Pixel(withoutChecker, 64, 44, 36));
+            CollectionAssert.AreEqual(withoutChecker, plain);
+            var dark = Pixel(withChecker, 64, 12, 4);
+            var partial = Pixel(withChecker, 64, 28, 4);
+            Assert.AreEqual(dark[0] / 2, partial[0], 2);
+            Assert.AreEqual(128 + dark[2] / 2, partial[2], 2);
+            CollectionAssert.AreEqual(new byte[] { 255, 0, 0, 255 }, Pixel(withChecker, 64, 44, 4));
+            CollectionAssert.AreEqual(new byte[] { 0, 255, 0, 255 }, Pixel(withChecker, 64, 44, 36));
+
+            background.IsVisible = true;
+            editor.ZoomPercentage = 200;
+            editor.CropX = "16"; editor.CropY = "8"; editor.CropWidth = "40"; editor.CropHeight = "32";
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var overlay = window.GetVisualDescendants().OfType<CropPreviewOverlay>().Single();
+            Assert.IsTrue(overlay.IsVisible);
+            CollectionAssert.AreEqual(Pixel(withChecker, 64, 4, 4), FramePixel(window, surface, 4, 4));
+            CollectionAssert.AreEqual(partial, FramePixel(window, surface, 28, 4));
+            CollectionAssert.AreEqual(new byte[] { 255, 0, 0, 255 }, FramePixel(window, surface, 44, 4));
+            CollectionAssert.AreEqual(new byte[] { 0, 255, 0, 255 }, FramePixel(window, surface, 44, 36));
+            Assert.IsFalse(editor.IsDirty);
+            Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(originalPixels, ReadPixels(editor.ActiveDocument!));
+
+            editor.ApplyCrop();
+            Assert.IsTrue(editor.IsDirty);
+            Assert.AreEqual(new PixelSize(40, 32), editor.ActiveDocument!.PixelSize);
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            CollectionAssert.AreEqual(Pixel(withChecker, 64, 4, 4), FramePixel(window, surface, 4, 4));
+            CollectionAssert.AreEqual(partial, FramePixel(window, surface, 12, 4));
+            CollectionAssert.AreEqual(new byte[] { 255, 0, 0, 255 }, FramePixel(window, surface, 28, 4));
+            CollectionAssert.AreEqual(new byte[] { 0, 255, 0, 255 }, FramePixel(window, surface, 28, 28));
+            using (var croppedPng = new ImageEditorViewModel())
+            {
+                croppedPng.LoadDocument(editor.CapturePngSnapshot().Bytes, "crop.png");
+                CollectionAssert.AreEqual(ReadPixels(editor.ActiveDocument), ReadPixels(croppedPng.ActiveDocument!));
+            }
+            editor.Undo();
+            Assert.IsFalse(editor.IsDirty);
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(originalPixels, ReadPixels(editor.ActiveDocument!));
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            CollectionAssert.AreEqual(partial, FramePixel(window, surface, 28, 4));
+            CollectionAssert.AreEqual(new byte[] { 255, 0, 0, 255 }, FramePixel(window, surface, 44, 4));
+            editor.Redo();
+            Assert.IsTrue(editor.IsDirty);
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            CollectionAssert.AreEqual(partial, FramePixel(window, surface, 12, 4));
+            CollectionAssert.AreEqual(new byte[] { 0, 255, 0, 255 }, FramePixel(window, surface, 28, 28));
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    private static byte[] RenderPixels(Control control, int width, int height)
+    {
+        using var rendered = new RenderTargetBitmap(new PixelSize(width, height));
+        using var copy = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        rendered.Render(control);
+        using var buffer = copy.Lock();
+        rendered.CopyPixels(buffer);
+        var pixels = new byte[width * height * 4];
+        for (int y = 0; y < height; y++)
+            Marshal.Copy(IntPtr.Add(buffer.Address, y * buffer.RowBytes), pixels, y * width * 4, width * 4);
+        return pixels;
+    }
+
+    private static byte[] FramePixel(Window window, Control control, double x, double y)
+    {
+        var point = control.TranslatePoint(new Point(x + 0.5, y + 0.5), window)!.Value;
+        using var rendered = window.CaptureRenderedFrame();
+        Assert.IsNotNull(rendered);
+        using var copy = new WriteableBitmap(rendered.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        using var buffer = copy.Lock();
+        rendered.CopyPixels(buffer);
+        var pixel = new byte[4];
+        int px = (int)(point.X * window.RenderScaling);
+        int py = (int)(point.Y * window.RenderScaling);
+        Marshal.Copy(IntPtr.Add(buffer.Address, py * buffer.RowBytes + px * 4), pixel, 0, 4);
+        return pixel;
+    }
+
+    [TestMethod]
     public async Task CropPreservesPixelsAlphaHistoryAndPngSnapshot() =>
         await _session.Dispatch(() =>
     {
@@ -273,9 +509,12 @@ public sealed class ImageEditingTests
             var outline = window.GetVisualDescendants().OfType<CropPreviewOverlay>().Single(c => c.Name == "CropPreviewOutline");
             var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
             var image = window.GetVisualDescendants().OfType<Image>().Single(c => c.Name == "EditorImage");
+            var background = window.GetVisualDescendants().OfType<Border>().Single(c => c.Name == "TransparencyBackground");
             var scroll = window.GetVisualDescendants().OfType<ScrollViewer>().Single(c => c.Name == "ImageScrollViewer");
             Assert.IsFalse(outline.IsVisible);
             Assert.IsFalse(outline.IsHitTestVisible);
+            Assert.IsFalse(background.IsVisible);
+            Assert.IsFalse(background.IsHitTestVisible);
 
             var bitmap = new WriteableBitmap(new PixelSize(1000, 800), new Vector(192, 192), PixelFormats.Bgra8888, AlphaFormat.Premul);
             editor.LoadDocument(new ImageEditorDocument("large.png", bitmap));
@@ -288,6 +527,10 @@ public sealed class ImageEditingTests
             Assert.AreEqual(new Size(1000, 800), image.Bounds.Size);
             var imageOrigin = image.TranslatePoint(new Point(0, 0), scroll)!.Value;
             var imageEnd = image.TranslatePoint(new Point(1000, 800), scroll)!.Value;
+            Assert.IsTrue(background.IsVisible);
+            Assert.AreEqual(image.Bounds.Size, background.Bounds.Size);
+            Assert.AreEqual(imageOrigin, background.TranslatePoint(new Point(0, 0), scroll)!.Value);
+            Assert.AreEqual(imageEnd, background.TranslatePoint(new Point(1000, 800), scroll)!.Value);
             Assert.AreEqual(1250, imageEnd.X - imageOrigin.X, 0.01);
             Assert.AreEqual(1000, imageEnd.Y - imageOrigin.Y, 0.01);
             var beforeScroll = outline.TranslatePoint(outline.CropRectangle.Position, scroll)!.Value;
@@ -297,6 +540,9 @@ public sealed class ImageEditingTests
             Dispatcher.UIThread.RunJobs();
             window.UpdateLayout();
             var afterScroll = outline.TranslatePoint(outline.CropRectangle.Position, scroll)!.Value;
+            var backgroundAfterScroll = background.TranslatePoint(new Point(0, 0), scroll)!.Value;
+            Assert.AreEqual(150, imageOrigin.X - backgroundAfterScroll.X, 0.01);
+            Assert.AreEqual(100, imageOrigin.Y - backgroundAfterScroll.Y, 0.01);
             Assert.AreEqual(150, beforeScroll.X - afterScroll.X, 0.01);
             Assert.AreEqual(100, beforeScroll.Y - afterScroll.Y, 0.01);
             var outlineEnd = outline.TranslatePoint(new Point(1000, 800), scroll)!.Value;
@@ -343,6 +589,7 @@ public sealed class ImageEditingTests
             Assert.AreEqual(new Rect(799, 999, 1, 1), outline.CropRectangle);
             editor.ClearDocument();
             Assert.IsFalse(outline.IsVisible);
+            Assert.IsFalse(background.IsVisible);
         }
         finally { window.Close(); }
     }, CancellationToken.None);
