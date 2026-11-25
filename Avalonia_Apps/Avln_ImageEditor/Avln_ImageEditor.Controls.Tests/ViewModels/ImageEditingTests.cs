@@ -84,6 +84,169 @@ public sealed class ImageEditingTests
     }
 
     [TestMethod]
+    public async Task CropPreservesPixelsAlphaHistoryAndPngSnapshot() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        editor.LoadDocument(MakeDocument());
+        int changes = 0;
+        editor.ContentChanging += (_, _) => changes++;
+        editor.CropX = "1";
+        editor.CropY = "1";
+        editor.CropWidth = "2";
+        editor.CropHeight = "1";
+        Assert.IsTrue(editor.ApplyCropCommand.CanExecute(null));
+        editor.ApplyCropCommand.Execute(null);
+        byte[] expected = { 0, 128, 128, 128, 255, 255, 255, 255 };
+        Assert.AreEqual(new PixelSize(2, 1), editor.ActiveDocument!.PixelSize);
+        CollectionAssert.AreEqual(expected, ReadPixels(editor.ActiveDocument));
+        Assert.AreEqual("2", editor.CropWidth);
+        Assert.AreEqual("1", editor.CropHeight);
+        Assert.IsTrue(editor.IsDirty);
+        var snapshot = editor.CapturePngSnapshot();
+        using (var decoded = new ImageEditorViewModel())
+        {
+            decoded.LoadDocument(snapshot.Bytes, "crop.png");
+            Assert.AreEqual(new PixelSize(2, 1), decoded.ActiveDocument!.PixelSize);
+            CollectionAssert.AreEqual(expected, ReadPixels(decoded.ActiveDocument));
+        }
+        editor.MarkSaved(snapshot);
+        Assert.IsFalse(editor.IsDirty);
+        editor.Undo();
+        Assert.IsTrue(editor.IsDirty);
+        Assert.AreEqual("3", editor.CropWidth);
+        CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!));
+        Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+        editor.Redo();
+        Assert.IsFalse(editor.IsDirty);
+        CollectionAssert.AreEqual(expected, ReadPixels(editor.ActiveDocument!));
+        Assert.AreEqual(3, changes);
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task HostExportsCropAndTracksSavedRevision() =>
+        await _session.Dispatch(async () =>
+    {
+        string directory = Path.Combine(AppContext.BaseDirectory, "editor-test-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        using var host = new MainWindowViewModel();
+        try
+        {
+            host.Editor.LoadDocument(MakeDocument());
+            host.Editor.CropX = "1";
+            host.Editor.CropY = "1";
+            host.Editor.CropWidth = "2";
+            host.Editor.CropHeight = "1";
+            host.Editor.ApplyCrop();
+            string path = Path.Combine(directory, "crop.png");
+            await host.ExportPngToNewFileAsync(path);
+            Assert.IsFalse(host.Editor.IsDirty);
+            using var decoded = new ImageEditorViewModel();
+            decoded.LoadDocument(File.ReadAllBytes(path), "crop.png");
+            CollectionAssert.AreEqual(new byte[] { 0, 128, 128, 128, 255, 255, 255, 255 }, ReadPixels(decoded.ActiveDocument!));
+            host.Editor.Undo();
+            Assert.IsTrue(host.Editor.IsDirty);
+            host.Editor.Redo();
+            Assert.IsFalse(host.Editor.IsDirty);
+        }
+        finally { Directory.Delete(directory, recursive: true); }
+        return true;
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task CropRejectsInvalidInputsAndWholeImagePreservesRedo() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        Assert.IsFalse(editor.ApplyCropCommand.CanExecute(null));
+        editor.LoadDocument(MakeDocument());
+        editor.FlipHorizontal();
+        editor.Undo();
+        var original = editor.ActiveDocument;
+        int changes = 0;
+        editor.ContentChanging += (_, _) => changes++;
+        var cases = new[] {
+            ("-1", "0", "1", "1"), ("0", "-1", "1", "1"),
+            ("0", "0", "0", "1"), ("0", "0", "1", "-1"),
+            ("3", "0", "1", "1"), ("0", "2", "1", "1"),
+            ("2", "0", "2", "1"), ("0", "1", "1", "2"),
+            ("2147483647", "0", "2147483647", "1"),
+            ("0", "0", "2147483648", "1"), ("", "0", "1", "1"),
+            ("1.5", "0", "1", "1")
+        };
+        foreach (var (x, y, width, height) in cases)
+        {
+            editor.CropX = x; editor.CropY = y; editor.CropWidth = width; editor.CropHeight = height;
+            Assert.IsFalse(editor.ApplyCropCommand.CanExecute(null), $"{x},{y},{width},{height}");
+            Assert.IsFalse(string.IsNullOrEmpty(editor.CropError));
+            editor.ApplyCrop();
+            Assert.AreSame(original, editor.ActiveDocument);
+            Assert.IsFalse(editor.IsDirty);
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+        }
+        editor.CropX = "0"; editor.CropY = "0"; editor.CropWidth = "3"; editor.CropHeight = "2";
+        Assert.IsTrue(editor.ApplyCropCommand.CanExecute(null));
+        editor.ApplyCrop();
+        Assert.AreSame(original, editor.ActiveDocument);
+        Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+        Assert.AreEqual(0, changes);
+        editor.CropX = "999";
+        editor.LoadDocument(MakeDocument());
+        Assert.AreEqual("0", editor.CropX);
+        Assert.AreEqual("3", editor.CropWidth);
+        editor.CropX = "999";
+        editor.RotateRight();
+        Assert.AreEqual("0", editor.CropX);
+        Assert.AreEqual("2", editor.CropWidth);
+        Assert.AreEqual("3", editor.CropHeight);
+        editor.CropX = "2"; editor.CropY = "0"; editor.CropWidth = "1"; editor.CropHeight = "1";
+        editor.Undo();
+        editor.CropX = "2"; editor.CropY = "0"; editor.CropWidth = "1"; editor.CropHeight = "1";
+        editor.ApplyCrop();
+        CollectionAssert.AreEqual(new byte[] { 0, 0, 0, 0 }, ReadPixels(editor.ActiveDocument!));
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task StandaloneCropInputsAndApplyAreBoundToEditor() =>
+        await _session.Dispatch(() =>
+    {
+        var host = new MainWindowViewModel();
+        var window = new MainWindow { DataContext = host, Width = 1500, Height = 900 };
+        try
+        {
+            host.Editor.LoadDocument(MakeDocument());
+            window.Show();
+            window.UpdateLayout();
+            var inputs = window.GetVisualDescendants().OfType<TextBox>().Where(t => t.Name?.StartsWith("Crop", StringComparison.Ordinal) == true).ToArray();
+            Assert.AreEqual(4, inputs.Length);
+            var button = window.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "Apply crop"));
+            inputs.Single(t => t.Name == "CropXInput").SetCurrentValue(TextBox.TextProperty, "-1");
+            Dispatcher.UIThread.RunJobs();
+            Assert.AreEqual("-1", host.Editor.CropX);
+            Assert.IsFalse(host.Editor.ApplyCropCommand.CanExecute(null));
+            Assert.IsFalse(button.IsEffectivelyEnabled);
+            Assert.IsFalse(string.IsNullOrEmpty(host.Editor.CropError));
+            Assert.IsTrue(window.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == host.Editor.CropError && t.IsVisible));
+            inputs.Single(t => t.Name == "CropXInput").SetCurrentValue(TextBox.TextProperty, "1");
+            inputs.Single(t => t.Name == "CropYInput").SetCurrentValue(TextBox.TextProperty, "1");
+            inputs.Single(t => t.Name == "CropWidthInput").SetCurrentValue(TextBox.TextProperty, "1");
+            inputs.Single(t => t.Name == "CropHeightInput").SetCurrentValue(TextBox.TextProperty, "1");
+            Dispatcher.UIThread.RunJobs();
+            Assert.IsTrue(button.IsEffectivelyEnabled);
+            Click(window, "Apply crop");
+            CollectionAssert.AreEqual(new byte[] { 0, 128, 128, 128 }, ReadPixels(host.Editor.ActiveDocument!));
+            Click(window, "Undo");
+            CollectionAssert.AreEqual(Pixels, ReadPixels(host.Editor.ActiveDocument!));
+        }
+        finally
+        {
+            host.Editor.MarkSaved(host.Editor.CapturePngSnapshot());
+            window.Close();
+            host.Editor.Dispose();
+        }
+    }, CancellationToken.None);
+
+    [TestMethod]
     public async Task RotateUndoRedoPreservePixelsAndNotifyBeforeMutation() =>
         await _session.Dispatch(() =>
     {
