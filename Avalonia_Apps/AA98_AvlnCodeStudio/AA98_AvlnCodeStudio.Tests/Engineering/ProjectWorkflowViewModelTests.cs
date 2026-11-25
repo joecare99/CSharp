@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,8 +18,11 @@ using AA98_AvlnCodeStudio.Model.Documents;
 using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.Planning.Core.Services;
 using AA98_AvlnCodeStudio.UI.Components;
+using AA98_AvlnCodeStudio.UI.Controls;
 using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.UI.ViewModels;
+using Avalonia;
+using Avalonia.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 #if NET10_0
@@ -31,6 +35,31 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 [TestClass]
 public sealed class ProjectWorkflowViewModelTests
 {
+    private static readonly Lazy<Task> DebugUiReady = new(() =>
+    {
+        TaskCompletionSource<bool> ready = NewCompletion<bool>();
+        Thread thread = new(() =>
+        {
+            try
+            {
+                AppBuilder.Configure<Application>().UsePlatformDetect().SetupWithoutStarting();
+                ready.TrySetResult(true);
+                Dispatcher.UIThread.MainLoop(CancellationToken.None);
+            }
+            catch (Exception exception)
+            {
+                ready.TrySetException(exception);
+            }
+        })
+        { IsBackground = true };
+        if (OperatingSystem.IsWindows())
+        {
+            thread.SetApartmentState(ApartmentState.STA);
+        }
+        thread.Start();
+        return ready.Task;
+    });
+
     [TestMethod]
     public async Task Selection_IsExplicitAndBuildUsesOnlyTheInspectedProject()
     {
@@ -687,6 +716,111 @@ public sealed class ProjectWorkflowViewModelTests
     }
 
     [TestMethod]
+    [DataRow("unchanged")]
+    [DataRow("cancel")]
+    [DataRow("selection")]
+    [DataRow("project")]
+    [DataRow("workspace")]
+    public async Task DebugDiscoveredTestCase_LateErrorRespectsWorkbenchContext(string scenario)
+    {
+        if (OperatingSystem.IsLinux() && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DISPLAY")))
+        {
+            Assert.Inconclusive("The Avalonia editor requires a graphical display.");
+        }
+        await DebugUiReady.Value.WaitAsync(TimeSpan.FromSeconds(20));
+        await Dispatcher.UIThread.InvokeAsync(() => DebugLateErrorCoreAsync(scenario));
+    }
+
+    private static async Task DebugLateErrorCoreAsync(string scenario)
+    {
+        using Fixture fixture = await Fixture.CreateAsync(useOutputDirectory: true, debugCase: true);
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        DiscoveredTestCase selected = new("id", "executor", "assembly", "Example.Late", "Late", null, null);
+        vm.DiscoveredTestCases.Add(selected);
+        vm.SelectedDiscoveredTestCase = selected;
+        TaskCompletionSource<CancellationToken> entered = NewCompletion<CancellationToken>();
+        TaskCompletionSource<TestRunSummary> completed = NewCompletion<TestRunSummary>();
+        ITestCaseDebugExecutionService debug = (ITestCaseDebugExecutionService)fixture.CaseExecution;
+        debug.DebugCaseAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DiscoveredTestCase>(),
+            Arg.Any<Func<int, CancellationToken, Task<IAsyncDisposable>>>(), Arg.Any<CancellationToken>())
+            .Returns(call => FailAfterAttachAsync(
+                call.Arg<Func<int, CancellationToken, Task<IAsyncDisposable>>>(), call.Arg<CancellationToken>()));
+
+        async Task<TestRunSummary> FailAfterAttachAsync(
+            Func<int, CancellationToken, Task<IAsyncDisposable>> attach, CancellationToken cancellationToken)
+        {
+            await using IAsyncDisposable lease = await attach(4242, cancellationToken);
+            entered.TrySetResult(cancellationToken);
+            return await completed.Task;
+        }
+
+        Assert.IsTrue(vm.DebugDiscoveredTestCaseCommand.CanExecute(null));
+        Task operation = vm.DebugDiscoveredTestCaseCommand.ExecuteAsync(null);
+        CancellationToken token = await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.IsTrue(vm.HasDebugSession);
+        _ = debug.Received(1).DebugCaseAsync(vm.ProjectInspection!.TargetPath!,
+            Path.GetDirectoryName(fixture.SecondProject)!, selected,
+            Arg.Any<Func<int, CancellationToken, Task<IAsyncDisposable>>>(), Arg.Any<CancellationToken>());
+        switch (scenario)
+        {
+            case "cancel":
+                vm.CancelProjectWorkflowCommand.Execute(null);
+                break;
+            case "selection":
+                DiscoveredTestCase other = new("other", "executor", "assembly", "Example.Other", "Other", null, null);
+                vm.DiscoveredTestCases.Add(other);
+                vm.SelectedDiscoveredTestCase = other;
+                break;
+            case "project":
+                vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
+                break;
+            case "workspace":
+                string otherSolution = Path.Combine(fixture.Root, "Other.slnx");
+                await File.WriteAllTextAsync(otherSolution, "<Solution><Project Path=\"first\\App.csproj\" /></Solution>");
+                await vm.OpenWorkspaceFileAsync(otherSolution);
+                Assert.AreEqual(otherSolution, vm.Workspace?.EntryPath);
+                break;
+        }
+
+        Assert.AreEqual(scenario != "unchanged", token.IsCancellationRequested);
+        vm.Editor.StatusText = "Current editor status";
+        vm.Editor.NotificationText = "Current notification";
+        vm.ProjectTestResults.Add(new TestResultNode("Current result", []));
+        vm.DiagnosticCollection.Items.Add(new Diagnostic { Message = "Current diagnostic" });
+        string previousWorkflowStatus = vm.ProjectWorkflowStatus;
+        var previousDiagnostics = vm.DiagnosticCollection.Items.ToArray();
+        completed.SetException(new InvalidOperationException("late debug error"));
+        await operation.WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
+        Assert.IsFalse(vm.HasDebugSession);
+        await fixture.Debugger.Received(1).StartSessionAsync(
+            Arg.Is<DebugLaunchRequest>(request => request.AttachToExistingProcess && request.ProcessId == 4242),
+            Arg.Any<CancellationToken>());
+        await fixture.Debugger.Received(1).SetBreakpointsAsync(
+            "session", Path.Combine(fixture.Root, "Tests.cs"),
+            Arg.Is<IReadOnlyList<int>>(lines => lines.Count == 1 && lines[0] == 1), Arg.Any<CancellationToken>());
+        await fixture.Debugger.Received(1).StopSessionAsync("session", CancellationToken.None);
+        Assert.AreEqual("Current result", vm.ProjectTestResults.Single().Label);
+        CollectionAssert.AreEqual(previousDiagnostics, vm.DiagnosticCollection.Items.ToArray());
+        if (scenario == "unchanged")
+        {
+            Assert.AreEqual("Adapter case debugging failed: late debug error", vm.ProjectWorkflowStatus);
+            Assert.AreEqual("Adapter case debugging failed.", vm.Editor.StatusText);
+            Assert.AreEqual("late debug error", vm.Editor.NotificationText);
+        }
+        else
+        {
+            bool reportCancellation = scenario is "cancel" or "selection";
+            Assert.AreEqual(reportCancellation ? "Project action canceled." : previousWorkflowStatus, vm.ProjectWorkflowStatus);
+            Assert.AreEqual(reportCancellation ? "Project action canceled." : "Current editor status", vm.Editor.StatusText);
+            Assert.AreEqual("Current notification", vm.Editor.NotificationText);
+        }
+    }
+
+    [TestMethod]
     public async Task TestSelectedMethod_UsesExactFilterAndInvalidatesLateResult()
     {
         using Fixture fixture = await Fixture.CreateAsync();
@@ -970,7 +1104,7 @@ public sealed class ProjectWorkflowViewModelTests
 
     private sealed class Fixture : IDisposable
     {
-        private Fixture(string root)
+        private Fixture(string root, bool debugCase)
         {
             Root = root;
             FirstProject = Path.Combine(root, "first", "App.csproj");
@@ -1000,11 +1134,20 @@ public sealed class ProjectWorkflowViewModelTests
                 .Returns(Task.FromResult(new DebugSessionInfo { SessionId = "session", State = DebugSessionState.Running }));
             RuntimeBuilder = Substitute.For<IProjectRuntimeBuilder>();
             Discovery = Substitute.For<ITestDiscoveryService>();
-            CaseExecution = Substitute.For<ITestCaseExecutionService>();
+            CaseExecution = debugCase
+                ? Substitute.For<ITestCaseExecutionService, ITestCaseDebugExecutionService>()
+                : Substitute.For<ITestCaseExecutionService>();
 
-            EditorWorkflow workflow = new(new FileEditorDocument(), new DesignEditorFileDialogService(), new DesignTextDocumentStorageService());
+            FileEditorDocument document = new();
+            if (debugCase)
+            {
+                string source = Path.Combine(root, "Tests.cs");
+                File.WriteAllText(source, string.Empty);
+                document.Load(source, string.Empty);
+            }
+            EditorWorkflow workflow = new(document, new DesignEditorFileDialogService(), new DesignTextDocumentStorageService());
             ViewModel = new MainWindowViewModel(
-                new AvaloniaEditorComponent(workflow, new EditorViewModel(workflow), null!),
+                new AvaloniaEditorComponent(workflow, new EditorViewModel(workflow), debugCase ? new EditorTextArea() : null!),
                 new PlanningExplorerViewModel(new MarkdownPlanningReader()),
                 new DiagnosticCollectionViewModel(),
                 null,
@@ -1034,11 +1177,11 @@ public sealed class ProjectWorkflowViewModelTests
         public ITestCaseExecutionService CaseExecution { get; }
         public MainWindowViewModel ViewModel { get; }
 
-        public static async Task<Fixture> CreateAsync(bool useOutputDirectory = false)
+        public static async Task<Fixture> CreateAsync(bool useOutputDirectory = false, bool debugCase = false)
         {
             string root = Path.Combine(useOutputDirectory ? AppContext.BaseDirectory : Path.GetTempPath(), $"AA98_WorkflowTests_{Guid.NewGuid():N}");
             Directory.CreateDirectory(root);
-            Fixture fixture = new(root);
+            Fixture fixture = new(root, debugCase);
             await fixture.ViewModel.OpenWorkspaceFileAsync(fixture.Solution);
             return fixture;
         }
