@@ -37,6 +37,8 @@
 		  <Button Command="{Binding Rotate180Command}" Content="Rotate 180°" />
 		  <Button Command="{Binding FlipHorizontalCommand}" Content="Flip horizontal" />
 		  <Button Command="{Binding FlipVerticalCommand}" Content="Flip vertical" />
+		  <Button Command="{Binding InvertColorsCommand}" Content="Invert colors" />
+		  <Button Command="{Binding ConvertToGrayscaleCommand}" Content="Convert to grayscale" />
 		  <Button Command="{Binding UndoCommand}" Content="Undo" />
 		  <Button Command="{Binding RedoCommand}" Content="Redo" />
 		  </StackPanel>
