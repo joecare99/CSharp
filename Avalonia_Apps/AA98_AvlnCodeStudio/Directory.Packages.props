@@ -1,6 +1,8 @@
 <Project>
   <Import Project="..\Packages.props" />
   <ItemGroup>
+    <PackageVersion Update="Avalonia.AvaloniaEdit" Version="12.0.0" />
+    <PackageVersion Update="Markdown.Avalonia" Version="12.0.2" />
     <PackageVersion Include="Ace4896.DBus.Services.Secrets" Version="1.6.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.12.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.12.0" />
