@@ -96,6 +96,28 @@ This is a view-model test, not a rendered UI or an adapter integration test:
 it does not establish how a real adapter or VSTest host emits late errors, or
 cover all exception types, callback orderings, or diagnostic refresh races.
 
+`DebugDiscoveredTestCase_LateErrorRespectsWorkbenchContext` exercises the
+separate debug workflow with the same five context scenarios. A gated fake
+debug execution service invokes the workbench attach callback, holds its
+session lease, then disposes it and throws an `InvalidOperationException`.
+The fake debugger records the attach and breakpoint request for a synthetic
+PID; no process is attached, started or terminated by these fakes. The test
+checks the session is cleared and stopped once, and verifies status, error,
+results and diagnostics. Before the fix, explicit cancellation and a changed
+case incorrectly displayed the late error; the debug workflow now reports
+cancellation instead, while unchanged context still displays the error.
+On Windows net10.0 with SDK 11.0.100, all 15 selected debug/run workbench
+tests passed, including the five debug rows. On WSL Ubuntu with SDK 10.0.404,
+all five debug rows passed on net10.0 in a separate artifact root; restore and
+build also emitted existing compatibility and compiler warnings.
+
+This is a workbench view-model and session-lease test with a real Avalonia
+editor control, not a rendered UI or real adapter/debugger integration.
+Lease disposal is performed by the fake service; it does not verify VSTest
+test-host startup, cancellation, process exit or real debugger detachment,
+nor all error types and callback orderings. The five debug rows require a
+graphical display on Linux.
+
 The tests can be rerun from the repository root with a fresh artifact root:
 
 ```powershell
@@ -108,7 +130,9 @@ Use the same isolated-root command with
 `--filter "FullyQualifiedName~RunDiscoveredTestCase_LateResultRespectsWorkbenchContext"`
 for the workbench result regression, or
 `--filter "FullyQualifiedName~RunDiscoveredTestCase_LateErrorRespectsWorkbenchContext"`
-for the late-error regression.
+for the run late-error regression, or
+`--filter "FullyQualifiedName~DebugDiscoveredTestCase_LateErrorRespectsWorkbenchContext"`
+for the debug late-error regression.
 
 These tests do not guarantee timely cancellation of uncooperative adapters or
 cover every runner version, callback ordering or startup race. The late-result
