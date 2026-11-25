@@ -79,6 +79,23 @@ was used. The substituted execution service deliberately returns the summary
 after cancellation; this checks view-model handling, not a real VSTest
 runner, adapter, cancellation propagation through them, or a rendered UI.
 
+`RunDiscoveredTestCase_LateErrorRespectsWorkbenchContext` uses a controlled
+fake that throws an `InvalidOperationException` after execution starts. It
+checks explicit cancellation, changing the selected case or project, opening
+another workspace, and an unchanged-context control. It verifies the current
+result and diagnostics remain intact and that the error is only reported in
+the unchanged context. Explicit cancellation and case selection report
+cancellation; project and workspace changes preserve the new status. The
+regression exposed a late error being reported after cancellation; selected-case
+execution now treats that error as cancellation when its token is canceled.
+On Windows net10.0 with SDK 11.0.100, all ten selected-case workbench tests
+passed, including the five late-error rows and the earlier late-result rows.
+On WSL Ubuntu with SDK 10.0.404, all nine late-error and late-result rows passed
+on net10.0 in a separate artifact root.
+This is a view-model test, not a rendered UI or an adapter integration test:
+it does not establish how a real adapter or VSTest host emits late errors, or
+cover all exception types, callback orderings, or diagnostic refresh races.
+
 The tests can be rerun from the repository root with a fresh artifact root:
 
 ```powershell
@@ -89,7 +106,9 @@ dotnet test AA98_AvlnCodeStudio.Tests\AA98_AvlnCodeStudio.Tests.csproj -f net10.
 
 Use the same isolated-root command with
 `--filter "FullyQualifiedName~RunDiscoveredTestCase_LateResultRespectsWorkbenchContext"`
-for the workbench regression.
+for the workbench result regression, or
+`--filter "FullyQualifiedName~RunDiscoveredTestCase_LateErrorRespectsWorkbenchContext"`
+for the late-error regression.
 
 These tests do not guarantee timely cancellation of uncooperative adapters or
 cover every runner version, callback ordering or startup race. The late-result
