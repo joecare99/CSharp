@@ -43,6 +43,7 @@ internal static partial class Program
             && imageButtons.Any(button => ReferenceEquals(button.Command, image.RedoCommand)),
             "The image editor did not expose its undo and redo commands.");
         Button rotateLeft = imageButtons.Single(button => ReferenceEquals(button.Command, image.RotateLeftCommand));
+        Button rotate180 = imageButtons.Single(button => ReferenceEquals(button.Command, image.Rotate180Command));
         Button flip = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipHorizontalCommand));
         Button flipVertical = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipVerticalCommand));
         Check(!image.AllowClear && !tab.IsDirty && ImageSize(image) == (2, 3),
@@ -60,6 +61,19 @@ internal static partial class Program
         image.RedoCommand.Execute(null);
         Check(tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(leftRotated),
             "Redo did not restore the counterclockwise rotation.");
+        image.UndoCommand.Execute(null);
+
+        Check(rotate180.IsEnabled, "The 180-degree rotation button is not available.");
+        Invoke(tab.View, "Rotate 180°");
+        byte[] halfTurn = image.CapturePngSnapshot().Bytes;
+        Check(tab.IsDirty && ImageSize(image) == (2, 3) && !halfTurn.SequenceEqual(initial),
+            "The 180-degree rotation did not update the image.");
+        image.UndoCommand.Execute(null);
+        Check(!tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(initial),
+            "One undo did not restore the image before the 180-degree rotation.");
+        image.RedoCommand.Execute(null);
+        Check(tab.IsDirty && image.CapturePngSnapshot().Bytes.SequenceEqual(halfTurn),
+            "Redo did not restore the 180-degree rotation.");
         image.UndoCommand.Execute(null);
         image.RotateRightCommand.Execute(null);
         Check(!tab.IsPreview && tab.IsDirty && ImageSize(image) == (3, 2),
