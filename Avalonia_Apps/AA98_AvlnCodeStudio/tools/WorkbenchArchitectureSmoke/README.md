@@ -42,7 +42,8 @@ $root = Join-Path (Get-Location).Path ("artifacts\image-smoke-win-" + [guid]::Ne
 This mode opens synthetic PNG, JPEG and BMP images through the Workbench explorer
 and shared image control. It checks command bindings, clockwise rotation and PNG export
 for all three, and counterclockwise and 180-degree rotation, both flip buttons,
-valid and invalid crop inputs, the non-interactive crop outline, crop undo/redo, preview pinning and
+valid and invalid crop inputs, the non-interactive crop outline, resetting crop coordinates via
+the shared button after invalid and valid input, crop undo/redo, preview pinning and
 dirty-close for PNG. It exercises updating an unchanged output, an
 external-change conflict, Save As, corrupt input, source preservation, an edit
 during a delayed write and a document switch during a delayed write. Only
@@ -51,6 +52,101 @@ picker is replaced with a controlled path; neither the native picker nor physica
 input, accessibility or all decoder behavior is covered. The standalone image
 host has its own Avalonia Headless window tests in `Avln_ImageEditor.Controls.Tests`.
 The outline follows zoom and does not change PNG export, dirty state or redo.
+The reset checks the full image coordinates and hidden outline, unchanged PNG bytes,
+document and dirty state, undo/redo availability and `ContentChanging` notifications.
+It is a programmatic button invocation, not physical input.
+On 2026-11-25 the reset follow-up passed `--image-only` on Windows/net10 and
+WSLg/net10 from separate isolated roots. Both builds required a build-only
+`Avalonia.AvaloniaEdit` 12.0.0 override: the configured 12.2.0 was unavailable
+from the configured feeds (NU1102), so the unmodified dependency configuration
+was not validated. The Windows build reported 260 warnings and WSL 715 warnings.
+The first Windows run from the `C:\Projekte` junction failed the configuration
+store's reparse-point check; running from the physical `D:\Projekte` path passed.
+
+The later package-graph follow-up retained Avalonia 12.2.0 and added persistent
+AA98-local extension versions; see `AA98.MarkDown.Host/README.md` for published
+dependency constraints. On 2026-11-25, fresh Windows and WSLg/net10 roots both
+passed restore, build and the `--image-only` smoke without command-line version
+overrides or source exclusions. The Windows build had 243 warnings and WSL had
+249, including NU1701 for Microsoft.Build and Microsoft.IO.Redist; these
+warnings are not evidence of full package compatibility. The Windows solution
+and test-project restores also succeeded. No complete test suite or native
+picker/physical-input acceptance is implied.
+
+Reproduction (Windows SDK 11.0.100; run the smoke from the physical workspace):
+
+```powershell
+$root = 'C:\Projekte\CSharp\Avalonia_Apps\AA98_AvlnCodeStudio\artifacts\fleet-package-graph-win-84671c27'
+$p = 'C:\Projekte\CSharp\Avalonia_Apps\AA98_AvlnCodeStudio\tools\build\IsolatedArtifacts.props'
+$env:NUGET_PACKAGES = Join-Path $root 'packages'
+dotnet restore tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --verbosity minimal
+$solutionRoot = 'C:\Projekte\CSharp\Avalonia_Apps\AA98_AvlnCodeStudio\artifacts\fleet-package-graph-solution-win-84671c27'
+dotnet restore AA98_AvlnCodeStudio.slnx "-p:HostArtifactRoot=$solutionRoot" "-p:CustomAfterDirectoryBuildProps=$p" --verbosity minimal
+dotnet build tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj --framework net10.0 --no-restore "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --verbosity minimal
+Set-Location 'D:\Projekte\CSharp\Avalonia_Apps\AA98_AvlnCodeStudio'
+dotnet run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj --framework net10.0 --no-build --no-restore "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" -- --image-only
+```
+
+In WSLg with SDK 10.0.404, from the physical checkout:
+
+```bash
+export DOTNET_ROOT="$HOME/.dotnet" PATH="$HOME/.dotnet:$PATH"
+root="$PWD/artifacts/fleet-package-graph-linux-84671c27"
+export NUGET_PACKAGES="$root/packages"
+p="$PWD/tools/build/IsolatedArtifacts.props"
+dotnet restore tools/WorkbenchArchitectureSmoke/WorkbenchArchitectureSmoke.csproj "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --verbosity minimal
+dotnet build tools/WorkbenchArchitectureSmoke/WorkbenchArchitectureSmoke.csproj --framework net10.0 --no-restore "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --verbosity minimal
+dotnet run --project tools/WorkbenchArchitectureSmoke/WorkbenchArchitectureSmoke.csproj --framework net10.0 --no-build --no-restore "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" -- --image-only
+```
+
+The Windows follow-up also restored `AA98_AvlnCodeStudio.slnx` and
+`AA98_AvlnCodeStudio.Tests.csproj` with the same isolation properties and
+no test-source exclusions. Three C# snapshot tests and five Debug late-error cases
+passed on net10 (8/8); a folder-mode whitespace verification of the two test
+files passed. The first test run used a longer package root and failed 3/8:
+Roslyn's `BuildHost-netcore` runtimeconfig was missing from the test output,
+so the host failed to start. That package asset path was 263 characters. A
+fresh short package/build root restored and copied the asset and all 8 passed;
+this is an observed path-length sensitivity, not proof of its exact cause.
+The existing Markdown host view-model tests also passed 5/5; they do not
+exercise the Markdown renderer.
+
+The successful test commands used a fixture-only directory props file to stop
+disposable test projects inheriting AA98 central versions; it does not change
+the restored application/test project graph:
+
+```powershell
+$root = Join-Path (Get-Location) 'artifacts\pgw'
+$env:NUGET_PACKAGES = Join-Path $root 'p'
+$fixture = Join-Path $root 't'
+New-Item -ItemType Directory -Force $fixture | Out-Null
+Set-Content (Join-Path $fixture 'Directory.Packages.props') '<Project><PropertyGroup><ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally></PropertyGroup></Project>'
+$env:TEMP = $fixture; $env:TMP = $fixture
+$p = Join-Path (Get-Location) 'tools\build\IsolatedArtifacts.props'
+$proj = 'AA98_AvlnCodeStudio.Tests\AA98_AvlnCodeStudio.Tests.csproj'
+dotnet restore $proj "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --verbosity minimal
+$filter = 'FullyQualifiedName~LanguageOperations_UseExplicitTargetFrameworkAcrossSharedSnapshot|FullyQualifiedName~RefreshProjectContextAsync_RefreshesReferencingFrameworkSnapshots|FullyQualifiedName~RefreshProjectContextAsync_PreservesReferencedOpenBuffersInFreshSnapshots|FullyQualifiedName~DebugDiscoveredTestCase_LateErrorRespectsWorkbenchContext'
+dotnet test $proj --framework net10.0 --no-restore "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --filter $filter --logger 'console;verbosity=normal' --verbosity minimal
+dotnet test $proj --framework net10.0 --no-build --no-restore "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --filter 'FullyQualifiedName~MarkdownHostMainWindowViewModelTests' --logger 'console;verbosity=normal' --verbosity minimal
+dotnet format whitespace . --folder --include AA98_AvlnCodeStudio.Tests\Engineering\CSharpSyntaxDiagnosticServiceTests.cs AA98_AvlnCodeStudio.Tests\Engineering\ProjectWorkflowViewModelTests.cs --verify-no-changes --verbosity minimal
+```
+
+The same three snapshot tests passed 3/3 on WSLg/net10 with the separately
+restored Linux graph (the Windows Debug cases were not repeated here):
+
+```bash
+export DOTNET_ROOT="$HOME/.dotnet" PATH="$HOME/.dotnet:$PATH"
+root="$PWD/artifacts/pgl"
+mkdir -p "$root/t"
+export NUGET_PACKAGES="$PWD/artifacts/fleet-package-graph-linux-84671c27/packages" TMPDIR="$root/t"
+printf '%s\n' '<Project><PropertyGroup><ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally></PropertyGroup></Project>' > "$root/t/Directory.Packages.props"
+p="$PWD/tools/build/IsolatedArtifacts.props"
+proj="AA98_AvlnCodeStudio.Tests/AA98_AvlnCodeStudio.Tests.csproj"
+dotnet restore "$proj" "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --verbosity minimal
+filter='FullyQualifiedName~LanguageOperations_UseExplicitTargetFrameworkAcrossSharedSnapshot|FullyQualifiedName~RefreshProjectContextAsync_RefreshesReferencingFrameworkSnapshots|FullyQualifiedName~RefreshProjectContextAsync_PreservesReferencedOpenBuffersInFreshSnapshots'
+dotnet test "$proj" --framework net10.0 --no-restore "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --filter "$filter" --logger 'console;verbosity=normal' --verbosity minimal
+```
+
 On Windows/net10 the image-only smoke passed including the outline, crop and both additional rotations;
 an earlier full Workbench/standalone architecture smoke passed and skipped the optional AA05 sample. The
 image-only smoke also passed on WSLg/net10, including crop, counterclockwise and

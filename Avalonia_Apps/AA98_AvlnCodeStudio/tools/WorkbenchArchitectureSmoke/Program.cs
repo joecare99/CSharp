@@ -67,6 +67,11 @@ internal static partial class Program
     [STAThread]
     private static int Main(string[] args)
     {
+        if (args.Contains("--markdown-only", StringComparer.Ordinal))
+        {
+            return RunMarkdownRendererSmoke();
+        }
+
         bool resourcesOnly = args.Contains("--resources-only", StringComparer.Ordinal);
         bool quickInfoOnly = args.Contains("--quick-info-only", StringComparer.Ordinal);
         bool compactOnly = args.Contains("--compact-only", StringComparer.Ordinal);

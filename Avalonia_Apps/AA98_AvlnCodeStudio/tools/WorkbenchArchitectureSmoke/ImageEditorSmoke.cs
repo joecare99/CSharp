@@ -46,6 +46,7 @@ internal static partial class Program
         Button rotateLeft = imageButtons.Single(button => ReferenceEquals(button.Command, image.RotateLeftCommand));
         Button rotate180 = imageButtons.Single(button => ReferenceEquals(button.Command, image.Rotate180Command));
         Button crop = imageButtons.Single(button => ReferenceEquals(button.Command, image.ApplyCropCommand));
+        Button resetCrop = imageButtons.Single(button => ReferenceEquals(button.Command, image.ResetCropCoordinatesCommand));
         Button flip = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipHorizontalCommand));
         Button flipVertical = imageButtons.Single(button => ReferenceEquals(button.Command, image.FlipVerticalCommand));
         Check(!image.AllowClear && !tab.IsDirty && ImageSize(image) == (2, 3),
@@ -98,6 +99,25 @@ internal static partial class Program
             && image.RedoCommand.CanExecute(null) && !image.UndoCommand.CanExecute(null)
             && image.CapturePngSnapshot().Bytes.SequenceEqual(initial) && previewChanges == 0,
             "Invalid image crop input was not rejected.");
+        async Task ResetCropAndCheckAsync(string scenario)
+        {
+            Check(resetCrop.IsEffectivelyEnabled, $"Reset crop was disabled after {scenario}.");
+            Invoke(tab.View, "Reset crop coordinates");
+            await WaitUntilAsync(() => image.CropX == "0" && image.CropY == "0"
+                && image.CropWidth == "2" && image.CropHeight == "3"
+                && cropInputs.Single(input => input.Name == "CropXInput").Text == "0"
+                && cropInputs.Single(input => input.Name == "CropYInput").Text == "0"
+                && cropInputs.Single(input => input.Name == "CropWidthInput").Text == "2"
+                && cropInputs.Single(input => input.Name == "CropHeightInput").Text == "3"
+                && !cropPreview.IsVisible && crop.IsEffectivelyEnabled, $"reset crop after {scenario}");
+            Check(string.IsNullOrEmpty(image.CropError) && !image.ShowCropPreview && !image.IsDirty && !tab.IsDirty
+                && ReferenceEquals(image.ActiveDocument, originalDocument)
+                && image.RedoCommand.CanExecute(null) && !image.UndoCommand.CanExecute(null)
+                && image.CapturePngSnapshot().Bytes.SequenceEqual(initial) && previewChanges == 0,
+                $"Reset crop after {scenario} changed pixels, history or dirty state.");
+        }
+
+        await ResetCropAndCheckAsync("invalid input");
         cropInputs.Single(input => input.Name == "CropXInput").SetCurrentValue(TextBox.TextProperty, "1");
         cropInputs.Single(input => input.Name == "CropYInput").SetCurrentValue(TextBox.TextProperty, "1");
         cropInputs.Single(input => input.Name == "CropWidthInput").SetCurrentValue(TextBox.TextProperty, "1");
@@ -108,6 +128,13 @@ internal static partial class Program
         Check(!cropPreview.IsHitTestVisible && !tab.IsDirty && image.RedoCommand.CanExecute(null)
             && image.CapturePngSnapshot().Bytes.SequenceEqual(initial),
             "The crop preview changed the image or its history.");
+        await ResetCropAndCheckAsync("valid input");
+        cropInputs.Single(input => input.Name == "CropXInput").SetCurrentValue(TextBox.TextProperty, "1");
+        cropInputs.Single(input => input.Name == "CropYInput").SetCurrentValue(TextBox.TextProperty, "1");
+        cropInputs.Single(input => input.Name == "CropWidthInput").SetCurrentValue(TextBox.TextProperty, "1");
+        cropInputs.Single(input => input.Name == "CropHeightInput").SetCurrentValue(TextBox.TextProperty, "1");
+        await WaitUntilAsync(() => cropPreview.IsVisible && cropPreview.CropRectangle == new Avalonia.Rect(1, 1, 1, 1),
+            "restored image crop preview");
         image.ZoomPercentage = 175;
         await WaitUntilAsync(() =>
         {
