@@ -44,35 +44,40 @@ real Avalonia application and window, without starting the Workbench or image
 editor. It opens a disposable Markdown file in the host and checks the laid-out
 `MarkdownScrollViewer` visual tree: a heading (the editor maps `#` to
 `Heading2`), paragraph text and a fenced C# block backed by AvaloniaEdit.
-This tests the integration of the selected packages, not syntax colors,
-links, images, physical input, accessibility or all Markdown syntax.
+It then inserts text into the editor's document without saving, verifies the
+rendered paragraph, dirty state and unchanged file, and checks undo and redo
+before switching tabs. A second disposable file is opened and edited; switching
+between the two tabs checks each dirty buffer and its rendered paragraph, with
+both files still unchanged on disk. Fixture files are created with unique names
+in the working directory and deleted when the host exits.
 
-On 2026-11-25 the mode passed on Windows and WSLg with net10, Avalonia 12.2.0,
-Avalonia.AvaloniaEdit 12.0.0 and Markdown.Avalonia 12.0.2. Build warnings
-including NU1701 remain. The new smoke file passed `dotnet format whitespace
---verify-no-changes`; checking it together with `Program.cs` reported existing
-whitespace errors elsewhere in `Program.cs`.
+The smoke uses document API edits and view-model selection, not physical
+keyboard or mouse input; it does not check undo history across tab switches,
+save dialogs, syntax colors, links, images, accessibility or all Markdown
+syntax. On 2026-11-25 the extended mode passed on Windows and WSLg with net10,
+Avalonia 12.2.0, Avalonia.AvaloniaEdit 12.0.0 and Markdown.Avalonia 12.0.2,
+using the regular package graph and isolated build outputs. Build warnings
+including NU1701 and the Microsoft.Build.Utilities.Core net10 support warning
+remain. The changed smoke file passed `dotnet format whitespace
+--verify-no-changes`.
 
 Windows commands, run from the physical checkout in an interactive session:
 
 ```powershell
-$root = Join-Path (Get-Location) 'artifacts\mrw'
-$env:NUGET_PACKAGES = Join-Path (Get-Location) 'artifacts\pgw\p'
+$root = Join-Path (Get-Location) 'artifacts\markdown-live-example-win'
 $p = Join-Path (Get-Location) 'tools\build\IsolatedArtifacts.props'
 $proj = 'tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj'
 dotnet restore $proj "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --verbosity minimal
 dotnet build $proj --framework net10.0 --no-restore "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --verbosity minimal
 dotnet run --project $proj --framework net10.0 --no-build --no-restore "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" -- --markdown-only
 dotnet format whitespace . --folder --include tools\WorkbenchArchitectureSmoke\MarkdownRendererSmoke.cs --verify-no-changes --verbosity minimal
-dotnet format whitespace . --folder --include tools\WorkbenchArchitectureSmoke\MarkdownRendererSmoke.cs tools\WorkbenchArchitectureSmoke\Program.cs --verify-no-changes --verbosity minimal
 ```
 
 In WSLg with the Linux SDK:
 
 ```bash
 export DOTNET_ROOT="$HOME/.dotnet" PATH="$HOME/.dotnet:$PATH"
-root="$PWD/artifacts/mrl"
-export NUGET_PACKAGES="$PWD/artifacts/fleet-package-graph-linux-84671c27/packages"
+root="$PWD/artifacts/markdown-live-example-linux"
 p="$PWD/tools/build/IsolatedArtifacts.props"
 proj="tools/WorkbenchArchitectureSmoke/WorkbenchArchitectureSmoke.csproj"
 dotnet restore "$proj" "-p:HostArtifactRoot=$root" "-p:CustomAfterDirectoryBuildProps=$p" --verbosity minimal
