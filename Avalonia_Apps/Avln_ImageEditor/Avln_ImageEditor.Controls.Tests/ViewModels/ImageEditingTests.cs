@@ -85,6 +85,167 @@ public sealed class ImageEditingTests
     }
 
     [TestMethod]
+    public async Task GrayscalePreservesAlphaDimensionsHistoryAndPng() =>
+        await _session.Dispatch(() =>
+        {
+            byte[] original =
+            {
+                17, 91, 203, 255, 16, 64, 96, 128, 0, 0, 0, 0,
+                0, 0, 255, 255, 0, 255, 0, 255, 255, 0, 0, 255
+            };
+            byte[] grayscale =
+            {
+                116, 116, 116, 255, 68, 68, 68, 128, 0, 0, 0, 0,
+                76, 76, 76, 255, 150, 150, 150, 255, 29, 29, 29, 255
+            };
+            using var editor = new ImageEditorViewModel();
+            int commandChanges = 0, events = 0;
+            editor.ConvertToGrayscaleCommand.CanExecuteChanged += (_, _) => commandChanges++;
+            Assert.IsFalse(editor.ConvertToGrayscaleCommand.CanExecute(null));
+            editor.ConvertToGrayscale();
+            var bitmap = new WriteableBitmap(new PixelSize(3, 2), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+            using (var buffer = bitmap.Lock()) Marshal.Copy(original, 0, buffer.Address, original.Length);
+            editor.LoadDocument(new ImageEditorDocument("colors.png", bitmap));
+            Assert.IsTrue(editor.ConvertToGrayscaleCommand.CanExecute(null));
+            Assert.IsTrue(commandChanges > 0);
+            editor.CropX = "1";
+            editor.CropWidth = "2";
+            editor.ContentChanging += (_, _) => events++;
+            editor.ConvertToGrayscaleCommand.Execute(null);
+            Assert.AreEqual(1, events);
+            Assert.AreEqual(new PixelSize(3, 2), editor.ActiveDocument!.PixelSize);
+            Assert.AreEqual("1", editor.CropX);
+            Assert.AreEqual("2", editor.CropWidth);
+            CollectionAssert.AreEqual(grayscale, ReadPixels(editor.ActiveDocument));
+            Assert.IsTrue(editor.IsDirty);
+            using (var decoded = new ImageEditorViewModel())
+            {
+                decoded.LoadDocument(editor.CapturePngSnapshot().Bytes, "grayscale.png");
+                CollectionAssert.AreEqual(grayscale, ReadPixels(decoded.ActiveDocument!));
+            }
+            editor.Undo();
+            Assert.IsFalse(editor.IsDirty);
+            Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(original, ReadPixels(editor.ActiveDocument!));
+            editor.Redo();
+            CollectionAssert.AreEqual(grayscale, ReadPixels(editor.ActiveDocument!));
+            Assert.AreEqual(3, events);
+            editor.Undo();
+            editor.ConvertToGrayscale();
+            Assert.IsFalse(editor.RedoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(grayscale, ReadPixels(editor.ActiveDocument!));
+            editor.ClearDocument();
+            Assert.IsFalse(editor.ConvertToGrayscaleCommand.CanExecute(null));
+            return true;
+        }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task GrayscaleNoOpPreservesRedoAndNotifications() =>
+        await _session.Dispatch(() =>
+        {
+            byte[] pixels = { 64, 64, 64, 128, 0, 0, 0, 0 };
+            using var editor = new ImageEditorViewModel();
+            var bitmap = new WriteableBitmap(new PixelSize(2, 1), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+            using (var buffer = bitmap.Lock()) Marshal.Copy(pixels, 0, buffer.Address, pixels.Length);
+            editor.LoadDocument(new ImageEditorDocument("gray.png", bitmap));
+            editor.FlipHorizontal();
+            editor.Undo();
+            var document = editor.ActiveDocument;
+            byte[] png = editor.CapturePngSnapshot().Bytes;
+            int events = 0;
+            editor.ContentChanging += (_, _) => events++;
+            editor.ConvertToGrayscale();
+            Assert.AreSame(document, editor.ActiveDocument);
+            Assert.AreEqual(0, events);
+            Assert.IsFalse(editor.IsDirty);
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(png, editor.CapturePngSnapshot().Bytes);
+            editor.Redo();
+            Assert.IsTrue(editor.IsDirty);
+            return true;
+        }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task InvertPreservesAlphaDimensionsHistoryAndPng() =>
+        await _session.Dispatch(() =>
+        {
+            byte[] original = { 17, 91, 203, 255, 16, 64, 96, 128, 0, 0, 0, 0 };
+            byte[] inverted = { 238, 164, 52, 255, 112, 64, 32, 128, 0, 0, 0, 0 };
+            using var editor = new ImageEditorViewModel();
+            int commandChanges = 0, events = 0;
+            editor.InvertColorsCommand.CanExecuteChanged += (_, _) => commandChanges++;
+            Assert.IsFalse(editor.InvertColorsCommand.CanExecute(null));
+            editor.InvertColors();
+            var bitmap = new WriteableBitmap(new PixelSize(3, 1), new Vector(192, 192), PixelFormats.Bgra8888, AlphaFormat.Premul);
+            using (var buffer = bitmap.Lock()) Marshal.Copy(original, 0, buffer.Address, original.Length);
+            editor.LoadDocument(new ImageEditorDocument("colors.png", bitmap));
+            Assert.IsTrue(editor.InvertColorsCommand.CanExecute(null));
+            Assert.IsTrue(commandChanges > 0);
+            editor.ContentChanging += (_, _) =>
+            {
+                events++;
+                if (events == 1) CollectionAssert.AreEqual(original, ReadPixels(editor.ActiveDocument!));
+            };
+            editor.CropX = "1";
+            editor.CropWidth = "2";
+            editor.InvertColorsCommand.Execute(null);
+            Assert.AreEqual(1, events);
+            Assert.AreEqual(new PixelSize(3, 1), editor.ActiveDocument!.PixelSize);
+            Assert.AreEqual("1", editor.CropX);
+            Assert.AreEqual("2", editor.CropWidth);
+            CollectionAssert.AreEqual(inverted, ReadPixels(editor.ActiveDocument));
+            Assert.IsTrue(editor.IsDirty);
+            using (var decoded = new ImageEditorViewModel())
+            {
+                decoded.LoadDocument(editor.CapturePngSnapshot().Bytes, "inverted.png");
+                CollectionAssert.AreEqual(inverted, ReadPixels(decoded.ActiveDocument!));
+            }
+            editor.Undo();
+            Assert.IsFalse(editor.IsDirty);
+            CollectionAssert.AreEqual(original, ReadPixels(editor.ActiveDocument!));
+            Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+            editor.Redo();
+            CollectionAssert.AreEqual(inverted, ReadPixels(editor.ActiveDocument!));
+            editor.Undo();
+            editor.InvertColors();
+            Assert.IsFalse(editor.RedoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(inverted, ReadPixels(editor.ActiveDocument!));
+            editor.InvertColors();
+            CollectionAssert.AreEqual(original, ReadPixels(editor.ActiveDocument!));
+            editor.ClearDocument();
+            Assert.IsFalse(editor.InvertColorsCommand.CanExecute(null));
+            return true;
+        }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task InvertNoOpPreservesRedoAndNotifications() =>
+        await _session.Dispatch(() =>
+        {
+            byte[] pixels = { 64, 64, 64, 128, 0, 0, 0, 0 };
+            using var editor = new ImageEditorViewModel();
+            var bitmap = new WriteableBitmap(new PixelSize(2, 1), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+            using (var buffer = bitmap.Lock()) Marshal.Copy(pixels, 0, buffer.Address, pixels.Length);
+            editor.LoadDocument(new ImageEditorDocument("gray.png", bitmap));
+            editor.FlipHorizontal();
+            editor.Undo();
+            var document = editor.ActiveDocument;
+            byte[] png = editor.CapturePngSnapshot().Bytes;
+            int events = 0;
+            editor.ContentChanging += (_, _) => events++;
+            editor.InvertColors();
+            Assert.AreSame(document, editor.ActiveDocument);
+            Assert.AreEqual(0, events);
+            Assert.IsFalse(editor.IsDirty);
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(png, editor.CapturePngSnapshot().Bytes);
+            editor.Redo();
+            Assert.IsTrue(editor.IsDirty);
+            return true;
+        }, CancellationToken.None);
+
+    [TestMethod]
     public async Task TransparencyBackgroundRendersOnlyBehindImageAndPreservesState() =>
         await _session.Dispatch(() =>
     {
@@ -1265,6 +1426,22 @@ public sealed class ImageEditingTests
                 window = new MainWindow { DataContext = host, Width = 1500 };
                 window.Show();
                 window.UpdateLayout();
+                Click(window, "Convert to grayscale");
+                Assert.IsTrue(host.Editor.IsDirty);
+                byte[] gray = ReadPixels(host.Editor.ActiveDocument!);
+                Click(window, "Undo");
+                Assert.IsFalse(host.Editor.IsDirty);
+                Click(window, "Redo");
+                CollectionAssert.AreEqual(gray, ReadPixels(host.Editor.ActiveDocument!));
+                Click(window, "Undo");
+                Click(window, "Invert colors");
+                Assert.IsTrue(host.Editor.IsDirty);
+                byte[] inverted = ReadPixels(host.Editor.ActiveDocument!);
+                Click(window, "Undo");
+                Assert.IsFalse(host.Editor.IsDirty);
+                Click(window, "Redo");
+                CollectionAssert.AreEqual(inverted, ReadPixels(host.Editor.ActiveDocument!));
+                Click(window, "Undo");
                 Click(window, "Rotate 180°");
                 Assert.AreEqual(new PixelSize(3, 2), host.Editor.ActiveDocument!.PixelSize);
                 CollectionAssert.AreEqual(Rotated180Pixels, ReadPixels(host.Editor.ActiveDocument));
