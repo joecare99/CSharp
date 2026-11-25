@@ -610,6 +610,83 @@ public sealed class ProjectWorkflowViewModelTests
     }
 
     [TestMethod]
+    [DataRow("unchanged")]
+    [DataRow("cancel")]
+    [DataRow("selection")]
+    [DataRow("project")]
+    [DataRow("workspace")]
+    public async Task RunDiscoveredTestCase_LateErrorRespectsWorkbenchContext(string scenario)
+    {
+        using Fixture fixture = await Fixture.CreateAsync(useOutputDirectory: true);
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        DiscoveredTestCase selected = new("id", "executor", "assembly", "Example.Late", "Late", null, null);
+        vm.DiscoveredTestCases.Add(selected);
+        vm.SelectedDiscoveredTestCase = selected;
+        TaskCompletionSource<CancellationToken> entered = NewCompletion<CancellationToken>();
+        TaskCompletionSource<TestRunSummary> completed = NewCompletion<TestRunSummary>();
+        fixture.CaseExecution.RunCaseAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DiscoveredTestCase>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                entered.TrySetResult(call.Arg<CancellationToken>());
+                return completed.Task;
+            });
+
+        Task operation = vm.RunDiscoveredTestCaseCommand.ExecuteAsync(null);
+        CancellationToken token = await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        _ = fixture.CaseExecution.Received(1).RunCaseAsync(
+            vm.ProjectInspection!.TargetPath!, Path.GetDirectoryName(fixture.SecondProject)!, selected, Arg.Any<CancellationToken>());
+        switch (scenario)
+        {
+            case "cancel":
+                vm.CancelProjectWorkflowCommand.Execute(null);
+                break;
+            case "selection":
+                DiscoveredTestCase other = new("other", "executor", "assembly", "Example.Other", "Other", null, null);
+                vm.DiscoveredTestCases.Add(other);
+                vm.SelectedDiscoveredTestCase = other;
+                break;
+            case "project":
+                vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
+                break;
+            case "workspace":
+                string otherSolution = Path.Combine(fixture.Root, "Other.slnx");
+                await File.WriteAllTextAsync(otherSolution, "<Solution><Project Path=\"first\\App.csproj\" /></Solution>");
+                await vm.OpenWorkspaceFileAsync(otherSolution);
+                Assert.AreEqual(otherSolution, vm.Workspace?.EntryPath);
+                break;
+        }
+
+        Assert.AreEqual(scenario != "unchanged", token.IsCancellationRequested);
+        vm.Editor.StatusText = "Current editor status";
+        vm.Editor.NotificationText = "Current notification";
+        vm.ProjectTestResults.Add(new TestResultNode("Current result", []));
+        vm.DiagnosticCollection.Items.Add(new Diagnostic { Message = "Current diagnostic" });
+        string previousWorkflowStatus = vm.ProjectWorkflowStatus;
+        var previousDiagnostics = vm.DiagnosticCollection.Items.ToArray();
+        completed.SetException(new InvalidOperationException("late adapter error"));
+        await operation.WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
+        Assert.AreEqual("Current result", vm.ProjectTestResults.Single().Label);
+        CollectionAssert.AreEqual(previousDiagnostics, vm.DiagnosticCollection.Items.ToArray());
+        if (scenario == "unchanged")
+        {
+            Assert.AreEqual("Adapter case execution failed: late adapter error", vm.ProjectWorkflowStatus);
+            Assert.AreEqual("Adapter case execution failed.", vm.Editor.StatusText);
+            Assert.AreEqual("late adapter error", vm.Editor.NotificationText);
+        }
+        else
+        {
+            bool reportCancellation = scenario is "cancel" or "selection";
+            Assert.AreEqual(reportCancellation ? "Project action canceled." : previousWorkflowStatus, vm.ProjectWorkflowStatus);
+            Assert.AreEqual(reportCancellation ? "Project action canceled." : "Current editor status", vm.Editor.StatusText);
+            Assert.AreEqual("Current notification", vm.Editor.NotificationText);
+        }
+    }
+
+    [TestMethod]
     public async Task TestSelectedMethod_UsesExactFilterAndInvalidatesLateResult()
     {
         using Fixture fixture = await Fixture.CreateAsync();
