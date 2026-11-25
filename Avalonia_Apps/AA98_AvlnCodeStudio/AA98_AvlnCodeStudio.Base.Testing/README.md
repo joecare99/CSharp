@@ -70,6 +70,15 @@ diagnostics and status do not replace the current context; the unchanged-context
 control publishes the same result and diagnostic. No product defect was
 reproduced in these cases. This tests the workbench with a fake, not a real
 adapter, and does not cover every callback ordering or diagnostic refresh race.
+
+On WSL Ubuntu 26.04.1 with SDK 10.0.404 and `net10.0`, all four
+data rows passed (4 executed, 0 failed, 0 skipped). The restore reported
+13 warnings; the test build reported 268 warnings and 0 errors, including
+NU1701 compatibility and compiler warnings. A fresh isolated artifact root
+was used. The substituted execution service deliberately returns the summary
+after cancellation; this checks view-model handling, not a real VSTest
+runner, adapter, cancellation propagation through them, or a rendered UI.
+
 The tests can be rerun from the repository root with a fresh artifact root:
 
 ```powershell
