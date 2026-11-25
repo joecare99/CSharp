@@ -118,6 +118,84 @@ test-host startup, cancellation, process exit or real debugger detachment,
 nor all error types and callback orderings. The five debug rows require a
 graphical display on Linux.
 
+The controlled cancellation fixture also runs the debug path with a real
+VSTest runner, test host and adapter, but a simulated attach lease. The
+adapter records a passed result before cancellation; the fixture verifies
+the selected identity and host PID, cancellation instead of a summary, one
+lease disposal, and exit of its owned worker, runner and host. It does not
+prove that VSTest forwarded the partial result. Debug cancellation aborts the
+run and terminates the host, so this is not evidence that an adapter sent a
+late error after cancellation.
+
+The controlled error adapter additionally reports an error after a passed
+result on the debug path without cancellation. The service rejects it and
+disposes the simulated attach lease. This is separate from the workbench's
+gated late-error test above; neither test proves real debugger detachment or
+an end-to-end late error reaching the workbench after abort.
+
+On Windows with SDK 11.0.100, a fresh isolated net10.0 testing-only harness
+linking the existing fixture and handler tests passed 31 and skipped 2; the
+skipped breakpoint/paused-cancellation rows require `AVLN_NETCOREDBG_PATH`.
+No debugger was configured. The full workbench test project could not be
+restored with the current central package versions: `Avalonia.AvaloniaEdit`
+12.2.0 and `Markdown.Avalonia` 12.2.0 were unavailable from the configured
+sources. Therefore the workbench late-error rows were not rerun in this
+validation. No product defect was reproduced, and this is not a DAP or
+rendered-UI acceptance.
+
+After AA98-local package versions were corrected, the same four test classes
+ran in the complete Windows/net10 test project without source exclusions:
+31 passed and the same two real-debugger rows were skipped. Five workbench
+late-error rows also passed in a separate focused run. These results still use
+the simulated attach lease and do not establish real debugger detachment.
+
+On WSL Ubuntu 26.04.1 with SDK 10.0.404 and NetCoreDbg 3.2.0-1, a separate
+isolated testing-only harness attempted the paused-abort row twice against the
+real test host and debugger. Its temporary copy of
+`TestHostDebugIntegrationTests` allowed Linux through the original Windows-only
+guard, selected only the cancellation row, and logged the host PID; the
+repository fixture was not changed. Both attempts failed before a session was
+returned: DAP `initialize` and `attach` requests returned, but
+`configurationDone` timed out. The test did not reach its breakpoint or abort,
+and no debugger lease or detach was exercised. A process-tree observation
+identified the owned test host, runner and NetCoreDbg in the second attempt;
+all observed processes had exited afterwards.
+
+The workspace and isolated `TMPDIR` were on WSL v9fs/DrvFS; even a short
+relative Unix-domain socket bind there returned `EOPNOTSUPP` (errno 95).
+`ptrace_scope` was 1 and was not changed. Neither observation establishes the
+sole cause of the timeout, and the accepted DAP attach response does not prove
+the debugger actually attached at the OS level. A real late error after debug
+abort, debugger detachment and end-to-end workbench behavior remain unverified.
+
+On Windows with SDK 11.0.100 and the session's NetCoreDbg 3.2.0-1092,
+`DebugCase_AttachesBeforeTheSelectedTestAndStopsAtItsBreakpoint` passed both
+net10.0 rows twice in the regular test project, with no package overrides or
+source exclusions. The first run restored into a fresh isolated artifact root;
+it emitted NU1701 and framework-support warnings. The preflight with
+`--no-restore` failed with NETSDK1004 because that fresh root had no assets.
+The session records the release archive's earlier SHA-256 verification; the
+executable's current SHA-256 is
+`23fc802866a03c5aa02484937d61ecbccf0ca731718d1840b0871f153340a823`.
+The archive itself was not rechecked for this run.
+
+Both rows attach the real debugger to the selected real test host, stop at a
+breakpoint and inspect a nonempty stack. One continues and verifies the passed
+selected case; the other cancels while paused and requires an
+`OperationCanceledException`; it does not independently verify delivery of
+the VSTest abort request. The service awaits the debugger lease release;
+the test does not independently assert a DAP disconnect response or the
+target's survival after detach. During the repeat, process handles were retained
+for 23 observed descendants, including both NetCoreDbg processes and test
+hosts; all observed processes exited. This is not a guarantee about processes
+too short-lived to observe or cleanup after a crash.
+
+In the same regular-project build, the five gated fake debug late-error rows
+and four fake run late-result rows passed. The real debugger test does not
+inject an adapter error after abort or exercise the workbench UI; the fake
+workbench tests do not establish how a real host forwards a late error. A real
+late-error-after-abort scenario and full DAP/UI acceptance remain unverified.
+
 The tests can be rerun from the repository root with a fresh artifact root:
 
 ```powershell
