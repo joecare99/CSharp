@@ -526,6 +526,110 @@ public sealed class ProjectWorkflowViewModelTests
     }
 
     [TestMethod]
+    [DataRow("unchanged", false)]
+    [DataRow("unchanged", true)]
+    [DataRow("cancel", false)]
+    [DataRow("cancel", true)]
+    [DataRow("project", false)]
+    [DataRow("project", true)]
+    [DataRow("workspace", false)]
+    [DataRow("workspace", true)]
+    public async Task DiscoverAdapterTests_LateCompletionRespectsWorkbenchContext(string scenario, bool error)
+    {
+        using Fixture fixture = await Fixture.CreateAsync(useOutputDirectory: true);
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        var originalWorkspace = vm.Workspace;
+        var originalProject = vm.SelectedWorkflowProject;
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        TaskCompletionSource<CancellationToken> entered = NewCompletion<CancellationToken>();
+        TaskCompletionSource<TestDiscoveryResult> completed = NewCompletion<TestDiscoveryResult>();
+        fixture.Discovery.DiscoverAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                entered.TrySetResult(call.Arg<CancellationToken>());
+                return completed.Task;
+            });
+
+        Task operation = vm.DiscoverAdapterTestsCommand.ExecuteAsync(null);
+        CancellationToken token = await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        if (scenario == "cancel")
+        {
+            Assert.IsTrue(vm.CancelProjectWorkflowCommand.CanExecute(null));
+            vm.CancelProjectWorkflowCommand.Execute(null);
+        }
+        else if (scenario == "project")
+        {
+            vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
+        }
+        else if (scenario == "workspace")
+        {
+            string otherSolution = Path.Combine(fixture.Root, "Other.slnx");
+            await File.WriteAllTextAsync(otherSolution, "<Solution><Project Path=\"first\\App.csproj\" /></Solution>");
+            await vm.OpenWorkspaceFileAsync(otherSolution);
+            Assert.AreEqual(otherSolution, vm.Workspace?.EntryPath);
+        }
+
+        Assert.AreEqual(scenario != "unchanged", token.IsCancellationRequested);
+        DiscoveredTestCase current = new("current", "executor", "source", "Example.Current", "Current case", null, null);
+        if (scenario != "unchanged")
+        {
+            vm.DiscoveredTestCases.Add(current);
+            vm.SelectedDiscoveredTestCase = current;
+        }
+        vm.Editor.StatusText = "Current editor status";
+        vm.Editor.NotificationText = "Current notification";
+        vm.ProjectTestResults.Add(new TestResultNode("Current result", []));
+        vm.DiagnosticCollection.Items.Add(new Diagnostic { Message = "Current diagnostic" });
+        string previousStatus = vm.ProjectWorkflowStatus;
+        var previousDiagnostics = vm.DiagnosticCollection.Items.ToArray();
+
+        if (error)
+        {
+            completed.SetException(new InvalidOperationException("late discovery error"));
+        }
+        else
+        {
+            completed.SetResult(new TestDiscoveryResult(
+                [new DiscoveredTestCase("old", "executor", "source", "Example.Old", "Old case", null, null)],
+                ["late discovery warning"]));
+        }
+        await operation.WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
+        if (scenario == "cancel")
+        {
+            Assert.AreSame(originalWorkspace, vm.Workspace);
+            Assert.AreSame(originalProject, vm.SelectedWorkflowProject);
+        }
+        Assert.AreEqual("Current result", vm.ProjectTestResults.Single().Label);
+        CollectionAssert.AreEqual(previousDiagnostics, vm.DiagnosticCollection.Items.ToArray());
+        if (scenario != "unchanged")
+        {
+            Assert.AreSame(current, vm.DiscoveredTestCases.Single());
+            Assert.AreSame(current, vm.SelectedDiscoveredTestCase);
+            Assert.AreEqual(scenario == "cancel" ? "Project action canceled." : previousStatus, vm.ProjectWorkflowStatus);
+            Assert.AreEqual(scenario == "cancel" ? "Project action canceled." : "Current editor status", vm.Editor.StatusText);
+            Assert.AreEqual("Current notification", vm.Editor.NotificationText);
+        }
+        else if (error)
+        {
+            Assert.AreEqual(0, vm.DiscoveredTestCases.Count);
+            Assert.AreEqual("Adapter test discovery failed: late discovery error", vm.ProjectWorkflowStatus);
+            Assert.AreEqual("Adapter test discovery failed.", vm.Editor.StatusText);
+            Assert.AreEqual("late discovery error", vm.Editor.NotificationText);
+        }
+        else
+        {
+            Assert.AreEqual("Old case", vm.DiscoveredTestCases.Single().DisplayName);
+            StringAssert.Contains(vm.ProjectWorkflowStatus, "VSTest discovered 1 cases.");
+            StringAssert.Contains(vm.ProjectWorkflowStatus, "late discovery warning");
+            Assert.AreEqual("Current editor status", vm.Editor.StatusText);
+            Assert.AreEqual("Current notification", vm.Editor.NotificationText);
+        }
+    }
+
+    [TestMethod]
     public async Task RunDiscoveredTestCase_UsesSelectionAndDiscardsChangedSelection()
     {
         using Fixture fixture = await Fixture.CreateAsync();
