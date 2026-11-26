@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +12,7 @@ using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Avln_ImageEditor.Controls.Models;
@@ -1326,6 +1329,340 @@ public sealed class ImageEditingTests
         editor.LoadDocument(bmp, "a.bmp");
         Assert.AreEqual(new PixelSize(2, 2), editor.ActiveDocument!.PixelSize);
     }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task ExportPickerKeepsOriginalDocumentWhenAnotherIsLoaded()
+    {
+        await _session.Dispatch(async () =>
+        {
+            string directory = Path.Combine(AppContext.BaseDirectory, "editor-test-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                string source = Path.Combine(directory, "source.png");
+                string otherSource = Path.Combine(directory, "other.png");
+                string destination = Path.Combine(directory, "export.png");
+                using var host = new MainWindowViewModel();
+                host.Editor.LoadDocument(MakeDocument());
+                byte[] sourceBytes = host.Editor.CapturePngSnapshot().Bytes;
+                File.WriteAllBytes(source, sourceBytes);
+                host.Editor.RotateLeft();
+                await Assert.ThrowsAsync<IOException>(() => host.ExportPngToNewFileAsync(source));
+                CollectionAssert.AreEqual(sourceBytes, File.ReadAllBytes(source));
+                Assert.IsTrue(host.Editor.IsDirty);
+                var picker = new TaskCompletionSource<IStorageFile?>();
+                var provider = DispatchProxy.Create<IStorageProvider, StorageProxy>();
+                ((StorageProxy)(object)provider).Handler = method => method.Name switch
+                {
+                    "get_CanSave" => true,
+                    "SaveFilePickerAsync" => picker.Task,
+                    _ => throw new NotSupportedException(method.Name)
+                };
+                var file = DispatchProxy.Create<IStorageFile, StorageProxy>();
+                ((StorageProxy)(object)file).Handler = method => method.Name switch
+                {
+                    "get_Path" => new Uri(destination),
+                    _ => throw new NotSupportedException(method.Name)
+                };
+                Task export = host.ExportPngAsync(provider);
+                host.Editor.LoadDocument(MakeDocument());
+                host.Editor.FlipHorizontal();
+                byte[] otherBytes = host.Editor.CapturePngSnapshot().Bytes;
+                File.WriteAllBytes(otherSource, otherBytes);
+                picker.SetResult(file);
+                await export;
+                Assert.IsTrue(host.Editor.IsDirty);
+                Assert.IsTrue(host.Editor.DocumentSummary.StartsWith("original.png", StringComparison.Ordinal));
+                CollectionAssert.AreEqual(otherBytes, host.Editor.CapturePngSnapshot().Bytes);
+                CollectionAssert.AreEqual(otherBytes, File.ReadAllBytes(otherSource));
+                CollectionAssert.AreEqual(sourceBytes, File.ReadAllBytes(source));
+                using var decoded = new ImageEditorViewModel();
+                decoded.LoadDocument(File.ReadAllBytes(destination), "export.png");
+                CollectionAssert.AreEqual(LeftRotatedPixels, ReadPixels(decoded.ActiveDocument!));
+                using var sourceEditor = new ImageEditorViewModel();
+                sourceEditor.LoadDocument(File.ReadAllBytes(source), "source.png");
+                CollectionAssert.AreEqual(Pixels, ReadPixels(sourceEditor.ActiveDocument!));
+            }
+            finally { Directory.Delete(directory, recursive: true); }
+            return true;
+        }, CancellationToken.None);
+    }
+
+    public class StorageProxy : DispatchProxy
+    {
+        public Func<MethodInfo, object?> Handler { get; set; } = null!;
+        protected override object? Invoke(MethodInfo? targetMethod, object?[]? args) => Handler(targetMethod!);
+    }
+
+    private sealed class DelayedReadStream : MemoryStream
+    {
+        public readonly TaskCompletionSource<bool> Started = new();
+        public readonly TaskCompletionSource<bool> Release = new();
+
+        public DelayedReadStream(byte[] bytes) : base(bytes) { }
+
+        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        {
+            Started.TrySetResult(true);
+            await Release.Task;
+            return await base.ReadAsync(buffer, offset, count, cancellationToken);
+        }
+    }
+
+    private static IStorageFile OpenFile(string path, Func<Task<Stream>> open)
+    {
+        var file = DispatchProxy.Create<IStorageFile, StorageProxy>();
+        ((StorageProxy)(object)file).Handler = method => method.Name switch
+        {
+            "get_Name" => Path.GetFileName(path),
+            "OpenReadAsync" => open(),
+            _ => throw new NotSupportedException(method.Name)
+        };
+        return file;
+    }
+
+    private static IStorageProvider OpenProvider(Task<IReadOnlyList<IStorageFile>> picker)
+    {
+        var provider = DispatchProxy.Create<IStorageProvider, StorageProxy>();
+        ((StorageProxy)(object)provider).Handler = method => method.Name switch
+        {
+            "get_CanOpen" => true,
+            "OpenFilePickerAsync" => picker,
+            _ => throw new NotSupportedException(method.Name)
+        };
+        return provider;
+    }
+
+    [TestMethod]
+    [DataRow("picker")]
+    [DataRow("read")]
+    [DataRow("confirmation")]
+    [DataRow("confirmation-replace")]
+    [DataRow("confirmation-replace-clean")]
+    [DataRow("confirmation-save")]
+    [DataRow("empty-picker")]
+    public async Task OpenDoesNotReplaceNewDocumentOrApplyStaleDiscardConfirmation(string stage)
+    {
+        await _session.Dispatch(async () =>
+        {
+            string directory = Path.Combine(AppContext.BaseDirectory, "open-test-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                string path = Path.Combine(directory, "selected.png");
+                using var host = new MainWindowViewModel();
+                host.Editor.LoadDocument(MakeDocument());
+                byte[] source = host.Editor.CapturePngSnapshot().Bytes;
+                File.WriteAllBytes(path, source);
+                if (stage == "empty-picker")
+                {
+                    host.Editor.AllowClear = true;
+                    host.Editor.ClearDocument();
+                }
+                var file = OpenFile(path, () => Task.FromResult<Stream>(File.OpenRead(path)));
+                var picker = new TaskCompletionSource<IReadOnlyList<IStorageFile>>();
+                var delayed = new DelayedReadStream(source);
+                var confirmation = new TaskCompletionSource<bool>();
+                var confirming = new TaskCompletionSource<bool>();
+                if (stage == "read") file = OpenFile(path, () => Task.FromResult<Stream>(delayed));
+                bool confirmationStage = stage.StartsWith("confirmation", StringComparison.Ordinal);
+                if (confirmationStage) host.Editor.RotateLeft();
+                if (stage != "picker" && stage != "empty-picker") picker.SetResult(new[] { file });
+                Task opening = host.OpenImageAsync(OpenProvider(picker.Task), () =>
+                {
+                    confirming.TrySetResult(true);
+                    return confirmationStage ? confirmation.Task : Task.FromResult(true);
+                });
+                if (stage == "read") await delayed.Started.Task;
+                if (confirmationStage) await confirming.Task;
+                if (!confirmationStage || stage.StartsWith("confirmation-replace", StringComparison.Ordinal)) host.Editor.LoadDocument(MakeDocument());
+                if (stage == "confirmation-save") host.Editor.MarkSaved(host.Editor.CapturePngSnapshot());
+                else if (stage != "confirmation-replace-clean") host.Editor.FlipHorizontal();
+                byte[] other = host.Editor.CapturePngSnapshot().Bytes;
+                if (stage == "picker" || stage == "empty-picker") picker.SetResult(new[] { file });
+                if (stage == "read") delayed.Release.SetResult(true);
+                if (confirmationStage) confirmation.SetResult(true);
+                await opening;
+                Assert.AreEqual(stage != "confirmation-save" && stage != "confirmation-replace-clean", host.Editor.IsDirty);
+                CollectionAssert.AreEqual(other, host.Editor.CapturePngSnapshot().Bytes);
+                CollectionAssert.AreEqual(source, File.ReadAllBytes(path));
+                Assert.AreEqual("Open canceled; the document changed.", host.StatusText);
+            }
+            finally { Directory.Delete(directory, recursive: true); }
+            return true;
+        }, CancellationToken.None);
+    }
+
+    [TestMethod]
+    [DataRow("clean")]
+    [DataRow("dirty-confirm")]
+    [DataRow("dirty-decline")]
+    [DataRow("confirmation-canceled")]
+    [DataRow("default-decline")]
+    [DataRow("picker-cancel")]
+    [DataRow("picker-task-canceled")]
+    [DataRow("read-failure")]
+    [DataRow("invalid")]
+    [DataRow("edit-during-read")]
+    public async Task OpenPositiveAndCanceledCasesPreserveFilesAndDirtyState(string scenario)
+    {
+        await _session.Dispatch(async () =>
+        {
+            string directory = Path.Combine(AppContext.BaseDirectory, "open-test-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                string path = Path.Combine(directory, "selected.png");
+                using var host = new MainWindowViewModel();
+                host.Editor.LoadDocument(MakeDocument());
+                byte[] source = host.Editor.CapturePngSnapshot().Bytes;
+                byte[] input = scenario == "invalid" ? new byte[] { 1, 2, 3 } : source;
+                File.WriteAllBytes(path, input);
+                if (scenario.StartsWith("dirty", StringComparison.Ordinal) || scenario == "confirmation-canceled" ||
+                    scenario == "default-decline" || scenario == "read-failure" || scenario == "picker-task-canceled") host.Editor.RotateLeft();
+                var delayed = new DelayedReadStream(input);
+                var file = OpenFile(path, () => scenario == "read-failure"
+                    ? Task.FromException<Stream>(new IOException("Read failed."))
+                    : scenario == "edit-during-read" ? Task.FromResult<Stream>(delayed) : Task.FromResult<Stream>(File.OpenRead(path)));
+                var files = scenario == "picker-cancel" ? Array.Empty<IStorageFile>() : new[] { file };
+                int confirmations = 0;
+                var provider = OpenProvider(scenario == "picker-task-canceled"
+                    ? Task.FromCanceled<IReadOnlyList<IStorageFile>>(new CancellationToken(true))
+                    : Task.FromResult<IReadOnlyList<IStorageFile>>(files));
+                Task opening = scenario == "default-decline" ? host.OpenImageAsync(provider) : host.OpenImageAsync(provider, () =>
+                {
+                    confirmations++;
+                    if (scenario == "confirmation-canceled") return Task.FromCanceled<bool>(new CancellationToken(true));
+                    return Task.FromResult(scenario != "dirty-decline");
+                });
+                if (scenario == "edit-during-read")
+                {
+                    await delayed.Started.Task;
+                    host.Editor.RotateLeft();
+                    delayed.Release.SetResult(true);
+                }
+                byte[] before = host.Editor.CapturePngSnapshot().Bytes;
+                if (scenario == "invalid")
+                    await Assert.ThrowsAsync<InvalidDataException>(() => opening);
+                else if (scenario == "read-failure")
+                    await Assert.ThrowsAsync<IOException>(() => opening);
+                else if (scenario == "confirmation-canceled" || scenario == "picker-task-canceled")
+                {
+                    try { await opening; Assert.Fail("Expected cancellation."); }
+                    catch (OperationCanceledException) { }
+                }
+                else
+                    await opening;
+                bool loaded = scenario == "clean" || scenario == "dirty-confirm" || scenario == "edit-during-read";
+                Assert.AreEqual(scenario == "dirty-decline" || scenario == "confirmation-canceled" || scenario == "default-decline" ||
+                    scenario == "read-failure" || scenario == "picker-task-canceled", host.Editor.IsDirty);
+                if (loaded)
+                {
+                    using var expected = new ImageEditorViewModel();
+                    expected.LoadDocument(source, "expected.png");
+                    CollectionAssert.AreEqual(ReadPixels(expected.ActiveDocument!), ReadPixels(host.Editor.ActiveDocument!));
+                }
+                else CollectionAssert.AreEqual(before, host.Editor.CapturePngSnapshot().Bytes);
+                Assert.AreEqual(loaded ? "selected.png" : "original.png", host.Editor.ActiveDocument!.Name);
+                Assert.AreEqual(scenario.StartsWith("dirty", StringComparison.Ordinal) || scenario == "edit-during-read" || scenario == "confirmation-canceled" ? 1 : 0, confirmations);
+                CollectionAssert.AreEqual(input, File.ReadAllBytes(path));
+            }
+            finally { Directory.Delete(directory, recursive: true); }
+            return true;
+        }, CancellationToken.None);
+    }
+
+    [TestMethod]
+    public async Task CanceledPickerDoesNotSaveOrRename()
+    {
+        await _session.Dispatch(async () =>
+        {
+            using var host = new MainWindowViewModel();
+            host.Editor.LoadDocument(MakeDocument());
+            host.Editor.RotateLeft();
+            var provider = DispatchProxy.Create<IStorageProvider, StorageProxy>();
+            ((StorageProxy)(object)provider).Handler = method => method.Name switch
+            {
+                "get_CanSave" => true,
+                "SaveFilePickerAsync" => Task.FromResult<IStorageFile?>(null),
+                _ => throw new NotSupportedException(method.Name)
+            };
+            byte[] before = host.Editor.CapturePngSnapshot().Bytes;
+            await host.ExportPngAsync(provider);
+            Assert.IsTrue(host.Editor.IsDirty);
+            Assert.IsTrue(host.Editor.DocumentSummary.StartsWith("original.png", StringComparison.Ordinal));
+            CollectionAssert.AreEqual(before, host.Editor.CapturePngSnapshot().Bytes);
+            Assert.AreEqual("Export canceled.", host.StatusText);
+            return true;
+        }, CancellationToken.None);
+    }
+
+    [TestMethod]
+    public async Task DelayedExportDoesNotMarkOrRenameAnotherDocument()
+    {
+        await _session.Dispatch(async () =>
+        {
+            string directory = Path.Combine(AppContext.BaseDirectory, "editor-test-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                var started = new TaskCompletionSource<bool>();
+                var release = new TaskCompletionSource<bool>();
+                using var host = new MainWindowViewModel((path, write) =>
+                    PngExportFile.WriteNewAsync(path, async (stream, token) =>
+                    {
+                        started.SetResult(true);
+                        await release.Task;
+                        await write(stream, token);
+                    }));
+                host.Editor.LoadDocument(MakeDocument());
+                string source = Path.Combine(directory, "source.png");
+                byte[] sourceBytes = host.Editor.CapturePngSnapshot().Bytes;
+                File.WriteAllBytes(source, sourceBytes);
+                host.Editor.RotateLeft();
+                string destination = Path.Combine(directory, "export.png");
+                Task export = host.ExportPngToNewFileAsync(destination);
+                await started.Task;
+                host.Editor.LoadDocument(MakeDocument());
+                host.Editor.FlipHorizontal();
+                byte[] otherBytes = host.Editor.CapturePngSnapshot().Bytes;
+                string other = Path.Combine(directory, "other.png");
+                File.WriteAllBytes(other, otherBytes);
+                release.SetResult(true);
+                await export;
+                Assert.IsTrue(host.Editor.IsDirty);
+                Assert.IsTrue(host.Editor.DocumentSummary.StartsWith("original.png", StringComparison.Ordinal));
+                CollectionAssert.AreEqual(otherBytes, host.Editor.CapturePngSnapshot().Bytes);
+                CollectionAssert.AreEqual(otherBytes, File.ReadAllBytes(other));
+                CollectionAssert.AreEqual(sourceBytes, File.ReadAllBytes(source));
+                using var decoded = new ImageEditorViewModel();
+                decoded.LoadDocument(File.ReadAllBytes(destination), "export.png");
+                CollectionAssert.AreEqual(LeftRotatedPixels, ReadPixels(decoded.ActiveDocument!));
+            }
+            finally { Directory.Delete(directory, recursive: true); }
+            return true;
+        }, CancellationToken.None);
+    }
+
+    [TestMethod]
+    public async Task ConcurrentDestinationCreationIsNotOverwritten()
+    {
+        string directory = Path.Combine(AppContext.BaseDirectory, "editor-test-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            string path = Path.Combine(directory, "export.png");
+            byte[] competingBytes = { 7, 8, 9 };
+            await Assert.ThrowsAsync<IOException>(() => PngExportFile.WriteNewAsync(path, async (stream, token) =>
+            {
+                await stream.WriteAsync(new byte[] { 1, 2, 3 }, 0, 3, token);
+                File.WriteAllBytes(path, competingBytes);
+            }));
+            CollectionAssert.AreEqual(competingBytes, File.ReadAllBytes(path));
+            Assert.AreEqual(1, Directory.GetFiles(directory).Length);
+        }
+        finally { Directory.Delete(directory, recursive: true); }
+    }
 
     [TestMethod]
     public async Task HostExportCreatesOnlyNewFilesAndMarksSaved()
