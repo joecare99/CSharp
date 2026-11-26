@@ -218,6 +218,38 @@ observed in these attempts, so they cannot establish handling by VSTest,
 the debugger, or the workbench. The temporary experiment was not added as a
 permanent test.
 
+`ProjectWorkflowViewModelTests.DiscoverAdapterTests_LateCompletionRespectsWorkbenchContext`
+holds a fake discovery service after the build, then returns cases and a warning
+or throws an `InvalidOperationException`. The six rows cover an unchanged
+context, a project change and a different workspace entry in the same root.
+After a change the fake ignores cancellation; the test checks that the current
+case, selection, status, notification, results and diagnostics survive. The
+unchanged controls publish the cases and warning or report the error. No product
+defect was reproduced for these scenarios. On Windows net10.0, SDK 11.0.100,
+all six rows passed with isolated build artifacts. On WSL Ubuntu with SDK
+10.0.404, all six rows also passed in a separate artifact root; restore
+reported NU1701 compatibility warnings.
+
+This tests the workbench view model with a substituted discovery service, not
+a rendered UI or an actual VSTest host or adapter. It does not establish real
+adapter cancellation behavior, cover every exception or callback ordering, or
+test MTP.
+
+The same test now includes explicit cancellation through
+`CancelProjectWorkflowCommand`, which is bound to the project workflow cancel
+button and cancels the discovery command's token. The gated fake ignores that
+token and later returns a case and warning or throws an `InvalidOperationException`.
+The result was already discarded; the late exception previously replaced the
+cancellation status with a failure. Discovery now reports cancellation for
+that exception when its token is canceled. The unchanged-context controls still
+publish the result or report the error; current cases, selection, diagnostics,
+results and notification are preserved after cancellation. This exercises the
+command and view model, not a physical button or real VSTest callbacks.
+Before the fix, the cancellation/error row failed while the cancellation/result
+row passed. Afterward, the ten `DiscoverAdapterTests` rows passed on Windows
+net10.0 with SDK 11.0.100 and on WSL Ubuntu net10.0 with SDK 10.0.404, using
+separate artifact roots. Both builds emitted compatibility and compiler warnings.
+
 The tests can be rerun from the repository root with a fresh artifact root:
 
 ```powershell
@@ -232,7 +264,9 @@ for the workbench result regression, or
 `--filter "FullyQualifiedName~RunDiscoveredTestCase_LateErrorRespectsWorkbenchContext"`
 for the run late-error regression, or
 `--filter "FullyQualifiedName~DebugDiscoveredTestCase_LateErrorRespectsWorkbenchContext"`
-for the debug late-error regression.
+for the debug late-error regression, or
+`--filter "FullyQualifiedName~DiscoverAdapterTests_LateCompletionRespectsWorkbenchContext"`
+for the discovery context and explicit cancellation checks.
 
 These tests do not guarantee timely cancellation of uncooperative adapters or
 cover every runner version, callback ordering or startup race. The late-result
