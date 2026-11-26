@@ -163,6 +163,8 @@ internal static partial class Program
             vm.SelectedDocument = first;
             vm.SaveCommand.Execute(null);
             Console.WriteLine($"External-change observation: disk equals buffer={File.ReadAllText(fixture) == first.Text}, dirty={first.IsDirty}.");
+            await CheckDelayedSavePickerAsync();
+            await CheckCloseSavePickerAsync(desktop);
             Console.WriteLine("Markdown host: rendering, dirty buffers, undo/redo, tab switching and close cancellation verified.");
         }
         catch (Exception exception)
@@ -180,6 +182,199 @@ internal static partial class Program
                 }
             }
             desktop.Shutdown(exitCode);
+        }
+    }
+
+    private static async Task CheckDelayedSavePickerAsync()
+    {
+        string target = Path.Combine(Environment.CurrentDirectory, "MarkdownPicker-" + Guid.NewGuid().ToString("N") + ".md");
+        string otherTarget = Path.Combine(Environment.CurrentDirectory, "MarkdownPicker-" + Guid.NewGuid().ToString("N") + ".md");
+        MainWindowViewModel vm = new();
+        MainWindow window = new() { DataContext = vm };
+        try
+        {
+            window.Show();
+            MarkdownDocumentTab first = vm.SelectedDocument!;
+            first.Text = "first buffer";
+            TaskCompletionSource<string?> picker = new();
+            window.SavePathPicker = _ => picker.Task;
+            Task save = window.SaveAsWithPickerAsync();
+            Check(!save.IsCompleted, "The fake save picker was not pending.");
+            vm.NewDocumentCommand.Execute(null);
+            MarkdownDocumentTab second = vm.SelectedDocument!;
+            second.Text = "second buffer";
+            string secondInput = vm.DocumentPathInput;
+            picker.SetResult(target);
+            await save;
+            Check(File.Exists(target) && File.ReadAllText(target) == "first buffer",
+                "The pending Save As did not save its original tab.");
+            Check(first.FilePath == target && !first.IsDirty && second.FilePath is null && second.IsDirty
+                && vm.DocumentPathInput == secondInput
+                && ReferenceEquals(vm.SelectedDocument, second), "The pending Save As changed the wrong tab.");
+
+            picker = new();
+            Task unchanged = window.SaveAsWithPickerAsync();
+            picker.SetResult(otherTarget);
+            await unchanged;
+            Check(File.ReadAllText(otherTarget) == "second buffer" && second.FilePath == otherTarget && !second.IsDirty,
+                "Save As with unchanged context failed.");
+
+            first.Text = "changed first";
+            vm.SelectedDocument = first;
+            string priorInput = vm.DocumentPathInput;
+            string priorStatus = vm.StatusText;
+            picker = new();
+            Task cancelled = window.SaveAsWithPickerAsync();
+            picker.SetResult(null);
+            await cancelled;
+            Check(first.FilePath == target && first.Text == "changed first" && first.IsDirty
+                && vm.DocumentPathInput == priorInput && vm.StatusText == priorStatus
+                && File.ReadAllText(target) == "first buffer", "Cancelling Save As changed state.");
+
+            async Task CheckInvalidatedAsync(Action mutate)
+            {
+                picker = new();
+                Task pending = window.SaveAsWithPickerAsync();
+                Check(!pending.IsCompleted, "The fake save picker was not pending.");
+                mutate();
+                picker.SetResult(otherTarget);
+                await pending;
+                Check(File.ReadAllText(otherTarget) == "second buffer" && first.FilePath == target
+                    && first.Text == "changed first" && first.IsDirty,
+                    "A stale picker wrote or changed the original document.");
+            }
+
+            await CheckInvalidatedAsync(() =>
+            {
+                first.Text = "temporary edit";
+                first.Text = "changed first";
+            });
+            await CheckInvalidatedAsync(() =>
+            {
+                first.FilePath = otherTarget;
+                first.FilePath = target;
+            });
+            await CheckInvalidatedAsync(() =>
+            {
+                int index = vm.Documents.IndexOf(first);
+                vm.Documents.RemoveAt(index);
+                vm.Documents.Insert(index, first);
+                vm.SelectedDocument = first;
+            });
+            await CheckInvalidatedAsync(() =>
+            {
+                int index = vm.Documents.IndexOf(first);
+                vm.Documents[index] = new MarkdownDocumentTab("replacement.md", "replacement", null);
+                vm.Documents[index] = first;
+                vm.SelectedDocument = first;
+            });
+            await CheckInvalidatedAsync(() =>
+            {
+                window.DataContext = new MainWindowViewModel();
+                window.DataContext = vm;
+                vm.SelectedDocument = first;
+            });
+
+            first.MarkSaved();
+            picker = new();
+            Task afterClose = window.SaveAsWithPickerAsync();
+            window.Close();
+            picker.SetResult(otherTarget);
+            await afterClose;
+            Check(!window.IsVisible && first.FilePath == target && File.ReadAllText(otherTarget) == "second buffer",
+                "A picker wrote after its window closed.");
+            Console.WriteLine("Markdown Save As: delayed tab switch, unchanged context, cancel, mutations, replacement and window closure verified with fake picker.");
+        }
+        finally
+        {
+            window.SavePathPicker = null;
+            foreach (MarkdownDocumentTab document in vm.DirtyDocuments.ToArray())
+            {
+                vm.RemoveDocument(document);
+            }
+            window.Close();
+            if (File.Exists(target))
+            {
+                File.Delete(target);
+            }
+            if (File.Exists(otherTarget))
+            {
+                File.Delete(otherTarget);
+            }
+        }
+    }
+
+    private static async Task CheckCloseSavePickerAsync(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        string target = Path.Combine(Environment.CurrentDirectory, "MarkdownPickerClose-" + Guid.NewGuid().ToString("N") + ".md");
+        MainWindowViewModel vm = new();
+        MainWindow window = new() { DataContext = vm };
+        try
+        {
+            window.Show();
+            MarkdownDocumentTab first = vm.SelectedDocument!;
+            first.Text = "close first";
+            vm.NewDocumentCommand.Execute(null);
+            MarkdownDocumentTab second = vm.SelectedDocument!;
+            second.Text = "close second";
+            vm.SelectedDocument = first;
+            TaskCompletionSource<string?> picker = new();
+            bool pickerStarted = false;
+            window.SavePathPicker = _ =>
+            {
+                pickerStarted = true;
+                return picker.Task;
+            };
+            MenuItem fileMenu = window.GetVisualDescendants().OfType<Menu>().Single().Items.OfType<MenuItem>()
+                .Single(item => Equals(item.Header, "_File"));
+            MenuItem closeTab = fileMenu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, "Close Tab"));
+            closeTab.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            await WaitUntilAsync(() => desktop.Windows.OfType<UnsavedChangesDialog>().Any(), "tab cancel prompt");
+            Click(desktop.Windows.OfType<UnsavedChangesDialog>().Single(), "Speichern");
+            await WaitUntilAsync(() => pickerStarted, "delayed close-tab cancel picker");
+            picker.SetResult(null);
+            await WaitUntilAsync(() => vm.StatusText == "Speichern wurde abgebrochen.", "cancelled tab picker");
+            Check(vm.Documents.Contains(first) && first.IsDirty && first.FilePath is null && !File.Exists(target),
+                "Picker cancellation did not prevent tab closure.");
+
+            pickerStarted = false;
+            picker = new();
+            closeTab.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            await WaitUntilAsync(() => desktop.Windows.OfType<UnsavedChangesDialog>().Any(), "tab save prompt");
+            Click(desktop.Windows.OfType<UnsavedChangesDialog>().Single(), "Speichern");
+            await WaitUntilAsync(() => pickerStarted, "delayed close-tab picker");
+            vm.SelectedDocument = second;
+            picker.SetResult(target);
+            await WaitUntilAsync(() => !vm.Documents.Contains(first), "saved tab closure");
+            Check(File.ReadAllText(target) == "close first" && second.IsDirty && second.FilePath is null,
+                "Close-tab Save As saved or closed the wrong document.");
+
+            pickerStarted = false;
+            picker = new();
+            window.Close();
+            await WaitUntilAsync(() => desktop.Windows.OfType<UnsavedChangesDialog>().Any(), "window save prompt");
+            Click(desktop.Windows.OfType<UnsavedChangesDialog>().Single(), "Speichern");
+            await WaitUntilAsync(() => pickerStarted, "delayed window-close picker");
+            window.Close();
+            Check(window.IsVisible, "A second close bypassed the active save prompt.");
+            picker.SetResult(null);
+            await WaitUntilAsync(() => vm.StatusText == "Speichern wurde abgebrochen.", "cancelled close picker");
+            Check(window.IsVisible && vm.Documents.Contains(second) && second.IsDirty && second.FilePath is null
+                && File.ReadAllText(target) == "close first", "Picker cancellation did not prevent window closure.");
+            Console.WriteLine("Markdown close flows: delayed tab save, repeated close and picker cancellation verified with fake picker.");
+        }
+        finally
+        {
+            window.SavePathPicker = null;
+            foreach (MarkdownDocumentTab document in vm.DirtyDocuments.ToArray())
+            {
+                vm.RemoveDocument(document);
+            }
+            window.Close();
+            if (File.Exists(target))
+            {
+                File.Delete(target);
+            }
         }
     }
 
