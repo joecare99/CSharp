@@ -161,6 +161,36 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     public string ZoomSummary => $"{ZoomPercentage:0}%";
     public string DocumentSummary => ActiveDocument?.Summary ?? "No image loaded";
 
+    /// <summary>An opaque document identity and revision captured without encoding pixels.</summary>
+    public sealed class DocumentState
+    {
+        internal DocumentState(object identity, ImageEditorDocument? revision, ImageEditorDocument? savedRevision)
+        {
+            Identity = identity;
+            Revision = revision;
+            SavedRevision = savedRevision;
+        }
+
+        internal object Identity { get; }
+        internal ImageEditorDocument? Revision { get; }
+        internal ImageEditorDocument? SavedRevision { get; }
+    }
+
+    /// <summary>Captures the current document identity, revision and saved state, including an empty editor.</summary>
+    public DocumentState CaptureDocumentState() => new(_documentIdentity, _activeDocument, _savedRevision);
+
+    /// <summary>Checks document identity, including an unchanged empty editor.</summary>
+    public bool IsSameDocument(DocumentState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        return ReferenceEquals(state.Identity, _documentIdentity);
+    }
+
+    /// <summary>Checks identity, current revision and saved revision against the captured state.</summary>
+    public bool IsCurrentDocumentState(DocumentState state) =>
+        IsSameDocument(state) && ReferenceEquals(state.Revision, _activeDocument) &&
+        ReferenceEquals(state.SavedRevision, _savedRevision);
+
     public void LoadDocument(byte[] imageBytes, string documentName)
     {
         ArgumentNullException.ThrowIfNull(imageBytes);
