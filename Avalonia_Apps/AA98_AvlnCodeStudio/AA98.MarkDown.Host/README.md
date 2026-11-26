@@ -31,6 +31,14 @@ future conflict handling is open; do not rely on the host to protect external
 changes. The low-level `CloseSelectedDocument` view-model method explicitly
 closes without the window's save checks.
 
+Save As captures the original tab before opening the picker. Switching tabs
+does not redirect the save or change the later selection's path input. If that
+tab changes, is removed or replaced, the window closes, or its data context
+changes while the picker is pending, the operation is abandoned. Cancelling
+the picker leaves the document and files unchanged; during a close request it
+also prevents closing. These checks do not detect external file changes or
+change the existing overwrite behavior for the selected destination.
+
 ## Package compatibility
 
 AA98 imports the shared `..\Packages.props` and locally overrides only
@@ -75,9 +83,18 @@ asserting an external-conflict policy.
 The extended cancellation and Save observation passed on Windows and WSLg
 with net10 on 2026-11-25 using isolated outputs and the regular package graph.
 
+The smoke also uses a controlled asynchronous fake save picker in real host
+windows. It checks a pending picker across tab switches, an unchanged context,
+cancellation, changed or restored document state, removed or replaced tabs,
+data-context replacement, window closure, and close-tab/window save flows.
+The same tab-switch test failed before the fix. The prompts and windows are
+real Avalonia controls, but the picker is not a native picker.
+These picker and close-flow checks passed on Windows and WSLg with net10 on
+2026-11-25 using separate isolated build outputs.
+
 The smoke uses document API edits and view-model selection, not physical
 keyboard or mouse input; it does not check undo history across tab switches,
-save-picker cancellation, discard or save decisions, Save As conflicts,
+native picker behavior, discard decisions, Save As conflicts,
 syntax colors, links, images, accessibility or all Markdown
 syntax. On 2026-11-25 the extended mode passed on Windows and WSLg with net10,
 Avalonia 12.2.0, Avalonia.AvaloniaEdit 12.0.0 and Markdown.Avalonia 12.0.2,

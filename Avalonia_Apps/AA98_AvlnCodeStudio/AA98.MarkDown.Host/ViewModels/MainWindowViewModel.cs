@@ -214,13 +214,23 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(DocumentPathInput))
+        SaveDocumentAs(SelectedDocument, DocumentPathInput);
+    }
+
+    internal bool SaveDocumentAs(MarkdownDocumentTab document, string pathInput)
+    {
+        if (!Documents.Contains(document))
         {
-            StatusText = "Bitte einen Zielpfad für Speichern unter angeben.";
-            return;
+            return false;
         }
 
-        string path = Path.GetFullPath(DocumentPathInput.Trim());
+        if (string.IsNullOrWhiteSpace(pathInput))
+        {
+            StatusText = "Bitte einen Zielpfad für Speichern unter angeben.";
+            return false;
+        }
+
+        string path = Path.GetFullPath(pathInput.Trim());
         if (!string.Equals(Path.GetExtension(path), ".md", StringComparison.OrdinalIgnoreCase))
         {
             path = Path.ChangeExtension(path, ".md");
@@ -232,11 +242,16 @@ public partial class MainWindowViewModel : ViewModelBase
             Directory.CreateDirectory(directory);
         }
 
-        File.WriteAllText(path, SelectedDocument.Text);
-        SelectedDocument.SetFilePath(path);
-        SelectedDocument.MarkSaved();
-        DocumentPathInput = path;
-        StatusText = $"Gespeichert: {SelectedDocument.Title}";
+        File.WriteAllText(path, document.Text);
+        document.SetFilePath(path);
+        document.MarkSaved();
+        if (ReferenceEquals(SelectedDocument, document))
+        {
+            DocumentPathInput = path;
+        }
+
+        StatusText = $"Gespeichert: {document.Title}";
+        return true;
     }
 
     private static string ResolvePath(string path, string? baseDirectory)

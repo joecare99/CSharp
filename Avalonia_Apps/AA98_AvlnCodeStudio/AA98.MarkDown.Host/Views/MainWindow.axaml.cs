@@ -6,6 +6,8 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,6 +30,8 @@ public partial class MainWindow : Window
 
     private bool _closeConfirmed;
     private bool _isClosingPromptActive;
+
+    internal Func<FilePickerSaveOptions, Task<string?>>? SavePathPicker { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
@@ -83,38 +87,34 @@ public partial class MainWindow : Window
 
     private async void OnSaveAsRequested(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is not MainWindowViewModel viewModel)
+        await SaveAsWithPickerAsync();
+    }
+
+    internal async Task SaveAsWithPickerAsync()
+    {
+        if (DataContext is not MainWindowViewModel viewModel || viewModel.SelectedDocument is not MarkdownDocumentTab document)
         {
             return;
+        }
+
+        await PickAndSaveDocumentAsAsync(viewModel, document, false);
+    }
+
+    private async Task<string?> PickSavePathAsync(FilePickerSaveOptions options)
+    {
+        if (SavePathPicker is not null)
+        {
+            return await SavePathPicker(options);
         }
 
         TopLevel? topLevel = TopLevel.GetTopLevel(this);
         if (topLevel?.StorageProvider is null)
         {
-            return;
+            return null;
         }
 
-        IStorageFile? file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-        {
-            Title = "Markdown-Datei speichern unter",
-            SuggestedFileName = GetSuggestedFileName(viewModel),
-            FileTypeChoices = MarkdownFileTypes,
-            DefaultExtension = "md",
-        });
-
-        if (file is null)
-        {
-            return;
-        }
-
-        string? path = TryGetLocalPath(file);
-        if (string.IsNullOrWhiteSpace(path))
-        {
-            viewModel.StatusText = "Zieldatei kann lokal nicht aufgelöst werden.";
-            return;
-        }
-
-        viewModel.SaveDocumentAs(path);
+        IStorageFile? file = await topLevel.StorageProvider.SaveFilePickerAsync(options);
+        return file is null ? null : TryGetLocalPath(file) ?? string.Empty;
     }
 
     private async void OnCloseTabRequested(object? sender, RoutedEventArgs e)
@@ -152,8 +152,14 @@ public partial class MainWindow : Window
 
     private async void OnWindowClosing(object? sender, WindowClosingEventArgs e)
     {
-        if (_closeConfirmed || _isClosingPromptActive)
+        if (_closeConfirmed)
         {
+            return;
+        }
+
+        if (_isClosingPromptActive)
+        {
+            e.Cancel = true;
             return;
         }
 
@@ -209,6 +215,11 @@ public partial class MainWindow : Window
 
     private async Task<bool> SaveDocumentWithPickerAsync(MainWindowViewModel viewModel, MarkdownDocumentTab document)
     {
+        if (!ReferenceEquals(DataContext, viewModel) || !viewModel.Documents.Contains(document) || !IsVisible)
+        {
+            return false;
+        }
+
         viewModel.SelectedDocument = document;
 
         if (!string.IsNullOrWhiteSpace(document.FilePath))
@@ -217,35 +228,73 @@ public partial class MainWindow : Window
             return !document.IsDirty;
         }
 
-        TopLevel? topLevel = TopLevel.GetTopLevel(this);
-        if (topLevel?.StorageProvider is null)
+        return await PickAndSaveDocumentAsAsync(viewModel, document, true);
+    }
+
+    private async Task<bool> PickAndSaveDocumentAsAsync(MainWindowViewModel viewModel, MarkdownDocumentTab document, bool reportCancel)
+    {
+        if (!ReferenceEquals(DataContext, viewModel) || !viewModel.Documents.Contains(document) || !IsVisible)
         {
             return false;
         }
 
-        IStorageFile? file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        bool invalidated = false;
+        void DocumentChanged(object? sender, PropertyChangedEventArgs e) => invalidated = true;
+        void DocumentsChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            Title = "Markdown-Datei speichern unter",
-            SuggestedFileName = GetSuggestedFileName(viewModel),
-            FileTypeChoices = MarkdownFileTypes,
-            DefaultExtension = "md",
-        });
+            if (e.Action == NotifyCollectionChangedAction.Reset
+                || (e.OldItems is not null && e.OldItems.Contains(document)))
+            {
+                invalidated = true;
+            }
+        }
 
-        if (file is null)
+        void ContextChanged(object? sender, EventArgs e) => invalidated = true;
+        document.PropertyChanged += DocumentChanged;
+        viewModel.Documents.CollectionChanged += DocumentsChanged;
+        DataContextChanged += ContextChanged;
+        Closed += ContextChanged;
+        string? path;
+        try
         {
-            viewModel.StatusText = "Speichern wurde abgebrochen.";
+            path = await PickSavePathAsync(new FilePickerSaveOptions
+            {
+                Title = "Markdown-Datei speichern unter",
+                SuggestedFileName = GetSuggestedFileName(document),
+                FileTypeChoices = MarkdownFileTypes,
+                DefaultExtension = "md",
+            });
+        }
+        finally
+        {
+            document.PropertyChanged -= DocumentChanged;
+            viewModel.Documents.CollectionChanged -= DocumentsChanged;
+            DataContextChanged -= ContextChanged;
+            Closed -= ContextChanged;
+        }
+
+        if (invalidated || !IsVisible || !ReferenceEquals(DataContext, viewModel) || !viewModel.Documents.Contains(document))
+        {
             return false;
         }
 
-        string? path = TryGetLocalPath(file);
+        if (path is null)
+        {
+            if (reportCancel)
+            {
+                viewModel.StatusText = "Speichern wurde abgebrochen.";
+            }
+
+            return false;
+        }
+
         if (string.IsNullOrWhiteSpace(path))
         {
             viewModel.StatusText = "Zieldatei kann lokal nicht aufgelöst werden.";
             return false;
         }
 
-        viewModel.SaveDocumentAs(path);
-        return !document.IsDirty;
+        return viewModel.SaveDocumentAs(document, path);
     }
 
     private async Task<SaveDecision> AskForUnsavedChangesAsync(string documentTitle, string actionTitle)
@@ -254,9 +303,9 @@ public partial class MainWindow : Window
         return await dialog.ShowDialog(this);
     }
 
-    private static string GetSuggestedFileName(MainWindowViewModel viewModel)
+    private static string GetSuggestedFileName(MarkdownDocumentTab document)
     {
-        string candidate = viewModel.SelectedDocument?.Title;
+        string candidate = document.Title;
         if (string.IsNullOrWhiteSpace(candidate))
         {
             return "Document.md";
