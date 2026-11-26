@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Avln_ImageEditor.Controls.Models;
@@ -14,6 +15,15 @@ namespace Avln_ImageEditor.Host.ViewModels;
 /// </summary>
 public sealed partial class MainWindowViewModel : ObservableObject, IDisposable
 {
+    private readonly Func<string, Func<Stream, CancellationToken, Task>, Task> _writeNewPng;
+
+    public MainWindowViewModel() : this((path, write) => PngExportFile.WriteNewAsync(path, write)) { }
+
+    internal MainWindowViewModel(Func<string, Func<Stream, CancellationToken, Task>, Task> writeNewPng)
+    {
+        _writeNewPng = writeNewPng;
+    }
+
     private static readonly FilePickerFileType PngFileType = new("PNG image")
     {
         Patterns = new[] { "*.png" },
@@ -59,7 +69,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable
     public Task OpenImageAsync(IStorageProvider storageProvider) =>
         OpenImageAsync(storageProvider, () => Task.FromResult(false));
 
-    /// <summary>Opens an image after confirming any unsaved changes.</summary>
+    /// <summary>Opens an image after confirming any unsaved changes, unless its target state becomes stale.</summary>
     public async Task OpenImageAsync(IStorageProvider storageProvider, Func<Task<bool>> confirmDiscard)
     {
         ArgumentNullException.ThrowIfNull(storageProvider);
@@ -71,6 +81,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable
             return;
         }
 
+        var target = Editor.CaptureDocumentState();
         var selectedFiles = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = "Open image",
@@ -83,14 +94,33 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable
             StatusText = "Open image canceled.";
             return;
         }
+        if (!Editor.IsSameDocument(target))
+        {
+            StatusText = "Open canceled; the document changed.";
+            return;
+        }
 
         var selectedFile = selectedFiles[0];
         await using var stream = await selectedFile.OpenReadAsync();
         byte[] imageBytes = await ReadImageBytesAsync(stream);
-        if (Editor.IsDirty && !await confirmDiscard())
+        if (!Editor.IsSameDocument(target))
         {
-            StatusText = "Open canceled; edits retained.";
+            StatusText = "Open canceled; the document changed.";
             return;
+        }
+        if (Editor.IsDirty)
+        {
+            var confirmedState = Editor.CaptureDocumentState();
+            if (!await confirmDiscard())
+            {
+                StatusText = "Open canceled; edits retained.";
+                return;
+            }
+            if (!Editor.IsCurrentDocumentState(confirmedState))
+            {
+                StatusText = "Open canceled; the document changed.";
+                return;
+            }
         }
         Editor.LoadDocument(imageBytes, selectedFile.Name);
         StatusText = $"Loaded {Editor.DocumentSummary}";
@@ -113,12 +143,17 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable
         return memoryStream.ToArray();
     }
 
-    /// <summary>Exports to a new local PNG without overwriting an existing file.</summary>
+    /// <summary>
+    /// Exports the current revision to a new local PNG without overwriting an existing file.
+    /// The revision is captured before the picker opens; later edits or document switches are not saved.
+    /// </summary>
+    /// <remarks>The storage provider controls the picker and its side effects; this host only writes after it returns.</remarks>
     public async Task ExportPngAsync(IStorageProvider storageProvider)
     {
         ArgumentNullException.ThrowIfNull(storageProvider);
         if (!Editor.HasDocument) { StatusText = "No image loaded."; return; }
         if (!storageProvider.CanSave) { StatusText = "This host cannot save files."; return; }
+        var snapshot = Editor.CapturePngSnapshot();
         var selectedFile = await storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = "Export PNG to a new file (existing files are not overwritten)",
@@ -128,18 +163,24 @@ public sealed partial class MainWindowViewModel : ObservableObject, IDisposable
         if (selectedFile is null) { StatusText = "Export canceled."; return; }
         string? path = selectedFile.TryGetLocalPath();
         if (path is null) throw new NotSupportedException("Export requires a local file path.");
-        await ExportPngToNewFileAsync(path);
+        await ExportPngToNewFileAsync(path, snapshot);
     }
 
-    /// <summary>Writes a snapshot to a temporary sibling and moves it to a new destination.</summary>
-    public async Task ExportPngToNewFileAsync(string path)
+    /// <summary>
+    /// Writes a snapshot to a temporary sibling and moves it to a new destination without replacement.
+    /// This depends on filesystem move semantics, does not guarantee crash durability, and cleanup can fail
+    /// if the filesystem rejects deletion. The host does not expose cancellation after export starts.
+    /// </summary>
+    public Task ExportPngToNewFileAsync(string path) => ExportPngToNewFileAsync(path, null);
+
+    private async Task ExportPngToNewFileAsync(string path, ImageEditorSaveSnapshot? snapshot)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         if (!string.Equals(Path.GetExtension(path), ".png", StringComparison.OrdinalIgnoreCase))
             throw new InvalidDataException("Choose a .png filename.");
-        var snapshot = Editor.CapturePngSnapshot();
+        snapshot ??= Editor.CapturePngSnapshot();
         var bytes = snapshot.Bytes;
-        await PngExportFile.WriteNewAsync(path, (stream, cancellationToken) =>
+        await _writeNewPng(path, (stream, cancellationToken) =>
             stream.WriteAsync(bytes, 0, bytes.Length, cancellationToken));
         Editor.MarkSaved(snapshot);
         Editor.RenameDocument(snapshot, Path.GetFileName(path));
