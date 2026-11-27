@@ -122,6 +122,15 @@ internal static partial class Program
         int previewChanges = 0;
         EventHandler previewChanging = (_, _) => previewChanges++;
         image.ContentChanging += previewChanging;
+        CheckBox dragMode = tab.View.GetVisualDescendants().OfType<CheckBox>()
+            .Single(element => element.Name == "DragCropMode");
+        Check(dragMode.IsChecked != true && dragMode.IsEffectivelyEnabled,
+            "The shared drag crop mode was not available and initially off.");
+        dragMode.IsChecked = true;
+        Check(!tab.IsDirty && ReferenceEquals(image.ActiveDocument, originalDocument)
+            && image.CapturePngSnapshot().Bytes.SequenceEqual(initial) && previewChanges == 0,
+            "Enabling drag crop changed image content.");
+        dragMode.IsChecked = false;
         Check(cropInputs.Length == 4, "The image crop fields were not available.");
         cropInputs.Single(input => input.Name == "CropXInput").SetCurrentValue(TextBox.TextProperty, "-1");
         await WaitUntilAsync(() => image.CropX == "-1" && !crop.IsEffectivelyEnabled
@@ -183,6 +192,23 @@ internal static partial class Program
             && image.RedoCommand.CanExecute(null) && !image.UndoCommand.CanExecute(null)
             && image.CapturePngSnapshot().Bytes.SequenceEqual(initial) && previewChanges == 0,
             "The zoomed crop preview changed pixels, history or dirty state.");
+        Button fit = imageButtons.Single(button => button.Name == "FitImageButton");
+        Check(fit.IsEffectivelyEnabled && imageScroll.Viewport.Width > 0 && imageScroll.Viewport.Height > 0,
+            "The image fit button or its viewport was unavailable.");
+        double expectedFit = Math.Clamp(Math.Min(imageScroll.Viewport.Width / 2, imageScroll.Viewport.Height / 3) * 100,
+            ImageEditorViewModel.MinimumZoomPercentage, ImageEditorViewModel.MaximumZoomPercentage);
+        Invoke(tab.View, "Fit (min 10%)");
+        await WaitUntilAsync(() => Math.Abs(image.ZoomPercentage - expectedFit) < 0.000001
+            && Math.Abs(cropPreview.Zoom - image.ZoomFactor) < 0.000001,
+            "fit image zoom and crop preview");
+        Invoke(tab.View, "Fit (min 10%)");
+        Check(Math.Abs(image.ZoomPercentage - expectedFit) < 0.000001,
+            "Repeated fit changed the zoom without a viewport change.");
+        Check(cropPreview.IsVisible && cropPreview.CropRectangle == new Avalonia.Rect(1, 1, 1, 1)
+            && !tab.IsDirty && ReferenceEquals(image.ActiveDocument, originalDocument)
+            && image.RedoCommand.CanExecute(null) && !image.UndoCommand.CanExecute(null)
+            && image.CapturePngSnapshot().Bytes.SequenceEqual(initial) && previewChanges == 0,
+            "Fit image changed crop state, pixels, history or dirty state.");
         image.ZoomPercentage = 100;
         image.ContentChanging -= previewChanging;
         Invoke(tab.View, "Apply crop");
