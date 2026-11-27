@@ -14,5 +14,6 @@
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
   <ItemGroup>
     <ProjectReference Include="..\..\AA98_AvlnCodeStudio.UI\AA98_AvlnCodeStudio.UI.csproj" />
+    <ProjectReference Include="..\..\AA98_AxamlDesigner.Host\AA98_AxamlDesigner.Host.csproj" />
   </ItemGroup>
 </Project>

@@ -69,3 +69,18 @@ reflection command binding with their new ViewModel members, checks both source
 files and editor synchronization through workspace undo/redo, and rebuilds the
 fixture. The review buttons are invoked programmatically; this is not physical
 UX acceptance.
+
+The Workbench smoke also refreshes the selected text binding's ViewModel
+context and checks that the bound member is recognized without losing a pending
+mode edit. It also opens the standalone host window, checks its shared designer,
+and exercises the refresh and designer undo/redo programmatically. These checks
+do not verify physical mouse or keyboard interaction, screen-reader behavior, or
+native desktop integration.
+
+The Workbench fixture also edits the open ViewModel buffer without saving,
+changes the open AXAML buffer to bind to the new member, and holds the real
+semantic compilation with its test hook while the user changes binding mode and
+trigger. It checks the resulting member selection, designer undo/redo, and that
+neither file on disk changed. A second delayed analysis is superseded by a
+newer ViewModel buffer and must not overwrite it. This exercises the Workbench
+buffer overlay; the standalone host has no separate C# editor buffer.

@@ -1,10 +1,15 @@
 using System;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using AA98_AxamlDesigner.Host.ViewModels;
 using AA98_AvlnCodeStudio.AxamlDesigner.UI.Views;
+using AA98_AvlnCodeStudio.Model.Workspaces;
 using AA98_AvlnCodeStudio.UI;
 using AA98_AvlnCodeStudio.UI.Services;
 using AA98_AvlnCodeStudio.UI.ViewModels;
@@ -134,6 +139,7 @@ internal static class Program
         int exitCode = 0;
         try
         {
+            await VerifyStandaloneBindingAsync();
             await BuildFixtureAsync(projectPath, restoreOnly: true);
             MainWindowViewModel workbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
             await workbench.OpenWorkspaceFileAsync(projectPath);
@@ -260,6 +266,8 @@ internal static class Program
                 mismatchedContext.ToString(), axamlPath, workbench.Workspace!, allowExistingRuntimeDataContext: true);
             Check(!unsafeContext.IsSuccessful, "Semantic analysis accepted a mismatched root DataContext.");
 
+            await VerifyUnsavedViewModelContextAsync(workbench, semanticService, axamlPath, generatedViewModelPath);
+
             string visualMarkup = generatedMarkup
                 .Replace("{Binding UserName,", "{CompiledBinding UserName,", StringComparison.Ordinal)
                 .Replace("{Binding SubmitCommand}", "{ReflectionBinding SubmitCommand}", StringComparison.Ordinal);
@@ -338,6 +346,161 @@ internal static class Program
         desktop.Shutdown(exitCode);
     }
 
+    private static async Task VerifyUnsavedViewModelContextAsync(
+        MainWindowViewModel workbench,
+        CSharpSyntaxDiagnosticService semanticService,
+        string axamlPath,
+        string viewModelPath)
+    {
+        byte[] markupBytes = await File.ReadAllBytesAsync(axamlPath);
+        byte[] viewModelBytes = await File.ReadAllBytesAsync(viewModelPath);
+        string savedMarkup = await File.ReadAllTextAsync(axamlPath);
+        string savedViewModel = await File.ReadAllTextAsync(viewModelPath);
+        await workbench.EditorWorkspace.OpenOrActivateAsync(viewModelPath);
+        EditorTabViewModel viewModelTab = workbench.EditorWorkspace.ActiveTab;
+        int closingBrace = savedViewModel.LastIndexOf('}');
+        Check(closingBrace >= 0, "The fixture ViewModel has no class body.");
+        viewModelTab.Editor.Text = savedViewModel.Insert(
+            closingBrace, "\n    public string OverlayCaption { get; set; } = \"\";\n");
+        Check(viewModelTab.Editor.Text != savedViewModel, "The ViewModel overlay was not edited.");
+
+        TaskCompletionSource started = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        PropertyInfo gate = typeof(CSharpSyntaxDiagnosticService).GetProperty(
+            "BeforeAxamlCompilationAsync", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("The existing AXAML compilation test hook is unavailable.");
+        gate.SetValue(semanticService, (Func<CancellationToken, Task>)(async token =>
+        {
+            started.TrySetResult();
+            await release.Task.WaitAsync(token);
+        }));
+        try
+        {
+            await workbench.EditorWorkspace.OpenOrActivateAsync(axamlPath);
+            string draftMarkup = savedMarkup.Replace(
+                "{Binding UserName,", "{Binding OverlayCaption,", StringComparison.Ordinal);
+            Check(draftMarkup != savedMarkup, "The fixture binding was not found.");
+            workbench.Editor.Text = draftMarkup;
+            var designer = workbench.AxamlDesigner;
+            designer.SelectedNode = designer.PreviewRoot!.Children.Single(node => node.StableName == "UserNameTextBox");
+            var row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+            await started.Task.WaitAsync(TimeSpan.FromMinutes(2));
+            row.BindingMode = AxamlBindingMode.OneWay;
+            row.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.LostFocus;
+            TaskCompletionSource refreshed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            NotifyCollectionChangedEventHandler onRefresh = (_, _) => refreshed.TrySetResult();
+            designer.BindingRows.CollectionChanged += onRefresh;
+            try
+            {
+                release.TrySetResult();
+                await refreshed.Task.WaitAsync(TimeSpan.FromMinutes(2));
+            }
+            finally
+            {
+                designer.BindingRows.CollectionChanged -= onRefresh;
+            }
+            Check(row.IsSelectingExistingMember && row.SelectedMember == "OverlayCaption"
+                && row.BindingMode == AxamlBindingMode.OneWay
+                && row.UpdateSourceTrigger == AxamlBindingUpdateSourceTrigger.LostFocus,
+                $"Unsaved ViewModel overlay was not recognized: selected={row.SelectedMember}, new={row.NewMemberName}, mode={row.BindingMode}, trigger={row.UpdateSourceTrigger}.");
+
+            string originalOverlay = viewModelTab.Editor.Text;
+            TaskCompletionSource staleStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource releaseStale = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            int calls = 0;
+            gate.SetValue(semanticService, (Func<CancellationToken, Task>)(async _ =>
+            {
+                if (Interlocked.Increment(ref calls) == 1)
+                {
+                    staleStarted.TrySetResult();
+                    await releaseStale.Task;
+                }
+            }));
+            try
+            {
+                viewModelTab.Editor.Text = originalOverlay + "\n";
+                await staleStarted.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                viewModelTab.Editor.Text = originalOverlay.Replace("OverlayCaption", "ReplacementCaption", StringComparison.Ordinal);
+                releaseStale.TrySetResult();
+                await WaitUntilAsync(() => row.AvailableMembers.Contains("ReplacementCaption"), "newer ViewModel overlay");
+                Check(!row.AvailableMembers.Contains("OverlayCaption")
+                    && row.BindingMode == AxamlBindingMode.OneWay
+                    && row.UpdateSourceTrigger == AxamlBindingUpdateSourceTrigger.LostFocus,
+                    "The stale ViewModel analysis replaced the newer overlay or binding draft.");
+            }
+            finally
+            {
+                releaseStale.TrySetResult();
+                gate.SetValue(semanticService, null);
+            }
+
+            viewModelTab.Editor.Text = originalOverlay;
+            await WaitUntilAsync(() => row.IsSelectingExistingMember && row.SelectedMember == "OverlayCaption",
+                "restored ViewModel overlay");
+            designer.ApplyBindingRow(row);
+            Check(workbench.Editor.Text.Contains("UpdateSourceTrigger=LostFocus", StringComparison.Ordinal),
+                "The pending binding options were not applied.");
+            designer.UndoCommand.Execute(null);
+            Check(workbench.Editor.Text == draftMarkup, "Designer undo did not restore the unsaved AXAML.");
+            designer.RedoCommand.Execute(null);
+            Check(workbench.Editor.Text.Contains("UpdateSourceTrigger=LostFocus", StringComparison.Ordinal),
+                "Designer redo did not restore the binding edit.");
+            byte[] currentMarkupBytes = await File.ReadAllBytesAsync(axamlPath);
+            byte[] currentViewModelBytes = await File.ReadAllBytesAsync(viewModelPath);
+            Check(viewModelTab.Editor.Text == originalOverlay
+                && markupBytes.SequenceEqual(currentMarkupBytes)
+                && viewModelBytes.SequenceEqual(currentViewModelBytes),
+                "The overlay binding test changed the ViewModel buffer or a source file on disk.");
+        }
+        finally
+        {
+            release.TrySetResult();
+            gate.SetValue(semanticService, null);
+            viewModelTab.Editor.Text = savedViewModel;
+            if (workbench.Editor.CurrentFilePath == axamlPath)
+            {
+                workbench.Editor.Text = savedMarkup;
+            }
+            workbench.EditorWorkspace.TryClose(viewModelTab);
+        }
+    }
+
+    private static async Task VerifyStandaloneBindingAsync()
+    {
+        AxamlDesignerHostViewModel host = new();
+        AA98_AxamlDesigner.Host.Views.MainWindow window = new() { DataContext = host };
+        try
+        {
+            window.Show();
+            host.Markup = "<TextBox xmlns='https://github.com/avaloniaui' Text='{Binding Caption}' />";
+            host.Designer.SelectedNode = host.Designer.PreviewRoot;
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+            Check(window.GetVisualDescendants().OfType<AxamlDesignerView>()
+                .Any(view => ReferenceEquals(view.DataContext, host.Designer)),
+                "The standalone window did not attach the shared designer.");
+            var row = host.Designer.BindingRows.Single();
+            row.BindingMode = AxamlBindingMode.TwoWay;
+            host.Designer.SetBindingContext(
+            [
+                new AxamlMvvmSemanticMember("Caption", "string", IsCommand: false, IsWritable: true),
+            ]);
+            Check(row.IsSelectingExistingMember && row.SelectedMember == "Caption"
+                && row.BindingMode == AxamlBindingMode.TwoWay,
+                "The standalone binding row lost its pending mode on context refresh.");
+            host.Designer.ApplyBindingRow(row);
+            Check(host.Markup.Contains("Mode=TwoWay", StringComparison.Ordinal), "Standalone binding apply failed.");
+            host.Designer.UndoCommand.Execute(null);
+            Check(!host.Markup.Contains("Mode=TwoWay", StringComparison.Ordinal), "Standalone binding undo failed.");
+            host.Designer.RedoCommand.Execute(null);
+            Check(host.Markup.Contains("Mode=TwoWay", StringComparison.Ordinal), "Standalone binding redo failed.");
+        }
+        finally
+        {
+            window.DataContext = null;
+            window.Close();
+        }
+    }
+
     private static async Task VerifyVisualBindingAsync(
         MainWindowViewModel workbench,
         IClassicDesktopStyleApplicationLifetime desktop,
@@ -355,6 +518,19 @@ internal static class Program
         designer.SetBindingContext([]);
         var row = designer.BindingRows.Single(binding => binding.PropertyName == propertyName);
         Check(row.CanEditBinding, $"The generated root DataContext blocked {kind}: {row.BindingExpressionDiagnostic}");
+        if (propertyName == "Text")
+        {
+            row.BindingMode = AxamlBindingMode.OneWay;
+            designer.SetBindingContext(
+            [
+                new AxamlMvvmSemanticMember("UserName", "string", IsCommand: false, IsWritable: true),
+            ]);
+            Check(row.IsSelectingExistingMember && row.SelectedMember == "UserName"
+                && row.BindingMode == AxamlBindingMode.OneWay,
+                $"The visual binding row did not retain its edit when the ViewModel context arrived: source={row.MemberSource}, selected={row.SelectedMember}, new={row.NewMemberName}, mode={row.BindingMode}, bound={row.MemberName}.");
+            row.BindingMode = AxamlBindingMode.TwoWay;
+            designer.SetBindingContext([]);
+        }
         row.NewMemberName = replacement;
         Task applying = designer.ApplyBindingRowAsync(row);
         WorkspaceFileChangeReviewDialog review = await WaitForReviewAsync(desktop, applying, workbench);
