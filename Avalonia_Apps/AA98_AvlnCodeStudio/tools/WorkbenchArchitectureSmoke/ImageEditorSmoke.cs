@@ -657,8 +657,11 @@ internal static partial class Program
                     KeyModifiers.None, MouseButton.Left)
                 { RoutedEvent = InputElement.PointerReleasedEvent };
                 surface.RaiseEvent(fillRelease);
-                Check(fillRelease.Handled && fillPointer.Captured is null && editor.IsDirty &&
-                    editor.UndoCommand.CanExecute(null), "Fill did not commit on release.");
+                Check(fillRelease.Handled && fillPointer.Captured is null,
+                    "Fill release did not end the gesture.");
+                await WaitUntilAsync(() => editor.IsDirty, "image fill completion");
+                Check(editor.IsDirty &&
+                    editor.UndoCommand.CanExecute(null), "Fill did not commit after release.");
                 byte[] filled = editor.CapturePngSnapshot().Bytes;
                 using (var stream = new MemoryStream(filled))
                 using (var decoded = new Bitmap(stream))
