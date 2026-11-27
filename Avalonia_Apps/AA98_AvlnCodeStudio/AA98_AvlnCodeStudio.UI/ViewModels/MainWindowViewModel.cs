@@ -2959,57 +2959,109 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         [RelayCommand(CanExecute = nameof(CanUpdateSvnWorkspaceNow))]
         private async Task UpdateSvnWorkspaceAsync(CancellationToken cancellationToken)
         {
-            CSharpWorkspace workspace = Workspace
-                ?? throw new InvalidOperationException("Open an SVN workspace before updating.");
-            Func<string, CancellationToken, Task<bool>>? approveUpdate = ApproveSvnUpdateAsync;
-            if (approveUpdate is null
-                || !await approveUpdate(workspace.RootPath, cancellationToken))
+            if (SvnUpdateBusy)
             {
-                Editor.StatusText = "SVN update was not approved; no changes were made.";
                 return;
             }
 
-            if (_svnWorkingCopyOperations is null)
+            CSharpWorkspace workspace = Workspace
+                ?? throw new InvalidOperationException("Open an SVN workspace before updating.");
+            long version = Interlocked.Read(ref _workspaceOpenVersion);
+            bool IsCurrent() => version == Interlocked.Read(ref _workspaceOpenVersion)
+                && ReferenceEquals(workspace, Workspace);
+            bool CanPublish()
             {
-                Editor.StatusText = "SVN update is not available in this host.";
-                return;
+                cancellationToken.ThrowIfCancellationRequested();
+                return IsCurrent();
             }
 
             SvnUpdateBusy = true;
             try
             {
-                string output = await _svnWorkingCopyOperations.UpdateAsync(workspace.RootPath, cancellationToken);
-                VersionControlStatus refreshedStatus = await _versionControlService.GetStatusAsync(
-                    new VersionControlStatusRequest
-                    {
-                        RepositoryContextPath = workspace.RootPath,
-                        IncludeChanges = true,
-                        IncludeCapabilities = true,
-                    },
-                    cancellationToken);
-                if (Workspace is not null && PathsEqual(Workspace.RootPath, workspace.RootPath))
+                if (!IsCurrent())
                 {
-                    ClearVersionControlError();
-                    VersionControlStatus = refreshedStatus;
+                    return;
                 }
 
-                Editor.StatusText = "SVN update completed.";
-                Editor.NotificationText = string.IsNullOrWhiteSpace(output)
-                    ? VersionControlSummary
-                    : output;
-            }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                Editor.StatusText = "SVN update was cancelled.";
-            }
-            catch (Exception exception) when (exception is IOException
-                or InvalidOperationException
-                or ArgumentException
-                or VersionControlClientNotFoundException
-                or System.ComponentModel.Win32Exception)
-            {
-                Editor.StatusText = "SVN update failed.";
-                Editor.NotificationText = exception.Message;
+                Func<string, CancellationToken, Task<bool>>? approveUpdate = ApproveSvnUpdateAsync;
+                bool approved = approveUpdate is not null && await approveUpdate(workspace.RootPath, cancellationToken);
+                if (!IsCurrent())
+                {
+                    return;
+                }
+                cancellationToken.ThrowIfCancellationRequested();
+                if (!approved)
+                {
+                    Editor.StatusText = "SVN update was not approved; no changes were made.";
+                    return;
+                }
+
+                if (_svnWorkingCopyOperations is null)
+                {
+                    Editor.StatusText = "SVN update is not available in this host.";
+                    return;
+                }
+
+                try
+                {
+                    string output = await _svnWorkingCopyOperations.UpdateAsync(workspace.RootPath, cancellationToken);
+                    if (!CanPublish())
+                    {
+                        return;
+                    }
+                    VersionControlStatus refreshedStatus = await _versionControlService.GetStatusAsync(
+                        new VersionControlStatusRequest
+                        {
+                            RepositoryContextPath = workspace.RootPath,
+                            IncludeChanges = true,
+                            IncludeCapabilities = true,
+                        },
+                        cancellationToken);
+                    if (!CanPublish() || !ClearVersionControlError(CanPublish))
+                    {
+                        return;
+                    }
+                    VersionControlStatus = refreshedStatus;
+                    if (!CanPublish())
+                    {
+                        return;
+                    }
+
+                    Editor.StatusText = "SVN update completed.";
+                    if (!CanPublish())
+                    {
+                        return;
+                    }
+                    Editor.NotificationText = string.IsNullOrWhiteSpace(output)
+                        ? VersionControlSummary
+                        : output;
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested || !IsCurrent())
+                {
+                    if (IsCurrent())
+                    {
+                        Editor.StatusText = "SVN update was cancelled.";
+                    }
+                }
+                catch (Exception exception) when (exception is IOException
+                    or InvalidOperationException
+                    or ArgumentException
+                    or VersionControlClientNotFoundException
+                    or System.ComponentModel.Win32Exception)
+                {
+                    if (IsCurrent() && !cancellationToken.IsCancellationRequested)
+                    {
+                        Editor.StatusText = "SVN update failed.";
+                        if (IsCurrent() && !cancellationToken.IsCancellationRequested)
+                        {
+                            Editor.NotificationText = exception.Message;
+                        }
+                    }
+                    else if (IsCurrent())
+                    {
+                        Editor.StatusText = "SVN update was cancelled.";
+                    }
+                }
             }
             finally
             {
