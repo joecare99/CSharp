@@ -11,5 +11,5 @@ public interface IAvaloniaEditorComponentFactory : IEditorComponentFactory
     /// Creates the editor component.
     /// </summary>
     /// <returns>The created editor component.</returns>
-    IAvaloniaEditorComponent Create();
+    new IAvaloniaEditorComponent Create();
 }
