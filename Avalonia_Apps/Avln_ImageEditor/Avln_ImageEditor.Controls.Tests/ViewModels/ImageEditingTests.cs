@@ -10,6 +10,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
@@ -661,6 +662,131 @@ public sealed class ImageEditingTests
     }, CancellationToken.None);
 
     [TestMethod]
+    public async Task DragCropUsesImageCoordinatesAndDoesNotMutateUntilApply() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        editor.LoadDocument(MakeDocument());
+        editor.FlipHorizontal();
+        editor.Undo();
+        byte[] png = editor.CapturePngSnapshot().Bytes;
+        var document = editor.ActiveDocument;
+        var window = new Window { Width = 800, Height = 650, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show();
+            editor.ZoomPercentage = 800;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var toggle = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "DragCropMode");
+            Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
+            void Down(double x, double y) => window.MouseDown(At(x, y), MouseButton.Left, RawInputModifiers.None);
+            void Move(double x, double y) => window.MouseMove(At(x, y), RawInputModifiers.LeftMouseButton);
+            void Up(double x, double y) => window.MouseUp(At(x, y), MouseButton.Left, RawInputModifiers.None);
+
+            Down(2.8, 1.8); Move(0.2, 0.2); Up(0.2, 0.2);
+            Assert.AreEqual("3", editor.CropWidth, "Mode must be off by default.");
+            toggle.IsChecked = true;
+            Down(2.8, 1.8);
+            Move(1.2, 0.2);
+            Assert.IsFalse(editor.ApplyCropCommand.CanExecute(null));
+            editor.ApplyCrop();
+            Assert.AreSame(document, editor.ActiveDocument);
+            Up(1.2, 0.2);
+            Assert.AreEqual(new Rect(1, 0, 2, 2), editor.CropPreview);
+            Assert.IsTrue(editor.ShowCropPreview);
+            Assert.IsFalse(editor.IsDirty);
+            Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!));
+            CollectionAssert.AreEqual(png, editor.CapturePngSnapshot().Bytes);
+
+            editor.ApplyCrop();
+            Assert.AreEqual(new PixelSize(2, 2), editor.ActiveDocument!.PixelSize);
+            Assert.IsTrue(editor.IsDirty);
+            editor.Undo();
+            Assert.AreSame(document, editor.ActiveDocument);
+            CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!));
+            Assert.IsFalse(editor.IsDirty);
+
+            toggle.IsChecked = true;
+            Down(1.2, 0.5); Move(-2, 4); Up(-2, 4);
+            Assert.AreEqual(new Rect(0, 0, 2, 2), editor.CropPreview);
+            Down(1.2, 0.5); Up(1.2, 0.5);
+            Assert.IsFalse(editor.ApplyCropCommand.CanExecute(null));
+            Assert.AreEqual("0", editor.CropWidth);
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task DragCropScrollCancellationCaptureAndDocumentReplacement() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        editor.LoadDocument(new ImageEditorDocument("large.png",
+            new WriteableBitmap(new PixelSize(1000, 800), new Vector(192, 192), PixelFormats.Bgra8888, AlphaFormat.Premul)));
+        var window = new Window { Width = 800, Height = 650, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show();
+            window.SetRenderScaling(1.25);
+            editor.ZoomPercentage = 125;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var toggle = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "DragCropMode");
+            var scroll = window.GetVisualDescendants().OfType<ScrollViewer>().Single(c => c.Name == "ImageScrollViewer");
+            scroll.Offset = new Vector(150, 100);
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            toggle.IsChecked = true;
+            Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
+            void Down(double x, double y) => window.MouseDown(At(x, y), MouseButton.Left, RawInputModifiers.None);
+            void Move(double x, double y) => window.MouseMove(At(x, y), RawInputModifiers.LeftMouseButton);
+            void Up(double x, double y) => window.MouseUp(At(x, y), MouseButton.Left, RawInputModifiers.None);
+            IPointer? pointer = null;
+            surface.AddHandler(InputElement.PointerPressedEvent, (_, e) => pointer = e.Pointer,
+                RoutingStrategies.Bubble, handledEventsToo: true);
+            Down(200.2, 130.2); Move(300.6, 200.8); Up(300.6, 200.8);
+            Assert.AreEqual(new Rect(200, 130, 101, 71), editor.CropPreview);
+
+            Down(220, 140); Move(250, 180);
+            Assert.AreEqual(new Rect(220, 140, 30, 40), editor.CropPreview);
+            window.KeyPress(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null);
+            Assert.AreEqual(new Rect(200, 130, 101, 71), editor.CropPreview);
+            Up(250, 180);
+            Down(220, 140); Move(250, 180);
+            Assert.IsNotNull(pointer);
+            pointer.Capture(null);
+            Assert.AreEqual(new Rect(200, 130, 101, 71), editor.CropPreview);
+            Up(250, 180);
+
+            Down(220, 140); Move(250, 180);
+            toggle.IsChecked = false;
+            Assert.AreEqual(new Rect(200, 130, 101, 71), editor.CropPreview);
+            Up(250, 180);
+            toggle.IsChecked = true;
+            Down(220, 140); Move(250, 180);
+            editor.CropX = "10";
+            Assert.IsFalse(editor.ApplyCropCommand.CanExecute(null));
+            Up(250, 180);
+            Assert.IsFalse(editor.ApplyCropCommand.CanExecute(null));
+
+            Down(220, 140); Move(250, 180);
+            editor.LoadDocument(new ImageEditorDocument("new.png",
+                new WriteableBitmap(new PixelSize(1000, 800), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul)));
+            Up(250, 180);
+            Assert.AreEqual(new Rect(0, 0, 1000, 800), editor.CropPreview);
+            Assert.AreEqual(false, toggle.IsChecked);
+            Assert.IsFalse(editor.IsDirty);
+            Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
     public async Task CropPreviewTracksImageGeometryZoomScrollAndDimensions() =>
         await _session.Dispatch(() =>
     {
@@ -792,6 +918,314 @@ public sealed class ImageEditingTests
             CollectionAssert.AreEqual(FlippedPixels, ReadPixels(editor.ActiveDocument!));
         }
         finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task FitIsStableWithSpaceConsumingScrollbars() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        var window = new Window { Width = 1000, Height = 750, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show();
+            editor.LoadDocument(new ImageEditorDocument("wide.png",
+                new WriteableBitmap(new PixelSize(1400, 300), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul)));
+            editor.ZoomPercentage = 200;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var scroll = window.GetVisualDescendants().OfType<ScrollViewer>().Single(c => c.Name == "ImageScrollViewer");
+            scroll.AllowAutoHide = false;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var fit = window.GetVisualDescendants().OfType<Button>().Single(c => c.Name == "FitImageButton");
+            var before = scroll.Viewport;
+            fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            double first = editor.ZoomPercentage;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var after = scroll.Viewport;
+            fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.AreEqual(first, editor.ZoomPercentage, 0.000001,
+                $"Repeated fit changed zoom: {first} -> {editor.ZoomPercentage}; viewport {before} -> {after}");
+            Assert.AreEqual(before, after, $"Scrollbar layout changed viewport: {before} -> {after}");
+            Assert.AreEqual(Math.Clamp(Math.Min(after.Width / 1400, after.Height / 300) * 100, 10, 800),
+                first, 0.000001);
+            foreach (double scaling in new[] { 1.25, 2.0 })
+            {
+                window.SetRenderScaling(scaling);
+                editor.ZoomPercentage = 200;
+                Dispatcher.UIThread.RunJobs();
+                window.UpdateLayout();
+                before = scroll.Viewport;
+                fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                first = editor.ZoomPercentage;
+                Dispatcher.UIThread.RunJobs();
+                window.UpdateLayout();
+                after = scroll.Viewport;
+                fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.AreEqual(before, after, $"Viewport changed at {scaling} scaling.");
+                Assert.AreEqual(first, editor.ZoomPercentage, 0.000001);
+                Assert.AreEqual(Math.Clamp(Math.Min(after.Width / 1400, after.Height / 300) * 100, 10, 800),
+                    first, 0.000001);
+            }
+            editor.LoadDocument(MakeDocument());
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.AreEqual(100, editor.ZoomPercentage);
+            window.Content = new Border();
+            editor.ZoomPercentage = 123;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.AreEqual(123, editor.ZoomPercentage);
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task FitUsesCurrentViewportAndPixelDimensionsWithoutFollowingResize() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        var control = new ImageEditorControl { DataContext = editor };
+        var window = new Window { Width = 1000, Height = 750, Content = control };
+        try
+        {
+            window.Show();
+            window.UpdateLayout();
+            var scroll = window.GetVisualDescendants().OfType<ScrollViewer>().Single(c => c.Name == "ImageScrollViewer");
+            var image = window.GetVisualDescendants().OfType<Image>().Single(c => c.Name == "EditorImage");
+            var fit = window.GetVisualDescendants().OfType<Button>().Single(c => c.Name == "FitImageButton");
+
+            void Layout()
+            {
+                Dispatcher.UIThread.RunJobs();
+                window.UpdateLayout();
+                Dispatcher.UIThread.RunJobs();
+                window.UpdateLayout();
+            }
+
+            double? landscapeZoom = null;
+            foreach (var (width, height, dpi) in new[] { (1400, 300, 96), (1400, 300, 192), (300, 1200, 192) })
+            {
+                editor.LoadDocument(new ImageEditorDocument("aspect.png",
+                    new WriteableBitmap(new PixelSize(width, height), new Vector(dpi, dpi), PixelFormats.Bgra8888, AlphaFormat.Premul)));
+                editor.ZoomPercentage = 200;
+                Layout();
+                scroll.Offset = new Vector(300, 250);
+                Layout();
+                Size viewport = scroll.Viewport;
+                double expected = Math.Clamp(Math.Min(viewport.Width / width, viewport.Height / height) * 100, 10, 800);
+                fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.AreEqual(expected, editor.ZoomPercentage, 0.000001);
+                if (width == 1400 && dpi == 96) landscapeZoom = editor.ZoomPercentage;
+                if (width == 1400 && dpi == 192) Assert.AreEqual(landscapeZoom!.Value, editor.ZoomPercentage, 0.000001);
+                Layout();
+                var start = image.TranslatePoint(new Point(0, 0), scroll)!.Value;
+                var end = image.TranslatePoint(new Point(width, height), scroll)!.Value;
+                Assert.IsTrue(start.X >= -0.02 && start.Y >= -0.02, $"Image starts outside viewport: {start}");
+                Assert.IsTrue(end.X <= scroll.Viewport.Width + 0.02 && end.Y <= scroll.Viewport.Height + 0.02,
+                    $"Image ends outside viewport: {end}, viewport {scroll.Viewport}");
+                Assert.AreEqual(width * editor.ZoomFactor, end.X - start.X, 0.02);
+                Assert.AreEqual(height * editor.ZoomFactor, end.Y - start.Y, 0.02);
+                if (width == 1400 && dpi == 96)
+                {
+                    var expandedViewport = scroll.Viewport;
+                    double repeatedFit = Math.Clamp(Math.Min(expandedViewport.Width / width, expandedViewport.Height / height) * 100, 10, 800);
+                    fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    Assert.AreEqual(repeatedFit, editor.ZoomPercentage, 0.000001);
+                    Assert.AreEqual(expected, editor.ZoomPercentage, 0.000001);
+                }
+            }
+
+            double beforeResize = editor.ZoomPercentage;
+            window.Width = 800;
+            window.Height = 600;
+            Layout();
+            Assert.AreEqual(beforeResize, editor.ZoomPercentage);
+            Size resizedViewport = scroll.Viewport;
+            fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.AreEqual(Math.Min(resizedViewport.Width / 300, resizedViewport.Height / 1200) * 100,
+                editor.ZoomPercentage, 0.000001);
+            editor.LoadDocument(new ImageEditorDocument("narrow.png",
+                new WriteableBitmap(new PixelSize(1400, 300), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul)));
+            window.Width = 380;
+            window.Height = 550;
+            editor.ZoomPercentage = 200;
+            Layout();
+            Assert.IsTrue(scroll.Viewport.Width < 640);
+            scroll.Offset = new Vector(400, 0);
+            Layout();
+            fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Layout();
+            var narrowStart = image.TranslatePoint(new Point(0, 0), scroll)!.Value;
+            var narrowEnd = image.TranslatePoint(new Point(1400, 300), scroll)!.Value;
+            Assert.IsTrue(narrowStart.X >= -0.02 && narrowStart.Y >= -0.02,
+                $"start {narrowStart}, end {narrowEnd}, viewport {scroll.Viewport}, extent {scroll.Extent}, offset {scroll.Offset}, zoom {editor.ZoomPercentage}");
+            Assert.IsTrue(narrowEnd.X <= scroll.Viewport.Width + 0.02 && narrowEnd.Y <= scroll.Viewport.Height + 0.02,
+                $"start {narrowStart}, end {narrowEnd}, viewport {scroll.Viewport}, extent {scroll.Extent}, offset {scroll.Offset}, zoom {editor.ZoomPercentage}");
+            foreach (double scaling in new[] { 1.25, 2.0 })
+            {
+                window.SetRenderScaling(scaling);
+                editor.ZoomPercentage = 200;
+                Layout();
+                var scaledViewport = scroll.Viewport;
+                fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.AreEqual(Math.Clamp(Math.Min(scaledViewport.Width / 1400, scaledViewport.Height / 300) * 100, 10, 800),
+                    editor.ZoomPercentage, 0.000001);
+                Layout();
+                var scaledStart = image.TranslatePoint(new Point(0, 0), scroll)!.Value;
+                var scaledEnd = image.TranslatePoint(new Point(1400, 300), scroll)!.Value;
+                Assert.IsTrue(scaledStart.X >= -0.02 && scaledStart.Y >= -0.02);
+                Assert.IsTrue(scaledEnd.X <= scroll.Viewport.Width + 0.02 && scaledEnd.Y <= scroll.Viewport.Height + 0.02);
+            }
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task FitHonorsLimitsAndIgnoresMissingOrUnrealizedViewport() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        var control = new ImageEditorControl { DataContext = editor };
+        var fit = control.FindControl<Button>("FitImageButton")!;
+        Assert.IsFalse(fit.IsEffectivelyEnabled);
+        fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Assert.AreEqual(100, editor.ZoomPercentage);
+        editor.LoadDocument(MakeDocument());
+        fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Assert.AreEqual(100, editor.ZoomPercentage, "An unrealized viewport must not change zoom.");
+
+        var window = new Window { Width = 700, Height = 600, Content = control };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.AreEqual(800, editor.ZoomPercentage);
+            editor.LoadDocument(new ImageEditorDocument("large.png",
+                new WriteableBitmap(new PixelSize(8192, 512), new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul)));
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var scroll = window.GetVisualDescendants().OfType<ScrollViewer>().Single(c => c.Name == "ImageScrollViewer");
+            Assert.IsTrue(scroll.Viewport.Width < 819.2);
+            fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.AreEqual(10, editor.ZoomPercentage);
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.IsTrue(editor.ActiveDocument!.DisplayImage.Size.Width * editor.ZoomFactor > scroll.Viewport.Width);
+
+            scroll.Height = 0;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.AreEqual(0, scroll.Bounds.Height, 0.001);
+            editor.ZoomPercentage = 175;
+            fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.AreEqual(175, editor.ZoomPercentage, "A zero-sized viewport must not change zoom.");
+            scroll.Height = double.NaN;
+            control.IsVisible = false;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.AreEqual(175, editor.ZoomPercentage, "A hidden viewport must not change zoom.");
+            control.IsVisible = true;
+            editor.ClearDocument();
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.IsFalse(fit.IsEffectivelyEnabled);
+            fit.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.AreEqual(175, editor.ZoomPercentage);
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task StandaloneDragCropSelectsWithoutEditing() =>
+        await _session.Dispatch(() =>
+    {
+        var host = new MainWindowViewModel();
+        var window = new MainWindow { DataContext = host, Width = 1500, Height = 900 };
+        try
+        {
+            host.Editor.LoadDocument(MakeDocument());
+            host.Editor.ZoomPercentage = 800;
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var toggle = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "DragCropMode");
+            var png = host.Editor.CapturePngSnapshot().Bytes;
+            toggle.IsChecked = true;
+            var start = surface.TranslatePoint(new Point(1.1, 0.1), window)!.Value;
+            var end = surface.TranslatePoint(new Point(2.9, 1.9), window)!.Value;
+            window.MouseDown(start, MouseButton.Left, RawInputModifiers.None);
+            window.MouseMove(end, RawInputModifiers.LeftMouseButton);
+            window.MouseUp(end, MouseButton.Left, RawInputModifiers.None);
+            Assert.AreEqual(new Rect(1, 0, 2, 2), host.Editor.CropPreview);
+            Assert.IsFalse(host.Editor.IsDirty);
+            CollectionAssert.AreEqual(png, host.Editor.CapturePngSnapshot().Bytes);
+            Click(window, "Apply crop");
+            Assert.AreEqual(new PixelSize(2, 2), host.Editor.ActiveDocument!.PixelSize);
+            host.Editor.Undo();
+            CollectionAssert.AreEqual(Pixels, ReadPixels(host.Editor.ActiveDocument!));
+        }
+        finally { host.Editor.Dispose(); window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task StandaloneFitPreservesCropPixelsDirtyAndRedo() =>
+        await _session.Dispatch(() =>
+    {
+        var host = new MainWindowViewModel();
+        var window = new MainWindow { DataContext = host, Width = 1500, Height = 900 };
+        try
+        {
+            window.Show();
+            window.UpdateLayout();
+            var fit = window.GetVisualDescendants().OfType<Button>().Single(c => c.Name == "FitImageButton");
+            Assert.IsFalse(fit.IsEffectivelyEnabled);
+            host.Editor.LoadDocument(MakeDocument());
+            host.Editor.FlipHorizontal();
+            host.Editor.Undo();
+            host.Editor.CropX = "1";
+            host.Editor.CropWidth = "1";
+            var original = host.Editor.ActiveDocument;
+            var state = host.Editor.CaptureDocumentState();
+            var png = host.Editor.CapturePngSnapshot().Bytes;
+            int changes = 0;
+            host.Editor.ContentChanging += (_, _) => changes++;
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+            Assert.IsTrue(fit.IsEffectivelyEnabled);
+            Click(window, "Fit (min 10%)");
+            Assert.AreEqual(800, host.Editor.ZoomPercentage);
+            Assert.AreSame(original, host.Editor.ActiveDocument);
+            Assert.IsTrue(host.Editor.IsCurrentDocumentState(state));
+            Assert.IsFalse(host.Editor.IsDirty);
+            Assert.IsFalse(host.Editor.UndoCommand.CanExecute(null));
+            Assert.IsTrue(host.Editor.RedoCommand.CanExecute(null));
+            Assert.AreEqual(0, changes);
+            Assert.AreEqual(new Rect(1, 0, 1, 2), host.Editor.CropPreview);
+            Assert.IsTrue(host.Editor.ShowCropPreview);
+            var overlay = window.GetVisualDescendants().OfType<CropPreviewOverlay>().Single();
+            Assert.IsTrue(overlay.IsVisible);
+            Assert.AreEqual(8, overlay.Zoom, 0.000001);
+            CollectionAssert.AreEqual(Pixels, ReadPixels(host.Editor.ActiveDocument!));
+            CollectionAssert.AreEqual(png, host.Editor.CapturePngSnapshot().Bytes);
+            host.Editor.Redo();
+            CollectionAssert.AreEqual(FlippedPixels, ReadPixels(host.Editor.ActiveDocument!));
+            var dirtyState = host.Editor.CaptureDocumentState();
+            int dirtyChanges = changes;
+            Click(window, "Fit (min 10%)");
+            Assert.IsTrue(host.Editor.IsCurrentDocumentState(dirtyState));
+            Assert.IsTrue(host.Editor.IsDirty);
+            Assert.AreEqual(dirtyChanges, changes);
+            host.Editor.Undo();
+            CollectionAssert.AreEqual(Pixels, ReadPixels(host.Editor.ActiveDocument!));
+        }
+        finally { host.Editor.Dispose(); window.Close(); }
     }, CancellationToken.None);
 
     [TestMethod]
