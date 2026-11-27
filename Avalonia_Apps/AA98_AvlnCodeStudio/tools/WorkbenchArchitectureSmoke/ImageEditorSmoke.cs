@@ -5,6 +5,7 @@ using AA98_AvlnCodeStudio.UI.Views;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -398,6 +399,68 @@ internal static partial class Program
                 await WaitUntilAsync(() => surface.Bounds.Size == new Size(64, 48) && background.IsVisible,
                     $"{dpi}-DPI image layout");
                 window.UpdateLayout();
+                CheckBox sampleMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "SampleColorMode");
+                CheckBox cropMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "DragCropMode");
+                TextBox hex = view.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "SampledColorHexInput");
+                Check(sampleMode.IsChecked != true && sampleMode.IsEffectivelyEnabled,
+                    "The image sampling mode was not available and initially off.");
+                cropMode.IsChecked = true;
+                sampleMode.IsChecked = true;
+                Check(cropMode.IsChecked != true, "Sampling did not disable drag crop.");
+                var state = editor.CaptureDocumentState();
+                byte[] beforeSampling = editor.CapturePngSnapshot().Bytes;
+                int changing = 0;
+                EventHandler contentChanging = (_, _) => changing++;
+                editor.ContentChanging += contentChanging;
+                void SampleAt(double x, double y, string expected)
+                {
+                    Point windowPoint = surface.TranslatePoint(new Point(x, y), window)
+                        ?? throw new InvalidOperationException("No image sampling coordinates.");
+                    IInputElement target = window.InputHitTest(windowPoint)
+                        ?? throw new InvalidOperationException("No image sampling input target.");
+                    Check(target is Visual visual && (ReferenceEquals(visual, surface)
+                        || visual.GetVisualAncestors().Contains(surface)), "Image sampling hit another control.");
+                    PointerPressedEventArgs press = new(target, new Pointer(7, PointerType.Mouse, true), window,
+                        windowPoint, 0,
+                        new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                        KeyModifiers.None, 1)
+                    {
+                        RoutedEvent = InputElement.PointerPressedEvent,
+                    };
+                    ((Interactive)target).RaiseEvent(press);
+                    Check(press.Handled && editor.SampledColorHex == expected && hex.Text == expected && hex.IsReadOnly,
+                        $"Image sampling did not report {expected} at {x},{y}.");
+                }
+                SampleAt(28.5, 4.5, "#80FF0000");
+                Point otherPoint = surface.TranslatePoint(new Point(44.5, 36.5), window)
+                    ?? throw new InvalidOperationException("No image sampling coordinates.");
+                IInputElement otherTarget = window.InputHitTest(otherPoint)
+                    ?? throw new InvalidOperationException("No image sampling input target.");
+                Check(otherTarget is Visual otherVisual && (ReferenceEquals(otherVisual, surface)
+                    || otherVisual.GetVisualAncestors().Contains(surface)), "Image sampling hit another control.");
+                foreach (var (kind, button) in new[]
+                {
+                    (PointerUpdateKind.RightButtonPressed, RawInputModifiers.RightMouseButton),
+                    (PointerUpdateKind.MiddleButtonPressed, RawInputModifiers.MiddleMouseButton),
+                })
+                {
+                    var press = new PointerPressedEventArgs(otherTarget, new Pointer(7, PointerType.Mouse, true), window,
+                        otherPoint, 0, new PointerPointProperties(RawInputModifiers.LeftMouseButton | button, kind),
+                        KeyModifiers.None, 1)
+                    {
+                        RoutedEvent = InputElement.PointerPressedEvent,
+                    };
+                    ((Interactive)otherTarget).RaiseEvent(press);
+                    Check(!press.Handled && editor.SampledColorHex == "#80FF0000",
+                        "A non-left press while left was held changed the sampled color.");
+                }
+                SampleAt(4.5, 4.5, "#00000000");
+                SampleAt(44.5, 36.5, "#FF00FF00");
+                editor.ContentChanging -= contentChanging;
+                Check(editor.IsCurrentDocumentState(state) && !editor.IsDirty && changing == 0
+                    && editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "Image sampling changed pixels, history or dirty state.");
+                sampleMode.IsChecked = false;
                 byte[] SnapshotPixel(Bitmap image, int x, int y)
                 {
                     using var copy = new WriteableBitmap(image.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);

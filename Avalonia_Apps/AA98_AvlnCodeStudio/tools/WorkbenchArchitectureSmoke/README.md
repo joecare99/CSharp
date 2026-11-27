@@ -55,6 +55,23 @@ The outline follows zoom and does not change PNG export, dirty state or redo.
 The reset checks the full image coordinates and hidden outline, unchanged PNG bytes,
 document and dirty state, undo/redo availability and `ContentChanging` notifications.
 It is a programmatic button invocation, not physical input.
+The color-sampling follow-up uses the actual AA98 image tab and a synthetic
+Avalonia pointer-pressed event routed to the window's hit-tested image target.
+At 96 and 192 bitmap DPI it samples half-alpha red, fully transparent and
+opaque green, checks the read-only hex field and exclusive crop mode, and
+verifies unchanged PNG, document state and `ContentChanging` count. It does
+not inject native pointer input, test clipboard access or claim physical or
+accessibility acceptance. On 2026-11-27 it passed `--image-only` on Windows
+and WSLg net10 with isolated roots. Both fresh builds reported 21 warnings
+(including NU1701 and existing C#/AVA warnings), none in the changed smoke or
+image-editor files. WSL initially lacked `svn`; the successful run used a
+privately downloaded and extracted SVN client and libraries, without changing
+the system installation.
+The subsequent button-filter follow-up additionally routes right and middle
+presses with left held to the hit-tested image and verifies that neither samples.
+The updated `--image-only` smoke passed on Windows and WSLg net10; each fresh
+build again reported 21 existing warnings and none in the changed smoke or
+image-editor files. The WSL run again used a private SVN extraction.
 On 2026-11-25 the reset follow-up passed `--image-only` on Windows/net10 and
 WSLg/net10 from separate isolated roots. Both builds required a build-only
 `Avalonia.AvaloniaEdit` 12.0.0 override: the configured 12.2.0 was unavailable
