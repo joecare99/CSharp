@@ -71,6 +71,45 @@ public sealed class WorkspaceFileChangeServiceTests
     }
 
     [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void Apply_RechecksEachFileDuringCommit(bool changeSecondFile)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string firstPath = Path.Combine(root, "First.cs");
+            string secondPath = Path.Combine(root, "Second.cs");
+            File.WriteAllText(firstPath, "first");
+            File.WriteAllText(secondPath, "second");
+            CommitInterleavingProvider provider = new();
+            WorkspaceFileChangeService service = new(provider);
+            WorkspaceFileChangeProposal proposal = service.Prepare(
+                root,
+                [
+                    WorkspaceFileChangeRequest.ReplaceExisting("First.cs", "first", "renamed first"),
+                    WorkspaceFileChangeRequest.ReplaceExisting("Second.cs", "second", "renamed second"),
+                ]);
+            provider.OnFirstCommitCheck = changeSecondFile
+                ? () => File.WriteAllText(secondPath, "external edit")
+                : null;
+            provider.BeginApply();
+
+            if (changeSecondFile)
+            {
+                Assert.ThrowsExactly<WorkspaceFileChangeConflictException>(() => service.Apply(proposal, confirmed: true));
+                Assert.AreEqual("first", File.ReadAllText(firstPath));
+                Assert.AreEqual("external edit", File.ReadAllText(secondPath));
+            }
+            else
+            {
+                service.Apply(proposal, confirmed: true);
+                Assert.AreEqual("renamed first", File.ReadAllText(firstPath));
+                Assert.AreEqual("renamed second", File.ReadAllText(secondPath));
+            }
+        });
+    }
+
+    [TestMethod]
     public void ApplyUndoRedo_PreservesDirtyOpenDocumentAndSavedSnapshots()
     {
         WithTemporaryDirectory(root =>
@@ -789,6 +828,26 @@ public sealed class WorkspaceFileChangeServiceTests
         public bool IsDocumentOpen(string fullPath) => _openPaths.Contains(Path.GetFullPath(fullPath));
 
         public void Open(string fullPath) => _openPaths.Add(Path.GetFullPath(fullPath));
+    }
+
+    private sealed class CommitInterleavingProvider : IWorkspaceOpenDocumentProvider
+    {
+        private int _applyChecks;
+        private bool _applying;
+
+        public Action? OnFirstCommitCheck { get; set; }
+
+        public void BeginApply() => _applying = true;
+
+        public bool IsDocumentOpen(string fullPath)
+        {
+            if (_applying && ++_applyChecks == 5)
+            {
+                OnFirstCommitCheck?.Invoke();
+            }
+
+            return false;
+        }
     }
 
     private sealed class FailingOpenDocumentChangeProvider(string openPath)
