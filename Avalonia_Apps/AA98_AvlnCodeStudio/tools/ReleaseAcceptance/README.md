@@ -62,6 +62,26 @@ wrapper to select another root; use distinct roots for concurrent builds.
 that do not consume that property. Explicit custom intermediate/extensions
 paths or projects that bypass `Microsoft.Common.props` require separate review.
 
+For the external `Workbench.Builder.Core` reference, its directory props append
+`Configuration` before MSBuild supplies the default. Solution restore and
+build can therefore evaluate different extensions paths. The isolation props
+give that specific project a configuration-independent base intermediate path;
+the SDK still separates configuration-specific intermediates. Normal builds
+without the isolation props are unaffected.
+
+To verify a fresh solution restore **and** build through this actual reference
+graph on Windows, choose a root that does not exist and run:
+
+```powershell
+$root = Join-Path (Get-Location) 'artifacts\verify-workbench-core-windows'
+.\tools\build\verify-workbench-core-isolation.ps1 -ArtifactRoot $root
+```
+
+The check requires both the restore and net10.0 build verification messages
+and a successful solution build. It leaves the root for inspection; remove
+only that root after use. The injected verification targets assert the same
+assets path and its existence rather than relying solely on evaluated paths.
+
 To check the evaluated intermediate and early extension paths across the actual
 solution graph, including referenced external projects, run:
 

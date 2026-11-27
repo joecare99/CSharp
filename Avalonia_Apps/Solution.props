@@ -18,5 +18,6 @@
 		<Company>JC-Soft</Company>
 		<Authors>Joe Care</Authors>
 		<Copyright>Copyright © JC-Soft 2026</Copyright>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 	</PropertyGroup>
 </Project>

@@ -4,4 +4,11 @@
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">$(HostArtifactRoot)\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(MSBuildProjectDirectory)\obj\**;$(MSBuildProjectDirectory)\bin\**</DefaultItemExcludes>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(HostArtifactRoot)' != '' and '$(MSBuildProjectExtensionsPath)' == ''">
+    <_IsolationWorkbenchCoreProject>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', '..', '..', '..', 'CSharpBible', 'Data', 'Workbench.Builder', 'Workbench.Builder.Core', 'Workbench.Builder.Core.csproj'))</_IsolationWorkbenchCoreProject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(_IsolationWorkbenchCoreProject)' != '' and '$(MSBuildProjectFullPath)' == '$(_IsolationWorkbenchCoreProject)'">
+    <!-- The external Directory.Build.props appends Configuration before its default is set. -->
+    <BaseIntermediateOutputPath>$(HostArtifactRoot)\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+  </PropertyGroup>
 </Project>
