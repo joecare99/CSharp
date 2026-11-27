@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AA98_AvlnCodeStudio.Base.Testing.Models;
@@ -471,7 +472,7 @@ public sealed class VSTestDiscoveryService
             lock (_gate)
             {
                 if (_completed is null || _completed.IsAborted || _completed.IsCanceled
-                    || _completed.Error is not null || _errors.Count > 0)
+                    || _completed.Error is not null)
                 {
                     throw new InvalidOperationException("VSTest case execution did not complete successfully. "
                         + _completed?.Error?.Message + " " + string.Join(Environment.NewLine, _errors));
@@ -488,7 +489,13 @@ public sealed class VSTestDiscoveryService
                     || !string.Equals(result.TestCase.Source, selectedCase.Source, StringComparison.Ordinal)
                     || !string.Equals(result.TestCase.FullyQualifiedName, selectedCase.FullyQualifiedName, StringComparison.Ordinal))
                 {
-                    throw new InvalidOperationException("VSTest returned a result for a different adapter case.");
+                    throw new InvalidOperationException("VSTest returned a result for a different adapter case. "
+                        + string.Join(Environment.NewLine, _errors));
+                }
+                if (_errors.Count > 1 || (_errors.Count == 1 && !IsXunitFailureMessage(_errors[0], result)))
+                {
+                    throw new InvalidOperationException("VSTest case execution did not complete successfully. "
+                        + string.Join(Environment.NewLine, _errors));
                 }
                 TestRunSummary summary = new() { TotalCount = 1 };
                 summary.Cases.Add(new TestCaseResult(
@@ -526,6 +533,24 @@ public sealed class VSTestDiscoveryService
                 }
                 return summary;
             }
+        }
+
+        private static bool IsXunitFailureMessage(string message, TestResult result)
+        {
+            // xUnit's VSTest adapter also logs its failed-case banner at error level.
+            if (result.Outcome != TestOutcome.Failed
+                || !string.Equals(result.TestCase.ExecutorUri?.ToString(), "executor://xunit/VsTestRunner3/netcore/", StringComparison.Ordinal)
+                || string.IsNullOrEmpty(result.DisplayName))
+            {
+                return false;
+            }
+
+            string suffix = "    " + result.DisplayName + " [FAIL]";
+            int separator = message.IndexOf("] ", StringComparison.Ordinal);
+            return separator >= 0
+                && string.Equals(message[(separator + 2)..], suffix, StringComparison.Ordinal)
+                && Regex.IsMatch(message[..separator], @"^\[xUnit\.net [0-9]{2,}:[0-9]{2}:[0-9]{2}\.[0-9]{2}$",
+                    RegexOptions.CultureInvariant);
         }
     }
 }

@@ -295,3 +295,62 @@ intermediate DLL path reproduced MSB3030 with the SDK 11 compiler.
 The diagnostic reads the adjacent `.deps.json` (up to 16 MiB), selecting only the target named by `runtimeTarget.name`. It recognizes a `Microsoft.Testing.Platform/<version>` library whose `runtime` contains `Microsoft.Testing.Platform.dll` either as a root-level name or as the final path component. It also reports a possible RID-specific asset when `runtimeTargets` contains that DLL with `assetType` set to `runtime` and a nonempty `rid`. It does not resolve RID compatibility or establish whether that asset is selected. A missing adapter then produces an explicit diagnostic; if adapters exist but VSTest discovers no cases, discovery adds a warning with the same guidance. An asset in dependency metadata does not establish a direct assembly reference or prove that a project is MTP-only: VSTest discovery is still attempted when adapters exist, and nonempty results are unchanged.
 
 Missing, unreadable, malformed, oversized or inconclusive metadata leaves existing VSTest behavior unchanged. Dependency-only references are not recognized; the diagnostic cannot detect every MTP-only project. No MTP execution is provided.
+
+### Selected-case workbench lifecycle
+
+The existing selected-case commands require a current inspection and selection,
+build the inspected project and then call the case execution service. The debug
+command also requires a saved C# editor and an available debugger; its attach
+callback adopts a session and the service owns the returned lease. Stopping a
+test debug session requests cancellation; disposal stops that session and clears
+it only if its ID is still active. The view model displays summary cases grouped
+by class/name, not by ID. The VSTest service separately rediscovers the selected
+ID, executor URI, source and fully qualified name, requires exactly one match and
+checks the returned case against that identity.
+
+The gated workbench tests exercise cancellation or selection/project changes
+during build, including returning to the original project, and forced command
+overlap during execution. The latter is a programmatic call despite a disabled
+command, not a second user-initiated run: it cancels the first token but does
+not start a second service call. Late result and exception tests cover unchanged,
+canceled, changed case, project and workspace contexts. Debug result tests also
+exercise the actual stop command with a fake attach and session lease. Current
+results and diagnostics survive stale completions; an unchanged run publishes
+its result and an unchanged error is reported. Cancellation is reported in
+the current context, whereas a changed project/workspace keeps its own status.
+No additional product defect was reproduced in these scenarios, so no product
+code was changed. The 26 selected-case run/debug rows passed on Windows
+net10.0 (SDK 11.0.100) and WSL net10.0 (SDK 10.0.404), each with a separate
+artifact root. The builds emitted existing NU1701, target-framework support,
+CS8600, CS8603, CA1416 and MSTEST0044 warnings outside the changed test code.
+
+These are deterministic view-model tests using substituted services, not an
+actual adapter, test host, debugger or rendered UI. They do not prove real
+adapter cancellation, debugger detachment, new-session interleavings, or
+arbitrary cross-thread/diagnostic-refresh races. The debug fixture uses a real
+Avalonia editor and needs a graphical display on Linux.
+
+### Selected-case xUnit error banners
+
+The run handler treats one exact xUnit v3 VSTest failure banner as a test
+failure only for a successfully completed run with exactly one failed result
+matching the selected case. Previously, any number of matching banners were
+discarded, including a possible second infrastructure error; a mismatched
+result also discarded the accompanying error text. Both issues were reproduced
+by focused handler tests. The handler now rejects multiple error events and
+preserves error messages on identity mismatch. Even identical duplicate banners
+are rejected, so a benign duplicate also becomes an infrastructure failure.
+A single infrastructure message identical to the expected banner is still
+indistinguishable from the actual banner using these events.
+
+The regression tests cover duplicate and differently timestamped banners,
+additional errors, similar but nonmatching messages, missing or unsuccessful
+completion, zero or multiple results, and a different result identity. Before
+the fix, three new rows failed. Afterward, `VSTestRunResultTests` and
+`FindTestMethodCandidatesAsync_XunitCandidateRunsParameterizedCases` passed
+47/47 on Windows net10.0 (SDK 11.0.100) and WSL Ubuntu net10.0 (SDK 10.0.404),
+with separate private artifact roots. The latter builds and runs a real xUnit
+v3 adapter, including a failing selected case. This does not cover every adapter
+version or event ordering. Whitespace format verification passed for both
+changed C# files. Existing build warnings included NU1701, unsupported net8/9
+dependency injection, CS8600, CS8603, CA1416 and MSTEST0044.
