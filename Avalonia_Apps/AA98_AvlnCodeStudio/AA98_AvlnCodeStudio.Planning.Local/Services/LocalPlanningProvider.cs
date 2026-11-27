@@ -4,6 +4,7 @@ using AA98_AvlnCodeStudio.Planning.Core.Services;
 using BaseReader = AA98_AvlnCodeStudio.Planning.Core.Services.MarkdownPlanningReader;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -413,7 +414,7 @@ public sealed class LocalPlanningProvider : IPlanningProvider
         PlanningItem item,
         string relativeSourcePath,
         string fullSourcePath,
-        out Diagnostic? diagnostic)
+        [NotNullWhen(true)] out Diagnostic? diagnostic)
     {
         diagnostic = null;
         if (!File.Exists(fullSourcePath)
