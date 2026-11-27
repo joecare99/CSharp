@@ -1249,6 +1249,9 @@ public sealed class ImageEditingTests
             Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
             void Down() => window.MouseDown(At(1.5, .5), MouseButton.Left, RawInputModifiers.None);
             void Up() => window.MouseUp(At(1.5, .5), MouseButton.Left, RawInputModifiers.None);
+            IPointer? pointer = null;
+            surface.AddHandler(InputElement.PointerPressedEvent, (_, e) => pointer = e.Pointer,
+                RoutingStrategies.Bubble, handledEventsToo: true);
             Down(); editor.ApplyManualColor(); Up();
             byte[] alphaPainted = (byte[])Pixels.Clone();
             Array.Copy(new byte[] { 0, 127, 128, 255 }, 0, alphaPainted, 4, 4);
@@ -1257,8 +1260,11 @@ public sealed class ImageEditingTests
             Assert.IsTrue(editor.IsCurrentDocumentState(state));
             brush.IsChecked = true;
             Down();
+            Assert.IsNotNull(pointer);
+            Assert.AreSame(surface, pointer.Captured);
             editor.ManualColorHex = "#FF0000FF";
             editor.ApplyManualColor();
+            Assert.IsNull(pointer.Captured);
             Up();
             Assert.IsTrue(editor.IsCurrentDocumentState(state));
             Assert.IsFalse(editor.IsDirty);
