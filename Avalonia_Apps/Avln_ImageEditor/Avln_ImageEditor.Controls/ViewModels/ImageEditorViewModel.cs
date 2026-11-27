@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using Avalonia;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avln_ImageEditor.Controls.Models;
@@ -24,6 +25,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     private ImageEditorDocument? _savedRevision;
     private ImageEditorDocument? _activeDocument;
     private bool _isCropSelectionInProgress;
+    internal bool IsCommittingBrushRevision { get; private set; }
 
     internal bool IsCropSelectionInProgress
     {
@@ -64,6 +66,47 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     private ImageEditorTool _selectedTool = ImageEditorTool.Select;
+
+    private Color? _sampledColor;
+
+    /// <summary>The last sampled straight RGBA color, or null until a pixel has been sampled.</summary>
+    public Color? SampledColor
+    {
+        get => _sampledColor;
+        private set
+        {
+            if (SetProperty(ref _sampledColor, value))
+            {
+                OnPropertyChanged(nameof(SampledColorSummary));
+                OnPropertyChanged(nameof(SampledColorHex));
+            }
+        }
+    }
+
+    public string SampledColorSummary => SampledColor is { } color
+        ? $"R {color.R}  G {color.G}  B {color.B}  A {color.A}" : "No color sampled";
+    public string SampledColorHex => SampledColor is { } color
+        ? $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}" : "";
+
+    /// <summary>Samples a pixel without changing the document or history; out-of-bounds coordinates do nothing.</summary>
+    public bool SamplePixel(int x, int y)
+    {
+        var source = ActiveDocument;
+        if (source is null || x < 0 || y < 0 || x >= source.PixelSize.Width || y >= source.PixelSize.Height)
+            return false;
+
+        using var pixels = new WriteableBitmap(source.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        using var buffer = pixels.Lock();
+        source.Bitmap.CopyPixels(buffer);
+        var pixel = new byte[4];
+        Marshal.Copy(IntPtr.Add(buffer.Address, checked(y * buffer.RowBytes + x * 4)), pixel, 0, 4);
+        int alpha = pixel[3];
+        static byte Straight(byte channel, int alpha) => alpha == 0 ? (byte)0 :
+            (byte)Math.Min(255, (Math.Min(channel, alpha) * 255 + alpha / 2) / alpha);
+        SampledColor = Color.FromArgb(pixel[3], Straight(pixel[2], alpha),
+            Straight(pixel[1], alpha), Straight(pixel[0], alpha));
+        return true;
+    }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ZoomFactor))]
@@ -353,16 +396,61 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         catch { transformed.Dispose(); throw; }
     }
 
-    private void CommitPixels(ImageEditorDocument source, WriteableBitmap pixels)
+    private void CommitPixels(ImageEditorDocument source, WriteableBitmap pixels, bool isBrush = false)
     {
         var next = new ImageEditorDocument(source.Name, pixels);
         ContentChanging?.Invoke(this, EventArgs.Empty);
+        if (!ReferenceEquals(source, _activeDocument))
+        {
+            next.Dispose();
+            return;
+        }
         for (int i = _history.Count - 1; i > _index; i--) { _history[i].Dispose(); _history.RemoveAt(i); }
         _history.Add(next);
         _index++;
         if (_history.Count > MaxHistoryStates) { _history[0].Dispose(); _history.RemoveAt(0); _index--; }
-        SetActiveDocument(next);
+        IsCommittingBrushRevision = isBrush;
+        try { SetActiveDocument(next); }
+        finally { IsCommittingBrushRevision = false; }
         RefreshState();
+    }
+
+    internal void PaintStroke(ImageEditorDocument source, Color color, HashSet<int> indices)
+    {
+        if (!ReferenceEquals(source, ActiveDocument) || color.A == 0 || indices.Count == 0) return;
+        int width = source.PixelSize.Width, height = source.PixelSize.Height;
+        var result = new WriteableBitmap(source.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        bool changed = false;
+        try
+        {
+            using (var buffer = result.Lock())
+            {
+                source.Bitmap.CopyPixels(buffer);
+                byte[] row = new byte[checked(width * 4)];
+                byte[] brush = { color.B, color.G, color.R, color.A };
+                for (int y = 0; y < height; y++)
+                {
+                    IntPtr address = IntPtr.Add(buffer.Address, y * buffer.RowBytes);
+                    Marshal.Copy(address, row, 0, row.Length);
+                    for (int x = 0; x < width; x++)
+                    {
+                        if (!indices.Contains(y * width + x)) continue;
+                        int offset = x * 4;
+                        for (int channel = 0; channel < 4; channel++)
+                        {
+                            int src = channel == 3 ? color.A : (brush[channel] * color.A + 127) / 255;
+                            byte value = (byte)Math.Min(255, src + (row[offset + channel] * (255 - color.A) + 127) / 255);
+                            changed |= row[offset + channel] != value;
+                            row[offset + channel] = value;
+                        }
+                    }
+                    Marshal.Copy(row, 0, address, row.Length);
+                }
+            }
+            if (!changed) { result.Dispose(); return; }
+            CommitPixels(source, result, isBrush: true);
+        }
+        catch { result.Dispose(); throw; }
     }
 
     private bool CanTransform() => HasDocument;

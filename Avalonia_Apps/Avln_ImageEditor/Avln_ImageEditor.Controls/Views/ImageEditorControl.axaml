@@ -23,9 +23,8 @@
 		  <Button Command="{Binding SelectToolCommand}"
 				  CommandParameter="{x:Static models:ImageEditorTool.Select}"
 				  Content="Select" />
-		  <Button Command="{Binding SelectToolCommand}"
-				  CommandParameter="{x:Static models:ImageEditorTool.Brush}"
-				  Content="Brush*" IsEnabled="False" />
+		  <CheckBox x:Name="BrushMode" VerticalAlignment="Center" Content="Brush (1 px)"
+					IsEnabled="{Binding HasDocument}" />
 		  <Button Command="{Binding SelectToolCommand}"
 				  CommandParameter="{x:Static models:ImageEditorTool.Eraser}"
 				  Content="Eraser*" IsEnabled="False" />
@@ -41,6 +40,20 @@
 		  <Button Command="{Binding ConvertToGrayscaleCommand}" Content="Convert to grayscale" />
 		  <Button Command="{Binding UndoCommand}" Content="Undo" />
 		  <Button Command="{Binding RedoCommand}" Content="Redo" />
+		  </StackPanel>
+		</ScrollViewer>
+
+		<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+		  <StackPanel Orientation="Horizontal" Spacing="8">
+			<CheckBox x:Name="SampleColorMode" VerticalAlignment="Center" Content="Sample image color"
+					  IsEnabled="{Binding HasDocument}" />
+			<TextBlock VerticalAlignment="Center" Foreground="#F2F2F2" Text="{Binding SampledColorSummary}" />
+			<StackPanel>
+			  <TextBlock Foreground="#F2F2F2" Text="Hex #AARRGGBB" />
+			  <TextBox x:Name="SampledColorHexInput" Width="140" IsReadOnly="True"
+					   AutomationProperties.Name="Sampled color hex, alpha red green blue"
+					   Text="{Binding SampledColorHex, Mode=OneWay}" />
+			</StackPanel>
 		  </StackPanel>
 		</ScrollViewer>
 
