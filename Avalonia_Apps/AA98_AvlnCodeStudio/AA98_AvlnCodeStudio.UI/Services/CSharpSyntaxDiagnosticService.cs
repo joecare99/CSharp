@@ -639,7 +639,8 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         string filePath,
         CSharpWorkspace workspace,
         CancellationToken cancellationToken = default,
-        bool allowExistingRuntimeDataContext = false)
+        bool allowExistingRuntimeDataContext = false,
+        IReadOnlyDictionary<string, string>? openDocumentTexts = null)
     {
         ArgumentNullException.ThrowIfNull(markup);
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
@@ -728,6 +729,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
                     "The selected project does not provide a C# compilation for semantic view-model analysis.");
             }
 
+            project = CreateProjectSnapshot(project, openDocumentTexts);
             if (BeforeAxamlCompilationAsync is { } beforeCompilation)
             {
                 await beforeCompilation(cancellationToken).ConfigureAwait(false);
@@ -1857,6 +1859,33 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
         }
 
         texts[WorkspacePathIdentity.Normalize(activeFilePath)] = activeSource;
+        return CreateProjectSnapshot(project, texts).Documents.FirstOrDefault(candidate =>
+            candidate.FilePath is not null
+            && WorkspacePathIdentity.AreEqual(candidate.FilePath, activeFilePath));
+    }
+
+    private static Microsoft.CodeAnalysis.Project CreateProjectSnapshot(
+        Microsoft.CodeAnalysis.Project project,
+        IReadOnlyDictionary<string, string>? openDocumentTexts)
+    {
+        if (openDocumentTexts is null || openDocumentTexts.Count == 0)
+        {
+            return project;
+        }
+
+        Dictionary<string, string> texts = new(WorkspacePathIdentity.Comparer);
+        foreach ((string path, string text) in openDocumentTexts)
+        {
+            string normalizedPath = WorkspacePathIdentity.Normalize(path);
+            if (texts.TryGetValue(normalizedPath, out string? previous)
+                && !string.Equals(previous, text, StringComparison.Ordinal))
+            {
+                throw new InvalidDataException($"More than one open editor buffer maps to '{normalizedPath}'.");
+            }
+
+            texts[normalizedPath] = text;
+        }
+
         Solution solution = project.Solution;
         HashSet<ProjectId> reachableProjectIds = new() { project.Id };
         Queue<ProjectId> projectsToVisit = new();
@@ -1917,9 +1946,7 @@ public sealed class CSharpSyntaxDiagnosticService : System.IDisposable
             }
         }
 
-        return solution.GetProject(project.Id)?.Documents.FirstOrDefault(candidate =>
-            candidate.FilePath is not null
-            && WorkspacePathIdentity.AreEqual(candidate.FilePath, activeFilePath));
+        return solution.GetProject(project.Id) ?? throw new InvalidOperationException("The project snapshot is unavailable.");
     }
 
     private static HostServices CreateHostServices()

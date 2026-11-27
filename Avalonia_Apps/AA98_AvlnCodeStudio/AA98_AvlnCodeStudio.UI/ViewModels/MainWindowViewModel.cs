@@ -3779,6 +3779,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
             CloseQuickInfo();
             QueueLanguageAnalysis();
+            if (_observedBackgroundEditors.TryGetValue(editor, out EditorTabViewModel? tab)
+                && string.Equals(Path.GetExtension(tab.FilePath), ".cs", StringComparison.OrdinalIgnoreCase)
+                && ActiveEditorTab.Designer is not null)
+            {
+                QueueAxamlMvvmBindingContext(Editor.Text, Editor.CurrentFilePath);
+            }
         }
 
         private void OnActiveTabPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -3878,6 +3884,11 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 tab.Editor.PropertyChanged -= OnBackgroundEditorPropertyChanged;
                 CloseQuickInfo();
                 QueueLanguageAnalysis();
+                if (string.Equals(Path.GetExtension(tab.FilePath), ".cs", StringComparison.OrdinalIgnoreCase)
+                    && ActiveEditorTab.Designer is not null)
+                {
+                    QueueAxamlMvvmBindingContext(Editor.Text, Editor.CurrentFilePath);
+                }
             }
 
             if (ReferenceEquals(_selectedPropertyTab, tab))
@@ -4093,7 +4104,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             EditorTabViewModel tab = ActiveEditorTab;
             if (tab.Designer is { } designer)
             {
-                _ = RefreshAxamlMvvmBindingContextAsync(tab, designer, markup, filePath, cancellation.Token);
+                IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
+                _ = RefreshAxamlMvvmBindingContextAsync(tab, designer, markup, filePath, openDocuments, cancellation.Token);
             }
         }
 
@@ -4102,6 +4114,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             AxamlDesignerViewModel designer,
             string? markup,
             string? filePath,
+            IReadOnlyDictionary<string, string> openDocuments,
             CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(markup)
@@ -4123,8 +4136,11 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                         filePath,
                         workspace,
                         cancellationToken,
-                        allowExistingRuntimeDataContext: true);
-                if (!ReferenceEquals(workspace, Workspace)
+                        allowExistingRuntimeDataContext: true,
+                        openDocumentTexts: openDocuments);
+                if (cancellationToken.IsCancellationRequested
+                    || !AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments())
+                    || !ReferenceEquals(workspace, Workspace)
                     || !ReferenceEquals(tab, ActiveEditorTab)
                     || tab.Editor.CurrentFilePath is not { } currentPath
                     || !WorkspacePathIdentity.AreEqual(filePath, currentPath)
