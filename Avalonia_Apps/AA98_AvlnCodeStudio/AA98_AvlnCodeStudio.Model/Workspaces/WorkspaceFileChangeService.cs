@@ -18,6 +18,8 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 /// If redo fails after recreating a generated file, rollback likewise preserves externally modified contents.
 /// These checks and the subsequent file and editor operations are not atomic against concurrent changes.
 /// Rollback is best effort and preserves externally changed content rather than overwriting it.
+/// Open editors are rechecked during synchronization; a later edit may prevent rollback and is reported
+/// as incomplete, leaving files and buffers potentially at different snapshots.
 /// </remarks>
 public sealed class WorkspaceFileChangeService
 {
@@ -219,23 +221,34 @@ public sealed class WorkspaceFileChangeService
                 appliedChanges.Add(change);
             }
 
-            if (_openDocumentProvider is IWorkspaceOpenDocumentChangeProvider provider)
+            foreach (WorkspaceFileChange change in appliedChanges)
             {
-                foreach (WorkspaceFileChange change in appliedChanges.Where(change =>
-                             _openDocumentProvider.IsDocumentOpen(change.TargetPath)))
+                if (!_openDocumentProvider.IsDocumentOpen(change.TargetPath))
                 {
-                    provider.ApplyChange(
-                        change.TargetPath,
-                        change.DocumentOriginalContent!,
-                        change.OriginalContent!,
-                        change.ProposedContent,
-                        change.ProposedContent);
-                    synchronizedDocuments.Add(change);
-                    if (!provider.CanApplyChange(change.TargetPath, change.ProposedContent, change.ProposedContent))
-                    {
-                        throw new IOException($"The open document '{change.RelativePath}' did not match the confirmed change after synchronization.");
-                    }
+                    if (change.RequiresOpenDocument) throw new WorkspaceOpenDocumentException(change.RelativePath);
+                    continue;
                 }
+
+                if (change.DocumentOriginalContent is null || _openDocumentProvider is not IWorkspaceOpenDocumentChangeProvider provider
+                    || !provider.CanApplyChange(change.TargetPath, change.DocumentOriginalContent, change.OriginalContent!))
+                    throw new WorkspaceOpenDocumentException(change.RelativePath);
+
+                synchronizedDocuments.Add(change);
+                provider.ApplyChange(
+                    change.TargetPath,
+                    change.DocumentOriginalContent,
+                    change.OriginalContent!,
+                    change.ProposedContent,
+                    change.ProposedContent);
+                if (!provider.CanApplyChange(change.TargetPath, change.ProposedContent, change.ProposedContent))
+                    throw new IOException($"The open document '{change.RelativePath}' did not match the confirmed change after synchronization.");
+            }
+
+            if (_openDocumentProvider is IWorkspaceOpenDocumentChangeProvider synchronizedProvider)
+            {
+                foreach (WorkspaceFileChange change in synchronizedDocuments)
+                    if (!synchronizedProvider.CanApplyChange(change.TargetPath, change.ProposedContent, change.ProposedContent))
+                        throw new WorkspaceOpenDocumentException(change.RelativePath);
             }
         }
         catch (Exception applyException)
@@ -247,12 +260,15 @@ public sealed class WorkspaceFileChangeService
                 {
                     try
                     {
-                        provider.ApplyChange(
-                            change.TargetPath,
-                            change.ProposedContent,
-                            change.ProposedContent,
-                            change.DocumentOriginalContent!,
-                            change.OriginalContent!);
+                        if (provider.CanApplyChange(change.TargetPath, change.ProposedContent, change.ProposedContent))
+                            provider.ApplyChange(
+                                change.TargetPath,
+                                change.ProposedContent,
+                                change.ProposedContent,
+                                change.DocumentOriginalContent!,
+                                change.OriginalContent!);
+                        else if (!provider.CanApplyChange(change.TargetPath, change.DocumentOriginalContent!, change.OriginalContent!))
+                            throw new IOException($"The open document '{change.RelativePath}' changed during rollback.");
                     }
                     catch (Exception rollbackException)
                     {
@@ -301,7 +317,7 @@ public sealed class WorkspaceFileChangeService
             if (rollbackErrors.Count > 0)
             {
                 rollbackErrors.Insert(0, applyException);
-                throw new AggregateException("Applying the workspace changes failed and one or more files could not be restored.", rollbackErrors);
+                throw new AggregateException("Applying the workspace changes failed and rollback was incomplete.", rollbackErrors);
             }
 
             throw;
@@ -458,15 +474,23 @@ public sealed class WorkspaceFileChangeService
                     string expectedSavedContent = undo ? change.ProposedContent : change.OriginalContent!;
                     string targetContent = undo ? change.DocumentOriginalContent! : change.ProposedContent;
                     string targetSavedContent = undo ? change.OriginalContent! : change.ProposedContent;
+                    synchronized.Add(change);
                     provider.ApplyChange(
                         change.TargetPath,
                         expectedContent,
                         expectedSavedContent,
                         targetContent,
                         targetSavedContent);
-                    synchronized.Add(change);
                     if (!provider.CanApplyChange(change.TargetPath, targetContent, targetSavedContent))
                         throw new IOException($"The open document '{change.RelativePath}' did not match the undo/redo snapshot.");
+                }
+
+                foreach (WorkspaceFileChange change in synchronized)
+                {
+                    string targetContent = undo ? change.DocumentOriginalContent! : change.ProposedContent;
+                    string targetSavedContent = undo ? change.OriginalContent! : change.ProposedContent;
+                    if (!provider.CanApplyChange(change.TargetPath, targetContent, targetSavedContent))
+                        throw new WorkspaceOpenDocumentException(change.RelativePath);
                 }
             }
 

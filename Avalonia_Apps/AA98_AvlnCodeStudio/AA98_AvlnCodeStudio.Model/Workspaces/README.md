@@ -276,6 +276,11 @@ The shared Workbench and standalone binding editor accepts its supported simple
 paths and options only; empty binding arguments such as `{Binding Name,, Mode=TwoWay}`
 or a trailing comma are ambiguous and cannot be edited there. Their original
 source is preserved instead of silently dropping the empty argument.
+When ViewModel analysis arrives after selection, the shared binding editor
+recognizes the existing bound member without discarding a pending mode or
+update-trigger edit. A different pending member name remains a draft rather
+than being replaced by the analyzed binding. This is shared by the standalone
+designer and Workbench; the preview remains inert and does not evaluate bindings.
 `RemoveSelectedControl` and
 `MoveSelectedControl` with direction `-1` or `1` operate on direct children of
 simple `StackPanel`, `WrapPanel`, `UniformGrid` and `DockPanel` elements. For a
