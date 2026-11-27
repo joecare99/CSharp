@@ -172,23 +172,32 @@ public partial class AxamlBindingRowViewModel : ObservableObject
     public void SetAvailableMembers(System.Collections.Generic.IEnumerable<string> members)
     {
         ArgumentNullException.ThrowIfNull(members);
-        AvailableMembers.Clear();
-        foreach (string member in members)
+        string[] updatedMembers = members.ToArray();
+        string? selectedMember = SelectedMember;
+        string memberSource = MemberSource;
+        if (!AvailableMembers.SequenceEqual(updatedMembers, StringComparer.Ordinal))
         {
-            AvailableMembers.Add(member);
+            AvailableMembers.Clear();
+            foreach (string member in updatedMembers)
+            {
+                AvailableMembers.Add(member);
+            }
         }
 
-        MemberSources.Clear();
-        if (AvailableMembers.Count > 0)
+        string[] sources = updatedMembers.Length > 0
+            ? [ExistingMemberSource, NewMemberSource]
+            : [NewMemberSource];
+        if (!MemberSources.SequenceEqual(sources, StringComparer.Ordinal))
         {
-            MemberSources.Add(ExistingMemberSource);
-            MemberSources.Add(NewMemberSource);
+            MemberSources.Clear();
+            foreach (string source in sources)
+            {
+                MemberSources.Add(source);
+            }
         }
-        else
-        {
-            MemberSources.Add(NewMemberSource);
-            MemberSource = NewMemberSource;
-        }
+
+        SelectedMember = updatedMembers.Contains(selectedMember, StringComparer.Ordinal) ? selectedMember : null;
+        MemberSource = sources.Contains(memberSource, StringComparer.Ordinal) ? memberSource : NewMemberSource;
 
         OnPropertyChanged(nameof(IsAvailable));
     }

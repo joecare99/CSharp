@@ -97,18 +97,13 @@ public partial class AxamlDesignerViewModel : ObservableObject
             AxamlBindingMode desiredBindingMode = parsedMemberName is null
                 ? property.DefaultBindingMode
                 : parsedBindingMode;
-            bool bindingModeChanged = row.BindingMode != desiredBindingMode;
             AxamlBindingUpdateSourceTrigger desiredUpdateSourceTrigger = parsedMemberName is null
                 ? AxamlBindingUpdateSourceTrigger.Default
                 : parsedUpdateSourceTrigger;
-            bool updateSourceTriggerChanged = row.UpdateSourceTrigger != desiredUpdateSourceTrigger;
             row.MemberName = memberName;
-            if (isNewRow || bindingChanged || bindingModeChanged)
+            if (isNewRow || bindingChanged)
             {
                 row.BindingMode = desiredBindingMode;
-            }
-            if (isNewRow || bindingChanged || updateSourceTriggerChanged)
-            {
                 row.UpdateSourceTrigger = desiredUpdateSourceTrigger;
             }
             row.Diagnostic = _bindingContextDiagnostic;
@@ -121,8 +116,20 @@ public partial class AxamlDesignerViewModel : ObservableObject
                 .Select(static entry => entry.Requirement.Name)
                 .Distinct(StringComparer.Ordinal)
                 .ToArray();
+            bool promoteBoundMember = !isNewRow && !bindingChanged
+                && row.IsCreatingNewMember
+                && string.Equals(row.NewMemberName, memberName, StringComparison.Ordinal)
+                && !row.AvailableMembers.Contains(memberName, StringComparer.Ordinal)
+                && compatibleMembers.Contains(memberName, StringComparer.Ordinal);
+            bool restoreBoundMemberName = row.IsSelectingExistingMember
+                && string.Equals(row.SelectedMember, memberName, StringComparison.Ordinal)
+                && !compatibleMembers.Contains(memberName, StringComparer.Ordinal);
             row.SetAvailableMembers(compatibleMembers);
-            if (isNewRow || bindingChanged)
+            if (restoreBoundMemberName)
+            {
+                row.NewMemberName = memberName;
+            }
+            if (isNewRow || bindingChanged || promoteBoundMember)
             {
                 if (compatibleMembers.Contains(memberName, StringComparer.Ordinal))
                 {
