@@ -1,7 +1,10 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using AA98_AvlnCodeStudio.Base.Versioning.Services;
 
 namespace AA98_AvlnCodeStudio.Versioning.Git.Services;
 
@@ -47,7 +50,14 @@ public sealed class GitCommandRunner : IGitCommandRunner
             },
         };
 
-        process.Start();
+        try
+        {
+            process.Start();
+        }
+        catch (Win32Exception exception) when (exception.NativeErrorCode == 2 && Directory.Exists(workingDirectory))
+        {
+            throw new VersionControlClientNotFoundException(_executablePath, exception);
+        }
         Task<string> standardOutputTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
         Task<string> standardErrorTask = process.StandardError.ReadToEndAsync(cancellationToken);
         try
