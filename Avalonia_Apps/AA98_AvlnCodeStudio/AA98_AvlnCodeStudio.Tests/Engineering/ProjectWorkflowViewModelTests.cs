@@ -526,6 +526,105 @@ public sealed class ProjectWorkflowViewModelTests
     }
 
     [TestMethod]
+    [DataRow("cancel")]
+    [DataRow("project")]
+    public async Task DiscoverAdapterTests_ForcedOverlapCannotPublishStaleResults(string scenario)
+    {
+        using Fixture fixture = await Fixture.CreateAsync(useOutputDirectory: true);
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        TaskCompletionSource<CancellationToken> entered = NewCompletion<CancellationToken>();
+        TaskCompletionSource<TestDiscoveryResult> completed = NewCompletion<TestDiscoveryResult>();
+        fixture.Discovery.DiscoverAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                entered.TrySetResult(call.Arg<CancellationToken>());
+                return completed.Task;
+            });
+
+        Task operation = vm.DiscoverAdapterTestsCommand.ExecuteAsync(null);
+        CancellationToken token = await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.IsFalse(vm.DiscoverAdapterTestsCommand.CanExecute(null));
+        await vm.DiscoverAdapterTestsCommand.ExecuteAsync(null);
+        Assert.IsTrue(vm.ProjectWorkflowBusy);
+        Assert.IsTrue(token.IsCancellationRequested);
+        if (scenario == "cancel")
+        {
+            vm.CancelProjectWorkflowCommand.Execute(null);
+        }
+        else
+        {
+            vm.SelectedWorkflowProject = vm.Workspace.Projects[0];
+        }
+
+        Assert.IsTrue(token.IsCancellationRequested);
+        DiscoveredTestCase current = new("current", "executor", "source", "Current", "Current", null, null);
+        vm.DiscoveredTestCases.Add(current);
+        vm.SelectedDiscoveredTestCase = current;
+        vm.Editor.StatusText = "Current editor status";
+        vm.Editor.NotificationText = "Current notification";
+        vm.ProjectTestResults.Add(new TestResultNode("Current result", []));
+        string status = vm.ProjectWorkflowStatus;
+        completed.SetResult(new TestDiscoveryResult(
+            [new DiscoveredTestCase("old", "executor", "source", "Old", "Old", null, null)], ["Old warning"]));
+        await operation.WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.AreSame(current, vm.DiscoveredTestCases.Single());
+        Assert.AreSame(current, vm.SelectedDiscoveredTestCase);
+        Assert.AreEqual(scenario == "cancel" ? "Project action canceled." : status, vm.ProjectWorkflowStatus);
+        Assert.AreEqual(scenario == "cancel" ? "Project action canceled." : "Current editor status", vm.Editor.StatusText);
+        Assert.AreEqual("Current notification", vm.Editor.NotificationText);
+        Assert.AreEqual("Current result", vm.ProjectTestResults.Single().Label);
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
+        _ = fixture.Discovery.Received(1).DiscoverAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+    }
+
+    [TestMethod]
+    [DataRow("cancel")]
+    [DataRow("project")]
+    [DataRow("project-return")]
+    public async Task DiscoverAdapterTests_InterruptedBuildDoesNotStartDiscovery(string scenario)
+    {
+        using Fixture fixture = await Fixture.CreateAsync(useOutputDirectory: true);
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        TaskCompletionSource<CancellationToken> entered = NewCompletion<CancellationToken>();
+        TaskCompletionSource<bool> completed = NewCompletion<bool>();
+        fixture.RuntimeBuilder.BuildAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                entered.TrySetResult(call.Arg<CancellationToken>());
+                return completed.Task;
+            });
+
+        Task operation = vm.DiscoverAdapterTestsCommand.ExecuteAsync(null);
+        CancellationToken token = await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        if (scenario == "cancel")
+        {
+            vm.CancelProjectWorkflowCommand.Execute(null);
+        }
+        else
+        {
+            var originalProject = vm.SelectedWorkflowProject;
+            vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
+            if (scenario == "project-return")
+            {
+                vm.SelectedWorkflowProject = originalProject;
+            }
+        }
+        Assert.IsTrue(token.IsCancellationRequested);
+        string status = vm.ProjectWorkflowStatus;
+        completed.SetResult(true);
+        await operation.WaitAsync(TimeSpan.FromSeconds(10));
+
+        _ = fixture.Discovery.DidNotReceive().DiscoverAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+        Assert.AreEqual(scenario == "cancel" ? "Project action canceled." : status, vm.ProjectWorkflowStatus);
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
+    }
+
+    [TestMethod]
     [DataRow("unchanged", false)]
     [DataRow("unchanged", true)]
     [DataRow("cancel", false)]
