@@ -507,7 +507,7 @@ public class AppStartupCompositionTests
         }
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(AIProviderPreset.Custom, "", false)]
     [DataRow(AIProviderPreset.Ollama, "", true)]
     [DataRow(AIProviderPreset.Custom, "http://localhost:11434/v1/chat/completions", true)]
