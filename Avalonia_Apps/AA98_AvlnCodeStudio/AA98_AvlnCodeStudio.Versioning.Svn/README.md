@@ -57,3 +57,26 @@ reset. Four of six boundary cases failed before the change; the expanded
 selection passed 18/18 on Windows and WSL/net10 with separate fresh artifact
 roots, and whitespace verification passed. These tests do not establish general
 thread safety.
+
+## SVN update lifecycle
+
+The update still requires explicit approval. It reserves the update command
+while approval and the update are pending. A newer workspace open invalidates
+the old operation's UI publication, including when both workspaces share a
+root. Ownership and cancellation are rechecked after asynchronous work and
+between notifying property changes. A running update may still modify its
+original working copy; changing workspaces does not undo or necessarily stop it.
+
+Controlled update and status services reproduced stale success, errors and
+reentrant property notifications after a workspace change, as well as duplicate
+approval. The regression selection also covers cancellation, normal refresh,
+approval refusal, empty output, and preservation of a newer missing-client
+warning. These are focused view-model tests, not a real SVN update, visual
+desktop test, or a general thread-safety guarantee.
+
+The expanded VCS selection passed 39/39 on Windows SDK 11.0.100 and WSL Linux
+SDK 10.0.404 with separate artifact roots; Linux used empty restore fallback
+folders. Whitespace verification passed for the two changed C# files. Existing
+NU1701, target-framework support, nullable, CA1416 and MSTEST0044 warnings
+remain elsewhere in the graph; no new warnings were observed in the changed
+files.
