@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Input;
@@ -1168,14 +1169,15 @@ public sealed class ImageEditingTests
         await _session.Dispatch(() =>
     {
         using var editor = new ImageEditorViewModel();
+        Assert.AreEqual("#FF000000", editor.ManualColorHex);
+        Assert.IsNull(editor.SampledColor);
+        editor.ApplyManualColor();
+        Assert.AreEqual("#FF000000", editor.SampledColorHex);
         editor.LoadDocument(MakeDocument());
         editor.FlipHorizontal(); editor.Undo();
         var state = editor.CaptureDocumentState();
         int changes = 0;
         editor.ContentChanging += (_, _) => changes++;
-        Assert.AreEqual("#FF000000", editor.ManualColorHex);
-        Assert.IsNull(editor.SampledColor);
-        editor.ApplyManualColor();
         Assert.AreEqual("#FF000000", editor.SampledColorHex);
         foreach (string invalid in new[] { "", "#FFF", "FF112233", "#FF11223G", "#FF112233 ", " #FF11223", "#FF11223\n" })
         {
@@ -1239,12 +1241,21 @@ public sealed class ImageEditingTests
             Assert.AreEqual("#80FF0000", input.Text);
             input.Text = "invalid";
             Assert.AreNotEqual("", error.Text);
+            Assert.AreEqual(error.Text, AutomationProperties.GetHelpText(input));
             button.Command!.Execute(null);
             Assert.AreEqual("#80FF0000", editor.SampledColorHex);
             brush.IsChecked = true;
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
             Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
             void Down() => window.MouseDown(At(1.5, .5), MouseButton.Left, RawInputModifiers.None);
             void Up() => window.MouseUp(At(1.5, .5), MouseButton.Left, RawInputModifiers.None);
+            Down(); editor.ApplyManualColor(); Up();
+            byte[] alphaPainted = (byte[])Pixels.Clone();
+            Array.Copy(new byte[] { 0, 127, 128, 255 }, 0, alphaPainted, 4, 4);
+            CollectionAssert.AreEqual(alphaPainted, ReadPixels(editor.ActiveDocument!));
+            editor.Undo();
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            brush.IsChecked = true;
             Down();
             editor.ManualColorHex = "#FF0000FF";
             editor.ApplyManualColor();
@@ -1253,6 +1264,7 @@ public sealed class ImageEditingTests
             Assert.IsFalse(editor.IsDirty);
             Assert.IsTrue(editor.RedoCommand.CanExecute(null));
             CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!));
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
             Down(); Up();
             byte[] painted = (byte[])Pixels.Clone();
             Array.Copy(new byte[] { 255, 0, 0, 255 }, 0, painted, 4, 4);
@@ -1264,13 +1276,17 @@ public sealed class ImageEditingTests
             CollectionAssert.AreEqual(painted, ReadPixels(editor.ActiveDocument!));
             editor.Undo();
             editor.ManualColorHex = "#00123456"; editor.ApplyManualColor();
+            brush.IsChecked = true;
             Down(); Up();
             Assert.IsTrue(editor.RedoCommand.CanExecute(null));
             CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!));
             control.DataContext = null;
+            input.Text = "#FFFFFFFF";
             input.Focus();
             window.KeyPress(Key.Enter, RawInputModifiers.None, PhysicalKey.Enter, null);
             Assert.AreEqual("#00123456", editor.SampledColorHex);
+            control.DataContext = editor;
+            Assert.AreEqual("#00123456", input.Text);
         }
         finally { window.Close(); }
     }, CancellationToken.None);
