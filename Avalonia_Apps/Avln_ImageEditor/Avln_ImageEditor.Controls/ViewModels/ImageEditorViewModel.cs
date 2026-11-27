@@ -24,6 +24,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     private object _documentIdentity = new();
     private ImageEditorDocument? _savedRevision;
     private ImageEditorDocument? _activeDocument;
+    private long _revisionSequence;
     private bool _isCropSelectionInProgress;
     internal bool IsCommittingBrushRevision { get; private set; }
 
@@ -54,6 +55,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     private void SetActiveDocument(ImageEditorDocument? value)
     {
         var oldSize = _activeDocument?.PixelSize;
+        if (!ReferenceEquals(value, _activeDocument)) _revisionSequence++;
         if (SetProperty(ref _activeDocument, value, nameof(ActiveDocument)))
         {
             OnPropertyChanged(nameof(HasDocument));
@@ -247,9 +249,9 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
                     Marshal.Copy(row, 0, IntPtr.Add(output.Address, rowIndex * output.RowBytes), row.Length);
                 }
             }
-            CommitPixels(source, cropped);
         }
         catch { cropped.Dispose(); throw; }
+        CommitPixels(source, cropped);
     }
 
     public bool HasDocument => ActiveDocument is not null;
@@ -432,30 +434,102 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
             using (var buffer = transformed.Lock())
                 for (int y = 0; y < targetHeight; y++)
                     Marshal.Copy(after, y * targetWidth * 4, IntPtr.Add(buffer.Address, y * buffer.RowBytes), targetWidth * 4);
-            CommitPixels(source, transformed);
         }
         catch { transformed.Dispose(); throw; }
+        CommitPixels(source, transformed);
     }
 
-    private void CommitPixels(ImageEditorDocument source, WriteableBitmap pixels, bool isBrush = false)
+    private void CommitPixels(ImageEditorDocument source, WriteableBitmap pixels, bool isBrush = false, Func<bool>? stillValid = null)
     {
-        var next = new ImageEditorDocument(source.Name, pixels);
-        ContentChanging?.Invoke(this, EventArgs.Empty);
-        if (!ReferenceEquals(source, _activeDocument))
+        ImageEditorDocument? next = null;
+        bool ownedByHistory = false;
+        try
         {
-            next.Dispose();
-            return;
+            next = new ImageEditorDocument(source.Name, pixels);
+            ContentChanging?.Invoke(this, EventArgs.Empty);
+            if (!ReferenceEquals(source, _activeDocument) || (stillValid is not null && !stillValid()))
+                return;
+
+            for (int i = _history.Count - 1; i > _index; i--) { _history[i].Dispose(); _history.RemoveAt(i); }
+            _history.Add(next);
+            ownedByHistory = true;
+            _index++;
+            if (_history.Count > MaxHistoryStates) { _history[0].Dispose(); _history.RemoveAt(0); _index--; }
+            IsCommittingBrushRevision = isBrush;
+            try { SetActiveDocument(next); }
+            finally { IsCommittingBrushRevision = false; }
+            RefreshState();
         }
-        for (int i = _history.Count - 1; i > _index; i--) { _history[i].Dispose(); _history.RemoveAt(i); }
-        _history.Add(next);
-        _index++;
-        if (_history.Count > MaxHistoryStates) { _history[0].Dispose(); _history.RemoveAt(0); _index--; }
-        IsCommittingBrushRevision = isBrush;
-        try { SetActiveDocument(next); }
-        finally { IsCommittingBrushRevision = false; }
-        RefreshState();
+        finally
+        {
+            if (!ownedByHistory)
+            {
+                if (next is null) pixels.Dispose();
+                else next.Dispose();
+            }
+        }
     }
 
+    internal void FloodFill(ImageEditorDocument source, Color color, int x, int y)
+    {
+        if (!ReferenceEquals(source, ActiveDocument) || SelectedTool != ImageEditorTool.Fill ||
+            SampledColor != color || IsCropSelectionInProgress ||
+            x < 0 || y < 0 || x >= source.PixelSize.Width || y >= source.PixelSize.Height) return;
+
+        int width = source.PixelSize.Width, height = source.PixelSize.Height;
+        int count = checked(width * height);
+        long sequence = _revisionSequence;
+        var state = CaptureDocumentState();
+        using var pixels = new WriteableBitmap(source.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        byte[] data = new byte[checked(count * 4)];
+        using (var buffer = pixels.Lock())
+        {
+            source.Bitmap.CopyPixels(buffer);
+            for (int row = 0; row < height; row++)
+                Marshal.Copy(IntPtr.Add(buffer.Address, row * buffer.RowBytes), data, row * width * 4, width * 4);
+        }
+
+        int seed = y * width + x;
+        int offset = seed * 4;
+        byte b = data[offset], g = data[offset + 1], r = data[offset + 2], a = data[offset + 3];
+        byte newB = (byte)((color.B * color.A + 127) / 255);
+        byte newG = (byte)((color.G * color.A + 127) / 255);
+        byte newR = (byte)((color.R * color.A + 127) / 255);
+        byte newA = color.A;
+        if (b == newB && g == newG && r == newR && a == newA) return;
+
+        int[] queue = new int[count];
+        int head = 0, tail = 0;
+        void Enqueue(int index)
+        {
+            int i = index * 4;
+            if (data[i] != b || data[i + 1] != g || data[i + 2] != r || data[i + 3] != a) return;
+            data[i] = newB; data[i + 1] = newG; data[i + 2] = newR; data[i + 3] = newA;
+            queue[tail++] = index;
+        }
+        Enqueue(seed);
+        while (head < tail)
+        {
+            int index = queue[head++];
+            int column = index % width;
+            if (column > 0) Enqueue(index - 1);
+            if (column + 1 < width) Enqueue(index + 1);
+            if (index >= width) Enqueue(index - width);
+            if (index < count - width) Enqueue(index + width);
+        }
+
+        var result = new WriteableBitmap(source.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        try
+        {
+            using (var buffer = result.Lock())
+                for (int row = 0; row < height; row++)
+                    Marshal.Copy(data, row * width * 4, IntPtr.Add(buffer.Address, row * buffer.RowBytes), width * 4);
+        }
+        catch { result.Dispose(); throw; }
+        CommitPixels(source, result, isBrush: true, stillValid: () =>
+            _revisionSequence == sequence && IsCurrentDocumentState(state) &&
+            SelectedTool == ImageEditorTool.Fill && SampledColor == color && !IsCropSelectionInProgress);
+    }
     internal void PaintStroke(ImageEditorDocument source, Color color, HashSet<int> indices, bool erase = false)
     {
         if (!ReferenceEquals(source, ActiveDocument) || (!erase && color.A == 0) || indices.Count == 0) return;
@@ -489,9 +563,9 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
                 }
             }
             if (!changed) { result.Dispose(); return; }
-            CommitPixels(source, result, isBrush: true);
         }
         catch { result.Dispose(); throw; }
+        CommitPixels(source, result, isBrush: true);
     }
 
     private bool CanTransform() => HasDocument;
@@ -503,7 +577,11 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     public void Undo()
     {
         if (!CanUndo()) return;
+        long sequence = _revisionSequence;
+        int index = _index;
+        object identity = _documentIdentity;
         ContentChanging?.Invoke(this, EventArgs.Empty);
+        if (sequence != _revisionSequence || index != _index || !ReferenceEquals(identity, _documentIdentity) || !CanUndo()) return;
         SetActiveDocument(_history[--_index]);
         RefreshState();
     }
@@ -512,7 +590,11 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     public void Redo()
     {
         if (!CanRedo()) return;
+        long sequence = _revisionSequence;
+        int index = _index;
+        object identity = _documentIdentity;
         ContentChanging?.Invoke(this, EventArgs.Empty);
+        if (sequence != _revisionSequence || index != _index || !ReferenceEquals(identity, _documentIdentity) || !CanRedo()) return;
         SetActiveDocument(_history[++_index]);
         RefreshState();
     }
