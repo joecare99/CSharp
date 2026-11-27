@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AA98_AvlnCodeStudio.Editor.Components;
 using AA98_AvlnCodeStudio.Editor.Services;
+using AA98_AvlnCodeStudio.Base.Versioning.Services;
 using AA98_AvlnCodeStudio.Model.Documents;
 using AA98_AvlnCodeStudio.UI;
 using AA98_AvlnCodeStudio.UI.Components;
@@ -45,6 +46,7 @@ public sealed class ProjectExplorerPreviewTests
             ServiceCollection registrations = new();
             App.ConfigureServices(registrations, static () => null, Path.Combine(root, "config"));
             registrations.AddSingleton<IAvaloniaEditorComponentFactory>(new TestEditorComponentFactory());
+            registrations.AddSingleton<IVersionControlService, NullVersionControlService>();
             using ServiceProvider services = registrations.BuildServiceProvider();
             MainWindowViewModel host = services.GetRequiredService<MainWindowViewModel>();
             ProjectExplorerViewModel explorer = host.ProjectExplorer!;

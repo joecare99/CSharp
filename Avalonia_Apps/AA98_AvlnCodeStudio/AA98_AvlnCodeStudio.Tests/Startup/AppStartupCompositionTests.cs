@@ -124,7 +124,7 @@ public class AppStartupCompositionTests
     /// storage identity distinct from RnzTrauer.
     /// </summary>
     [TestMethod]
-    public void CreateServiceProvider_RegistersIsolatedConfigUi()
+    public async Task CreateServiceProvider_RegistersIsolatedConfigUi()
     {
         string configRoot = Path.Combine(Path.GetTempPath(), "CodeStudioLayeredConfig", Guid.NewGuid().ToString("N"));
         try
@@ -168,7 +168,9 @@ public class AppStartupCompositionTests
                 new ConfigPropertyKey("Workbench", nameof(CodeStudioSettings.AIModelId)),
                 out _));
             Assert.AreEqual(legacySettings, File.ReadAllText(legacyPath));
-            Assert.IsNotNull(serviceProvider.GetRequiredService<ConfigUiViewModel>());
+            ConfigUiViewModel configUi = serviceProvider.GetRequiredService<ConfigUiViewModel>();
+            await WaitForConfigUiLoadAsync(configUi);
+            Assert.IsTrue(configUi.IsSelectedSectionReady, configUi.ErrorMessage);
         }
         finally
         {
@@ -176,6 +178,32 @@ public class AppStartupCompositionTests
             {
                 Directory.Delete(configRoot, recursive: true);
             }
+        }
+    }
+
+    private static async Task WaitForConfigUiLoadAsync(ConfigUiViewModel configUi)
+    {
+        TaskCompletionSource<bool> completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        System.ComponentModel.PropertyChangedEventHandler handler = (_, args) =>
+        {
+            if (args.PropertyName == nameof(ConfigUiViewModel.IsBusy) && !configUi.IsBusy)
+            {
+                completion.TrySetResult(true);
+            }
+        };
+        configUi.PropertyChanged += handler;
+        try
+        {
+            if (!configUi.IsBusy)
+            {
+                completion.TrySetResult(true);
+            }
+
+            await completion.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        }
+        finally
+        {
+            configUi.PropertyChanged -= handler;
         }
     }
 
@@ -864,9 +892,12 @@ public class AppStartupCompositionTests
                 new ConfigPropertyKey("Workbench", nameof(CodeStudioSettings.AIProfileIFMEndpoint)),
                 new ConfigLayerValue("http://invalid.example/chat")));
             ConfigUiViewModel config = services.GetRequiredService<ConfigUiViewModel>();
-            await config.LoadCommand.ExecuteAsync(null);
+            await WaitForConfigUiLoadAsync(config);
+            Assert.IsTrue(config.IsSelectedSectionReady, config.ErrorMessage);
+            Assert.AreEqual("http://invalid.example/chat",
+                config.PropertyEditor.Items.Single(item => item.PropertyItem.Name == nameof(CodeStudioSettings.AIProfileIFMEndpoint)).PropertyItem.Value);
             using AIProviderDraftViewModel preview = new(config, services.GetRequiredService<CodeStudioSettings>());
-            string version = (await store.LoadAsync()).StorageVersion;
+            string? version = (await store.LoadAsync()).StorageVersion;
             preview.ProfileIssues.Single().InspectCommand.Execute(null);
             Assert.AreEqual(AIProfileInspection.IFM, preview.InspectedProfile);
             Assert.IsFalse(config.HasUnsavedChanges);

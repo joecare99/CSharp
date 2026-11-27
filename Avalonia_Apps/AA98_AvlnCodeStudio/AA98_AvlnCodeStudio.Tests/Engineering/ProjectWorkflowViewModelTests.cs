@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using AppKomponentBaseLib.Diagnostics;
 using AA98_AvlnCodeStudio.Base.Building.Models;
 using AA98_AvlnCodeStudio.Base.Building.Services;
@@ -35,6 +36,13 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 [TestClass]
 public sealed class ProjectWorkflowViewModelTests
 {
+    // Other tests may already own the process-wide dispatcher; run each set of UI rows in a fresh host.
+    private const string IsolatedDebugProcessVariable = "AA98_WORKFLOW_DEBUG_ISOLATED";
+    private static readonly Lazy<Task> IsolatedLateError = new(() =>
+        RunDebugTestsIsolatedAsync(nameof(DebugDiscoveredTestCase_LateErrorRespectsWorkbenchContext)));
+    private static readonly Lazy<Task> IsolatedLateResult = new(() =>
+        RunDebugTestsIsolatedAsync(nameof(DebugDiscoveredTestCase_LateResultRespectsSessionAndContext)));
+
     private static readonly Lazy<Task> DebugUiReady = new(() =>
     {
         TaskCompletionSource<bool> ready = NewCompletion<bool>();
@@ -59,6 +67,74 @@ public sealed class ProjectWorkflowViewModelTests
         thread.Start();
         return ready.Task;
     });
+
+    private static async Task RunDebugTestsIsolatedAsync(string methodName)
+    {
+        string resultsDirectory = Path.Combine(AppContext.BaseDirectory, $"workflow-debug-results-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(resultsDirectory);
+        try
+        {
+            ProcessStartInfo start = new("dotnet")
+            {
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+            };
+            start.Environment[IsolatedDebugProcessVariable] = "1";
+            start.ArgumentList.Add("vstest");
+            start.ArgumentList.Add(typeof(ProjectWorkflowViewModelTests).Assembly.Location);
+            start.ArgumentList.Add($"--TestCaseFilter:FullyQualifiedName={typeof(ProjectWorkflowViewModelTests).FullName}.{methodName}");
+            start.ArgumentList.Add("--logger:console;verbosity=normal");
+            start.ArgumentList.Add("--logger:trx;LogFileName=result.trx");
+            start.ArgumentList.Add($"--ResultsDirectory:{resultsDirectory}");
+            using Process process = Process.Start(start)!;
+            Task<string> output = process.StandardOutput.ReadToEndAsync();
+            Task<string> error = process.StandardError.ReadToEndAsync();
+            using CancellationTokenSource timeout = new(TimeSpan.FromMinutes(2));
+            try
+            {
+                await process.WaitForExitAsync(timeout.Token);
+            }
+            catch (OperationCanceledException) when (timeout.IsCancellationRequested)
+            {
+                try
+                {
+                    process.Kill(entireProcessTree: true);
+                }
+                catch (InvalidOperationException) when (process.HasExited)
+                {
+                }
+                await process.WaitForExitAsync();
+                Assert.Fail($"Timed out running {methodName} in the isolated test host.");
+            }
+            string result = await output + Environment.NewLine + await error;
+            Assert.AreEqual(0, process.ExitCode, result);
+            string trxPath = Path.Combine(resultsDirectory, "result.trx");
+            Assert.IsTrue(File.Exists(trxPath), result);
+            var results = XDocument.Load(trxPath).Descendants()
+                .Where(element => element.Name.LocalName == "UnitTestResult").ToArray();
+            Assert.AreEqual(5, results.Length, result);
+            Assert.IsTrue(results.All(element => (string?)element.Attribute("outcome") == "Passed"), result);
+        }
+        finally
+        {
+            Directory.Delete(resultsDirectory, recursive: true);
+        }
+    }
+
+    private static async Task WaitForLanguageAnalysisAsync(MainWindowViewModel vm)
+    {
+        // Drain the real editor analysis before capturing diagnostics for the late-result assertions.
+        Diagnostic marker = new() { Message = "Pending language analysis" };
+        vm.DiagnosticCollection.Items.Add(marker);
+        vm.Editor.Text += " ";
+        Stopwatch timeout = Stopwatch.StartNew();
+        while (vm.DiagnosticCollection.Items.Contains(marker) && timeout.Elapsed < TimeSpan.FromSeconds(60))
+        {
+            await Task.Delay(50);
+        }
+        Assert.IsFalse(vm.DiagnosticCollection.Items.Contains(marker), "Language analysis did not complete.");
+    }
 
     [TestMethod]
     public async Task Selection_IsExplicitAndBuildUsesOnlyTheInspectedProject()
@@ -762,8 +838,114 @@ public sealed class ProjectWorkflowViewModelTests
     }
 
     [TestMethod]
+    [DataRow("cancel")]
+    [DataRow("selection")]
+    [DataRow("project-return")]
+    public async Task RunDiscoveredTestCase_InterruptedBuildDoesNotStartExecution(string scenario)
+    {
+        using Fixture fixture = await Fixture.CreateAsync(useOutputDirectory: true);
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        DiscoveredTestCase selected = new("id", "executor", "assembly", "Example.First", "First", null, null);
+        vm.DiscoveredTestCases.Add(selected);
+        vm.SelectedDiscoveredTestCase = selected;
+        TaskCompletionSource<CancellationToken> entered = NewCompletion<CancellationToken>();
+        TaskCompletionSource<bool> completed = NewCompletion<bool>();
+        fixture.RuntimeBuilder.BuildAsync(Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                entered.TrySetResult(call.Arg<CancellationToken>());
+                return completed.Task;
+            });
+
+        Task operation = vm.RunDiscoveredTestCaseCommand.ExecuteAsync(null);
+        CancellationToken token = await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        if (scenario == "cancel")
+        {
+            vm.CancelProjectWorkflowCommand.Execute(null);
+        }
+        else if (scenario == "selection")
+        {
+            vm.SelectedDiscoveredTestCase = null;
+        }
+        else
+        {
+            var originalProject = vm.SelectedWorkflowProject;
+            vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
+            vm.SelectedWorkflowProject = originalProject;
+        }
+        Assert.IsTrue(token.IsCancellationRequested);
+        string status = vm.ProjectWorkflowStatus;
+        completed.SetResult(true);
+        await operation.WaitAsync(TimeSpan.FromSeconds(10));
+
+        _ = fixture.CaseExecution.DidNotReceive().RunCaseAsync(
+            Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DiscoveredTestCase>(), Arg.Any<CancellationToken>());
+        Assert.AreEqual(scenario == "project-return" ? status : "Project action canceled.", vm.ProjectWorkflowStatus);
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task RunDiscoveredTestCase_ForcedOverlapCannotPublishStaleCompletion(bool error)
+    {
+        using Fixture fixture = await Fixture.CreateAsync(useOutputDirectory: true);
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        DiscoveredTestCase selected = new("id", "executor", "assembly", "Example.First", "First", null, null);
+        vm.DiscoveredTestCases.Add(selected);
+        vm.SelectedDiscoveredTestCase = selected;
+        TaskCompletionSource<CancellationToken> entered = NewCompletion<CancellationToken>();
+        TaskCompletionSource<TestRunSummary> completed = NewCompletion<TestRunSummary>();
+        fixture.CaseExecution.RunCaseAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DiscoveredTestCase>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                entered.TrySetResult(call.Arg<CancellationToken>());
+                return completed.Task;
+            });
+
+        Task operation = vm.RunDiscoveredTestCaseCommand.ExecuteAsync(null);
+        CancellationToken token = await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.IsFalse(vm.RunDiscoveredTestCaseCommand.CanExecute(null));
+        await vm.RunDiscoveredTestCaseCommand.ExecuteAsync(null);
+        Assert.IsTrue(token.IsCancellationRequested);
+        Assert.IsTrue(vm.ProjectWorkflowBusy);
+        vm.ProjectTestResults.Add(new TestResultNode("Current result", []));
+        vm.DiagnosticCollection.Items.Add(new Diagnostic { Message = "Current diagnostic" });
+        var diagnostics = vm.DiagnosticCollection.Items.ToArray();
+        vm.Editor.NotificationText = "Current notification";
+        if (error)
+        {
+            completed.SetException(new InvalidOperationException("late error"));
+        }
+        else
+        {
+            completed.SetResult(new TestRunSummary
+            {
+                Cases = { new TestCaseResult("Old", "Passed", null, null, "Example.First", "id", null) },
+                Messages = { "old message" },
+            });
+        }
+        await operation.WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.AreSame(selected, vm.SelectedDiscoveredTestCase);
+        Assert.AreEqual("Current result", vm.ProjectTestResults.Single().Label);
+        CollectionAssert.AreEqual(diagnostics, vm.DiagnosticCollection.Items.ToArray());
+        Assert.AreEqual("Project action canceled.", vm.ProjectWorkflowStatus);
+        Assert.AreEqual("Project action canceled.", vm.Editor.StatusText);
+        Assert.AreEqual("Current notification", vm.Editor.NotificationText);
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
+        _ = fixture.CaseExecution.Received(1).RunCaseAsync(
+            Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DiscoveredTestCase>(), Arg.Any<CancellationToken>());
+    }
+
+    [TestMethod]
     [DataRow("unchanged")]
     [DataRow("cancel")]
+    [DataRow("selection")]
     [DataRow("project")]
     [DataRow("workspace")]
     public async Task RunDiscoveredTestCase_LateResultRespectsWorkbenchContext(string scenario)
@@ -790,6 +972,9 @@ public sealed class ProjectWorkflowViewModelTests
         {
             case "cancel":
                 vm.CancelProjectWorkflowCommand.Execute(null);
+                break;
+            case "selection":
+                vm.SelectedDiscoveredTestCase = null;
                 break;
             case "project":
                 vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
@@ -835,8 +1020,8 @@ public sealed class ProjectWorkflowViewModelTests
         {
             Assert.AreEqual("Current result", vm.ProjectTestResults.Single().Label);
             CollectionAssert.AreEqual(previousDiagnostics, vm.DiagnosticCollection.Items.ToArray());
-            Assert.AreEqual(scenario == "cancel" ? "Project action canceled." : previousWorkflowStatus, vm.ProjectWorkflowStatus);
-            Assert.AreEqual(scenario == "cancel" ? "Project action canceled." : "Current editor status", vm.Editor.StatusText);
+            Assert.AreEqual(scenario is "cancel" or "selection" ? "Project action canceled." : previousWorkflowStatus, vm.ProjectWorkflowStatus);
+            Assert.AreEqual(scenario is "cancel" or "selection" ? "Project action canceled." : "Current editor status", vm.Editor.StatusText);
         }
         Assert.AreEqual("Current notification", vm.Editor.NotificationText);
     }
@@ -930,6 +1115,11 @@ public sealed class ProjectWorkflowViewModelTests
         {
             Assert.Inconclusive("The Avalonia editor requires a graphical display.");
         }
+        if (Environment.GetEnvironmentVariable(IsolatedDebugProcessVariable) != "1")
+        {
+            await IsolatedLateError.Value;
+            return;
+        }
         await DebugUiReady.Value.WaitAsync(TimeSpan.FromSeconds(20));
         await Dispatcher.UIThread.InvokeAsync(() => DebugLateErrorCoreAsync(scenario));
     }
@@ -988,6 +1178,7 @@ public sealed class ProjectWorkflowViewModelTests
         }
 
         Assert.AreEqual(scenario != "unchanged", token.IsCancellationRequested);
+        await WaitForLanguageAnalysisAsync(vm);
         vm.Editor.StatusText = "Current editor status";
         vm.Editor.NotificationText = "Current notification";
         vm.ProjectTestResults.Add(new TestResultNode("Current result", []));
@@ -1021,6 +1212,118 @@ public sealed class ProjectWorkflowViewModelTests
             Assert.AreEqual(reportCancellation ? "Project action canceled." : "Current editor status", vm.Editor.StatusText);
             Assert.AreEqual("Current notification", vm.Editor.NotificationText);
         }
+    }
+
+    [TestMethod]
+    [DataRow("unchanged")]
+    [DataRow("stop")]
+    [DataRow("selection")]
+    [DataRow("project")]
+    [DataRow("workspace")]
+    public async Task DebugDiscoveredTestCase_LateResultRespectsSessionAndContext(string scenario)
+    {
+        if (OperatingSystem.IsLinux() && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DISPLAY")))
+        {
+            Assert.Inconclusive("The Avalonia editor requires a graphical display.");
+        }
+        if (Environment.GetEnvironmentVariable(IsolatedDebugProcessVariable) != "1")
+        {
+            await IsolatedLateResult.Value;
+            return;
+        }
+        await DebugUiReady.Value.WaitAsync(TimeSpan.FromSeconds(20));
+        await Dispatcher.UIThread.InvokeAsync(() => DebugLateResultCoreAsync(scenario));
+    }
+
+    private static async Task DebugLateResultCoreAsync(string scenario)
+    {
+        using Fixture fixture = await Fixture.CreateAsync(useOutputDirectory: true, debugCase: true);
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        DiscoveredTestCase selected = new("id", "executor", "assembly", "Example.Late", "Late", null, null);
+        vm.DiscoveredTestCases.Add(selected);
+        vm.SelectedDiscoveredTestCase = selected;
+        TaskCompletionSource<CancellationToken> entered = NewCompletion<CancellationToken>();
+        TaskCompletionSource<TestRunSummary> completed = NewCompletion<TestRunSummary>();
+        ITestCaseDebugExecutionService debug = (ITestCaseDebugExecutionService)fixture.CaseExecution;
+        debug.DebugCaseAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DiscoveredTestCase>(),
+            Arg.Any<Func<int, CancellationToken, Task<IAsyncDisposable>>>(), Arg.Any<CancellationToken>())
+            .Returns(call => CompleteAfterAttachAsync(
+                call.Arg<Func<int, CancellationToken, Task<IAsyncDisposable>>>(), call.Arg<CancellationToken>()));
+
+        async Task<TestRunSummary> CompleteAfterAttachAsync(
+            Func<int, CancellationToken, Task<IAsyncDisposable>> attach, CancellationToken cancellationToken)
+        {
+            await using IAsyncDisposable lease = await attach(4242, cancellationToken);
+            entered.TrySetResult(cancellationToken);
+            return await completed.Task;
+        }
+
+        Task operation = vm.DebugDiscoveredTestCaseCommand.ExecuteAsync(null);
+        CancellationToken token = await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.IsTrue(vm.HasDebugSession);
+        _ = debug.Received(1).DebugCaseAsync(vm.ProjectInspection!.TargetPath!,
+            Path.GetDirectoryName(fixture.SecondProject)!, selected,
+            Arg.Any<Func<int, CancellationToken, Task<IAsyncDisposable>>>(), Arg.Any<CancellationToken>());
+        switch (scenario)
+        {
+            case "stop":
+                Assert.IsTrue(vm.StopDebugSessionCommand.CanExecute(null));
+                await vm.StopDebugSessionCommand.ExecuteAsync(null);
+                Assert.IsTrue(vm.HasDebugSession);
+                break;
+            case "selection":
+                vm.SelectedDiscoveredTestCase = null;
+                break;
+            case "project":
+                vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
+                break;
+            case "workspace":
+                string otherSolution = Path.Combine(fixture.Root, "Other.slnx");
+                await File.WriteAllTextAsync(otherSolution, "<Solution><Project Path=\"first\\App.csproj\" /></Solution>");
+                await vm.OpenWorkspaceFileAsync(otherSolution);
+                break;
+        }
+
+        Assert.AreEqual(scenario != "unchanged", token.IsCancellationRequested);
+        await WaitForLanguageAnalysisAsync(vm);
+        if (scenario != "unchanged")
+        {
+            vm.ProjectTestResults.Add(new TestResultNode("Current result", []));
+            vm.DiagnosticCollection.Items.Add(new Diagnostic { Message = "Current diagnostic" });
+        }
+        var diagnostics = vm.DiagnosticCollection.Items.ToArray();
+        string status = vm.ProjectWorkflowStatus;
+        vm.Editor.StatusText = "Current editor status";
+        vm.Editor.NotificationText = "Current notification";
+        completed.SetResult(new TestRunSummary
+        {
+            Outcome = TestRunOutcome.Failed,
+            Failures = { new TestRunFailure { TestName = "Late", Message = "late failure", SourcePath = Path.Combine(fixture.Root, "Tests.cs"), LineNumber = 1 } },
+            Cases = { new TestCaseResult("Late", "Failed", null, "Example", "Example.Late", "id", null) },
+            Messages = { "late debug message" },
+        });
+        await operation.WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
+        Assert.IsFalse(vm.HasDebugSession);
+        await fixture.Debugger.Received(1).StopSessionAsync("session", CancellationToken.None);
+        if (scenario == "unchanged")
+        {
+            Assert.AreEqual("Failed: Late", vm.ProjectTestResults.Single().Children.Single().Label);
+            Assert.IsTrue(vm.DiagnosticCollection.Items.Any(item => item.Message.Contains("late failure", StringComparison.Ordinal)));
+            StringAssert.Contains(vm.ProjectWorkflowStatus, "late debug message");
+            Assert.AreEqual(vm.ProjectWorkflowStatus, vm.Editor.StatusText);
+        }
+        else
+        {
+            Assert.AreEqual("Current result", vm.ProjectTestResults.Single().Label);
+            CollectionAssert.AreEqual(diagnostics, vm.DiagnosticCollection.Items.ToArray());
+            Assert.AreEqual(scenario is "stop" or "selection" ? "Project action canceled." : status, vm.ProjectWorkflowStatus);
+            Assert.AreEqual(scenario is "stop" or "selection" ? "Project action canceled." : "Current editor status", vm.Editor.StatusText);
+        }
+        Assert.AreEqual("Current notification", vm.Editor.NotificationText);
     }
 
     [TestMethod]

@@ -245,7 +245,9 @@ public sealed class VSTestCancellationIntegrationTests
         ProcessStartInfo start = new("dotnet") { RedirectStandardOutput = true, RedirectStandardError = true };
         start.Environment["MSBUILDDISABLENODEREUSE"] = "1";
         start.Environment["DOTNET_CLI_USE_MSBUILD_SERVER"] = "0";
-        foreach (string key in new[] { "HostArtifactRoot", "CustomAfterDirectoryBuildProps", "DirectoryBuildPropsPath" })
+        // Let dotnet select its own MSBuild and SDK rather than inheriting the workspace locator's paths.
+        foreach (string key in new[] { "HostArtifactRoot", "CustomAfterDirectoryBuildProps", "DirectoryBuildPropsPath",
+            "MSBUILD_EXE_PATH", "MSBuildSDKsPath", "MSBuildExtensionsPath" })
         {
             start.Environment.Remove(key);
         }

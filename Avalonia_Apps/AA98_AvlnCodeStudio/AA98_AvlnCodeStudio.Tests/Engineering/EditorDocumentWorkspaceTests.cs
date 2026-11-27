@@ -1183,7 +1183,8 @@ public sealed class EditorDocumentWorkspaceTests
             string upperPath = Path.Combine(root, "View.axaml");
             string lowerPath = Path.Combine(root, "view.axaml");
             await File.WriteAllTextAsync(upperPath, "upper");
-            if (!OperatingSystem.IsWindows())
+            bool caseDistinctFiles = !File.Exists(lowerPath);
+            if (caseDistinctFiles)
             {
                 await File.WriteAllTextAsync(lowerPath, "lower");
             }
@@ -1204,7 +1205,7 @@ public sealed class EditorDocumentWorkspaceTests
             {
                 Assert.AreNotSame(upperTab, lowerTab);
                 Assert.AreEqual("upper", upperTab.Editor.Text);
-                Assert.AreEqual("lower", lowerTab.Editor.Text);
+                Assert.AreEqual(caseDistinctFiles ? "lower" : "upper", lowerTab.Editor.Text);
                 Assert.AreSame(upperTab, documents.FindByPath(upperPath));
                 Assert.AreSame(lowerTab, documents.FindByPath(lowerPath));
             }

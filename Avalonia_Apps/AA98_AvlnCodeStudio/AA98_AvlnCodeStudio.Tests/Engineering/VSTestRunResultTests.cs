@@ -76,6 +76,152 @@ public sealed class VSTestRunResultTests
     }
 
     [TestMethod]
+    public void XunitFailureMessageForSelectedFailedCase_IsReportedAsTestFailure()
+    {
+        TestCase selected = new("Sample.XunitTests.Other", new Uri("executor://xunit/VsTestRunner3/netcore/"), "sample.dll")
+        {
+            Id = Guid.NewGuid(),
+            DisplayName = "Sample.XunitTests.Other",
+        };
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        handler.HandleLogMessage(TestMessageLevel.Error, "[xUnit.net 00:00:01.12]     Sample.XunitTests.Other [FAIL]");
+        Complete(handler, new TestResult(selected)
+        {
+            DisplayName = selected.DisplayName,
+            Outcome = TestOutcome.Failed,
+            ErrorMessage = "Assertion failed.",
+        });
+
+        TestRunSummary summary = handler.GetResult();
+        Assert.AreEqual(TestRunOutcome.Failed, summary.Outcome);
+        Assert.AreEqual("Assertion failed.", summary.Failures.Single().Message);
+    }
+
+    [TestMethod]
+    [DataRow("executor://xunit/VsTestRunner3/netcore/", TestOutcome.Passed, "[xUnit.net 00:00:01.12]     Sample.XunitTests.Other [FAIL]")]
+    [DataRow("executor://other", TestOutcome.Failed, "[xUnit.net 00:00:01.12]     Sample.XunitTests.Other [FAIL]")]
+    [DataRow("executor://xunit/VsTestRunner3/netcore/", TestOutcome.Failed, "[xUnit.net 00:00:01.12]     Sample.XunitTests.Unrelated [FAIL]")]
+    [DataRow("executor://xunit/VsTestRunner3/netcore/", TestOutcome.Failed, "Adapter failed after reporting a result.")]
+    public void OtherErrorMessagesRemainErrors(string executor, TestOutcome outcome, string message)
+    {
+        TestCase selected = new("Sample.XunitTests.Other", new Uri(executor), "sample.dll")
+        {
+            Id = Guid.NewGuid(),
+            DisplayName = "Sample.XunitTests.Other",
+        };
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        handler.HandleLogMessage(TestMessageLevel.Error, message);
+        Complete(handler, new TestResult(selected) { DisplayName = selected.DisplayName, Outcome = outcome });
+
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, message);
+    }
+
+    [TestMethod]
+    public void XunitFailureMessageDoesNotHideAnotherAdapterError()
+    {
+        TestCase selected = new("Sample.XunitTests.Other", new Uri("executor://xunit/VsTestRunner3/netcore/"), "sample.dll")
+        {
+            Id = Guid.NewGuid(),
+            DisplayName = "Sample.XunitTests.Other",
+        };
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        handler.HandleLogMessage(TestMessageLevel.Error, "[xUnit.net 00:00:01.12]     Sample.XunitTests.Other [FAIL]");
+        handler.HandleLogMessage(TestMessageLevel.Error, "Adapter failed after reporting a result.");
+        Complete(handler, new TestResult(selected) { DisplayName = selected.DisplayName, Outcome = TestOutcome.Failed });
+
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, "Adapter failed after reporting a result.");
+    }
+
+    [TestMethod]
+    [DataRow("[xUnit.net 00:00:01.12]     Sample.XunitTests.Other [FAIL]")]
+    [DataRow("[xUnit.net 00:00:02.34]     Sample.XunitTests.Other [FAIL]")]
+    public void MultipleXunitFailureMessages_AreNotDiscarded(string secondMessage)
+    {
+        TestCase selected = CreateXunitCase();
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        const string firstMessage = "[xUnit.net 00:00:01.12]     Sample.XunitTests.Other [FAIL]";
+        handler.HandleLogMessage(TestMessageLevel.Error, firstMessage);
+        handler.HandleLogMessage(TestMessageLevel.Error, secondMessage);
+        Complete(handler, new TestResult(selected) { DisplayName = selected.DisplayName, Outcome = TestOutcome.Failed });
+
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, firstMessage);
+        StringAssert.Contains(error.Message, secondMessage);
+    }
+
+    [TestMethod]
+    public void DifferentResultCase_DoesNotHideAdapterError()
+    {
+        TestCase selected = CreateXunitCase();
+        TestCase other = CreateXunitCase();
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        handler.HandleLogMessage(TestMessageLevel.Error, "Additional infrastructure error.");
+        Complete(handler, new TestResult(other) { DisplayName = other.DisplayName, Outcome = TestOutcome.Failed });
+
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, "different adapter case");
+        StringAssert.Contains(error.Message, "Additional infrastructure error.");
+    }
+
+    [TestMethod]
+    [DataRow("missing")]
+    [DataRow("canceled")]
+    [DataRow("aborted")]
+    [DataRow("completion-error")]
+    [DataRow("zero")]
+    [DataRow("multiple")]
+    [DataRow("different")]
+    public void XunitBanner_DoesNotOverrideInvalidRun(string scenario)
+    {
+        TestCase selected = CreateXunitCase();
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        handler.HandleLogMessage(TestMessageLevel.Error, "[xUnit.net 00:00:01.12]     Sample.XunitTests.Other [FAIL]");
+        TestResult result = new(scenario == "different" ? CreateXunitCase() : selected)
+        {
+            DisplayName = selected.DisplayName,
+            Outcome = TestOutcome.Failed,
+        };
+        TestResult[] results = scenario switch
+        {
+            "zero" => [],
+            "multiple" => [result, result],
+            _ => [result],
+        };
+        TestRunChangedEventArgs chunk = new(null!, results, null!);
+        if (scenario == "missing")
+        {
+            handler.HandleTestRunStatsChange(chunk);
+        }
+        else
+        {
+            TestRunCompleteEventArgs complete = new(null!, scenario == "canceled", scenario == "aborted",
+                scenario == "completion-error" ? new InvalidOperationException("Completion failed.") : null!,
+                null!, TimeSpan.Zero);
+            handler.HandleTestRunComplete(complete, chunk, null, null);
+        }
+
+        Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+    }
+
+    [TestMethod]
+    [DataRow("[xUnit.net 00:00:01.12]    Sample.XunitTests.Other [FAIL]")]
+    [DataRow("[xUnit.net 00:00:01.12]     Sample.XunitTests.Other [FAIL] extra")]
+    [DataRow("[xUnit.net invalid]     Sample.XunitTests.Other [FAIL]")]
+    [DataRow("[xUnit.net 00:00:01.12]     Sample.XunitTests.Other [fail]")]
+    public void SimilarXunitMessages_RemainErrors(string message)
+    {
+        TestCase selected = CreateXunitCase();
+        VSTestDiscoveryService.RunHandler handler = new(selected);
+        handler.HandleLogMessage(TestMessageLevel.Error, message);
+        Complete(handler, new TestResult(selected) { DisplayName = selected.DisplayName, Outcome = TestOutcome.Failed });
+
+        InvalidOperationException error = Assert.ThrowsExactly<InvalidOperationException>(() => handler.GetResult());
+        StringAssert.Contains(error.Message, message);
+    }
+
+    [TestMethod]
     [DataRow(null)]
     [DataRow("")]
     [DataRow(" \t\r\n")]
@@ -240,6 +386,13 @@ public sealed class VSTestRunResultTests
 
     private static TestCase CreateCase(Guid id) =>
         new("Example.Theory", new Uri("executor://example"), "sample.dll") { Id = id };
+
+    private static TestCase CreateXunitCase() =>
+        new("Sample.XunitTests.Other", new Uri("executor://xunit/VsTestRunner3/netcore/"), "sample.dll")
+        {
+            Id = Guid.NewGuid(),
+            DisplayName = "Sample.XunitTests.Other",
+        };
 
     private static void Complete(VSTestDiscoveryService.RunHandler handler, TestResult result)
     {

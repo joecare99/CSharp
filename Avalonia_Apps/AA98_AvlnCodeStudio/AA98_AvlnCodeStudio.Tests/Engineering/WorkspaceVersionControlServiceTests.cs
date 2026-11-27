@@ -104,25 +104,46 @@ public sealed class WorkspaceVersionControlServiceTests
     [TestMethod]
     public async Task GetStatusAsync_SelectsFallbackWhenNoRepositoryMarkerExists()
     {
+        string root = Path.GetPathRoot(Path.GetTempPath())!;
+        if (Directory.Exists(Path.Combine(root, ".svn"))
+            || Directory.Exists(Path.Combine(root, ".git"))
+            || File.Exists(Path.Combine(root, ".git")))
+        {
+            Assert.Inconclusive("The filesystem root itself has a repository marker.");
+        }
+
+        ISvnCommandRunner svnRunner = Substitute.For<ISvnCommandRunner>();
+        IGitCommandRunner gitRunner = Substitute.For<IGitCommandRunner>();
+        WorkspaceVersionControlService service = new(new(gitRunner), new(svnRunner), new());
+        VersionControlStatus actual = await service.GetStatusAsync(new VersionControlStatusRequest
+        {
+            RepositoryContextPath = root,
+        });
+
+        Assert.IsFalse(actual.IsRepositoryRootDiscovered);
+        Assert.AreEqual(root, actual.RepositoryRootPath);
+        await svnRunner.DidNotReceive().RunAsync(Arg.Any<string>(), Arg.Any<System.Collections.Generic.IReadOnlyList<string>>(), Arg.Any<CancellationToken>());
+        await gitRunner.DidNotReceive().RunAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+    }
+
+    [TestMethod]
+    public async Task GetStatusAsync_SelectsSvnFromAncestorMarker()
+    {
         string root = Path.Combine(Path.GetTempPath(), "AvlnVersionControl", Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(root);
+        string child = Path.Combine(root, "nested");
+        Directory.CreateDirectory(Path.Combine(root, ".svn"));
+        Directory.CreateDirectory(child);
         try
         {
             ISvnCommandRunner svnRunner = Substitute.For<ISvnCommandRunner>();
+            svnRunner.RunAsync(child, Arg.Any<System.Collections.Generic.IReadOnlyList<string>>(), Arg.Any<CancellationToken>())
+                .Returns(Task.FromResult(new SvnCommandResult { ExitCode = 1 }));
             IGitCommandRunner gitRunner = Substitute.For<IGitCommandRunner>();
-            SvnVersionControlService svn = new(svnRunner);
-            GitVersionControlService git = new(gitRunner);
-            NullVersionControlService fallback = new();
+            WorkspaceVersionControlService service = new(new(gitRunner), new(svnRunner), new());
 
-            WorkspaceVersionControlService service = new(git, svn, fallback);
-            VersionControlStatus actual = await service.GetStatusAsync(new VersionControlStatusRequest
-            {
-                RepositoryContextPath = root,
-            });
+            await service.GetStatusAsync(new VersionControlStatusRequest { RepositoryContextPath = child });
 
-            Assert.IsFalse(actual.IsRepositoryRootDiscovered);
-            Assert.AreEqual(root, actual.RepositoryRootPath);
-            await svnRunner.DidNotReceive().RunAsync(Arg.Any<string>(), Arg.Any<System.Collections.Generic.IReadOnlyList<string>>(), Arg.Any<CancellationToken>());
+            await svnRunner.Received(1).RunAsync(child, Arg.Any<System.Collections.Generic.IReadOnlyList<string>>(), Arg.Any<CancellationToken>());
             await gitRunner.DidNotReceive().RunAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
         }
         finally
