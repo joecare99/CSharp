@@ -21,7 +21,7 @@ public enum ImageEditorTool
     Eraser,
 
     /// <summary>
-    /// Represents a fill-style editing tool for future editing operations.
+    /// Replaces a four-connected region of identical premultiplied pixels.
     /// </summary>
     Fill,
 

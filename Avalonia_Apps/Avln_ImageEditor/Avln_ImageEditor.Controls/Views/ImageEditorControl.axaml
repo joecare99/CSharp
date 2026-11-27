@@ -27,9 +27,8 @@
 					IsEnabled="{Binding HasDocument}" />
 		  <CheckBox x:Name="EraserMode" VerticalAlignment="Center" Content="Eraser (1 px)"
 					IsEnabled="{Binding HasDocument}" />
-		  <Button Command="{Binding SelectToolCommand}"
-				  CommandParameter="{x:Static models:ImageEditorTool.Fill}"
-				  Content="Fill*" IsEnabled="False" />
+		  <CheckBox x:Name="FillMode" VerticalAlignment="Center" Content="Fill"
+					IsEnabled="{Binding HasDocument}" />
 		  <Button Command="{Binding RotateRightCommand}" Content="Rotate 90° right" />
 		  <Button Command="{Binding RotateLeftCommand}" Content="Rotate left" />
 		  <Button Command="{Binding Rotate180Command}" Content="Rotate 180°" />
@@ -122,9 +121,6 @@
 		  <TextBlock VerticalAlignment="Center"
 					 Foreground="#D7D9E0"
 					 Text="{Binding DocumentSummary}" />
-		  <TextBlock VerticalAlignment="Center"
-					 Foreground="#9EA3B0"
-					 Text="* Not implemented" />
 		</StackPanel>
 		</DockPanel>
 	  </StackPanel>
