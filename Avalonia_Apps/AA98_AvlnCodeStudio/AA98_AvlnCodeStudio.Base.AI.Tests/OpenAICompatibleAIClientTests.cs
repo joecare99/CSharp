@@ -224,7 +224,7 @@ public sealed class OpenAICompatibleAIClientTests
         Assert.IsFalse(requestSent);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("https://user:password@api.example.test/v1/chat/completions")]
     [DataRow("https://api.example.test/v1/chat/completions#fragment")]
     public async Task CompleteAsync_RejectsCredentialsAndFragmentsInEndpoint(string endpoint)
