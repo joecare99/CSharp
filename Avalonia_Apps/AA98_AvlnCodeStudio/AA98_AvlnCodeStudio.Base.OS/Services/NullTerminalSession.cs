@@ -8,6 +8,10 @@ namespace AA98_AvlnCodeStudio.Base.OS.Services;
 /// <summary>
 /// Provides a provider-neutral fallback terminal session without process integration.
 /// </summary>
+/// <remarks>
+/// Output and error events never fire and do not retain subscribers. The exit event
+/// is still raised when a running fallback session is stopped.
+/// </remarks>
 public sealed class NullTerminalSession : ITerminalSession
 {
     /// <summary>
@@ -29,16 +33,32 @@ public sealed class NullTerminalSession : ITerminalSession
     public TerminalSessionState State { get; private set; } = TerminalSessionState.Stopped;
 
     /// <inheritdoc/>
-    public event EventHandler<string>? OutputReceived;
+    public event EventHandler<string>? OutputReceived
+    {
+        add { }
+        remove { }
+    }
 
     /// <inheritdoc/>
-    public event EventHandler<string>? OutputPartialReceived;
+    public event EventHandler<string>? OutputPartialReceived
+    {
+        add { }
+        remove { }
+    }
 
     /// <inheritdoc/>
-    public event EventHandler<string>? ErrorReceived;
+    public event EventHandler<string>? ErrorReceived
+    {
+        add { }
+        remove { }
+    }
 
     /// <inheritdoc/>
-    public event EventHandler<string>? ErrorPartialReceived;
+    public event EventHandler<string>? ErrorPartialReceived
+    {
+        add { }
+        remove { }
+    }
 
     /// <inheritdoc/>
     public event EventHandler<int>? Exited;
