@@ -23,8 +23,8 @@ for argument in "$@"; do
   fi
 done
 
-script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-repo_root="$(cd -- "$script_dir/../.." && pwd)"
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+repo_root="$(cd -- "$script_dir/../.." && pwd -P)"
 artifact_root="$repo_root/../../artifacts/linux"
 mkdir -p "$artifact_root"
 

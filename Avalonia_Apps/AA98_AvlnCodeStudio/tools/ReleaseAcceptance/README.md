@@ -66,8 +66,13 @@ For the external `Workbench.Builder.Core` reference, its directory props append
 `Configuration` before MSBuild supplies the default. Solution restore and
 build can therefore evaluate different extensions paths. The isolation props
 give that specific project a configuration-independent base intermediate path;
-the SDK still separates configuration-specific intermediates. Normal builds
-without the isolation props are unaffected.
+the SDK still separates configuration-specific intermediates. The isolated
+Workbench parent retains its configuration for references outside the solution,
+and the external project's default output path includes Debug when configuration
+was not yet set. These adjustments apply only when the isolation props are
+injected. Normal builds without them are unaffected.
+The guard uses the effective `HostArtifactRoot`, which some directory props
+supply by default even if it was not passed on the command line.
 
 To verify a fresh solution restore **and** build through this actual reference
 graph on Windows, choose a root that does not exist and run:
@@ -81,6 +86,62 @@ The check requires both the restore and net10.0 build verification messages
 and a successful solution build. It leaves the root for inspection; remove
 only that root after use. The injected verification targets assert the same
 assets path and its existence rather than relying solely on evaluated paths.
+
+For configuration regression checks, run solution restore and a net10.0 build
+with `-p:Configuration=Debug` and then `Release`, using a fresh, distinct
+`HostArtifactRoot` for each run. Inject `VerifyWorkbenchCoreIsolation.targets`
+using **both** `CustomAfterMicrosoftCommonTargets` and
+`CustomAfterMicrosoftCommonCrossTargetingTargets`; require the restore and
+build verification messages as well as successful exit codes. Require a
+message for the requested configuration. A solution build can additionally
+reach the reference through a differently configured project; check that
+those outputs are separated too. For a dedicated project build,
+`-p:VerifyWorkbenchCoreConfiguration=Debug` or `Release` asserts the expected
+configuration for every invocation. The build
+target checks `ProjectAssetsFile` immediately before `ResolvePackageAssets`.
+Also inspect the resulting `obj.net/Workbench.Builder.Core/<configuration>/net10.0`
+and `bin/Workbench.Builder.Core/<configuration>/net10.0` DLLs. A missing
+verification message is a failure, even if the build succeeds.
+
+The Linux wrapper resolves its own directory physically before injecting the
+props. This matters when the solution is opened through a symlinked workspace:
+MSBuild may resolve project references to physical paths, so an aliased props
+path can otherwise miss the exact Workbench project match. Direct injection
+must likewise use a physical path to `IsolatedArtifacts.props`. The wrapper
+does not canonicalize an explicitly supplied artifact root; use one spelling
+consistently. Use distinct roots for simultaneous builds: sharing a restore
+assets file between concurrent configurations is not covered.
+
+The normal, non-injected configuration can be inspected with `dotnet msbuild
+<project> -getProperty:BaseIntermediateOutputPath,MSBuildProjectExtensionsPath`
+without performing a restore or build into someone else's artifacts. A
+same-named project in another directory is not the external reference and
+should receive only generic isolation. An explicit extensions path opts out of
+the Workbench-specific adjustment and requires its own consistency review.
+These checks do not prove every custom MSBuild import or third-party project is
+isolated, and they do not replace runtime or UI acceptance.
+
+On November 27, 2026, solution restores and net10.0 builds were checked with
+separate new roots for Debug and Release on Windows (SDK 11.0.100) and WSL
+Ubuntu 26.04 (SDK 10.0.404). Both restore and build verification messages were
+present, and the actual assets JSON identified the external project and the
+selected root. Compiled DLLs existed in configuration-specific `obj.net` and
+`bin` paths; the Release solution graph also produced separate Debug DLLs.
+An explicitly empty root and a same-named fixture elsewhere were evaluated
+without non-isolated builds; a dedicated Windows project build also exercised
+both configurations in one root sequentially. The Linux run used the `/mnt/c`
+workspace alias, whose physical location was `/mnt/d`.
+
+The Windows builds finished with 27 Debug and 21 Release warnings; Linux
+finished with 27 warnings for each. Warnings included NU1701, MSTEST0044,
+nullable/compiler, platform and Avalonia warnings. A strict Release assertion
+initially failed because the solution graph also built a Debug reference; the
+successful retry checked both outputs rather than asserting all invocations
+were Release. Linux Debug also required a retry after MSB4166 (child node
+exited prematurely); retries disabled node reuse and used one MSBuild node.
+The first Linux alias attempt before the physical-path wrapper fix missed the
+Workbench verification and was not a pass. These are build-path checks, not
+test execution or proof of the older target frameworks.
 
 To check the evaluated intermediate and early extension paths across the actual
 solution graph, including referenced external projects, run:

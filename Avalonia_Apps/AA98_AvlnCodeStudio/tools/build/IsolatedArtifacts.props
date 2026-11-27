@@ -6,9 +6,15 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(HostArtifactRoot)' != '' and '$(MSBuildProjectExtensionsPath)' == ''">
     <_IsolationWorkbenchCoreProject>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', '..', '..', '..', 'CSharpBible', 'Data', 'Workbench.Builder', 'Workbench.Builder.Core', 'Workbench.Builder.Core.csproj'))</_IsolationWorkbenchCoreProject>
+    <_IsolationWorkbenchCoreParent>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', '..', 'AA98_AvlnCodeStudio.Building.Workbench', 'AA98_AvlnCodeStudio.Building.Workbench.csproj'))</_IsolationWorkbenchCoreParent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(_IsolationWorkbenchCoreParent)' != '' and '$(MSBuildProjectFullPath)' == '$(_IsolationWorkbenchCoreParent)'">
+    <!-- A solution build otherwise drops Configuration for references outside the solution. -->
+    <ShouldUnsetParentConfigurationAndPlatform Condition="'$(ShouldUnsetParentConfigurationAndPlatform)' == ''">false</ShouldUnsetParentConfigurationAndPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(_IsolationWorkbenchCoreProject)' != '' and '$(MSBuildProjectFullPath)' == '$(_IsolationWorkbenchCoreProject)'">
     <!-- The external Directory.Build.props appends Configuration before its default is set. -->
     <BaseIntermediateOutputPath>$(HostArtifactRoot)\obj.net\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <OutputPath Condition="'$(Configuration)' == ''">$(BaseOutputPath)Debug\</OutputPath>
   </PropertyGroup>
 </Project>

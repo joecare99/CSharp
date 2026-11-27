@@ -147,6 +147,12 @@ public sealed class ImageEditingTests
             CollectionAssert.AreEqual(before, editor.CapturePngSnapshot().Bytes);
             editor.Redo();
             CollectionAssert.AreEqual(paintedPng, editor.CapturePngSnapshot().Bytes);
+            editor.MarkSaved(editor.CapturePngSnapshot());
+            Assert.IsFalse(editor.IsDirty);
+            editor.Undo();
+            Assert.IsTrue(editor.IsDirty);
+            editor.Redo();
+            Assert.IsFalse(editor.IsDirty);
             sample.IsChecked = true;
             Assert.AreEqual(false, brush.IsChecked);
             Assert.AreEqual(ImageEditorTool.Select, editor.SelectedTool);
