@@ -16,7 +16,8 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 /// If undo fails after deleting a generated file, rollback does not overwrite a file recreated at that path,
 /// even when it is empty; it reports incomplete rollback and leaves the history entry available.
 /// If redo fails after recreating a generated file, rollback likewise preserves externally modified contents.
-/// These checks and the subsequent file operations are not atomic against concurrent external changes.
+/// These checks and the subsequent file and editor operations are not atomic against concurrent changes.
+/// Rollback is best effort and preserves externally changed content rather than overwriting it.
 /// </remarks>
 public sealed class WorkspaceFileChangeService
 {
@@ -211,6 +212,8 @@ public sealed class WorkspaceFileChangeService
             foreach (WorkspaceFileChange change in proposal.Changes)
             {
                 EnsureDocumentCanBeChanged(change);
+                EnsureNoReparsePoints(proposal.WorkspaceRoot, change.TargetPath);
+                EnsureUnchanged(change);
                 MoveStagedFile(stagedFiles[change], change);
                 stagedFiles.Remove(change);
                 appliedChanges.Add(change);
