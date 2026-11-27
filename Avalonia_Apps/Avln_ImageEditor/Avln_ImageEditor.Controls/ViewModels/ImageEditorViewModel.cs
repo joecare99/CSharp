@@ -69,7 +69,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
 
     private Color? _sampledColor;
 
-    /// <summary>The last sampled straight RGBA color, or null until a pixel has been sampled.</summary>
+    /// <summary>The last selected straight RGBA color, or null until sampled or applied.</summary>
     public Color? SampledColor
     {
         get => _sampledColor;
@@ -84,9 +84,50 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     }
 
     public string SampledColorSummary => SampledColor is { } color
-        ? $"R {color.R}  G {color.G}  B {color.B}  A {color.A}" : "No color sampled";
+        ? $"R {color.R}  G {color.G}  B {color.B}  A {color.A}" : "No color selected";
     public string SampledColorHex => SampledColor is { } color
         ? $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}" : "";
+
+    private string _manualColorHex = "#FF000000";
+
+    /// <summary>Editable color draft; applying or sampling replaces it with the selected color.</summary>
+    public string ManualColorHex
+    {
+        get => _manualColorHex;
+        set
+        {
+            if (SetProperty(ref _manualColorHex, value ?? ""))
+                OnPropertyChanged(nameof(ManualColorError));
+        }
+    }
+
+    public string ManualColorError => TryParseManualColor(out _) ? "" :
+        "Enter exactly #AARRGGBB using hexadecimal digits 0–9 and A–F.";
+
+    private bool TryParseManualColor(out Color color)
+    {
+        color = default;
+        if (ManualColorHex.Length != 9 || ManualColorHex[0] != '#' ||
+            !uint.TryParse(ManualColorHex.AsSpan(1), NumberStyles.AllowHexSpecifier,
+                CultureInfo.InvariantCulture, out uint value)) return false;
+        color = Color.FromArgb((byte)(value >> 24), (byte)(value >> 16),
+            (byte)(value >> 8), (byte)value);
+        return true;
+    }
+
+    /// <summary>Applies a valid draft without modifying pixels or document history.</summary>
+    [RelayCommand]
+    public void ApplyManualColor()
+    {
+        if (TryParseManualColor(out var color))
+            SelectColor(color);
+    }
+
+    private void SelectColor(Color color)
+    {
+        SampledColor = color;
+        ManualColorHex = $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}";
+    }
 
     /// <summary>Samples a pixel without changing the document or history; out-of-bounds coordinates do nothing.</summary>
     public bool SamplePixel(int x, int y)
@@ -103,8 +144,8 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         int alpha = pixel[3];
         static byte Straight(byte channel, int alpha) => alpha == 0 ? (byte)0 :
             (byte)Math.Min(255, (Math.Min(channel, alpha) * 255 + alpha / 2) / alpha);
-        SampledColor = Color.FromArgb(pixel[3], Straight(pixel[2], alpha),
-            Straight(pixel[1], alpha), Straight(pixel[0], alpha));
+        SelectColor(Color.FromArgb(pixel[3], Straight(pixel[2], alpha),
+            Straight(pixel[1], alpha), Straight(pixel[0], alpha)));
         return true;
     }
 
@@ -415,9 +456,9 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         RefreshState();
     }
 
-    internal void PaintStroke(ImageEditorDocument source, Color color, HashSet<int> indices)
+    internal void PaintStroke(ImageEditorDocument source, Color color, HashSet<int> indices, bool erase = false)
     {
-        if (!ReferenceEquals(source, ActiveDocument) || color.A == 0 || indices.Count == 0) return;
+        if (!ReferenceEquals(source, ActiveDocument) || (!erase && color.A == 0) || indices.Count == 0) return;
         int width = source.PixelSize.Width, height = source.PixelSize.Height;
         var result = new WriteableBitmap(source.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
         bool changed = false;
@@ -439,7 +480,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
                         for (int channel = 0; channel < 4; channel++)
                         {
                             int src = channel == 3 ? color.A : (brush[channel] * color.A + 127) / 255;
-                            byte value = (byte)Math.Min(255, src + (row[offset + channel] * (255 - color.A) + 127) / 255);
+                            byte value = erase ? (byte)0 : (byte)Math.Min(255, src + (row[offset + channel] * (255 - color.A) + 127) / 255);
                             changed |= row[offset + channel] != value;
                             row[offset + channel] = value;
                         }

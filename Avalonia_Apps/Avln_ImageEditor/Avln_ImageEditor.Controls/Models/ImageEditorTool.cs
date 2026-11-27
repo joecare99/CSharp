@@ -11,12 +11,12 @@ public enum ImageEditorTool
     Select,
 
     /// <summary>
-    /// Represents a brush-style painting tool for future editing operations.
+    /// Paints with the currently sampled color.
     /// </summary>
     Brush,
 
     /// <summary>
-    /// Represents an eraser-style editing tool for future editing operations.
+    /// Erases pixels to transparency.
     /// </summary>
     Eraser,
 

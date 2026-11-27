@@ -25,9 +25,8 @@
 				  Content="Select" />
 		  <CheckBox x:Name="BrushMode" VerticalAlignment="Center" Content="Brush (1 px)"
 					IsEnabled="{Binding HasDocument}" />
-		  <Button Command="{Binding SelectToolCommand}"
-				  CommandParameter="{x:Static models:ImageEditorTool.Eraser}"
-				  Content="Eraser*" IsEnabled="False" />
+		  <CheckBox x:Name="EraserMode" VerticalAlignment="Center" Content="Eraser (1 px)"
+					IsEnabled="{Binding HasDocument}" />
 		  <Button Command="{Binding SelectToolCommand}"
 				  CommandParameter="{x:Static models:ImageEditorTool.Fill}"
 				  Content="Fill*" IsEnabled="False" />
@@ -49,11 +48,24 @@
 					  IsEnabled="{Binding HasDocument}" />
 			<TextBlock VerticalAlignment="Center" Foreground="#F2F2F2" Text="{Binding SampledColorSummary}" />
 			<StackPanel>
-			  <TextBlock Foreground="#F2F2F2" Text="Hex #AARRGGBB" />
+			  <TextBlock Foreground="#F2F2F2" Text="Selected hex #AARRGGBB" />
 			  <TextBox x:Name="SampledColorHexInput" Width="140" IsReadOnly="True"
-					   AutomationProperties.Name="Sampled color hex, alpha red green blue"
+					   AutomationProperties.Name="Selected color hex, alpha red green blue"
 					   Text="{Binding SampledColorHex, Mode=OneWay}" />
 			</StackPanel>
+			<StackPanel>
+			  <TextBlock Foreground="#F2F2F2" Text="Color draft #AARRGGBB" />
+			  <TextBox x:Name="ManualColorHexInput" Width="140"
+					   AutomationProperties.Name="Color draft, hash alpha red green blue"
+					   AutomationProperties.HelpText="{Binding ManualColorError}"
+					   ToolTip.Tip="Enter exactly #AARRGGBB, then press Enter or Apply color."
+					   Text="{Binding ManualColorHex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					   KeyDown="ManualColorKeyDown" />
+			  <TextBlock x:Name="ManualColorError" Foreground="#FFB4AB"
+						 Text="{Binding ManualColorError}" TextWrapping="Wrap" MaxWidth="260" />
+			</StackPanel>
+			<Button x:Name="ApplyManualColorButton" VerticalAlignment="Center"
+					Command="{Binding ApplyManualColorCommand}" Content="Apply color" />
 		  </StackPanel>
 		</ScrollViewer>
 
