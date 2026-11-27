@@ -15,12 +15,25 @@ namespace Avln_ImageEditor.Controls.ViewModels;
 /// <summary>Coordinates the host-independent image editor state. Use on the UI thread.</summary>
 public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
 {
+    public const double MinimumZoomPercentage = 10;
+    public const double MaximumZoomPercentage = 800;
     private const int MaxHistoryStates = 9;
     private readonly List<ImageEditorDocument> _history = new();
     private int _index;
     private object _documentIdentity = new();
     private ImageEditorDocument? _savedRevision;
     private ImageEditorDocument? _activeDocument;
+    private bool _isCropSelectionInProgress;
+
+    internal bool IsCropSelectionInProgress
+    {
+        get => _isCropSelectionInProgress;
+        set
+        {
+            if (SetProperty(ref _isCropSelectionInProgress, value))
+                ApplyCropCommand.NotifyCanExecuteChanged();
+        }
+    }
 
     /// <summary>Raised immediately before a successful pixel mutation, including undo and redo.</summary>
     public event EventHandler? ContentChanging;
@@ -118,7 +131,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
             width <= size.Value.Width - x && height <= size.Value.Height - y;
     }
 
-    private bool CanApplyCrop() => TryGetCrop(out _, out _, out _, out _);
+    private bool CanApplyCrop() => !IsCropSelectionInProgress && TryGetCrop(out _, out _, out _, out _);
 
     /// <summary>Resets only the crop coordinates to the current image's full extent.</summary>
     [RelayCommand(CanExecute = nameof(CanTransform))]
@@ -131,7 +144,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     [RelayCommand(CanExecute = nameof(CanApplyCrop))]
     public void ApplyCrop()
     {
-        if (!TryGetCrop(out int x, out int y, out int width, out int height)) return;
+        if (IsCropSelectionInProgress || !TryGetCrop(out int x, out int y, out int width, out int height)) return;
         var source = ActiveDocument!;
         if (x == 0 && y == 0 && width == source.PixelSize.Width && height == source.PixelSize.Height) return;
 
@@ -158,7 +171,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     public bool HasDocument => ActiveDocument is not null;
     public bool IsDirty => ActiveDocument is not null && !ReferenceEquals(ActiveDocument, _savedRevision);
     public double ZoomFactor => ZoomPercentage / 100.0;
-    public string ZoomSummary => $"{ZoomPercentage:0}%";
+    public string ZoomSummary => $"{ZoomPercentage:0.##}%";
     public string DocumentSummary => ActiveDocument?.Summary ?? "No image loaded";
 
     /// <summary>An opaque document identity and revision captured without encoding pixels.</summary>
@@ -411,9 +424,9 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     [RelayCommand]
     public void SelectTool(ImageEditorTool tool) => SelectedTool = tool;
     [RelayCommand]
-    public void ZoomIn() => ZoomPercentage = Math.Min(800, ZoomPercentage + 25);
+    public void ZoomIn() => ZoomPercentage = Math.Min(MaximumZoomPercentage, ZoomPercentage + 25);
     [RelayCommand]
-    public void ZoomOut() => ZoomPercentage = Math.Max(10, ZoomPercentage - 25);
+    public void ZoomOut() => ZoomPercentage = Math.Max(MinimumZoomPercentage, ZoomPercentage - 25);
     [RelayCommand]
     public void ResetZoom() => ZoomPercentage = 100;
     public void Dispose() => ClearCore();
