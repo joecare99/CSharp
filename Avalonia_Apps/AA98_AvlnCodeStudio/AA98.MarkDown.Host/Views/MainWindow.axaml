@@ -59,7 +59,7 @@
             CornerRadius="4">
       <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
         <TextBox Grid.Column="0"
-                 Watermark="Markdown file path (*.md)"
+                 PlaceholderText="Markdown file path (*.md)"
                  Text="{Binding DocumentPathInput, Mode=TwoWay}" />
         <Button Grid.Column="1"
                 Content="Open"
