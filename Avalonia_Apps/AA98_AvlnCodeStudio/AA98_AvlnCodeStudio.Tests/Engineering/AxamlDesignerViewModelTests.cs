@@ -3261,6 +3261,67 @@ public sealed class AxamlDesignerViewModelTests
     }
 
     [TestMethod]
+    public void BindingRows_ContextRefreshRecognizesExistingBoundMember()
+    {
+        AxamlDesignerViewModel viewModel = new();
+        viewModel.LoadMarkup("<TextBox Text='{Binding Caption}' />");
+        viewModel.SelectedNode = viewModel.PreviewRoot;
+        Assert.IsTrue(viewModel.BindingRows.Single().IsCreatingNewMember);
+        viewModel.SetBindingContext(
+        [
+            new AxamlMvvmSemanticMember("Caption", "string", IsCommand: false, IsWritable: true),
+        ]);
+        AxamlBindingRowViewModel row = viewModel.BindingRows.Single();
+        Assert.IsTrue(row.IsSelectingExistingMember);
+        Assert.AreEqual("Caption", row.SelectedMember);
+
+        viewModel.SetBindingContext(
+        [
+            new AxamlMvvmSemanticMember("Other", "string", IsCommand: false, IsWritable: true),
+        ]);
+        Assert.IsTrue(row.IsCreatingNewMember);
+        Assert.AreEqual("Caption", row.GetRequestedMember());
+        viewModel.SetBindingContext(
+        [
+            new AxamlMvvmSemanticMember("Caption", "string", IsCommand: false, IsWritable: true),
+            new AxamlMvvmSemanticMember("Other", "string", IsCommand: false, IsWritable: true),
+        ]);
+        Assert.IsTrue(row.IsSelectingExistingMember);
+        Assert.AreEqual("Caption", row.SelectedMember);
+
+        viewModel.SetBindingContext([]);
+        Assert.AreEqual("Caption", row.GetRequestedMember());
+        viewModel.SetBindingContext(
+        [
+            new AxamlMvvmSemanticMember("Caption", "string", IsCommand: false, IsWritable: true),
+        ]);
+        Assert.IsTrue(row.IsSelectingExistingMember);
+        Assert.AreEqual("Caption", row.SelectedMember);
+
+        row.NewMemberName = "DraftName";
+        row.BindingMode = AxamlBindingMode.TwoWay;
+        row.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.LostFocus;
+        viewModel.SetBindingContext(
+        [
+            new AxamlMvvmSemanticMember("Caption", "string", IsCommand: false, IsWritable: true),
+            new AxamlMvvmSemanticMember("DraftName", "string", IsCommand: false, IsWritable: true),
+        ]);
+        Assert.AreEqual("DraftName", row.GetRequestedMember());
+        Assert.AreEqual(AxamlBindingMode.TwoWay, row.BindingMode);
+        Assert.AreEqual(AxamlBindingUpdateSourceTrigger.LostFocus, row.UpdateSourceTrigger);
+        viewModel.ApplyBindingRow(row);
+        StringAssert.Contains(viewModel.PreviewRoot!.Properties["Text"], "Binding DraftName");
+        viewModel.UndoCommand.Execute(null);
+        Assert.AreEqual("{Binding Caption}", viewModel.PreviewRoot!.Properties["Text"]);
+        viewModel.RedoCommand.Execute(null);
+        StringAssert.Contains(viewModel.PreviewRoot!.Properties["Text"], "Binding DraftName");
+        Assert.AreEqual(AxamlBindingUpdateSourceTrigger.LostFocus, viewModel.BindingRows.Single().UpdateSourceTrigger);
+        viewModel.LoadMarkup("<TextBox Text='{Binding NewDocument}' />");
+        viewModel.ApplyBindingRow(row);
+        Assert.AreEqual("{Binding NewDocument}", viewModel.PreviewRoot!.Properties["Text"]);
+    }
+
+    [TestMethod]
     public void BindingRows_OfferCompatibleMembersAndApplyExplicitNewBinding()
     {
         AxamlDesignerViewModel viewModel = new();

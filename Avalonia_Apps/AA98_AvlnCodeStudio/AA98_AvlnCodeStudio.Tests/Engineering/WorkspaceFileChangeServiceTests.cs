@@ -150,6 +150,331 @@ public sealed class WorkspaceFileChangeServiceTests
     }
 
     [TestMethod]
+    public void Apply_RejectsRequiredEditorClosedAfterItsFileWasReplaced()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string first = Path.Combine(root, "First.txt");
+            string second = Path.Combine(root, "Second.txt");
+            File.WriteAllText(first, "first");
+            File.WriteAllText(second, "second");
+            InterleavingDocuments documents = new();
+            documents.Open(first, "dirty", "first");
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "after-first", "dirty"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "second", "after-second"),
+            ]);
+            documents.BeginChecks(6, () => documents.Close(first));
+
+            Assert.ThrowsExactly<WorkspaceOpenDocumentException>(() => service.Apply(proposal, true));
+
+            Assert.AreEqual("first", File.ReadAllText(first));
+            Assert.AreEqual("second", File.ReadAllText(second));
+            Assert.AreEqual("dirty", documents.Get(first).Content);
+            Assert.IsFalse(service.CanUndo);
+        });
+    }
+
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void Apply_RejectsEditorTransitionAfterStaging(bool closeReviewedEditor)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string first = Path.Combine(root, "First.txt");
+            string second = Path.Combine(root, "Second.txt");
+            File.WriteAllText(first, "first");
+            File.WriteAllText(second, "second");
+            InterleavingDocuments documents = new();
+            if (closeReviewedEditor) documents.Open(first, "dirty", "first");
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "after-first", closeReviewedEditor ? "dirty" : null),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "second", "after-second"),
+            ]);
+            documents.BeginChecks(3, () =>
+            {
+                Assert.AreEqual(2, Directory.GetFiles(root, ".avln-change-*.tmp").Length);
+                if (closeReviewedEditor) documents.Close(first);
+                else documents.Open(first, "new user edit", "first");
+            });
+
+            WorkspaceOpenDocumentException exception = Assert.ThrowsExactly<WorkspaceOpenDocumentException>(
+                () => service.Apply(proposal, true));
+
+            Assert.AreEqual("First.txt", exception.RelativePath);
+            Assert.AreEqual("first", File.ReadAllText(first));
+            Assert.AreEqual("second", File.ReadAllText(second));
+            Assert.AreEqual(closeReviewedEditor ? "dirty" : "new user edit", documents.Get(first).Content);
+            Assert.IsFalse(service.CanUndo);
+        });
+    }
+
+    [TestMethod]
+    public void Apply_RejectsUnsupportedEditorOpenedAfterItsFileWasReplaced()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string first = Path.Combine(root, "First.txt");
+            string second = Path.Combine(root, "Second.txt");
+            File.WriteAllText(first, "first");
+            File.WriteAllText(second, "second");
+            LateOpenProvider documents = new(first);
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "after-first"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "second", "after-second"),
+            ]);
+            documents.BeginChecks();
+
+            Assert.ThrowsExactly<WorkspaceOpenDocumentException>(() => service.Apply(proposal, true));
+
+            Assert.AreEqual("first", File.ReadAllText(first));
+            Assert.AreEqual("second", File.ReadAllText(second));
+            Assert.IsFalse(service.CanUndo);
+        });
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void Apply_MultipleOpenEditorsHandleEditsDuringSynchronization(bool editAlreadySynchronized)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string first = Path.Combine(root, "First.txt");
+            string second = Path.Combine(root, "Second.txt");
+            File.WriteAllText(first, "first");
+            File.WriteAllText(second, "second");
+            InterleavingDocuments documents = new();
+            documents.Open(first, "dirty-first", "first");
+            documents.Open(second, "dirty-second", "second");
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "after-first", "dirty-first"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "second", "after-second", "dirty-second"),
+            ]);
+            documents.OnApplied = path =>
+            {
+                if (path == (editAlreadySynchronized ? second : first))
+                {
+                    documents.OnApplied = null;
+                    documents.Get(editAlreadySynchronized ? first : second).Content = "new user edit";
+                }
+            };
+
+            if (editAlreadySynchronized)
+            {
+                AggregateException exception = Assert.ThrowsExactly<AggregateException>(() => service.Apply(proposal, true));
+                StringAssert.Contains(exception.Message, "rollback was incomplete");
+                StringAssert.Contains(exception.ToString(), "First.txt");
+                Assert.AreEqual("new user edit", documents.Get(first).Content);
+                Assert.AreEqual("after-first", documents.Get(first).Saved);
+                Assert.AreEqual("dirty-second", documents.Get(second).Content);
+                Assert.AreEqual("second", documents.Get(second).Saved);
+            }
+            else
+            {
+                Assert.ThrowsExactly<WorkspaceOpenDocumentException>(() => service.Apply(proposal, true));
+                Assert.AreEqual("dirty-first", documents.Get(first).Content);
+                Assert.AreEqual("first", documents.Get(first).Saved);
+                Assert.AreEqual("new user edit", documents.Get(second).Content);
+                Assert.AreEqual("second", documents.Get(second).Saved);
+            }
+
+            Assert.AreEqual("first", File.ReadAllText(first));
+            Assert.AreEqual("second", File.ReadAllText(second));
+            Assert.IsFalse(service.CanUndo);
+            Assert.IsFalse(service.CanRedo);
+        });
+    }
+
+    [TestMethod]
+    public void ApplyUndoRedo_SynchronizesMultipleDirtyEditors()
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string first = Path.Combine(root, "First.txt");
+            string second = Path.Combine(root, "Second.txt");
+            File.WriteAllText(first, "first");
+            File.WriteAllText(second, "second");
+            InterleavingDocuments documents = new();
+            documents.Open(first, "dirty-first", "first");
+            documents.Open(second, "dirty-second", "second");
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "after-first", "dirty-first"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "second", "after-second", "dirty-second"),
+            ]);
+
+            service.Apply(proposal, true);
+            Assert.AreEqual("after-first", documents.Get(first).Content);
+            Assert.AreEqual("after-second", documents.Get(second).Content);
+            Assert.IsTrue(service.Undo());
+            Assert.AreEqual("dirty-first", documents.Get(first).Content);
+            Assert.AreEqual("first", documents.Get(first).Saved);
+            Assert.AreEqual("dirty-second", documents.Get(second).Content);
+            Assert.AreEqual("second", documents.Get(second).Saved);
+            Assert.IsTrue(service.Redo());
+            Assert.AreEqual("after-first", File.ReadAllText(first));
+            Assert.AreEqual("after-second", File.ReadAllText(second));
+            Assert.AreEqual("after-first", documents.Get(first).Content);
+            Assert.AreEqual("after-second", documents.Get(second).Content);
+        });
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void Apply_RollsBackOrReportsEditorMutationWhenSynchronizationThrows(bool newerEdit)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string first = Path.Combine(root, "First.txt");
+            string second = Path.Combine(root, "Second.txt");
+            File.WriteAllText(first, "first");
+            File.WriteAllText(second, "second");
+            InterleavingDocuments documents = new();
+            documents.Open(first, "dirty-first", "first");
+            documents.Open(second, "dirty-second", "second");
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "after-first", "dirty-first"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "second", "after-second", "dirty-second"),
+            ]);
+            documents.OnApplied = path =>
+            {
+                if (path != second) return;
+                documents.OnApplied = null;
+                if (newerEdit) documents.Get(second).Content = "new user edit";
+                throw new IOException("Synchronization event failed.");
+            };
+
+            if (newerEdit)
+            {
+                AggregateException exception = Assert.ThrowsExactly<AggregateException>(() => service.Apply(proposal, true));
+                StringAssert.Contains(exception.Message, "rollback was incomplete");
+                Assert.AreEqual("new user edit", documents.Get(second).Content);
+                Assert.AreEqual("after-second", documents.Get(second).Saved);
+            }
+            else
+            {
+                Assert.ThrowsExactly<IOException>(() => service.Apply(proposal, true));
+                Assert.AreEqual("dirty-second", documents.Get(second).Content);
+                Assert.AreEqual("second", documents.Get(second).Saved);
+            }
+
+            Assert.AreEqual("dirty-first", documents.Get(first).Content);
+            Assert.AreEqual("first", documents.Get(first).Saved);
+            Assert.AreEqual("first", File.ReadAllText(first));
+            Assert.AreEqual("second", File.ReadAllText(second));
+            Assert.IsFalse(service.CanUndo);
+        });
+    }
+
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void UndoRedo_ReportsEditToPreviouslySynchronizedEditor(bool undo)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string first = Path.Combine(root, "First.txt");
+            string second = Path.Combine(root, "Second.txt");
+            File.WriteAllText(first, "first");
+            File.WriteAllText(second, "second");
+            InterleavingDocuments documents = new();
+            documents.Open(first, "dirty-first", "first");
+            documents.Open(second, "dirty-second", "second");
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "after-first", "dirty-first"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "second", "after-second", "dirty-second"),
+            ]);
+            service.Apply(proposal, true);
+            if (!undo) Assert.IsTrue(service.Undo());
+            documents.OnApplied = path =>
+            {
+                if (path == second)
+                {
+                    documents.OnApplied = null;
+                    documents.Get(first).Content = "new user edit";
+                }
+            };
+
+            AggregateException exception = Assert.ThrowsExactly<AggregateException>(() =>
+            {
+                if (undo) service.Undo();
+                else service.Redo();
+            });
+
+            StringAssert.Contains(exception.Message, "rollback was incomplete");
+            Assert.AreEqual("new user edit", documents.Get(first).Content);
+            Assert.AreEqual(undo ? "first" : "after-first", documents.Get(first).Saved);
+            Assert.AreEqual(undo ? "after-second" : "dirty-second", documents.Get(second).Content);
+            Assert.AreEqual(undo ? "after-second" : "second", documents.Get(second).Saved);
+            Assert.AreEqual(undo ? "after-first" : "first", File.ReadAllText(first));
+            Assert.AreEqual(undo ? "after-second" : "second", File.ReadAllText(second));
+            Assert.AreEqual(undo, service.CanUndo);
+            Assert.AreEqual(!undo, service.CanRedo);
+        });
+    }
+
+    [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void UndoRedo_RollsBackEditorMutationWhenSynchronizationThrows(bool undo)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string first = Path.Combine(root, "First.txt");
+            string second = Path.Combine(root, "Second.txt");
+            File.WriteAllText(first, "first");
+            File.WriteAllText(second, "second");
+            InterleavingDocuments documents = new();
+            documents.Open(first, "dirty-first", "first");
+            documents.Open(second, "dirty-second", "second");
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "after-first", "dirty-first"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "second", "after-second", "dirty-second"),
+            ]);
+            service.Apply(proposal, true);
+            if (!undo) Assert.IsTrue(service.Undo());
+            documents.OnApplied = path =>
+            {
+                if (path != second) return;
+                documents.OnApplied = null;
+                throw new IOException("Synchronization event failed.");
+            };
+
+            Assert.ThrowsExactly<IOException>(() =>
+            {
+                if (undo) service.Undo();
+                else service.Redo();
+            });
+
+            Assert.AreEqual(undo ? "after-first" : "dirty-first", documents.Get(first).Content);
+            Assert.AreEqual(undo ? "after-second" : "dirty-second", documents.Get(second).Content);
+            Assert.AreEqual(undo ? "after-second" : "second", documents.Get(second).Saved);
+            Assert.AreEqual(undo ? "after-first" : "first", File.ReadAllText(first));
+            Assert.AreEqual(undo ? "after-second" : "second", File.ReadAllText(second));
+            Assert.AreEqual(undo, service.CanUndo);
+            Assert.AreEqual(!undo, service.CanRedo);
+        });
+    }
+
+    [TestMethod]
     public void Prepare_EnforcesCreateAndReplacePreconditions()
     {
         WithTemporaryDirectory(root =>
@@ -830,6 +1155,60 @@ public sealed class WorkspaceFileChangeServiceTests
         public void Open(string fullPath) => _openPaths.Add(Path.GetFullPath(fullPath));
     }
 
+    private sealed class LateOpenProvider(string path) : IWorkspaceOpenDocumentProvider
+    {
+        private int _checks;
+        private bool _enabled;
+        private bool _open;
+
+        public void BeginChecks() => _enabled = true;
+
+        public bool IsDocumentOpen(string fullPath)
+        {
+            if (_enabled && ++_checks == 6) _open = true;
+            return _open && WorkspacePathIdentity.AreEqual(fullPath, path);
+        }
+    }
+
+    private sealed class InterleavingDocuments : IWorkspaceOpenDocumentChangeProvider
+    {
+        private readonly Dictionary<string, Document> _documents = new(WorkspacePathIdentity.Comparer);
+        private int _checks;
+        private int _trigger;
+        private Action? _onCheck;
+        public Action<string>? OnApplied { get; set; }
+
+        public sealed class Document(string content, string saved)
+        {
+            public string Content { get; set; } = content;
+            public string Saved { get; set; } = saved;
+            public bool Open { get; set; } = true;
+        }
+
+        public Document Get(string path) => _documents[path];
+        public void Open(string path, string content, string saved) => _documents[path] = new(content, saved);
+        public void Close(string path) => Get(path).Open = false;
+        public void BeginChecks(int trigger, Action action) { _checks = 0; _trigger = trigger; _onCheck = action; }
+        public bool IsDocumentOpen(string fullPath)
+        {
+            if (++_checks == _trigger) _onCheck?.Invoke();
+            return _documents.TryGetValue(fullPath, out Document? document) && document.Open;
+        }
+
+        public bool CanApplyChange(string fullPath, string expectedContent, string expectedSavedContent) =>
+            _documents.TryGetValue(fullPath, out Document? document) && document.Open
+            && document.Content == expectedContent && document.Saved == expectedSavedContent;
+
+        public void ApplyChange(string fullPath, string expectedContent, string expectedSavedContent, string proposedContent, string proposedSavedContent)
+        {
+            if (!CanApplyChange(fullPath, expectedContent, expectedSavedContent))
+                throw new IOException("The open document snapshot is stale.");
+            Get(fullPath).Content = proposedContent;
+            Get(fullPath).Saved = proposedSavedContent;
+            OnApplied?.Invoke(fullPath);
+        }
+    }
+
     private sealed class CommitInterleavingProvider : IWorkspaceOpenDocumentProvider
     {
         private int _applyChecks;
@@ -863,7 +1242,8 @@ public sealed class WorkspaceFileChangeServiceTests
                 OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
         }
 
-        public bool CanApplyChange(string fullPath, string expectedContent, string expectedSavedContent) => true;
+        public bool CanApplyChange(string fullPath, string expectedContent, string expectedSavedContent) =>
+            IsDocumentOpen(fullPath) && expectedContent == "before" && expectedSavedContent == "before";
 
         public void ApplyChange(
             string fullPath,

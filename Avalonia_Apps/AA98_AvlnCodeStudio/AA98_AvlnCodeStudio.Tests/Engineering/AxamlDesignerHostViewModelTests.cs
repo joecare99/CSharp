@@ -20,6 +20,29 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class AxamlDesignerHostViewModelTests
 {
     [TestMethod]
+    public void Host_BindingContextRefreshPreservesPendingModeAndPublishesUndoRedo()
+    {
+        AxamlDesignerHostViewModel host = new();
+        host.Markup = "<TextBox Text='{Binding Caption}' />";
+        host.Designer.SelectedNode = host.Designer.PreviewRoot;
+        AxamlBindingRowViewModel row = host.Designer.BindingRows.Single();
+        row.BindingMode = AxamlBindingMode.TwoWay;
+        host.Designer.SetBindingContext(
+        [
+            new AxamlMvvmSemanticMember("Caption", "string", IsCommand: false, IsWritable: true),
+        ]);
+        Assert.IsTrue(row.IsSelectingExistingMember);
+        Assert.AreEqual(AxamlBindingMode.TwoWay, row.BindingMode);
+        host.Designer.ApplyBindingRow(row);
+        StringAssert.Contains(host.Markup, "Mode=TwoWay");
+        Assert.IsTrue(host.HasUnsavedChanges);
+        host.Designer.UndoCommand.Execute(null);
+        Assert.AreEqual("<TextBox Text='{Binding Caption}' />", host.Markup);
+        host.Designer.RedoCommand.Execute(null);
+        StringAssert.Contains(host.Markup, "Mode=TwoWay");
+    }
+
+    [TestMethod]
     public void Host_CodeAndDesignerShareBufferAndUnappliedDraftsProtectDocument()
     {
         string directory = Path.Combine(Path.GetTempPath(), $"AxamlHostBuffer-{Guid.NewGuid():N}");
