@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -7,6 +8,7 @@ using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using Avln_ImageEditor.Controls.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -26,6 +28,11 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     private ImageEditorDocument? _activeDocument;
     private long _revisionSequence;
     private bool _isCropSelectionInProgress;
+    private static FillOperation? s_activeFill;
+    private FillOperation? _pendingFill;
+    internal Action<Action> ScheduleFill { get; set; } = action => Dispatcher.UIThread.Post(action, DispatcherPriority.Background);
+    internal bool IsFillInProgress => _pendingFill is not null;
+    internal int FillPixelsProcessed => _pendingFill?.Head ?? 0;
     internal bool IsCommittingBrushRevision { get; private set; }
 
     internal bool IsCropSelectionInProgress
@@ -33,6 +40,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         get => _isCropSelectionInProgress;
         set
         {
+            if (value && !_isCropSelectionInProgress) CancelPendingFill();
             if (SetProperty(ref _isCropSelectionInProgress, value))
                 ApplyCropCommand.NotifyCanExecuteChanged();
         }
@@ -69,6 +77,11 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private ImageEditorTool _selectedTool = ImageEditorTool.Select;
 
+    partial void OnSelectedToolChanging(ImageEditorTool value)
+    {
+        if (value != _selectedTool) CancelPendingFill();
+    }
+
     private Color? _sampledColor;
 
     /// <summary>The last selected straight RGBA color, or null until sampled or applied.</summary>
@@ -77,6 +90,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         get => _sampledColor;
         private set
         {
+            if (value != _sampledColor) CancelPendingFill();
             if (SetProperty(ref _sampledColor, value))
             {
                 OnPropertyChanged(nameof(SampledColorSummary));
@@ -308,6 +322,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         if (_history.Contains(document))
             throw new ArgumentException("The document is already owned by this editor.", nameof(document));
         ImageDecodeLimits.ValidateSize(document.PixelSize.Width, document.PixelSize.Height);
+        CancelPendingFill();
         var old = _history.ToArray();
         _history.Clear();
         _history.Add(document);
@@ -342,6 +357,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     {
         ArgumentNullException.ThrowIfNull(snapshot);
         if (!IsCurrentDocument(snapshot)) return;
+        if (!ReferenceEquals(_savedRevision, snapshot.Revision)) CancelPendingFill();
         _savedRevision = (ImageEditorDocument)snapshot.Revision;
         RefreshState();
     }
@@ -439,25 +455,38 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         CommitPixels(source, transformed);
     }
 
-    private void CommitPixels(ImageEditorDocument source, WriteableBitmap pixels, bool isBrush = false, Func<bool>? stillValid = null)
+    private void CommitPixels(ImageEditorDocument source, WriteableBitmap pixels, bool isBrush = false, Func<bool>? stillValid = null, Action? published = null)
     {
         ImageEditorDocument? next = null;
         bool ownedByHistory = false;
         try
         {
+            if (stillValid is null) CancelPendingFill();
             next = new ImageEditorDocument(source.Name, pixels);
             ContentChanging?.Invoke(this, EventArgs.Empty);
             if (!ReferenceEquals(source, _activeDocument) || (stillValid is not null && !stillValid()))
                 return;
 
-            for (int i = _history.Count - 1; i > _index; i--) { _history[i].Dispose(); _history.RemoveAt(i); }
+            int redoCount = _history.Count - _index - 1;
+            bool trimOldest = _index + 2 > MaxHistoryStates;
+            var retired = new List<ImageEditorDocument>(redoCount + (trimOldest ? 1 : 0));
+            for (int i = _index + 1; i < _history.Count; i++) retired.Add(_history[i]);
+            if (trimOldest) retired.Add(_history[0]);
+            _history.EnsureCapacity(_index + 2);
+            _history.RemoveRange(_index + 1, redoCount);
             _history.Add(next);
             ownedByHistory = true;
             _index++;
-            if (_history.Count > MaxHistoryStates) { _history[0].Dispose(); _history.RemoveAt(0); _index--; }
+            if (trimOldest) { _history.RemoveAt(0); _index--; }
+            published?.Invoke();
             IsCommittingBrushRevision = isBrush;
             try { SetActiveDocument(next); }
-            finally { IsCommittingBrushRevision = false; }
+            finally
+            {
+                IsCommittingBrushRevision = false;
+                foreach (var document in retired)
+                    if (!_history.Contains(document)) document.Dispose();
+            }
             RefreshState();
         }
         finally
@@ -470,11 +499,56 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         }
     }
 
-    internal void FloodFill(ImageEditorDocument source, Color color, int x, int y)
+    private sealed class FillOperation
     {
+        internal required ImageEditorDocument Source;
+        internal required DocumentState State;
+        internal required long Sequence;
+        internal required Color Color;
+        internal required PixelSize Size;
+        internal required byte[] Data;
+        internal required int[] Queue;
+        internal required Action<string, bool> Report;
+        internal byte B, G, R, A, NewB, NewG, NewR, NewA;
+        internal int Head, Tail;
+        internal bool Published;
+    }
+
+    internal void CancelPendingFill()
+    {
+        var fill = _pendingFill;
+        if (fill is null) return;
+        Dispatcher.UIThread.VerifyAccess();
+        _pendingFill = null;
+        if (ReferenceEquals(s_activeFill, fill)) s_activeFill = null;
+        fill.Data = Array.Empty<byte>();
+        fill.Queue = Array.Empty<int>();
+        ReportFill(fill, fill.Published ? "Fill complete." : "Fill canceled.");
+    }
+
+    private static bool ReportFill(FillOperation fill, string message, bool error = false)
+    {
+        try { fill.Report(message, error); return true; }
+        catch (Exception ex)
+        {
+            try { Trace.TraceError("Fill status reporting failed: {0}", ex); }
+            catch { }
+            return false;
+        }
+    }
+
+    internal void FloodFill(ImageEditorDocument source, Color color, int x, int y, Action<string, bool> report)
+    {
+        Dispatcher.UIThread.VerifyAccess();
+        CancelPendingFill();
         if (!ReferenceEquals(source, ActiveDocument) || SelectedTool != ImageEditorTool.Fill ||
             SampledColor != color || IsCropSelectionInProgress ||
             x < 0 || y < 0 || x >= source.PixelSize.Width || y >= source.PixelSize.Height) return;
+        if (s_activeFill is not null)
+        {
+            report("Another fill is running; retry when it finishes.", false);
+            return;
+        }
 
         int width = source.PixelSize.Width, height = source.PixelSize.Height;
         int count = checked(width * height);
@@ -498,37 +572,115 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         byte newA = color.A;
         if (b == newB && g == newG && r == newR && a == newA) return;
 
-        int[] queue = new int[count];
-        int head = 0, tail = 0;
-        void Enqueue(int index)
+        var fill = new FillOperation
         {
-            int i = index * 4;
-            if (data[i] != b || data[i + 1] != g || data[i + 2] != r || data[i + 3] != a) return;
-            data[i] = newB; data[i + 1] = newG; data[i + 2] = newR; data[i + 3] = newA;
-            queue[tail++] = index;
-        }
-        Enqueue(seed);
-        while (head < tail)
+            Source = source,
+            State = state,
+            Sequence = sequence,
+            Color = color,
+            Size = source.PixelSize,
+            Data = data,
+            Queue = new int[count],
+            Report = report,
+            B = b,
+            G = g,
+            R = r,
+            A = a,
+            NewB = newB,
+            NewG = newG,
+            NewR = newR,
+            NewA = newA
+        };
+        EnqueueFill(fill, seed);
+        _pendingFill = fill;
+        s_activeFill = fill;
+        if (!ReportFill(fill, "Filling… Click again or press Escape to cancel."))
         {
-            int index = queue[head++];
-            int column = index % width;
-            if (column > 0) Enqueue(index - 1);
-            if (column + 1 < width) Enqueue(index + 1);
-            if (index >= width) Enqueue(index - width);
-            if (index < count - width) Enqueue(index + width);
+            if (ReferenceEquals(_pendingFill, fill)) CancelPendingFill();
+            return;
         }
+        if (!ReferenceEquals(_pendingFill, fill)) return;
+        try { ScheduleFill(() => RunFillChunk(fill)); }
+        catch (Exception ex) { FailFill(fill, ex); }
+    }
 
-        var result = new WriteableBitmap(source.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+    private static void EnqueueFill(FillOperation fill, int index)
+    {
+        int i = index * 4;
+        byte[] data = fill.Data;
+        if (data[i] != fill.B || data[i + 1] != fill.G || data[i + 2] != fill.R || data[i + 3] != fill.A) return;
+        data[i] = fill.NewB; data[i + 1] = fill.NewG; data[i + 2] = fill.NewR; data[i + 3] = fill.NewA;
+        fill.Queue[fill.Tail++] = index;
+    }
+
+    private bool FillIsCurrent(FillOperation fill) =>
+        ReferenceEquals(_pendingFill, fill) && _revisionSequence == fill.Sequence &&
+        IsCurrentDocumentState(fill.State) && SelectedTool == ImageEditorTool.Fill &&
+        SampledColor == fill.Color && !IsCropSelectionInProgress;
+
+    private void FinishFill(FillOperation fill, string message)
+    {
+        if (!ReferenceEquals(_pendingFill, fill)) return;
+        _pendingFill = null;
+        if (ReferenceEquals(s_activeFill, fill)) s_activeFill = null;
+        fill.Data = Array.Empty<byte>();
+        fill.Queue = Array.Empty<int>();
+        ReportFill(fill, message);
+    }
+
+    private void FailFill(FillOperation fill, Exception error)
+    {
+        FinishFill(fill, "Fill stopped.");
+        if (!ReportFill(fill, $"Fill failed; image may have changed: {error.Message}", error: true))
+        {
+            try { Trace.TraceError("Fill failed: {0}", error); }
+            catch { }
+        }
+    }
+
+    private void RunFillChunk(FillOperation fill)
+    {
+        Dispatcher.UIThread.VerifyAccess();
+        if (!ReferenceEquals(_pendingFill, fill)) return;
         try
         {
-            using (var buffer = result.Lock())
-                for (int row = 0; row < height; row++)
-                    Marshal.Copy(data, row * width * 4, IntPtr.Add(buffer.Address, row * buffer.RowBytes), width * 4);
+            if (!FillIsCurrent(fill)) { FinishFill(fill, "Fill canceled."); return; }
+            int width = fill.Size.Width, count = fill.Queue.Length;
+            long start = Stopwatch.GetTimestamp();
+            int remaining = 4096;
+            while (fill.Head < fill.Tail && remaining-- > 0)
+            {
+                int index = fill.Queue[fill.Head++];
+                int column = index % width;
+                if (column > 0) EnqueueFill(fill, index - 1);
+                if (column + 1 < width) EnqueueFill(fill, index + 1);
+                if (index >= width) EnqueueFill(fill, index - width);
+                if (index < count - width) EnqueueFill(fill, index + width);
+                if ((fill.Head & 127) == 0 &&
+                    Stopwatch.GetTimestamp() - start >= Stopwatch.Frequency / 250) break;
+            }
+            if (fill.Head < fill.Tail)
+            {
+                ScheduleFill(() => RunFillChunk(fill));
+                return;
+            }
+
+            var result = new WriteableBitmap(fill.Size, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
+            try
+            {
+                using var buffer = result.Lock();
+                for (int row = 0; row < fill.Size.Height; row++)
+                    Marshal.Copy(fill.Data, row * width * 4, IntPtr.Add(buffer.Address, row * buffer.RowBytes), width * 4);
+            }
+            catch { result.Dispose(); throw; }
+            CommitPixels(fill.Source, result, isBrush: true, stillValid: () => FillIsCurrent(fill),
+                published: () => fill.Published = true);
+            FinishFill(fill, "Fill complete.");
         }
-        catch { result.Dispose(); throw; }
-        CommitPixels(source, result, isBrush: true, stillValid: () =>
-            _revisionSequence == sequence && IsCurrentDocumentState(state) &&
-            SelectedTool == ImageEditorTool.Fill && SampledColor == color && !IsCropSelectionInProgress);
+        catch (Exception ex)
+        {
+            FailFill(fill, ex);
+        }
     }
     internal void PaintStroke(ImageEditorDocument source, Color color, HashSet<int> indices, bool erase = false)
     {
@@ -576,6 +728,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     [RelayCommand(CanExecute = nameof(CanUndo))]
     public void Undo()
     {
+        CancelPendingFill();
         if (!CanUndo()) return;
         long sequence = _revisionSequence;
         int index = _index;
@@ -589,6 +742,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
     [RelayCommand(CanExecute = nameof(CanRedo))]
     public void Redo()
     {
+        CancelPendingFill();
         if (!CanRedo()) return;
         long sequence = _revisionSequence;
         int index = _index;
@@ -608,6 +762,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
 
     private void ClearCore()
     {
+        CancelPendingFill();
         var old = _history.ToArray();
         _history.Clear();
         _documentIdentity = new object();

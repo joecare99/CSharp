@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
@@ -147,12 +148,15 @@ public partial class ImageEditorControl : UserControl
         CancelDrag(restore: true);
         CancelBrush();
         CancelFill();
+        _editor?.CancelPendingFill();
         if (_editor is not null)
         {
             _editor.PropertyChanged -= EditorPropertyChanged;
             _editor.ContentChanging -= EditorContentChanging;
         }
         _editor = editor;
+        FillStatusText.Text = "";
+        FillErrorText.Text = "";
         if (_editor is not null)
         {
             _editor.PropertyChanged += EditorPropertyChanged;
@@ -211,6 +215,12 @@ public partial class ImageEditorControl : UserControl
 
     private void ImagePointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        if (FillMode.IsChecked == true && _editor?.IsFillInProgress == true)
+        {
+            _editor.CancelPendingFill();
+            e.Handled = true;
+            return;
+        }
         if (_fillPointer is not null)
         {
             CancelFill();
@@ -352,7 +362,24 @@ public partial class ImageEditorControl : UserControl
                 editor.SelectedTool == ImageEditorTool.Fill && editor.SampledColor == color &&
                 TryFillPixel(e.GetPosition(ImageSurface), document, out int endX, out int endY) && endX == x && endY == y;
             CancelFill();
-            if (valid) editor!.FloodFill(document!, color, x, y);
+            if (valid)
+            {
+                FillStatusText.Text = "";
+                FillErrorText.Text = "";
+                try
+                {
+                    editor!.FloodFill(document!, color, x, y, (message, error) =>
+                    {
+                        if (error)
+                        {
+                            if (ReferenceEquals(_editor, editor) && this.IsAttachedToVisualTree()) FillErrorText.Text = message;
+                            else Trace.TraceError(message);
+                        }
+                        else if (ReferenceEquals(_editor, editor) && this.IsAttachedToVisualTree()) FillStatusText.Text = message;
+                    });
+                }
+                catch (Exception ex) { FillErrorText.Text = $"Fill failed: {ex.Message}"; }
+            }
             e.Handled = true;
             return;
         }
@@ -394,6 +421,12 @@ public partial class ImageEditorControl : UserControl
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
+        if (e.Key == Key.Escape && _editor?.IsFillInProgress == true)
+        {
+            _editor.CancelPendingFill();
+            e.Handled = true;
+            return;
+        }
         if (e.Key == Key.Escape && _fillPointer is not null)
         {
             CancelFill();

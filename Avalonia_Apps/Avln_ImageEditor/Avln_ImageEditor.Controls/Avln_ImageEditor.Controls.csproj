@@ -17,6 +17,7 @@
     <None Remove="obj\**" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Avln_ImageEditor.Controls.Tests" />
     <PackageReference Include="Avalonia" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
   </ItemGroup>

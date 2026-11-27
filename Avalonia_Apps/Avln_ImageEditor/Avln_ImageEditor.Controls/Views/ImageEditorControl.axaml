@@ -29,6 +29,8 @@
 					IsEnabled="{Binding HasDocument}" />
 		  <CheckBox x:Name="FillMode" VerticalAlignment="Center" Content="Fill"
 					IsEnabled="{Binding HasDocument}" />
+		  <TextBlock x:Name="FillStatusText" VerticalAlignment="Center" Foreground="#F2F2F2" />
+		  <TextBlock x:Name="FillErrorText" VerticalAlignment="Center" Foreground="#FFB4AB" />
 		  <Button Command="{Binding RotateRightCommand}" Content="Rotate 90° right" />
 		  <Button Command="{Binding RotateLeftCommand}" Content="Rotate left" />
 		  <Button Command="{Binding Rotate180Command}" Content="Rotate 180°" />
