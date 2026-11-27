@@ -304,6 +304,10 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private VersionControlStatus? _versionControlStatus;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(VersionControlSummary))]
+        private string? _versionControlError;
+
+        [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateSvnWorkspaceCommand))]
         private bool _svnUpdateBusy;
 
@@ -311,13 +315,13 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             ? UiStrings.NoWorkspaceOpenText
             : string.Format(UiStrings.WorkspaceOpenStatusFormat, Workspace.EntryPath);
 
-        public string VersionControlSummary => VersionControlStatus is null || !VersionControlStatus.IsRepositoryRootDiscovered
+        public string VersionControlSummary => VersionControlError ?? (VersionControlStatus is null || !VersionControlStatus.IsRepositoryRootDiscovered
             ? UiStrings.NoRepositoryStatusText
             : string.Format(
                 UiStrings.RepositoryStatusFormat,
                 VersionControlStatus.RepositoryName ?? VersionControlStatus.RepositoryRootPath,
                 VersionControlStatus.ActiveReferenceName ?? UiStrings.UnknownReferenceText,
-                VersionControlStatus.Changes.Count);
+                VersionControlStatus.Changes.Count));
 
         public bool CanUpdateSvnWorkspace => Workspace is not null
             && _svnWorkingCopyOperations is not null
@@ -1970,6 +1974,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             cancellationToken.ThrowIfCancellationRequested();
             if (Workspace is not null && PathsEqual(Workspace.RootPath, workspace.RootPath))
             {
+                ClearVersionControlError();
                 VersionControlStatus = status;
             }
 
@@ -2881,18 +2886,74 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 await RefreshDiagnosticsAsync(cancellationToken);
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
+            if (version != Interlocked.Read(ref _workspaceOpenVersion) || !ReferenceEquals(workspace, Workspace))
+            {
+                return;
+            }
+
             QueueLanguageAnalysis();
             RefreshAxamlPreview();
-            VersionControlStatus status = await _versionControlService.GetStatusAsync(new VersionControlStatusRequest
+            if (version != Interlocked.Read(ref _workspaceOpenVersion) || !ReferenceEquals(workspace, Workspace))
             {
-                RepositoryContextPath = workspace.RootPath,
-                IncludeChanges = true,
-                IncludeCapabilities = true,
-            }, cancellationToken);
-            if (version == Interlocked.Read(ref _workspaceOpenVersion) && ReferenceEquals(workspace, Workspace))
-            {
-                VersionControlStatus = status;
+                return;
             }
+            bool IsCurrentOpen()
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return version == Interlocked.Read(ref _workspaceOpenVersion) && ReferenceEquals(workspace, Workspace);
+            }
+
+            if (!ClearVersionControlError(IsCurrentOpen))
+            {
+                return;
+            }
+            VersionControlStatus = null;
+            if (!IsCurrentOpen())
+            {
+                return;
+            }
+            try
+            {
+                VersionControlStatus status = await _versionControlService.GetStatusAsync(new VersionControlStatusRequest
+                {
+                    RepositoryContextPath = workspace.RootPath,
+                    IncludeChanges = true,
+                    IncludeCapabilities = true,
+                }, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                if (version == Interlocked.Read(ref _workspaceOpenVersion) && ReferenceEquals(workspace, Workspace))
+                {
+                    VersionControlStatus = status;
+                }
+            }
+            catch (VersionControlClientNotFoundException exception)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                if (version == Interlocked.Read(ref _workspaceOpenVersion) && ReferenceEquals(workspace, Workspace))
+                {
+                    VersionControlError = exception.Message;
+                    if (!IsCurrentOpen())
+                    {
+                        return;
+                    }
+                    Editor.NotificationText = exception.Message;
+                }
+            }
+        }
+
+        private bool ClearVersionControlError(Func<bool>? canContinue = null)
+        {
+            if (VersionControlError is not null && Editor.NotificationText == VersionControlError)
+            {
+                Editor.NotificationText = string.Empty;
+                if (canContinue is not null && !canContinue())
+                {
+                    return false;
+                }
+            }
+            VersionControlError = null;
+            return canContinue is null || canContinue();
         }
 
         [RelayCommand(CanExecute = nameof(CanUpdateSvnWorkspaceNow))]
@@ -2928,6 +2989,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                     cancellationToken);
                 if (Workspace is not null && PathsEqual(Workspace.RootPath, workspace.RootPath))
                 {
+                    ClearVersionControlError();
                     VersionControlStatus = refreshedStatus;
                 }
 
@@ -2943,6 +3005,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             catch (Exception exception) when (exception is IOException
                 or InvalidOperationException
                 or ArgumentException
+                or VersionControlClientNotFoundException
                 or System.ComponentModel.Win32Exception)
             {
                 Editor.StatusText = "SVN update failed.";
