@@ -470,6 +470,124 @@ internal static partial class Program
                     Marshal.Copy(IntPtr.Add(buffer.Address, y * buffer.RowBytes + x * 4), value, 0, 4);
                     return value;
                 }
+                CheckBox brushMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "BrushMode");
+                Check(brushMode.IsChecked != true && brushMode.IsEffectivelyEnabled,
+                    "The image brush was not available and initially off.");
+                sampleMode.IsChecked = true;
+                brushMode.IsChecked = true;
+                Check(sampleMode.IsChecked != true && cropMode.IsChecked != true,
+                    "The image brush did not exclude sampling and crop.");
+                Point BrushPoint(double x)
+                {
+                    Point point = surface.TranslatePoint(new Point(x, 4.5), window)
+                        ?? throw new InvalidOperationException("No image brush coordinates.");
+                    IInputElement target = window.InputHitTest(point)
+                        ?? throw new InvalidOperationException("No image brush input target.");
+                    Check(target is Visual visual && (ReferenceEquals(visual, surface)
+                        || visual.GetVisualAncestors().Contains(surface)), "Image brush hit another control.");
+                    return point;
+                }
+                Point start = BrushPoint(4.5);
+                Point middle = BrushPoint(6.5);
+                Point end = BrushPoint(8.5);
+                IInputElement brushTarget = window.InputHitTest(start)!;
+                Pointer brushPointer = new(17, PointerType.Mouse, true);
+                int brushChanges = 0;
+                EventHandler brushChanging = (_, _) => brushChanges++;
+                editor.ContentChanging += brushChanging;
+                PointerPressedEventArgs brushPress = new(brushTarget, brushPointer, window, start, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                {
+                    RoutedEvent = InputElement.PointerPressedEvent,
+                };
+                ((Interactive)brushTarget).RaiseEvent(brushPress);
+                Check(brushPress.Handled && ReferenceEquals(brushPointer.Captured, surface),
+                    "The image brush did not capture the left press.");
+                PointerEventArgs brushMove = new(InputElement.PointerMovedEvent, surface, brushPointer, window, middle, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), KeyModifiers.None);
+                surface.RaiseEvent(brushMove);
+                Check(brushMove.Handled && brushChanges == 0 && editor.IsCurrentDocumentState(state) && !editor.IsDirty
+                    && editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "The pending brush gesture changed the document.");
+                PointerReleasedEventArgs brushRelease = new(surface, brushPointer, window, end, 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased),
+                    KeyModifiers.None, MouseButton.Left)
+                {
+                    RoutedEvent = InputElement.PointerReleasedEvent,
+                };
+                surface.RaiseEvent(brushRelease);
+                Check(brushRelease.Handled && brushPointer.Captured is null && brushChanges == 1 && editor.IsDirty
+                    && editor.UndoCommand.CanExecute(null), "The image brush did not commit on release.");
+                byte[] painted = editor.CapturePngSnapshot().Bytes;
+                using (var stream = new MemoryStream(painted))
+                using (var decoded = new Bitmap(stream))
+                {
+                    for (int x = 4; x <= 8; x++)
+                        Check(SnapshotPixel(decoded, x, 4).SequenceEqual(new byte[] { 0, 255, 0, 255 }),
+                            $"The image brush missed pixel {x},4.");
+                    Check(SnapshotPixel(decoded, 3, 4).SequenceEqual(new byte[] { 0, 0, 0, 0 })
+                        && SnapshotPixel(decoded, 9, 4).SequenceEqual(new byte[] { 0, 0, 0, 0 }),
+                        "The image brush painted beyond the stroke.");
+                }
+                editor.Undo();
+                Check(editor.IsCurrentDocumentState(state) && !editor.IsDirty && !editor.UndoCommand.CanExecute(null)
+                    && editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "One undo did not restore the image before the brush stroke.");
+                editor.Redo();
+                Check(editor.IsDirty && editor.CapturePngSnapshot().Bytes.SequenceEqual(painted),
+                    "Redo did not restore the image brush stroke.");
+                editor.Undo();
+                Check(editor.IsCurrentDocumentState(state) && !editor.IsDirty && brushChanges == 4,
+                    "Undo did not restore the clean image after brush redo.");
+                editor.ContentChanging -= brushChanging;
+                CheckBox eraserMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "EraserMode");
+                Check(eraserMode.IsChecked != true && eraserMode.IsEffectivelyEnabled,
+                    "The image eraser was not available and initially off.");
+                eraserMode.IsChecked = true;
+                Check(brushMode.IsChecked != true && sampleMode.IsChecked != true && cropMode.IsChecked != true,
+                    "The eraser did not exclude other modes.");
+                Point eraseStart = BrushPoint(28.5);
+                Point eraseEnd = BrushPoint(30.5);
+                IInputElement eraseTarget = window.InputHitTest(eraseStart)!;
+                Pointer erasePointer = new(18, PointerType.Mouse, true);
+                PointerPressedEventArgs erasePress = new(eraseTarget, erasePointer, window, eraseStart, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                { RoutedEvent = InputElement.PointerPressedEvent };
+                ((Interactive)eraseTarget).RaiseEvent(erasePress);
+                Check(erasePress.Handled && ReferenceEquals(erasePointer.Captured, surface),
+                    "The eraser did not capture the hit-tested press.");
+                PointerEventArgs eraseMove = new(InputElement.PointerMovedEvent, surface, erasePointer, window, eraseEnd, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), KeyModifiers.None);
+                surface.RaiseEvent(eraseMove);
+                Check(editor.IsCurrentDocumentState(state) && !editor.IsDirty
+                    && editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "The pending eraser changed the image.");
+                PointerReleasedEventArgs eraseRelease = new(surface, erasePointer, window, eraseEnd, 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased),
+                    KeyModifiers.None, MouseButton.Left)
+                { RoutedEvent = InputElement.PointerReleasedEvent };
+                surface.RaiseEvent(eraseRelease);
+                Check(eraseRelease.Handled && erasePointer.Captured is null && editor.IsDirty,
+                    "The eraser did not commit on release.");
+                byte[] erased = editor.CapturePngSnapshot().Bytes;
+                using (var stream = new MemoryStream(erased))
+                using (var decoded = new Bitmap(stream))
+                {
+                    for (int x = 28; x <= 30; x++)
+                        Check(SnapshotPixel(decoded, x, 4).SequenceEqual(new byte[] { 0, 0, 0, 0 }),
+                            $"The eraser missed pixel {x},4.");
+                    Check(SnapshotPixel(decoded, 27, 4).SequenceEqual(new byte[] { 0, 0, 128, 128 }),
+                        "The eraser changed an adjacent pixel.");
+                }
+                editor.Undo();
+                Check(editor.IsCurrentDocumentState(state) && !editor.IsDirty
+                    && editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "Undo did not restore the image before erasing.");
+                editor.Redo();
+                Check(editor.CapturePngSnapshot().Bytes.SequenceEqual(erased), "Redo did not restore the erased image.");
+                editor.Undo();
                 using (var stream = new MemoryStream(editor.CapturePngSnapshot().Bytes))
                 using (var decoded = new Bitmap(stream))
                 {
