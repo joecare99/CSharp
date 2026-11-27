@@ -98,7 +98,7 @@ public sealed class UnsavedChangesDialog : Window
     /// </summary>
     /// <param name="owner">The owner window.</param>
     /// <returns>The chosen decision.</returns>
-    public async Task<SaveDecision> ShowDialog(Window owner)
+    public new async Task<SaveDecision> ShowDialog(Window owner)
     {
         ArgumentNullException.ThrowIfNull(owner);
 
