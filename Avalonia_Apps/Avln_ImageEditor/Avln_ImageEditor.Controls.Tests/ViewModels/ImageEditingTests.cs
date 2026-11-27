@@ -90,6 +90,257 @@ public sealed class ImageEditingTests
     }
 
     [TestMethod]
+    public async Task FillConnectedExactPixelsTransparencyAndHistory() =>
+        await _session.Dispatch(() =>
+    {
+        byte[] source = {
+            0,0,255,255, 0,0,255,255, 0,0,0,0, 0,0,255,255,
+            0,0,255,255, 0,0,0,0, 0,0,255,255, 0,0,255,255,
+            0,0,0,0, 0,0,255,255, 0,0,255,255, 0,0,255,255
+        };
+        var bitmap = new WriteableBitmap(new PixelSize(4, 3), new Vector(192, 192), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        using (var buffer = bitmap.Lock())
+            for (int y = 0; y < 3; y++) Marshal.Copy(source, y * 16, IntPtr.Add(buffer.Address, y * buffer.RowBytes), 16);
+        using var editor = new ImageEditorViewModel();
+        editor.LoadDocument(new ImageEditorDocument("fill.png", bitmap));
+        editor.FlipHorizontal(); editor.Undo();
+        var state = editor.CaptureDocumentState();
+        int changes = 0;
+        editor.ContentChanging += (_, _) => changes++;
+        var window = new Window { Width = 900, Height = 750, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show(); editor.ZoomPercentage = 800;
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var fill = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "FillMode");
+            Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
+            void Click(double x, double y) { window.MouseDown(At(x, y), MouseButton.Left, RawInputModifiers.None); window.MouseUp(At(x, y), MouseButton.Left, RawInputModifiers.None); }
+            Assert.AreEqual(false, fill.IsChecked);
+            fill.IsChecked = true;
+            Click(.5, .5);
+            Assert.IsTrue(editor.IsCurrentDocumentState(state), "No selected color.");
+            editor.ManualColorHex = "#FFFF0000"; editor.ApplyManualColor();
+            Click(.5, .5);
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            Assert.AreEqual(0, changes);
+            editor.ManualColorHex = "#01FF0000"; editor.ApplyManualColor();
+            Click(4.1, 1.5);
+            Click(1.5, 3.1);
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            editor.ManualColorHex = "#80402010"; editor.ApplyManualColor();
+            window.MouseDown(At(.5, .5), MouseButton.Left, RawInputModifiers.None);
+            CollectionAssert.AreEqual(source, ReadPixels(editor.ActiveDocument!));
+            window.MouseUp(At(.5, .5), MouseButton.Left, RawInputModifiers.None);
+            byte[] expected = (byte[])source.Clone();
+            foreach (int i in new[] { 0, 1, 4 }) Array.Copy(new byte[] { 8, 16, 32, 128 }, 0, expected, i * 4, 4);
+            CollectionAssert.AreEqual(expected, ReadPixels(editor.ActiveDocument!));
+            Assert.IsTrue(editor.IsDirty);
+            Assert.IsFalse(editor.RedoCommand.CanExecute(null));
+            Assert.AreEqual(1, changes);
+            Assert.AreEqual(true, fill.IsChecked);
+            using (var decoded = new ImageEditorViewModel())
+            {
+                decoded.LoadDocument(editor.CapturePngSnapshot().Bytes, "fill.png");
+                CollectionAssert.AreEqual(expected, ReadPixels(decoded.ActiveDocument!));
+            }
+            editor.Undo();
+            Assert.IsFalse(editor.IsDirty);
+            CollectionAssert.AreEqual(source, ReadPixels(editor.ActiveDocument!));
+            editor.Redo();
+            CollectionAssert.AreEqual(expected, ReadPixels(editor.ActiveDocument!));
+            fill.IsChecked = true;
+            editor.FlipHorizontal(); editor.Undo();
+            fill.IsChecked = true;
+            var filledState = editor.CaptureDocumentState();
+            editor.ManualColorHex = "#8040200F"; editor.ApplyManualColor();
+            Click(.5, .5);
+            Assert.IsTrue(editor.IsCurrentDocumentState(filledState));
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(expected, ReadPixels(editor.ActiveDocument!));
+            editor.ManualColorHex = "#00123456"; editor.ApplyManualColor();
+            Click(.5, .5);
+            byte[] erasedPartial = (byte[])expected.Clone();
+            foreach (int i in new[] { 0, 1, 4 }) Array.Clear(erasedPartial, i * 4, 4);
+            CollectionAssert.AreEqual(erasedPartial, ReadPixels(editor.ActiveDocument!));
+            editor.Undo();
+            fill.IsChecked = true;
+            Click(3.5, 2.5);
+            foreach (int i in new[] { 3, 6, 7, 9, 10, 11 }) Array.Clear(expected, i * 4, 4);
+            CollectionAssert.AreEqual(expected, ReadPixels(editor.ActiveDocument!));
+            editor.Undo();
+            editor.Redo();
+            CollectionAssert.AreEqual(expected, ReadPixels(editor.ActiveDocument!));
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task FillCancelsInvalidAndCompetingGesturesAndExcludesOtherModes() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        editor.LoadDocument(MakeDocument()); editor.FlipHorizontal(); editor.Undo();
+        editor.ManualColorHex = "#FF123456"; editor.ApplyManualColor();
+        var state = editor.CaptureDocumentState();
+        var control = new ImageEditorControl { DataContext = editor };
+        var window = new Window { Width = 900, Height = 750, Content = control };
+        try
+        {
+            window.Show(); editor.ZoomPercentage = 800;
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var fill = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "FillMode");
+            var brush = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "BrushMode");
+            var eraser = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "EraserMode");
+            var crop = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "DragCropMode");
+            var sample = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "SampleColorMode");
+            Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
+            void Down() => window.MouseDown(At(.5, .5), MouseButton.Left, RawInputModifiers.None);
+            void Up() => window.MouseUp(At(.5, .5), MouseButton.Left, RawInputModifiers.None);
+            IPointer? pointer = null;
+            surface.AddHandler(InputElement.PointerPressedEvent, (_, e) => pointer = e.Pointer, RoutingStrategies.Bubble, handledEventsToo: true);
+            crop.IsChecked = true; fill.IsChecked = true; Assert.AreEqual(false, crop.IsChecked);
+            Assert.AreEqual(ImageEditorTool.Fill, editor.SelectedTool);
+            Down(); Assert.IsNotNull(pointer);
+            window.MouseDown(At(.5, .5), MouseButton.Right, RawInputModifiers.LeftMouseButton);
+            window.MouseUp(At(.5, .5), MouseButton.Right, RawInputModifiers.LeftMouseButton); Up();
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            Down(); pointer.Capture(null); Up();
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            Down(); window.KeyPress(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null); Up();
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            Down(); window.MouseMove(At(1.5, .5), RawInputModifiers.LeftMouseButton); Up();
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            Down();
+            window.MouseDown(At(.5, .5), MouseButton.Middle, RawInputModifiers.LeftMouseButton);
+            window.MouseUp(At(.5, .5), MouseButton.Middle, RawInputModifiers.LeftMouseButton); Up();
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            Down(); editor.ManualColorHex = "#FFABCDEF"; editor.ApplyManualColor(); Up();
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            Down(); editor.SelectedTool = ImageEditorTool.Brush; Up();
+            Assert.AreEqual(false, fill.IsChecked); Assert.AreEqual(true, brush.IsChecked);
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            fill.IsChecked = true; Assert.AreEqual(false, brush.IsChecked);
+            eraser.IsChecked = true; Assert.AreEqual(false, fill.IsChecked);
+            fill.IsChecked = true; Assert.AreEqual(false, eraser.IsChecked);
+            sample.IsChecked = true; Assert.AreEqual(false, fill.IsChecked);
+            fill.IsChecked = true; Assert.AreEqual(false, sample.IsChecked);
+            IInputElement target = window.InputHitTest(At(.5, .5))!;
+            foreach (var kind in new[] { PointerUpdateKind.Other, PointerUpdateKind.MiddleButtonPressed, PointerUpdateKind.RightButtonPressed, PointerUpdateKind.LeftButtonPressed })
+            {
+                var buttons = kind == PointerUpdateKind.LeftButtonPressed ? RawInputModifiers.LeftMouseButton | RawInputModifiers.RightMouseButton : RawInputModifiers.LeftMouseButton;
+                var press = new PointerPressedEventArgs(target, pointer, window, At(.5, .5), 0,
+                    new PointerPointProperties(buttons, kind), KeyModifiers.None, 1)
+                { RoutedEvent = InputElement.PointerPressedEvent };
+                ((Interactive)target).RaiseEvent(press);
+                Assert.IsFalse(press.Handled);
+            }
+            Down();
+            var invalid = new PointerReleasedEventArgs(surface, pointer, window, At(.5, .5), 0,
+                new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.Other), KeyModifiers.None, MouseButton.Left)
+            { RoutedEvent = InputElement.PointerReleasedEvent };
+            surface.RaiseEvent(invalid); Up();
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            Down();
+            var mixed = new PointerReleasedEventArgs(surface, pointer, window, At(.5, .5), 0,
+                new PointerPointProperties(RawInputModifiers.RightMouseButton, PointerUpdateKind.LeftButtonReleased),
+                KeyModifiers.None, MouseButton.Left)
+            { RoutedEvent = InputElement.PointerReleasedEvent };
+            surface.RaiseEvent(mixed); Up();
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            Down(); editor.Redo(); byte[] competing = ReadPixels(editor.ActiveDocument!); Up();
+            CollectionAssert.AreEqual(competing, ReadPixels(editor.ActiveDocument!));
+            editor.Undo();
+            fill.IsChecked = true;
+            using (var other = new ImageEditorViewModel())
+            {
+                other.LoadDocument(MakeDocument());
+                Down(); control.DataContext = other; Up();
+                Assert.IsFalse(other.IsDirty);
+                CollectionAssert.AreEqual(Pixels, ReadPixels(other.ActiveDocument!));
+                control.DataContext = editor;
+            }
+            fill.IsChecked = true;
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            bool interleaved = false;
+            EventHandler reenter = (_, _) =>
+            {
+                if (interleaved) return;
+                interleaved = true;
+                editor.Redo(); editor.Undo();
+                editor.SelectedTool = ImageEditorTool.Fill;
+            };
+            editor.ContentChanging += reenter;
+            Down(); Up();
+            editor.ContentChanging -= reenter;
+            Assert.IsTrue(interleaved);
+            Assert.IsTrue(editor.IsCurrentDocumentState(state));
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!));
+            Down(); editor.LoadDocument(MakeDocument()); Up();
+            Assert.IsFalse(editor.IsDirty); Assert.AreEqual(false, fill.IsChecked);
+            fill.IsChecked = true;
+            bool replaced = false;
+            editor.ContentChanging += (_, _) =>
+            {
+                if (replaced) return;
+                replaced = true;
+                editor.LoadDocument(MakeDocument());
+            };
+            Down(); Up();
+            Assert.IsTrue(replaced);
+            Assert.IsFalse(editor.IsDirty);
+            CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!));
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task FillLargeAtZoomScrollAndDpi() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        const int width = 2048, height = 2048;
+        var bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(192, 192), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        using (var buffer = bitmap.Lock())
+        {
+            var row = new byte[width * 4];
+            for (int x = 0; x < width; x++) { row[x * 4 + 2] = 128; row[x * 4 + 3] = 128; }
+            for (int y = 0; y < height; y++) Marshal.Copy(row, 0, IntPtr.Add(buffer.Address, y * buffer.RowBytes), row.Length);
+        }
+        editor.LoadDocument(new ImageEditorDocument("large.png", bitmap));
+        editor.ManualColorHex = "#FF0000FF"; editor.ApplyManualColor();
+        var window = new Window { Width = 1000, Height = 800, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show(); window.SetRenderScaling(1.25); editor.ZoomPercentage = 125;
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var scroll = window.GetVisualDescendants().OfType<ScrollViewer>().Single(c => c.Name == "ImageScrollViewer");
+            var fill = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "FillMode");
+            scroll.Offset = new Vector(150, 100);
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            fill.IsChecked = true;
+            Point point = surface.TranslatePoint(new Point(200.5, 130.5), window)!.Value;
+            window.MouseDown(point, MouseButton.Left, RawInputModifiers.None);
+            window.MouseUp(point, MouseButton.Left, RawInputModifiers.None);
+            var pixels = ReadPixels(editor.ActiveDocument!);
+            for (int i = 0; i < pixels.Length; i += 4)
+                if (pixels[i] != 255 || pixels[i + 1] != 0 || pixels[i + 2] != 0 || pixels[i + 3] != 255)
+                    Assert.Fail($"Unexpected pixel at {i / 4}.");
+            Assert.IsTrue(editor.IsDirty);
+            editor.Undo(); Assert.IsFalse(editor.IsDirty);
+            CollectionAssert.AreEqual(new byte[] { 0, 0, 128, 128 }, Pixel(ReadPixels(editor.ActiveDocument!), width, 2047, 2047));
+            editor.Redo();
+            CollectionAssert.AreEqual(new byte[] { 255, 0, 0, 255 }, Pixel(ReadPixels(editor.ActiveDocument!), width, 0, 0));
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
     public async Task EraserCommitsOnReleaseAndPreservesNoOpRedo() =>
         await _session.Dispatch(() =>
     {
@@ -2119,6 +2370,115 @@ public sealed class ImageEditingTests
             host.Editor.MarkSaved(host.Editor.CapturePngSnapshot());
             window.Close();
             host.Editor.Dispose();
+        }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task ThrowingDirtyObserverPreventsLaterHostNotification() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        editor.LoadDocument(MakeDocument());
+        var window = new Window { Content = new ImageEditorControl { DataContext = editor } };
+        window.Show();
+        bool hostNotified = false;
+        System.ComponentModel.PropertyChangedEventHandler throwing = (_, e) =>
+        {
+            if (e.PropertyName == nameof(ImageEditorViewModel.IsDirty))
+                throw new InvalidOperationException("test notification failure");
+        };
+        System.ComponentModel.PropertyChangedEventHandler host = (_, e) =>
+        {
+            if (e.PropertyName == nameof(ImageEditorViewModel.IsDirty))
+                hostNotified = true;
+        };
+        editor.PropertyChanged += throwing;
+        editor.PropertyChanged += host;
+        try
+        {
+            Assert.ThrowsExactly<InvalidOperationException>(() => editor.FlipHorizontal());
+            Assert.IsTrue(editor.IsDirty);
+            Assert.IsFalse(hostNotified, "This characterizes the existing observer-exception limitation.");
+        }
+        finally
+        {
+            editor.PropertyChanged -= throwing;
+            editor.PropertyChanged -= host;
+            window.Close();
+        }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task HistoryReentrancyDoesNotOverwriteReplacement() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        editor.LoadDocument(MakeDocument());
+        var window = new Window { Content = new ImageEditorControl { DataContext = editor } };
+        window.Show();
+        try
+        {
+            editor.FlipHorizontal();
+            EventHandler clear = (_, _) => editor.ClearDocument();
+            editor.ContentChanging += clear;
+            editor.Undo();
+            editor.ContentChanging -= clear;
+            Assert.IsNull(editor.ActiveDocument);
+            Assert.IsFalse(editor.RedoCommand.CanExecute(null));
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task RedoReentrancyDoesNotOverwriteReplacement() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        editor.LoadDocument(MakeDocument());
+        var window = new Window { Content = new ImageEditorControl { DataContext = editor } };
+        window.Show();
+        try
+        {
+            editor.FlipHorizontal();
+            editor.Undo();
+            var replacement = MakeDocument();
+            EventHandler replace = (_, _) => editor.LoadDocument(replacement);
+            editor.ContentChanging += replace;
+            editor.Redo();
+            editor.ContentChanging -= replace;
+            Assert.AreSame(replacement, editor.ActiveDocument);
+            Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(Pixels, ReadPixels(replacement));
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task PublishedBitmapSurvivesThrowingNotification() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        editor.LoadDocument(MakeDocument());
+        var window = new Window { Content = new ImageEditorControl { DataContext = editor } };
+        window.Show();
+        System.ComponentModel.PropertyChangedEventHandler throwing = (_, e) =>
+        {
+            if (e.PropertyName == nameof(ImageEditorViewModel.ActiveDocument))
+                throw new InvalidOperationException("test notification failure");
+        };
+        try
+        {
+            editor.PropertyChanged += throwing;
+            Assert.ThrowsExactly<InvalidOperationException>(() => editor.FlipHorizontal());
+            editor.PropertyChanged -= throwing;
+            CollectionAssert.AreEqual(FlippedPixels, ReadPixels(editor.ActiveDocument!));
+            editor.Undo();
+            CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!));
+        }
+        finally
+        {
+            editor.PropertyChanged -= throwing;
+            window.Close();
         }
     }, CancellationToken.None);
 
