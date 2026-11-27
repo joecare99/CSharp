@@ -402,6 +402,8 @@ internal static partial class Program
                 CheckBox sampleMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "SampleColorMode");
                 CheckBox cropMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "DragCropMode");
                 TextBox hex = view.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "SampledColorHexInput");
+                TextBox colorDraft = view.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "ManualColorHexInput");
+                Button applyColor = view.GetVisualDescendants().OfType<Button>().Single(c => c.Name == "ApplyManualColorButton");
                 Check(sampleMode.IsChecked != true && sampleMode.IsEffectivelyEnabled,
                     "The image sampling mode was not available and initially off.");
                 cropMode.IsChecked = true;
@@ -412,6 +414,14 @@ internal static partial class Program
                 int changing = 0;
                 EventHandler contentChanging = (_, _) => changing++;
                 editor.ContentChanging += contentChanging;
+                colorDraft.Text = "#80402010";
+                applyColor.Command!.Execute(null);
+                Check(editor.SampledColorHex == "#80402010" && hex.Text == "#80402010",
+                    "Manual color was not applied in the image tab.");
+                colorDraft.Text = "#bad";
+                applyColor.Command.Execute(null);
+                Check(editor.SampledColorHex == "#80402010" && editor.ManualColorError.Length > 0,
+                    "Invalid image-tab color did not retain the selection.");
                 void SampleAt(double x, double y, string expected)
                 {
                     Point windowPoint = surface.TranslatePoint(new Point(x, y), window)
@@ -428,7 +438,8 @@ internal static partial class Program
                         RoutedEvent = InputElement.PointerPressedEvent,
                     };
                     ((Interactive)target).RaiseEvent(press);
-                    Check(press.Handled && editor.SampledColorHex == expected && hex.Text == expected && hex.IsReadOnly,
+                    Check(press.Handled && editor.SampledColorHex == expected && hex.Text == expected &&
+                        colorDraft.Text == expected && hex.IsReadOnly,
                         $"Image sampling did not report {expected} at {x},{y}.");
                 }
                 SampleAt(28.5, 4.5, "#80FF0000");
@@ -541,6 +552,88 @@ internal static partial class Program
                 Check(editor.IsCurrentDocumentState(state) && !editor.IsDirty && brushChanges == 4,
                     "Undo did not restore the clean image after brush redo.");
                 editor.ContentChanging -= brushChanging;
+
+                void EnterManualColor(string value)
+                {
+                    Check(colorDraft.Focus(), "The image color field did not receive focus.");
+                    colorDraft.SelectAll();
+                    var input = new TextInputEventArgs { RoutedEvent = InputElement.TextInputEvent, Text = value };
+                    colorDraft.RaiseEvent(input);
+                    Check(colorDraft.Text == value && editor.ManualColorHex == value,
+                        "The image color field did not receive text input through its binding.");
+                    var enter = new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter };
+                    colorDraft.RaiseEvent(enter);
+                    Check(enter.Handled && editor.SampledColorHex == value && hex.Text == value,
+                        "Enter did not apply the entered image color.");
+                }
+
+                EnterManualColor("#FF3157B9");
+                window.UpdateLayout();
+                brushMode.IsChecked = true;
+                start = BrushPoint(4.5);
+                end = BrushPoint(8.5);
+                brushTarget = window.InputHitTest(start)!;
+                brushPointer = new Pointer(19, PointerType.Mouse, true);
+                var manualPress = new PointerPressedEventArgs(brushTarget, brushPointer, window, start, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                { RoutedEvent = InputElement.PointerPressedEvent };
+                ((Interactive)brushTarget).RaiseEvent(manualPress);
+                Check(manualPress.Handled && ReferenceEquals(brushPointer.Captured, surface),
+                    "The manual-color brush did not capture its hit-tested press.");
+                var manualMove = new PointerEventArgs(InputElement.PointerMovedEvent, surface, brushPointer, window, end, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), KeyModifiers.None);
+                surface.RaiseEvent(manualMove);
+                Check(editor.IsCurrentDocumentState(state) && !editor.IsDirty &&
+                    editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "The pending manual-color stroke changed the image.");
+                var manualRelease = new PointerReleasedEventArgs(surface, brushPointer, window, end, 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased),
+                    KeyModifiers.None, MouseButton.Left)
+                { RoutedEvent = InputElement.PointerReleasedEvent };
+                surface.RaiseEvent(manualRelease);
+                Check(manualRelease.Handled && editor.IsDirty && editor.UndoCommand.CanExecute(null),
+                    "The manual-color stroke did not commit on release.");
+                byte[] manualPainted = editor.CapturePngSnapshot().Bytes;
+                using (var stream = new MemoryStream(manualPainted))
+                using (var decoded = new Bitmap(stream))
+                    for (int x = 4; x <= 8; x++)
+                        Check(SnapshotPixel(decoded, x, 4).SequenceEqual(new byte[] { 185, 87, 49, 255 }),
+                            $"The manual-color brush missed pixel {x},4.");
+                editor.Undo();
+                Check(editor.IsCurrentDocumentState(state) && !editor.IsDirty &&
+                    editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "Undo did not restore the image before manual-color painting.");
+                editor.Redo();
+                Check(editor.IsDirty && editor.CapturePngSnapshot().Bytes.SequenceEqual(manualPainted),
+                    "Redo did not restore the manual-color stroke.");
+                editor.Undo();
+
+                brushMode.IsChecked = true;
+                window.UpdateLayout();
+                start = BrushPoint(4.5);
+                brushTarget = window.InputHitTest(start)!;
+                brushPointer = new Pointer(20, PointerType.Mouse, true);
+                var cancelledPress = new PointerPressedEventArgs(brushTarget, brushPointer, window, start, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                { RoutedEvent = InputElement.PointerPressedEvent };
+                ((Interactive)brushTarget).RaiseEvent(cancelledPress);
+                Check(cancelledPress.Handled && ReferenceEquals(brushPointer.Captured, surface),
+                    "The pending manual-color stroke did not capture its press.");
+                EnterManualColor("#FF3A4B5C");
+                Check(brushPointer.Captured is null && editor.IsCurrentDocumentState(state) && !editor.IsDirty &&
+                    editor.RedoCommand.CanExecute(null) && editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "Changing the manual color did not cancel the pending stroke safely.");
+                var cancelledRelease = new PointerReleasedEventArgs(surface, brushPointer, window, start, 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased),
+                    KeyModifiers.None, MouseButton.Left)
+                { RoutedEvent = InputElement.PointerReleasedEvent };
+                surface.RaiseEvent(cancelledRelease);
+                Check(editor.IsCurrentDocumentState(state) && editor.RedoCommand.CanExecute(null) &&
+                    editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "A cancelled manual-color stroke changed the image on release.");
+
                 CheckBox eraserMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "EraserMode");
                 Check(eraserMode.IsChecked != true && eraserMode.IsEffectivelyEnabled,
                     "The image eraser was not available and initially off.");
