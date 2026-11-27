@@ -634,6 +634,47 @@ internal static partial class Program
                     editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
                     "A cancelled manual-color stroke changed the image on release.");
 
+                CheckBox fillMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "FillMode");
+                Check(fillMode.IsChecked != true && fillMode.IsEffectivelyEnabled,
+                    "The image fill was not available and initially off.");
+                EnterManualColor("#80402010");
+                fillMode.IsChecked = true;
+                Check(brushMode.IsChecked != true && sampleMode.IsChecked != true && cropMode.IsChecked != true,
+                    "The fill did not exclude other modes.");
+                window.UpdateLayout();
+                Point fillPoint = BrushPoint(4.5);
+                IInputElement fillTarget = window.InputHitTest(fillPoint)!;
+                Pointer fillPointer = new(21, PointerType.Mouse, true);
+                var fillPress = new PointerPressedEventArgs(fillTarget, fillPointer, window, fillPoint, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                { RoutedEvent = InputElement.PointerPressedEvent };
+                ((Interactive)fillTarget).RaiseEvent(fillPress);
+                Check(fillPress.Handled && ReferenceEquals(fillPointer.Captured, surface) &&
+                    editor.IsCurrentDocumentState(state), "Fill press did not capture or changed pixels prematurely.");
+                var fillRelease = new PointerReleasedEventArgs(surface, fillPointer, window, fillPoint, 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased),
+                    KeyModifiers.None, MouseButton.Left)
+                { RoutedEvent = InputElement.PointerReleasedEvent };
+                surface.RaiseEvent(fillRelease);
+                Check(fillRelease.Handled && fillPointer.Captured is null && editor.IsDirty &&
+                    editor.UndoCommand.CanExecute(null), "Fill did not commit on release.");
+                byte[] filled = editor.CapturePngSnapshot().Bytes;
+                using (var stream = new MemoryStream(filled))
+                using (var decoded = new Bitmap(stream))
+                    Check(SnapshotPixel(decoded, 4, 4).SequenceEqual(new byte[] { 8, 16, 32, 128 }) &&
+                        SnapshotPixel(decoded, 23, 23).SequenceEqual(new byte[] { 8, 16, 32, 128 }) &&
+                        SnapshotPixel(decoded, 24, 4).SequenceEqual(new byte[] { 0, 0, 128, 128 }) &&
+                        SnapshotPixel(decoded, 4, 24).SequenceEqual(new byte[] { 0, 255, 0, 255 }),
+                        "Fill PNG pixels did not match the connected region.");
+                editor.Undo();
+                Check(editor.IsCurrentDocumentState(state) && editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "Fill undo did not restore the original image.");
+                editor.Redo();
+                Check(editor.IsDirty && editor.CapturePngSnapshot().Bytes.SequenceEqual(filled),
+                    "Fill redo did not restore its PNG.");
+                editor.Undo();
+
                 CheckBox eraserMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "EraserMode");
                 Check(eraserMode.IsChecked != true && eraserMode.IsEffectivelyEnabled,
                     "The image eraser was not available and initially off.");
