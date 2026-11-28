@@ -87,6 +87,20 @@ internal sealed class ConfigLayerDraftSession
         }
     }
 
+    public bool TryPublishIfReloadCurrent(long version, Action publish)
+    {
+        lock (_snapshotLock)
+        {
+            if (version != _reloadVersion)
+            {
+                return false;
+            }
+
+            publish();
+            return true;
+        }
+    }
+
     public ConfigLayerSnapshot SetValue(ConfigPropertyKey key, ConfigLayerValue value)
     {
         lock (_snapshotLock)

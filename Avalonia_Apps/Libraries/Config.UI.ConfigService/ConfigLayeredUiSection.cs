@@ -18,12 +18,16 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
     private readonly ConfigLayeredSettingsResolver _resolver;
     private readonly IConfigSectionProvider _provider;
     private readonly ConfigLayerDraftSession _draftSession;
+    private readonly object _operationSync = new();
     private readonly Func<IConfigSectionProvider, PropertyInfo, IReadOnlyList<PropertyOption>?>? _optionsProvider;
     private PropertyGeneration? _propertyGeneration;
+    private long _operationVersion;
 
     private sealed class PropertyGeneration
     {
         public volatile bool IsCurrent = true;
+        // PropertyItem validates its initial value before the generation can be published.
+        public volatile bool IsInitializing = true;
         public long ReloadVersion { get; init; }
     }
 
@@ -132,23 +136,21 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
     public async Task LoadAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        State = ConfigUiSectionState.Loading;
-        ErrorMessage = null;
+        long operation = BeginOperation(ConfigUiSectionState.Loading);
         try
         {
             await _draftSession.LoadAsync(cancellationToken).ConfigureAwait(false);
-            await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
-            State = ConfigUiSectionState.Ready;
+            await RefreshPropertiesAsync(operation, cancellationToken).ConfigureAwait(false);
+            CompleteOperation(operation, ConfigUiSectionState.Ready);
         }
         catch (OperationCanceledException)
         {
-            State = ConfigUiSectionState.Failed;
-            ErrorMessage = "Loading the section was cancelled; the draft may have changed.";
+            CompleteOperation(operation, ConfigUiSectionState.Failed, "Loading the section was cancelled; the draft may have changed.");
             throw;
         }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
-            SetFailed(Unwrap(exception));
+            SetFailed(operation, Unwrap(exception));
         }
     }
 
@@ -156,39 +158,37 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
     public async Task SaveAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        long operation = BeginOperation(ConfigUiSectionState.Saving);
         if (IsReadOnly)
         {
-            SetFailed(new InvalidOperationException("This configuration layer is read-only."));
+            SetFailed(operation, new InvalidOperationException("This configuration layer is read-only."));
             return;
         }
 
         if (Properties.Any(static property => !property.ValidationResult.IsValid))
         {
-            SetFailed(new InvalidOperationException("Configuration contains invalid values."));
+            SetFailed(operation, new InvalidOperationException("Configuration contains invalid values."));
             return;
         }
 
-        State = ConfigUiSectionState.Saving;
-        ErrorMessage = null;
         bool saved = false;
         try
         {
             await _draftSession.SaveAsync(cancellationToken).ConfigureAwait(false);
             saved = true;
-            await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
-            State = ConfigUiSectionState.Ready;
+            await RefreshPropertiesAsync(operation, cancellationToken).ConfigureAwait(false);
+            CompleteOperation(operation, ConfigUiSectionState.Ready);
         }
         catch (OperationCanceledException exception)
         {
-            State = ConfigUiSectionState.Failed;
-            ErrorMessage = saved
+            CompleteOperation(operation, ConfigUiSectionState.Failed, saved
                 ? $"Settings were saved, but refreshing the section was cancelled: {exception.Message}"
-                : "Saving was cancelled; settings may already have been saved.";
+                : "Saving was cancelled; settings may already have been saved.");
             throw;
         }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
-            SetFailed(Unwrap(exception), saved);
+            SetFailed(operation, Unwrap(exception), saved);
         }
     }
 
@@ -196,14 +196,13 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
     public async Task ResetAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        long operation = BeginOperation(ConfigUiSectionState.Resetting);
         if (IsReadOnly)
         {
-            SetFailed(new InvalidOperationException("This configuration layer is read-only."));
+            SetFailed(operation, new InvalidOperationException("This configuration layer is read-only."));
             return;
         }
 
-        State = ConfigUiSectionState.Resetting;
-        ErrorMessage = null;
         bool saved = false;
         bool saveAttempted = false;
         try
@@ -213,22 +212,21 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
             saveAttempted = true;
             await _draftSession.SaveAsync(cancellationToken).ConfigureAwait(false);
             saved = true;
-            await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
-            State = ConfigUiSectionState.Ready;
+            await RefreshPropertiesAsync(operation, cancellationToken).ConfigureAwait(false);
+            CompleteOperation(operation, ConfigUiSectionState.Ready);
         }
         catch (OperationCanceledException)
         {
-            State = ConfigUiSectionState.Failed;
-            ErrorMessage = saved
+            CompleteOperation(operation, ConfigUiSectionState.Failed, saved
                 ? "The reset was saved, but refreshing the section was cancelled."
                 : saveAttempted
                     ? "The reset was cancelled; settings may already have been saved and the draft may have changed."
-                    : "The reset was cancelled before saving; the draft may have changed.";
+                    : "The reset was cancelled before saving; the draft may have changed.");
             throw;
         }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
-            SetFailed(Unwrap(exception), saved);
+            SetFailed(operation, Unwrap(exception), saved);
         }
     }
 
@@ -236,30 +234,28 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
     public async Task ResetDraftAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        long operation = BeginOperation(ConfigUiSectionState.Resetting);
         if (IsReadOnly)
         {
-            SetFailed(new InvalidOperationException("This configuration layer is read-only."));
+            SetFailed(operation, new InvalidOperationException("This configuration layer is read-only."));
             return;
         }
 
-        State = ConfigUiSectionState.Resetting;
-        ErrorMessage = null;
         try
         {
             await _draftSession.LoadAsync(cancellationToken).ConfigureAwait(false);
             await RemoveEditableSectionOverridesAsync(cancellationToken).ConfigureAwait(false);
-            await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
-            State = ConfigUiSectionState.Ready;
+            await RefreshPropertiesAsync(operation, cancellationToken).ConfigureAwait(false);
+            CompleteOperation(operation, ConfigUiSectionState.Ready);
         }
         catch (OperationCanceledException)
         {
-            State = ConfigUiSectionState.Failed;
-            ErrorMessage = "The draft reset was cancelled; the draft may have changed.";
+            CompleteOperation(operation, ConfigUiSectionState.Failed, "The draft reset was cancelled; the draft may have changed.");
             throw;
         }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
-            SetFailed(Unwrap(exception));
+            SetFailed(operation, Unwrap(exception));
         }
     }
 
@@ -272,49 +268,65 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
     private async Task ReloadDiscardingDraftAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        State = ConfigUiSectionState.Loading;
-        ErrorMessage = null;
+        long operation = BeginOperation(ConfigUiSectionState.Loading);
         try
         {
             await _draftSession.ReloadAsync(cancellationToken).ConfigureAwait(false);
-            await RefreshPropertiesAsync(cancellationToken).ConfigureAwait(false);
-            State = ConfigUiSectionState.Ready;
+            await RefreshPropertiesAsync(operation, cancellationToken).ConfigureAwait(false);
+            CompleteOperation(operation, ConfigUiSectionState.Ready);
         }
         catch (OperationCanceledException)
         {
-            State = ConfigUiSectionState.Failed;
-            ErrorMessage = "Reloading the shared draft was cancelled; it may already have been replaced.";
+            CompleteOperation(operation, ConfigUiSectionState.Failed, "Reloading the shared draft was cancelled; it may already have been replaced.");
             throw;
         }
         catch (Exception exception) when (IsExpectedProviderFailure(exception))
         {
-            SetFailed(Unwrap(exception));
+            SetFailed(operation, Unwrap(exception));
         }
     }
 
-    private async Task RefreshPropertiesAsync(CancellationToken cancellationToken)
+    private async Task RefreshPropertiesAsync(long operation, CancellationToken cancellationToken)
     {
-        long reloadVersion = _draftSession.GetReloadVersion();
-        IReadOnlyDictionary<string, ConfigValueResolution> resolutions =
-            await _resolver.ResolveSectionAsync(Section.Name, _draftSession.GetDraft(), cancellationToken).ConfigureAwait(false);
-
-        PropertyGeneration generation = new() { ReloadVersion = reloadVersion };
-        IPropertyItem[] properties = _provider.ModelType
-            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(static property => property.CanRead && property.CanWrite)
-            .Where(static property => property.GetIndexParameters().Length == 0)
-            .Where(static property => property.GetCustomAttribute<ConfigIgnoreAttribute>() is null)
-            .Where(static property => property.GetCustomAttribute<ConfigUiIgnoreAttribute>() is null)
-            .OrderBy(static property => property.Name, StringComparer.Ordinal)
-            .Select(property => CreatePropertyItem(property, resolutions[property.Name], generation))
-            .Cast<IPropertyItem>()
-            .ToArray();
-        if (_propertyGeneration is not null)
+        while (true)
         {
-            _propertyGeneration.IsCurrent = false;
+            long reloadVersion = _draftSession.GetReloadVersion();
+            IReadOnlyDictionary<string, ConfigValueResolution> resolutions =
+                await _resolver.ResolveSectionAsync(Section.Name, _draftSession.GetDraft(), cancellationToken).ConfigureAwait(false);
+
+            PropertyGeneration generation = new() { ReloadVersion = reloadVersion };
+            IPropertyItem[] properties = _provider.ModelType
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(static property => property.CanRead && property.CanWrite)
+                .Where(static property => property.GetIndexParameters().Length == 0)
+                .Where(static property => property.GetCustomAttribute<ConfigIgnoreAttribute>() is null)
+                .Where(static property => property.GetCustomAttribute<ConfigUiIgnoreAttribute>() is null)
+                .OrderBy(static property => property.Name, StringComparer.Ordinal)
+                .Select(property => CreatePropertyItem(property, resolutions[property.Name], generation))
+                .Cast<IPropertyItem>()
+                .ToArray();
+            lock (_operationSync)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                if (operation != _operationVersion)
+                {
+                    return;
+                }
+                if (_draftSession.TryPublishIfReloadCurrent(reloadVersion, () =>
+                    {
+                        generation.IsInitializing = false;
+                        if (_propertyGeneration is not null)
+                        {
+                            _propertyGeneration.IsCurrent = false;
+                        }
+                        _propertyGeneration = generation;
+                        Properties = properties;
+                    }))
+                {
+                    return;
+                }
+            }
         }
-        _propertyGeneration = generation;
-        Properties = properties;
     }
 
     private PropertyItem CreatePropertyItem(PropertyInfo property, ConfigValueResolution resolution, PropertyGeneration generation)
@@ -354,7 +366,7 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
             isEditable: isEditable,
             isSensitive: property.GetCustomAttribute<SensitiveConfigPropertyAttribute>() is not null,
             options,
-            validator: _ => generation.IsCurrent && _draftSession.IsReloadVersionCurrent(generation.ReloadVersion)
+            validator: _ => generation.IsInitializing || (generation.IsCurrent && _draftSession.IsReloadVersionCurrent(generation.ReloadVersion))
                 ? PropertyValidationResult.Valid
                 : PropertyValidationResult.Invalid("This property has been replaced. Use the current settings field."),
             valueContext: valueContext,
@@ -396,13 +408,33 @@ public sealed class ConfigLayeredUiSection : IConfigUiSection, IConfigUiDraftDis
         }
     }
 
-    private void SetFailed(Exception exception, bool saved = false)
+    private long BeginOperation(ConfigUiSectionState state)
     {
-        State = ConfigUiSectionState.Failed;
-        ErrorMessage = saved
-            ? $"Settings were saved, but the section could not be refreshed: {exception.Message}"
-            : exception.Message;
+        lock (_operationSync)
+        {
+            long operation = ++_operationVersion;
+            State = state;
+            ErrorMessage = null;
+            return operation;
+        }
     }
+
+    private void CompleteOperation(long operation, ConfigUiSectionState state, string? error = null)
+    {
+        lock (_operationSync)
+        {
+            if (operation == _operationVersion)
+            {
+                State = state;
+                ErrorMessage = error;
+            }
+        }
+    }
+
+    private void SetFailed(long operation, Exception exception, bool saved = false) =>
+        CompleteOperation(operation, ConfigUiSectionState.Failed, saved
+            ? $"Settings were saved, but the section could not be refreshed: {exception.Message}"
+            : exception.Message);
 
     private static PropertyScope GetScope(ConfigLayer layer) => layer switch
     {
