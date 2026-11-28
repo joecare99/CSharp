@@ -279,7 +279,6 @@ internal static class Program
             Check(!unsafeContext.IsSuccessful, "Semantic analysis accepted a mismatched root DataContext.");
 
             await VerifyUnsavedViewModelContextAsync(workbench, semanticService, axamlPath, generatedViewModelPath);
-            await ReproduceMissingBindingOverlayAsync(workbench, desktop, semanticService, projectPath, axamlPath);
 
             string visualMarkup = generatedMarkup
                 .Replace("{Binding UserName,", "{CompiledBinding UserName,", StringComparison.Ordinal)
@@ -1108,38 +1107,6 @@ internal static class Program
             window.DataContext = null;
             window.Close();
         }
-    }
-
-    private static async Task ReproduceMissingBindingOverlayAsync(
-        MainWindowViewModel workbench,
-        IClassicDesktopStyleApplicationLifetime desktop,
-        CSharpSyntaxDiagnosticService semanticService,
-        string projectPath,
-        string axamlPath)
-    {
-        string path = Path.Combine(Path.GetDirectoryName(axamlPath)!, "LoginViewViewModel.Overlay.cs");
-        string original = "namespace Sample; public partial class LoginViewViewModel { }";
-        await File.WriteAllTextAsync(path, original);
-        await semanticService.RefreshProjectContextAsync(projectPath);
-        await workbench.EditorWorkspace.OpenOrActivateAsync(path);
-        EditorTabViewModel overlay = workbench.EditorWorkspace.ActiveTab;
-        overlay.Editor.Text = original.Replace("{ }", "{ public string LateOverlayMember { get; set; } = \"\"; }", StringComparison.Ordinal);
-        await workbench.EditorWorkspace.OpenOrActivateAsync(axamlPath);
-        var designer = workbench.AxamlDesigner;
-        designer.SelectedNode = designer.PreviewRoot!.Children.Single(node => node.StableName == "UserNameTextBox");
-        designer.SetBindingContext([]);
-        var row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
-        row.NewMemberName = "LateOverlayMember";
-        Task applying = designer.ApplyBindingRowAsync(row);
-        WorkspaceFileChangeReviewDialog review = await WaitForReviewAsync(desktop, applying, workbench);
-        Click(review, "Cancel");
-        await applying.WaitAsync(TimeSpan.FromMinutes(2));
-        Check(overlay.Editor.Text.Contains("LateOverlayMember", StringComparison.Ordinal)
-            && await File.ReadAllTextAsync(path) == original,
-            "The reproduction did not retain the unsaved overlay.");
-        Console.WriteLine("REPRODUCED: missing-member review offered creation despite an existing member in a different unsaved C# partial buffer.");
-        overlay.Editor.Text = original;
-        workbench.EditorWorkspace.TryClose(overlay);
     }
 
     private static async Task VerifyVisualBindingAsync(
