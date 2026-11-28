@@ -422,6 +422,7 @@ internal static partial class Program
                 applyColor.Command.Execute(null);
                 Check(editor.SampledColorHex == "#80402010" && editor.ManualColorError.Length > 0,
                     "Invalid image-tab color did not retain the selection.");
+                window.UpdateLayout();
                 void SampleAt(double x, double y, string expected)
                 {
                     Point windowPoint = surface.TranslatePoint(new Point(x, y), window)
@@ -429,7 +430,8 @@ internal static partial class Program
                     IInputElement target = window.InputHitTest(windowPoint)
                         ?? throw new InvalidOperationException("No image sampling input target.");
                     Check(target is Visual visual && (ReferenceEquals(visual, surface)
-                        || visual.GetVisualAncestors().Contains(surface)), "Image sampling hit another control.");
+                        || visual.GetVisualAncestors().Contains(surface)),
+                        $"Image sampling hit {target.GetType().Name} at {windowPoint}; surface bounds {surface.Bounds}.");
                     PointerPressedEventArgs press = new(target, new Pointer(7, PointerType.Mouse, true), window,
                         windowPoint, 0,
                         new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
@@ -591,6 +593,7 @@ internal static partial class Program
                 Check(editor.CapturePngSnapshot().Bytes.SequenceEqual(sizedPaint), "Redo did not restore the sized brush stroke.");
                 editor.Undo();
                 CheckBox lineMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "LineMode");
+                LinePreviewOverlay linePreview = view.GetVisualDescendants().OfType<LinePreviewOverlay>().Single();
                 lineMode.IsChecked = true;
                 Check(editor.SelectedTool == ImageEditorTool.Line && brushMode.IsChecked != true,
                     "The line tool was not selected exclusively.");
@@ -600,16 +603,22 @@ internal static partial class Program
                     KeyModifiers.None, 1)
                 { RoutedEvent = InputElement.PointerPressedEvent };
                 ((Interactive)brushTarget).RaiseEvent(linePress);
-                Check(linePress.Handled && ReferenceEquals(brushPointer.Captured, surface),
+                Check(linePress.Handled && ReferenceEquals(brushPointer.Captured, surface)
+                    && linePreview.HasPreview && !linePreview.IsHitTestVisible,
                     "The line did not capture its press.");
                 Point offLine = surface.TranslatePoint(new Point(6.5, 10.5), window)!.Value;
                 surface.RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent, surface, brushPointer, window, offLine, 0,
                     new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), KeyModifiers.None));
-                Check(editor.IsCurrentDocumentState(state), "The pending line changed the image.");
+                Check(linePreview.HasPreview && linePreview.Start == new Point(4.5, 4.5)
+                    && linePreview.End == new Point(6.5, 10.5)
+                    && editor.IsCurrentDocumentState(state) && !editor.IsDirty
+                    && editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "The pending line preview or document state was incorrect.");
                 surface.RaiseEvent(new PointerReleasedEventArgs(surface, brushPointer, window, end, 0,
                     new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased),
                     KeyModifiers.None, MouseButton.Left)
                 { RoutedEvent = InputElement.PointerReleasedEvent });
+                Check(!linePreview.HasPreview, "The line preview survived release.");
                 byte[] linePaint = editor.CapturePngSnapshot().Bytes;
                 Check(linePaint.SequenceEqual(sizedPaint), "The line did not use only its endpoints and selected size.");
                 editor.Undo();
