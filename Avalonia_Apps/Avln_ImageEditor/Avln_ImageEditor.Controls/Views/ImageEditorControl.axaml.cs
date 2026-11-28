@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -29,8 +29,10 @@ public partial class ImageEditorControl : UserControl
     private ImageEditorDocument? _brushDocument;
     private Color _brushColor;
     private bool _erasing;
+    private int _brushSize;
+    private BitArray? _brushCenters;
     private Point _brushLast;
-    private readonly HashSet<int> _brushPixels = new();
+    private BitArray? _brushPixels;
     private IPointer? _fillPointer;
     private ImageEditorDocument? _fillDocument;
     private Color _fillColor;
@@ -204,6 +206,10 @@ public partial class ImageEditorControl : UserControl
             CancelBrush();
             CancelFill();
         }
+        else if (e.PropertyName == nameof(ImageEditorViewModel.BrushSizeText))
+        {
+            CancelBrush();
+        }
         else if (_dragPointer is not null && !_updatingCrop &&
                  e.PropertyName is nameof(ImageEditorViewModel.CropX) or nameof(ImageEditorViewModel.CropY)
                  or nameof(ImageEditorViewModel.CropWidth) or nameof(ImageEditorViewModel.CropHeight))
@@ -259,6 +265,7 @@ public partial class ImageEditorControl : UserControl
              (!e.GetCurrentPoint(ImageSurface).Properties.IsRightButtonPressed &&
               !e.GetCurrentPoint(ImageSurface).Properties.IsMiddleButtonPressed)) &&
             _editor?.ActiveDocument is { } brushDocument &&
+            _editor.TryGetBrushSize(out int brushSize) &&
             (EraserMode.IsChecked == true || _editor.SampledColor is not null))
         {
             Point brushStart = e.GetPosition(ImageSurface);
@@ -266,10 +273,13 @@ public partial class ImageEditorControl : UserControl
                 brushStart.X >= brushDocument.PixelSize.Width || brushStart.Y >= brushDocument.PixelSize.Height) return;
             _brushDocument = brushDocument;
             _erasing = EraserMode.IsChecked == true;
+            _brushSize = brushSize;
+            _brushCenters = new BitArray(checked((brushDocument.PixelSize.Width + brushSize - 1) *
+                (brushDocument.PixelSize.Height + brushSize - 1)));
             _brushColor = _editor.SampledColor.GetValueOrDefault();
             _brushLast = brushStart;
             _brushPointer = e.Pointer;
-            _brushPixels.Clear();
+            _brushPixels = new BitArray(checked(brushDocument.PixelSize.Width * brushDocument.PixelSize.Height));
             AddBrushSegment(brushStart, brushStart);
             ImageSurface.Focus();
             e.Pointer.Capture(ImageSurface);
@@ -389,9 +399,9 @@ public partial class ImageEditorControl : UserControl
                            !e.GetCurrentPoint(ImageSurface).Properties.IsMiddleButtonPressed)))
         {
             ContinueBrush(e.GetPosition(ImageSurface));
-            if (_brushPointer is not null && _editor is { } editor && _brushDocument is { } document)
+            if (_brushPointer is not null && _editor is { } editor && _brushDocument is { } document &&
+                _brushPixels is { } pixels)
             {
-                var pixels = new HashSet<int>(_brushPixels);
                 var color = _brushColor;
                 bool erasing = _erasing;
                 CancelBrush();
@@ -490,6 +500,8 @@ public partial class ImageEditorControl : UserControl
     {
         if (_brushDocument is null) return;
         int width = _brushDocument.PixelSize.Width, height = _brushDocument.PixelSize.Height;
+        int low = -(_brushSize / 2), high = low + _brushSize - 1;
+        int minX = -high, maxX = width - 1 - low, minY = -high, maxY = height - 1 - low;
         double dx = to.X - from.X, dy = to.Y - from.Y, first = 0, last = 1;
         bool Clip(double p, double q)
         {
@@ -499,19 +511,26 @@ public partial class ImageEditorControl : UserControl
             else { if (r < first) return false; last = Math.Min(last, r); }
             return true;
         }
-        if (!Clip(-dx, from.X) || !Clip(dx, Math.BitDecrement((double)width) - from.X) ||
-            !Clip(-dy, from.Y) || !Clip(dy, Math.BitDecrement((double)height) - from.Y)) return;
-        int x0 = Math.Clamp((int)Math.Floor(from.X + first * dx), 0, width - 1);
-        int y0 = Math.Clamp((int)Math.Floor(from.Y + first * dy), 0, height - 1);
-        int x1 = Math.Clamp((int)Math.Floor(from.X + last * dx), 0, width - 1);
-        int y1 = Math.Clamp((int)Math.Floor(from.Y + last * dy), 0, height - 1);
+        if (!Clip(-dx, from.X - minX) || !Clip(dx, Math.BitDecrement((double)maxX + 1) - from.X) ||
+            !Clip(-dy, from.Y - minY) || !Clip(dy, Math.BitDecrement((double)maxY + 1) - from.Y)) return;
+        int x0 = Math.Clamp((int)Math.Floor(from.X + first * dx), minX, maxX);
+        int y0 = Math.Clamp((int)Math.Floor(from.Y + first * dy), minY, maxY);
+        int x1 = Math.Clamp((int)Math.Floor(from.X + last * dx), minX, maxX);
+        int y1 = Math.Clamp((int)Math.Floor(from.Y + last * dy), minY, maxY);
         if (x0 > x1 || (x0 == x1 && y0 > y1))
             (x0, y0, x1, y1) = (x1, y1, x0, y0);
         int stepX = x0 < x1 ? 1 : -1, stepY = y0 < y1 ? 1 : -1;
         int deltaX = Math.Abs(x1 - x0), deltaY = -Math.Abs(y1 - y0), error = deltaX + deltaY;
         while (true)
         {
-            _brushPixels.Add(y0 * width + x0);
+            int centerIndex = (y0 - minY) * (width + _brushSize - 1) + x0 - minX;
+            if (!_brushCenters![centerIndex])
+            {
+                _brushCenters[centerIndex] = true;
+                for (int y = Math.Max(0, y0 + low); y <= Math.Min(height - 1, y0 + high); y++)
+                    for (int x = Math.Max(0, x0 + low); x <= Math.Min(width - 1, x0 + high); x++)
+                        _brushPixels![y * width + x] = true;
+            }
             if (x0 == x1 && y0 == y1) break;
             int twice = 2 * error;
             if (twice >= deltaY) { error += deltaY; x0 += stepX; }
@@ -524,7 +543,8 @@ public partial class ImageEditorControl : UserControl
         var pointer = _brushPointer;
         _brushPointer = null;
         _brushDocument = null;
-        _brushPixels.Clear();
+        _brushCenters = null;
+        _brushPixels = null;
         if (pointer?.Captured == ImageSurface) pointer.Capture(null);
     }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -103,6 +104,33 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
         ? $"R {color.R}  G {color.G}  B {color.B}  A {color.A}" : "No color selected";
     public string SampledColorHex => SampledColor is { } color
         ? $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}" : "";
+
+    private string _brushSizeText = "1";
+
+    /// <summary>Brush and eraser size draft in pixels; only ASCII integers 1 through 16 are accepted.</summary>
+    public string BrushSizeText
+    {
+        get => _brushSizeText;
+        set
+        {
+            if (SetProperty(ref _brushSizeText, value ?? ""))
+                OnPropertyChanged(nameof(BrushSizeError));
+        }
+    }
+
+    public string BrushSizeError => TryGetBrushSize(out _) ? "" : "Enter an integer from 1 to 16.";
+
+    internal bool TryGetBrushSize(out int size)
+    {
+        size = 0;
+        if (BrushSizeText.Length is < 1 or > 2) return false;
+        foreach (char c in BrushSizeText)
+        {
+            if (c is < '0' or > '9') return false;
+            size = size * 10 + c - '0';
+        }
+        return size is >= 1 and <= 16;
+    }
 
     private string _manualColorHex = "#FF000000";
 
@@ -682,9 +710,9 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
             FailFill(fill, ex);
         }
     }
-    internal void PaintStroke(ImageEditorDocument source, Color color, HashSet<int> indices, bool erase = false)
+    internal void PaintStroke(ImageEditorDocument source, Color color, BitArray indices, bool erase = false)
     {
-        if (!ReferenceEquals(source, ActiveDocument) || (!erase && color.A == 0) || indices.Count == 0) return;
+        if (!ReferenceEquals(source, ActiveDocument) || (!erase && color.A == 0)) return;
         int width = source.PixelSize.Width, height = source.PixelSize.Height;
         var result = new WriteableBitmap(source.PixelSize, new Vector(96, 96), PixelFormats.Bgra8888, AlphaFormat.Premul);
         bool changed = false;
@@ -701,7 +729,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
                     Marshal.Copy(address, row, 0, row.Length);
                     for (int x = 0; x < width; x++)
                     {
-                        if (!indices.Contains(y * width + x)) continue;
+                        if (!indices[y * width + x]) continue;
                         int offset = x * 4;
                         for (int channel = 0; channel < 4; channel++)
                         {
