@@ -325,6 +325,7 @@ public partial class ImageEditorControl : UserControl
             ImageSurface.Focus();
             e.Pointer.Capture(ImageSurface);
             if (!ReferenceEquals(e.Pointer.Captured, ImageSurface)) { CancelBrush(); return; }
+            if (_lining) LinePreview.SetPreview(_brushLast, _brushLast, brushDocument.PixelSize);
             e.Handled = true;
             return;
         }
@@ -390,7 +391,9 @@ public partial class ImageEditorControl : UserControl
                  properties.PointerUpdateKind != PointerUpdateKind.Other))) CancelBrush();
             else if (_lining)
             {
-                if (!ValidBrushPoint(e.GetPosition(ImageSurface))) CancelBrush();
+                Point point = e.GetPosition(ImageSurface);
+                if (!ValidBrushPoint(point) || !ReferenceEquals(_editor?.ActiveDocument, _brushDocument)) CancelBrush();
+                else LinePreview.SetPreview(_brushLast, point, _brushDocument!.PixelSize);
             }
             else ContinueBrush(e.GetPosition(ImageSurface));
             e.Handled = true;
@@ -597,6 +600,7 @@ public partial class ImageEditorControl : UserControl
 
     private void CancelBrush()
     {
+        LinePreview.ClearPreview();
         var pointer = _brushPointer;
         _brushPointer = null;
         _brushDocument = null;

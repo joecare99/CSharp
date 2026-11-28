@@ -170,6 +170,8 @@
 				  </Border.Background>
 				</Border>
 				<Image x:Name="EditorImage" Source="{Binding ActiveDocument.DisplayImage}" Stretch="Fill" />
+				<views:LinePreviewOverlay x:Name="LinePreview" IsHitTestVisible="False"
+										  Zoom="{Binding ZoomFactor}" />
 				<views:CropPreviewOverlay x:Name="CropPreviewOutline"
 										  IsHitTestVisible="False"
 										  IsVisible="{Binding ShowCropPreview}"
