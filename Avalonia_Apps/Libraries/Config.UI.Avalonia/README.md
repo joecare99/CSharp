@@ -12,6 +12,18 @@ to discard all dirty sections, including independent drafts.
 Layered-provider cancellation releases the loading state and is propagated;
 after a cancelled shared reload the draft may already have been replaced.
 
+Repeated selection of a section already loading reuses that in-flight load;
+other sections may still load independently. An older selection completion cannot
+clear a newer draft or publish its failure as the current section's status. Selection-load cancellation
+is contained at the unawaited selection boundary while recovery is retained.
+Programmatic selection during an explicit apply, reset, discard, retry or load is
+deferred until that operation finishes; busy remains set through the handoff.
+Layered sections also guard their own property generations and retry resolution
+if a sibling reload replaced their shared draft. As with other Avalonia view
+models, hosts must access view-model state on the UI thread. Sharing mutable
+sections between independently edited view models or concurrently invoking
+mutating provider operations is not a transaction or conflict-resolution API.
+
 If saving is cancelled, the provider may already have written settings. The
 dialog reports this uncertainty, retains pending drafts and propagates the
 cancellation; runtime activation for that section was not attempted. The

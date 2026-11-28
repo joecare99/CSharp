@@ -20,9 +20,13 @@ public sealed partial class ConfigUiViewModel : ObservableObject
     private readonly HashSet<IConfigUiSection> _sectionsWithUnsavedChanges = [];
     private readonly HashSet<IConfigUiSection> _sectionsRequiringRefresh = [];
     private readonly HashSet<object> _draftsWithUncertainDiscard = new(ReferenceEqualityComparer.Instance);
+    private readonly HashSet<IConfigUiSection> _selectionLoads = new(ReferenceEqualityComparer.Instance);
+    private readonly Dictionary<IConfigUiSection, long> _sectionLoadVersions = new(ReferenceEqualityComparer.Instance);
     private readonly Dictionary<IConfigUiSection, Dictionary<IPropertyItem, EventHandler<PropertyValueChangedEventArgs>>> _subscribedProperties =
         new(ReferenceEqualityComparer.Instance);
     private bool _isApplying;
+    private bool _selectionDeferred;
+    private bool _processingDeferredSelection;
     private int _loadingCount;
 
     /// <summary>
@@ -60,7 +64,7 @@ public sealed partial class ConfigUiViewModel : ObservableObject
     public bool IsBusy => SelectedSection?.State is ConfigUiSectionState.Loading
         or ConfigUiSectionState.Saving
         or ConfigUiSectionState.Resetting
-        || _isApplying || _loadingCount > 0;
+        || _isApplying || _processingDeferredSelection || _loadingCount > 0;
 
     /// <summary>Gets the selected section's localized failure message.</summary>
     public string ErrorMessage => SelectedSection?.ErrorMessage ?? string.Empty;
@@ -152,6 +156,11 @@ public sealed partial class ConfigUiViewModel : ObservableObject
     {
         _propertyEditor.SetItems([]);
         RefreshState();
+        if (_isApplying)
+        {
+            _selectionDeferred = true;
+            return;
+        }
         if (value is null)
         {
             return;
@@ -170,15 +179,40 @@ public sealed partial class ConfigUiViewModel : ObservableObject
             return;
         }
 
-        _ = LoadSelectedSectionAsync(value);
+        if (_selectionLoads.Add(value))
+        {
+            _ = LoadSelectionAsync(value);
+        }
+    }
+
+    private async Task LoadSelectionAsync(IConfigUiSection section)
+    {
+        try
+        {
+            await LoadSelectedSectionAsync(section, selectionLoad: true);
+        }
+        catch (OperationCanceledException)
+        {
+            // Selection has no awaiting caller; recovery state is retained by the load.
+        }
     }
 
     [RelayCommand]
     private async Task LoadAsync()
     {
-        if (!IsBusy && SelectedSection is not null)
+        if (!IsBusy && SelectedSection is { } section)
         {
-            await LoadSelectedSectionAsync(SelectedSection, discardSharedDraft: true);
+            _isApplying = true;
+            RefreshState();
+            try
+            {
+                await LoadSelectedSectionAsync(section, discardSharedDraft: true);
+            }
+            finally
+            {
+                _isApplying = false;
+                RefreshState();
+            }
         }
     }
 
@@ -629,8 +663,10 @@ public sealed partial class ConfigUiViewModel : ObservableObject
         }
     }
 
-    private async Task LoadSelectedSectionAsync(IConfigUiSection section, bool discardSharedDraft = false)
+    private async Task LoadSelectedSectionAsync(IConfigUiSection section, bool discardSharedDraft = false, bool selectionLoad = false)
     {
+        long version = _sectionLoadVersions.TryGetValue(section, out long previous) ? previous + 1 : 1;
+        _sectionLoadVersions[section] = version;
         _loadingCount++;
         OperationMessage = string.Empty;
         RefreshState();
@@ -700,6 +736,11 @@ public sealed partial class ConfigUiViewModel : ObservableObject
                 await section.LoadAsync();
             }
 
+            if (_sectionLoadVersions[section] != version)
+            {
+                return;
+            }
+
             if (section.State == ConfigUiSectionState.Ready)
             {
                 _loadedSections.Add(section);
@@ -715,7 +756,10 @@ public sealed partial class ConfigUiViewModel : ObservableObject
                 string hint = discardAttempted
                     ? " The shared draft may already have been discarded; retry discard/reload or Cancel."
                     : " The draft may have changed; retry reload or Cancel.";
-                OperationMessage = $"{section.Section.DisplayName}: {section.ErrorMessage ?? "The section could not be reloaded."}{hint}";
+                if (!selectionLoad || ReferenceEquals(section, SelectedSection))
+                {
+                    OperationMessage = $"{section.Section.DisplayName}: {section.ErrorMessage ?? "The section could not be reloaded."}{hint}";
+                }
             }
             if (discardConfirmed && !string.IsNullOrEmpty(OperationMessage))
             {
@@ -728,6 +772,10 @@ public sealed partial class ConfigUiViewModel : ObservableObject
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
+            if (_sectionLoadVersions[section] != version)
+            {
+                return;
+            }
             if (discardAttempted && !discardConfirmed && section is IConfigUiDraftDiscard sharedDraft)
             {
                 MarkDraftUncertain(sharedDraft.DraftIdentity);
@@ -741,10 +789,17 @@ public sealed partial class ConfigUiViewModel : ObservableObject
                 : _sectionsRequiringRefresh.Contains(section)
                     ? " Retry loading this section."
                     : string.Empty;
-            OperationMessage = $"{section.Section.DisplayName}: {exception.Message}{hint}";
+            if (!selectionLoad || ReferenceEquals(section, SelectedSection))
+            {
+                OperationMessage = $"{section.Section.DisplayName}: {exception.Message}{hint}";
+            }
         }
         catch (OperationCanceledException)
         {
+            if (_sectionLoadVersions[section] != version)
+            {
+                throw;
+            }
             if (discardAttempted && !discardConfirmed && section is IConfigUiDraftDiscard sharedDraft)
             {
                 MarkDraftUncertain(sharedDraft.DraftIdentity);
@@ -757,9 +812,13 @@ public sealed partial class ConfigUiViewModel : ObservableObject
         }
         finally
         {
-            if (!_sectionsRequiringRefresh.Contains(section))
+            if (_sectionLoadVersions[section] == version && !_sectionsRequiringRefresh.Contains(section))
             {
                 SynchronizeSectionProperties(section);
+            }
+            if (selectionLoad)
+            {
+                _selectionLoads.Remove(section);
             }
             _loadingCount--;
             RefreshState();
@@ -768,6 +827,19 @@ public sealed partial class ConfigUiViewModel : ObservableObject
 
     private void RefreshState()
     {
+        if (!_isApplying && _selectionDeferred)
+        {
+            _selectionDeferred = false;
+            _processingDeferredSelection = true;
+            try
+            {
+                OnSelectedSectionChanged(SelectedSection);
+            }
+            finally
+            {
+                _processingDeferredSelection = false;
+            }
+        }
         OnPropertyChanged(nameof(IsBusy));
         OnPropertyChanged(nameof(ErrorMessage));
         OnPropertyChanged(nameof(SelectedContextDisplay));
