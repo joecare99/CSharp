@@ -43,6 +43,97 @@ namespace AA98_AvlnCodeStudio.Tests.Engineering;
 public sealed class CSharpWorkspaceLoaderTests
 {
     [TestMethod]
+    public async Task ProjectSave_QueuesReferenceSnapshotRefreshBehindRunningAnalysis()
+    {
+        string root = Path.Combine(Environment.CurrentDirectory, $"ReferenceSaveGate_{Guid.NewGuid():N}");
+        string consumer = Path.Combine(root, "Consumer");
+        string library = Path.Combine(root, "Library");
+        Directory.CreateDirectory(consumer);
+        Directory.CreateDirectory(library);
+        try
+        {
+            string projectPath = Path.Combine(consumer, "Consumer.csproj");
+            string sourcePath = Path.Combine(consumer, "Consumer.cs");
+            string projectText = """
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+                  <ItemGroup><ProjectReference Include="../Library/Library.csproj" /></ItemGroup>
+                </Project>
+                """;
+            string withoutReference = projectText.Replace(
+                "<ProjectReference Include=\"../Library/Library.csproj\" />", "", StringComparison.Ordinal);
+            const string source = "public class Consumer { public int Read() => new Library().Value; }";
+            await File.WriteAllTextAsync(projectPath, projectText);
+            await File.WriteAllTextAsync(sourcePath, source);
+            await File.WriteAllTextAsync(Path.Combine(library, "Library.csproj"),
+                "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>");
+            await File.WriteAllTextAsync(Path.Combine(library, "Library.cs"), "public class Library { public int Value => 1; }");
+            ProcessStartInfo restoreInfo = new("dotnet")
+            {
+                WorkingDirectory = root,
+                ArgumentList = { "restore", projectPath, "--verbosity", "quiet" },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
+            ClearInheritedMsBuildEnvironment(restoreInfo);
+            using (Process restore = Process.Start(restoreInfo)!)
+            {
+                Task<string> output = restore.StandardOutput.ReadToEndAsync();
+                Task<string> error = restore.StandardError.ReadToEndAsync();
+                await restore.WaitForExitAsync();
+                Assert.AreEqual(0, restore.ExitCode, $"{await output}{await error}");
+            }
+
+            TestEditorComponentFactory factory = new();
+            IAvaloniaEditorComponent initial = factory.Create();
+            using EditorDocumentWorkspace documents = new(initial, factory);
+            using CSharpSyntaxDiagnosticService service = new();
+            MainWindowViewModel workbench = new(initial,
+                new PlanningExplorerViewModel(new MarkdownPlanningReader()),
+                new DiagnosticCollectionViewModel(), null, null,
+                editorWorkspace: documents, csharpSyntaxDiagnosticService: service);
+            CSharpWorkspace workspace = new CSharpWorkspaceLoader().Load(projectPath);
+            workbench.Workspace = workspace;
+            await documents.OpenOrActivateAsync(projectPath);
+            EditorTabViewModel projectTab = documents.ActiveTab;
+            int position = source.IndexOf("Value", StringComparison.Ordinal);
+            StringAssert.Contains(await service.GetQuickInfoAsync(source, sourcePath, position, workspace), "int Library.Value");
+            SemaphoreSlim gate = (SemaphoreSlim)typeof(CSharpSyntaxDiagnosticService)
+                .GetField("_workspaceGate", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(service)!;
+            var contexts = (System.Collections.IDictionary)typeof(CSharpSyntaxDiagnosticService)
+                .GetField("_projectContexts", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(service)!;
+
+            projectTab.Editor.Text = withoutReference;
+            Assert.AreEqual(1, contexts.Count, "An unsaved project buffer must not invalidate the saved snapshot.");
+            await gate.WaitAsync();
+            try
+            {
+                await projectTab.SaveCommand.ExecuteAsync(null);
+                Assert.AreEqual(1, contexts.Count, "Refresh must wait for the in-flight analysis gate.");
+            }
+            finally
+            {
+                gate.Release();
+            }
+            await gate.WaitAsync();
+            try
+            {
+                Assert.AreEqual(0, contexts.Count, "A successful project save must invalidate the cached snapshot.");
+            }
+            finally
+            {
+                gate.Release();
+            }
+            Assert.IsNull(await service.GetQuickInfoAsync(source, sourcePath, position, workspace));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [TestMethod]
     public void Load_ClassicalSolution_ResolvesCSharpProjectsAndIgnoresOtherProjectTypes()
     {
         WithTemporaryDirectory(root =>

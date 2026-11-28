@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AA98_AvlnCodeStudio.Tests.Engineering;
 
@@ -409,6 +411,7 @@ public sealed class WorkspaceFileChangeServiceTests
                     documents.OnApplied = null;
                     documents.Get(first).Content = "new user edit";
                 }
+
             };
 
             AggregateException exception = Assert.ThrowsExactly<AggregateException>(() =>
@@ -426,6 +429,106 @@ public sealed class WorkspaceFileChangeServiceTests
             Assert.AreEqual(undo ? "after-second" : "second", File.ReadAllText(second));
             Assert.AreEqual(undo, service.CanUndo);
             Assert.AreEqual(!undo, service.CanRedo);
+        });
+    }
+
+    [TestMethod]
+    [DataRow("apply", "edit")]
+    [DataRow("apply", "none")]
+    [DataRow("undo", "edit")]
+    [DataRow("redo", "edit")]
+    [DataRow("undo", "none")]
+    [DataRow("redo", "none")]
+    [DataRow("undo", "closed")]
+    [DataRow("redo", "replacement")]
+    public void Rollback_RechecksEditorsAfterLaterRollbackStep(string operation, string laterChange)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string first = Path.Combine(root, "First.txt");
+            string second = Path.Combine(root, "Second.txt");
+            File.WriteAllText(first, "first");
+            File.WriteAllText(second, "second");
+            InterleavingDocuments documents = new();
+            documents.Open(first, "dirty-first", "first");
+            documents.Open(second, "dirty-second", "second");
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                WorkspaceFileChangeRequest.ReplaceExisting("First.txt", "first", "after-first", "dirty-first"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Second.txt", "second", "after-second", "dirty-second"),
+            ]);
+            if (operation != "apply") service.Apply(proposal, true);
+            if (operation == "redo") Assert.IsTrue(service.Undo());
+
+            using ManualResetEventSlim rollbackGate = new();
+            using ManualResetEventSlim continueRollback = new();
+            bool failing = false;
+            documents.OnApplied = path =>
+            {
+                if (!failing && path == second)
+                {
+                    failing = true;
+                    throw new IOException("Synchronization event failed.");
+                }
+
+                if (failing && path == first)
+                {
+                    rollbackGate.Set();
+                    if (!continueRollback.Wait(TimeSpan.FromSeconds(30)))
+                        throw new TimeoutException("Timed out waiting to continue rollback.");
+                }
+
+            };
+
+            Task<Exception?> execution = Task.Run(() =>
+            {
+                try
+                {
+                    if (operation == "apply") service.Apply(proposal, true);
+                    else if (operation == "undo") service.Undo();
+                    else service.Redo();
+                    return null;
+                }
+                catch (Exception exception) { return exception; }
+            });
+            try
+            {
+                Assert.IsTrue(rollbackGate.Wait(TimeSpan.FromSeconds(30)), "Rollback did not reach the gate.");
+                if (laterChange == "edit") documents.Get(second).Content = "later user edit";
+                else if (laterChange == "closed") documents.Close(second);
+                else if (laterChange == "replacement") documents.Open(second, "replacement editor", "second");
+            }
+            finally { continueRollback.Set(); }
+
+            Exception? result = execution.GetAwaiter().GetResult();
+            if (laterChange == "none")
+            {
+                Assert.IsInstanceOfType<IOException>(result);
+                Assert.AreEqual("Synchronization event failed.", result.Message);
+            }
+            else
+            {
+                Assert.IsInstanceOfType<AggregateException>(result);
+                StringAssert.Contains(result.Message, "rollback was incomplete");
+                StringAssert.Contains(result.ToString(), "Second.txt");
+            }
+
+            string originalFirst = operation == "undo" ? "after-first" : "first";
+            string originalSecond = operation == "undo" ? "after-second" : "second";
+            Assert.AreEqual(originalFirst, File.ReadAllText(first));
+            Assert.AreEqual(originalSecond, File.ReadAllText(second));
+            Assert.AreEqual(operation == "undo" ? "after-first" : "dirty-first", documents.Get(first).Content);
+            Assert.AreEqual(laterChange switch
+            {
+                "edit" => "later user edit",
+                "replacement" => "replacement editor",
+                _ => operation == "undo" ? "after-second" : "dirty-second",
+            }, documents.Get(second).Content);
+            Assert.AreEqual(operation == "undo" ? "after-first" : "first", documents.Get(first).Saved);
+            Assert.AreEqual(laterChange == "replacement" ? "second" : operation == "undo" ? "after-second" : "second", documents.Get(second).Saved);
+            Assert.AreEqual(operation == "undo", service.CanUndo);
+            Assert.AreEqual(operation == "redo", service.CanRedo);
         });
     }
 
