@@ -84,3 +84,19 @@ trigger. It checks the resulting member selection, designer undo/redo, and that
 neither file on disk changed. A second delayed analysis is superseded by a
 newer ViewModel buffer and must not overwrite it. This exercises the Workbench
 buffer overlay; the standalone host has no separate C# editor buffer.
+
+The referenced-project fixture uses a consumer view with a runtime DataContext
+from a separate `ProjectReference` library. Its real Workbench C# tab contains
+an unsaved replacement member. A controlled compilation gate holds the context
+while mode and trigger are edited, then the smoke checks selection, AXAML
+apply/undo/redo, and byte-identical backing files. It also checks A→B→A buffer
+changes, cancellation, explicit discard/close and reopening the dirty library
+tab. After removing the reference, it explicitly invalidates the semantic
+project cache and reopens the workspace, then checks the open buffer is ignored
+and preserved. This does not test automatic project-file change detection.
+The service gate serializes compilations: a canceled older compilation is
+released before the newer one starts, not completed out of order. It does not
+simulate an already-computed stale result arriving after the newer result.
+All desktop interaction is synthetic, not physical acceptance.
+
+For just this fixture, append `-- --reference-only` to either command above.

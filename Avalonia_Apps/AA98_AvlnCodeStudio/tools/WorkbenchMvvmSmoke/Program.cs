@@ -27,10 +27,13 @@ internal static class Program
 {
     private static string s_root = null!;
     private static string s_repositoryRoot = null!;
+    private static bool s_referenceOnly;
 
     [STAThread]
     private static int Main(string[] args)
     {
+        s_referenceOnly = args.Contains("--reference-only", StringComparer.Ordinal);
+        args = args.Where(argument => argument != "--reference-only").ToArray();
         s_repositoryRoot = Directory.GetCurrentDirectory();
         s_root = Path.Combine(s_repositoryRoot, $"AvlnWorkbenchMvvm-{Guid.NewGuid():N}");
         Directory.CreateDirectory(s_root);
@@ -139,6 +142,15 @@ internal static class Program
         int exitCode = 0;
         try
         {
+            if (s_referenceOnly)
+            {
+                MainWindowViewModel referenceWorkbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
+                CSharpSyntaxDiagnosticService referenceService = SmokeApplication.Services!.GetRequiredService<CSharpSyntaxDiagnosticService>();
+                await VerifyReferencedViewModelContextAsync(referenceWorkbench, referenceService);
+                desktop.Shutdown();
+                return;
+            }
+
             await VerifyStandaloneBindingAsync();
             await BuildFixtureAsync(projectPath, restoreOnly: true);
             MainWindowViewModel workbench = SmokeApplication.Services!.GetRequiredService<MainWindowViewModel>();
@@ -335,6 +347,7 @@ internal static class Program
                 && await File.ReadAllTextAsync(incrementalViewModelPath) == incrementalViewModel,
                 "Incremental generation could not be redone.");
             await BuildFixtureAsync(projectPath);
+            await VerifyReferencedViewModelContextAsync(workbench, semanticService);
             Console.WriteLine("Workbench MVVM: generation and visual binding review, source preservation, undo/redo and generated-project build verified.");
         }
         catch (Exception exception)
@@ -344,6 +357,235 @@ internal static class Program
         }
 
         desktop.Shutdown(exitCode);
+    }
+
+    private static async Task VerifyReferencedViewModelContextAsync(
+        MainWindowViewModel workbench,
+        CSharpSyntaxDiagnosticService semanticService)
+    {
+        string root = Path.Combine(s_root, "ReferenceFixture");
+        string consumer = Path.Combine(root, "Consumer");
+        string library = Path.Combine(root, "Library");
+        Directory.CreateDirectory(consumer);
+        Directory.CreateDirectory(library);
+        File.Copy(Path.Combine(s_root, "Fixture", "Directory.Build.props"), Path.Combine(root, "Directory.Build.props"));
+        string projectPath = Path.Combine(consumer, "Consumer.csproj");
+        string libraryPath = Path.Combine(library, "Library.csproj");
+        string viewModelPath = Path.Combine(library, "ReferencedViewModel.cs");
+        string axamlPath = Path.Combine(consumer, "ReferenceView.axaml");
+        string projectText = """
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup><TargetFramework>net10.0</TargetFramework><ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally></PropertyGroup>
+              <ItemGroup>
+                <PackageReference Include="Avalonia" Version="12.1.5" />
+                <ProjectReference Include="../Library/Library.csproj" />
+              </ItemGroup>
+            </Project>
+            """;
+        File.WriteAllText(projectPath, projectText);
+        File.WriteAllText(libraryPath, """
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup><TargetFramework>net10.0</TargetFramework><ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally></PropertyGroup>
+            </Project>
+            """);
+        string savedViewModel = """
+            namespace Referenced;
+            public class ReferencedViewModel
+            {
+                public string DiskCaption { get; set; } = "";
+            }
+            """;
+        File.WriteAllText(viewModelPath, savedViewModel);
+        File.WriteAllText(Path.Combine(consumer, "ReferenceView.axaml.cs"),
+            "using Avalonia.Controls; using Referenced; namespace Consumer; public partial class ReferenceView : Window { public ReferenceView() { DataContext = new ReferencedViewModel(); } }");
+        string markup = """
+            <Window xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Consumer.ReferenceView">
+              <StackPanel><TextBox x:Name="CaptionBox" Text="{Binding OverlayCaption}" /></StackPanel>
+            </Window>
+            """;
+        File.WriteAllText(axamlPath, markup);
+        byte[] markupBytes = await File.ReadAllBytesAsync(axamlPath);
+        byte[] viewModelBytes = await File.ReadAllBytesAsync(viewModelPath);
+        await BuildFixtureAsync(projectPath, restoreOnly: true);
+        await workbench.OpenWorkspaceFileAsync(projectPath);
+        await workbench.EditorWorkspace.OpenOrActivateAsync(viewModelPath);
+        EditorTabViewModel viewModelTab = workbench.EditorWorkspace.ActiveTab;
+        string overlay = savedViewModel.Replace("DiskCaption", "OverlayCaption", StringComparison.Ordinal);
+        viewModelTab.Editor.Text = overlay;
+        PropertyInfo gate = typeof(CSharpSyntaxDiagnosticService).GetProperty(
+            "BeforeAxamlCompilationAsync", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("The existing AXAML compilation test hook is unavailable.");
+        TaskCompletionSource started = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        gate.SetValue(semanticService, (Func<CancellationToken, Task>)(async token =>
+        {
+            started.TrySetResult();
+            await release.Task.WaitAsync(token);
+        }));
+        try
+        {
+            await workbench.EditorWorkspace.OpenOrActivateAsync(axamlPath);
+            var designer = workbench.AxamlDesigner;
+            designer.SelectedNode = designer.PreviewRoot!.Children.Single(node => node.StableName == "CaptionBox");
+            var row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+            await started.Task.WaitAsync(TimeSpan.FromMinutes(2));
+            row.BindingMode = AxamlBindingMode.OneWay;
+            row.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.LostFocus;
+            release.TrySetResult();
+            await WaitUntilAsync(() => row.IsSelectingExistingMember && row.SelectedMember == "OverlayCaption",
+                "referenced unsaved ViewModel context");
+            Check(row.BindingMode == AxamlBindingMode.OneWay && row.UpdateSourceTrigger == AxamlBindingUpdateSourceTrigger.LostFocus,
+                "Referenced context refresh lost pending binding options.");
+            TaskCompletionSource abaStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource abaCanceled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource abaRelease = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource abaNewStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource abaNewRelease = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource abaRefreshed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            int abaCalls = 0;
+            gate.SetValue(semanticService, (Func<CancellationToken, Task>)(async token =>
+            {
+                if (Interlocked.Increment(ref abaCalls) == 1)
+                {
+                    using CancellationTokenRegistration registration = token.Register(() => abaCanceled.TrySetResult());
+                    abaStarted.TrySetResult();
+                    await abaRelease.Task;
+                }
+                else
+                {
+                    abaNewStarted.TrySetResult();
+                    await abaNewRelease.Task.WaitAsync(token);
+                }
+            }));
+            NotifyCollectionChangedEventHandler abaRefresh = (_, _) => abaRefreshed.TrySetResult();
+            try
+            {
+                string stateA = overlay + "\n";
+                viewModelTab.Editor.Text = stateA;
+                await abaStarted.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                viewModelTab.Editor.Text = overlay.Replace("OverlayCaption", "OtherCaption", StringComparison.Ordinal);
+                viewModelTab.Editor.Text = stateA;
+                await abaCanceled.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                abaRelease.TrySetResult();
+                await abaNewStarted.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                designer.BindingRows.CollectionChanged += abaRefresh;
+                abaNewRelease.TrySetResult();
+                await abaRefreshed.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                Check(row.IsSelectingExistingMember && row.SelectedMember == "OverlayCaption"
+                    && row.BindingMode == AxamlBindingMode.OneWay
+                    && row.UpdateSourceTrigger == AxamlBindingUpdateSourceTrigger.LostFocus,
+                    "ABA refresh lost the current referenced member or pending options.");
+                overlay = stateA;
+            }
+            finally
+            {
+                abaRelease.TrySetResult();
+                abaNewRelease.TrySetResult();
+                designer.BindingRows.CollectionChanged -= abaRefresh;
+            }
+            gate.SetValue(semanticService, null);
+            designer.ApplyBindingRow(row);
+            string applied = workbench.Editor.Text;
+            Check(applied.Contains("Mode=OneWay", StringComparison.Ordinal)
+                && applied.Contains("UpdateSourceTrigger=LostFocus", StringComparison.Ordinal),
+                "Referenced binding options were not applied.");
+            designer.UndoCommand.Execute(null);
+            Check(workbench.Editor.Text == markup, "Referenced binding undo failed.");
+            designer.RedoCommand.Execute(null);
+            Check(workbench.Editor.Text == applied, "Referenced binding redo failed.");
+            byte[] currentMarkupBytes = await File.ReadAllBytesAsync(axamlPath);
+            byte[] currentViewModelBytes = await File.ReadAllBytesAsync(viewModelPath);
+            Check(viewModelTab.Editor.Text == overlay
+                && markupBytes.SequenceEqual(currentMarkupBytes)
+                && viewModelBytes.SequenceEqual(currentViewModelBytes),
+                "Referenced binding changed the editor overlay or backing files.");
+
+            TaskCompletionSource staleStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource staleCanceled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource staleRelease = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            int calls = 0;
+            gate.SetValue(semanticService, (Func<CancellationToken, Task>)(async token =>
+            {
+                if (Interlocked.Increment(ref calls) == 1)
+                {
+                    using CancellationTokenRegistration registration = token.Register(() => staleCanceled.TrySetResult());
+                    staleStarted.TrySetResult();
+                    await staleRelease.Task;
+                }
+            }));
+            try
+            {
+                viewModelTab.Editor.Text = overlay + "\n";
+                await staleStarted.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                Check(workbench.EditorWorkspace.TryClose(viewModelTab, discardProtected: true),
+                    "Could not close the referenced editor after explicitly discarding its dirty buffer.");
+                await staleCanceled.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                staleRelease.TrySetResult();
+                await WaitUntilAsync(
+                    () => designer.BindingRows.Any(binding => binding.PropertyName == "Text"
+                        && binding.AvailableMembers.Contains("DiskCaption")),
+                    "closed referenced editor context");
+                Check(designer.BindingRows.All(binding => !binding.AvailableMembers.Contains("OverlayCaption")),
+                    "Closed editor overlay remained in the binding context.");
+            }
+            finally
+            {
+                staleRelease.TrySetResult();
+                gate.SetValue(semanticService, null);
+            }
+
+            await workbench.EditorWorkspace.OpenOrActivateAsync(viewModelPath);
+            viewModelTab = workbench.EditorWorkspace.ActiveTab;
+            viewModelTab.Editor.Text = overlay;
+            await workbench.EditorWorkspace.OpenOrActivateAsync(axamlPath);
+            await WaitUntilAsync(() => designer.BindingRows.Any(binding => binding.PropertyName == "Text"
+                && binding.AvailableMembers.Contains("OverlayCaption")), "reopened referenced overlay");
+            File.WriteAllText(projectPath, projectText.Replace(
+                "<ProjectReference Include=\"../Library/Library.csproj\" />", "", StringComparison.Ordinal));
+            Check(!File.ReadAllText(projectPath).Contains("ProjectReference", StringComparison.Ordinal),
+                "Could not remove the fixture project reference.");
+            await semanticService.RefreshProjectContextAsync(projectPath);
+            TaskCompletionSource removedStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource removedRelease = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource removedRefreshed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            gate.SetValue(semanticService, (Func<CancellationToken, Task>)(async token =>
+            {
+                removedStarted.TrySetResult();
+                await removedRelease.Task.WaitAsync(token);
+            }));
+            NotifyCollectionChangedEventHandler removedRefresh = (_, _) => removedRefreshed.TrySetResult();
+            try
+            {
+                await workbench.OpenWorkspaceFileAsync(projectPath);
+                await removedStarted.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                designer.BindingRows.CollectionChanged += removedRefresh;
+                removedRelease.TrySetResult();
+                await removedRefreshed.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                Check(designer.BindingRows.Any(binding => binding.PropertyName == "Text")
+                    && designer.BindingRows.All(binding => !binding.AvailableMembers.Contains("DiskCaption")
+                        && !binding.AvailableMembers.Contains("OverlayCaption")), "Removed project reference remained in the binding context.");
+            }
+            finally
+            {
+                removedRelease.TrySetResult();
+                designer.BindingRows.CollectionChanged -= removedRefresh;
+                gate.SetValue(semanticService, null);
+            }
+            currentMarkupBytes = await File.ReadAllBytesAsync(axamlPath);
+            currentViewModelBytes = await File.ReadAllBytesAsync(viewModelPath);
+            Check(viewModelTab.Editor.Text == overlay
+                && markupBytes.SequenceEqual(currentMarkupBytes)
+                && viewModelBytes.SequenceEqual(currentViewModelBytes),
+                "Removing the reference changed the reopened overlay or backing files.");
+            Console.WriteLine("Referenced ViewModel overlay, cancellation, close and removed reference verified.");
+        }
+        finally
+        {
+            release.TrySetResult();
+            gate.SetValue(semanticService, null);
+        }
     }
 
     private static async Task VerifyUnsavedViewModelContextAsync(
