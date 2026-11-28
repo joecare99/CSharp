@@ -1039,6 +1039,276 @@ public sealed class ImageEditingTests
     }, CancellationToken.None);
 
     [TestMethod]
+    public async Task RectangleGeometryPreviewAndHistory() =>
+        await _session.Dispatch(() =>
+    {
+        const int width = 12, height = 10;
+        using var editor = new ImageEditorViewModel();
+        var bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(192, 192), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        using (var buffer = bitmap.Lock())
+            for (int y = 0; y < height; y++)
+                Marshal.Copy(new byte[width * 4], 0, IntPtr.Add(buffer.Address, y * buffer.RowBytes), width * 4);
+        editor.LoadDocument(new ImageEditorDocument("rectangle.png", bitmap));
+        editor.ManualColorHex = "#80FF0000"; editor.ApplyManualColor();
+        var window = new Window { Width = 1000, Height = 800, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show(); window.SetRenderScaling(1.25); editor.ZoomPercentage = 800;
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var preview = window.GetVisualDescendants().OfType<LinePreviewOverlay>().Single();
+            var rectangle = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "RectangleMode");
+            Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
+            void Down(double x, double y) { rectangle.IsChecked = true; window.MouseDown(At(x, y), MouseButton.Left, RawInputModifiers.None); }
+            void Up(double x, double y) => window.MouseUp(At(x, y), MouseButton.Left, RawInputModifiers.None);
+            byte[] original = editor.CapturePngSnapshot().Bytes;
+            byte[] emptyPreview = RenderPixels(preview, width, height);
+            editor.BrushSizeText = "3";
+            Down(2.5, 2.5);
+            window.MouseMove(At(7.5, 6.5), RawInputModifiers.LeftMouseButton);
+            Assert.IsTrue(preview.HasPreview && preview.IsRectangle && !preview.IsHitTestVisible);
+            Assert.AreEqual(new Point(2.5, 2.5), preview.Start);
+            Assert.AreEqual(new Point(7.5, 6.5), preview.End);
+            CollectionAssert.AreNotEqual(emptyPreview, RenderPixels(preview, width, height));
+            Assert.IsFalse(editor.IsDirty); Assert.IsFalse(editor.UndoCommand.CanExecute(null));
+            CollectionAssert.AreEqual(original, editor.CapturePngSnapshot().Bytes);
+            Up(7.5, 6.5);
+            Assert.IsFalse(preview.HasPreview);
+            byte[] painted = ReadPixels(editor.ActiveDocument!);
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                {
+                    bool expected = x >= 1 && x <= 8 && y >= 1 && y <= 7 &&
+                        (x <= 3 || x >= 6 || y <= 3 || y >= 5);
+                    Assert.AreEqual(expected ? (byte)128 : (byte)0, painted[(y * width + x) * 4 + 3], $"{x},{y}");
+                }
+            editor.Undo(); Assert.IsFalse(editor.IsDirty); editor.Redo();
+            CollectionAssert.AreEqual(painted, ReadPixels(editor.ActiveDocument!)); editor.Undo();
+            Down(7.5, 6.5); Up(2.5, 2.5);
+            CollectionAssert.AreEqual(painted, ReadPixels(editor.ActiveDocument!)); editor.Undo();
+            editor.BrushSizeText = "1";
+            foreach (var (x0, y0, x1, y1) in new[] { (3, 3, 3, 3), (3, 3, 3, 7), (3, 3, 8, 3), (2, 2, 20, 6) })
+            {
+                Down(x0 + .5, y0 + .5); Up(x1 + .5, y1 + .5);
+                byte[] result = ReadPixels(editor.ActiveDocument!);
+                for (int y = 0; y < height; y++)
+                    for (int x = 0; x < width; x++)
+                    {
+                        bool edge = x >= x0 && x <= x1 && y >= y0 && y <= y1 &&
+                            (x == x0 || x == x1 || y == y0 || y == y1);
+                        Assert.AreEqual(edge ? (byte)128 : (byte)0, result[(y * width + x) * 4 + 3], $"{x0},{y0}-{x1},{y1}: {x},{y}");
+                    }
+                editor.Undo();
+            }
+            editor.ManualColorHex = "#00FFFFFF"; editor.ApplyManualColor();
+            Down(1.5, 1.5); Up(7.5, 7.5);
+            Assert.IsFalse(editor.IsDirty); Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task FilledRectangleGeometryCompositionAndHistory() =>
+        await _session.Dispatch(() =>
+    {
+        const int width = 12, height = 10;
+        using var editor = new ImageEditorViewModel();
+        var bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(192, 192), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        using (var buffer = bitmap.Lock())
+            for (int y = 0; y < height; y++)
+                Marshal.Copy(new byte[width * 4], 0, IntPtr.Add(buffer.Address, y * buffer.RowBytes), width * 4);
+        editor.LoadDocument(new ImageEditorDocument("filled.png", bitmap));
+        editor.ManualColorHex = "#80FF0000"; editor.ApplyManualColor();
+        var window = new Window { Width = 1000, Height = 800, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show(); window.SetRenderScaling(1.25); editor.ZoomPercentage = 800;
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var filled = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "FilledRectangleMode");
+            var preview = window.GetVisualDescendants().OfType<LinePreviewOverlay>().Single();
+            Assert.AreNotEqual(true, filled.IsChecked);
+            filled.IsChecked = true; editor.SelectedTool = ImageEditorTool.Rectangle; editor.BrushSizeText = "16";
+            Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
+            void Begin(double x, double y)
+            {
+                editor.SelectedTool = ImageEditorTool.Rectangle;
+                window.MouseDown(At(x, y), MouseButton.Left, RawInputModifiers.None);
+            }
+            void Draw(double x0, double y0, double x1, double y1)
+            {
+                Begin(x0 + .5, y0 + .5);
+                Assert.IsTrue(preview.HasPreview); Assert.IsFalse(editor.IsDirty);
+                window.MouseMove(At(x1 + .5, y1 + .5), RawInputModifiers.LeftMouseButton);
+                Assert.IsFalse(editor.IsDirty);
+                window.MouseUp(At(x1 + .5, y1 + .5), MouseButton.Left, RawInputModifiers.None);
+                Assert.IsFalse(preview.HasPreview);
+            }
+            foreach (var (x0, y0, x1, y1) in new[] {
+                (2, 2, 7, 6), (7, 6, 2, 2), (3, 3, 3, 3), (3, 3, 3, 7), (3, 3, 8, 3),
+                (5, 5, -20, 7), (5, 5, 30, 7), (5, 5, 7, -20), (5, 5, 7, 30),
+                (5, 5, 1000000, 1000000) })
+            {
+                Draw(x0, y0, x1, y1);
+                byte[] result = ReadPixels(editor.ActiveDocument!);
+                for (int y = 0; y < height; y++)
+                    for (int x = 0; x < width; x++)
+                    {
+                        bool inside = x >= Math.Min(x0, x1) && x <= Math.Max(x0, x1) &&
+                            y >= Math.Min(y0, y1) && y <= Math.Max(y0, y1);
+                        int i = (y * width + x) * 4;
+                        Assert.AreEqual(inside ? (byte)128 : (byte)0, result[i + 2], $"{x0},{y0}-{x1},{y1}: {x},{y}");
+                        Assert.AreEqual(inside ? (byte)128 : (byte)0, result[i + 3], $"{x0},{y0}-{x1},{y1}: {x},{y}");
+                    }
+                editor.Undo(); Assert.IsFalse(editor.IsDirty); Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            }
+            editor.BrushSizeText = "invalid";
+            Draw(2, 2, 7, 6);
+            byte[] painted = ReadPixels(editor.ActiveDocument!);
+            editor.ManualColorHex = "#800000FF"; editor.ApplyManualColor();
+            Begin(2.5, 2.5);
+            window.MouseUp(At(7.5, 6.5), MouseButton.Left, RawInputModifiers.None);
+            byte[] composite = ReadPixels(editor.ActiveDocument!);
+            foreach (var (x, y) in new[] { (2, 2), (4, 4), (7, 6) })
+            {
+                int i = (y * width + x) * 4;
+                CollectionAssert.AreEqual(new byte[] { 128, 0, 64, 192 }, composite.Skip(i).Take(4).ToArray());
+            }
+            editor.Undo();
+            editor.Undo(); editor.Redo(); CollectionAssert.AreEqual(painted, ReadPixels(editor.ActiveDocument!)); editor.Undo();
+            editor.ManualColorHex = "#00FFFFFF"; editor.ApplyManualColor();
+            Draw(1, 1, 8, 8);
+            Assert.IsFalse(editor.IsDirty); Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            editor.Redo();
+            editor.ManualColorHex = "#FFFF0000"; editor.ApplyManualColor();
+            Begin(2.5, 2.5);
+            window.MouseUp(At(7.5, 6.5), MouseButton.Left, RawInputModifiers.None);
+            editor.Undo();
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            editor.ManualColorHex = "#00FF0000"; editor.ApplyManualColor();
+            Begin(2.5, 2.5);
+            window.MouseUp(At(7.5, 6.5), MouseButton.Left, RawInputModifiers.None);
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            editor.Redo();
+            Begin(.5, .5);
+            editor.ManualColorHex = "#FFFF0000"; editor.ApplyManualColor();
+            window.MouseUp(At(.5, .5), MouseButton.Left, RawInputModifiers.None);
+            Begin(.5, .5);
+            window.MouseUp(At(.5, .5), MouseButton.Left, RawInputModifiers.None);
+            editor.Undo();
+            Begin(2.5, 2.5);
+            window.MouseUp(At(7.5, 6.5), MouseButton.Left, RawInputModifiers.None);
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task RectangleRejectsStaleAndInvalidGestures() =>
+        await _session.Dispatch(() =>
+    {
+        using var editor = new ImageEditorViewModel();
+        using var replacement = new ImageEditorViewModel();
+        editor.LoadDocument(MakeDocument()); editor.SamplePixel(0, 0);
+        replacement.LoadDocument(MakeDocument()); replacement.SamplePixel(0, 0);
+        editor.FlipHorizontal(); editor.Undo();
+        var control = new ImageEditorControl { DataContext = editor };
+        var window = new Window { Width = 900, Height = 750, Content = control };
+        try
+        {
+            window.Show(); editor.ZoomPercentage = 800; Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var preview = window.GetVisualDescendants().OfType<LinePreviewOverlay>().Single();
+            var filled = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "FilledRectangleMode");
+            filled.IsChecked = true;
+            IPointer? pointer = null;
+            surface.AddHandler(InputElement.PointerPressedEvent, (_, e) => pointer = e.Pointer, RoutingStrategies.Bubble, handledEventsToo: true);
+            Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
+            void Down() { editor.SelectedTool = ImageEditorTool.Rectangle; window.MouseDown(At(.5, .5), MouseButton.Left, RawInputModifiers.None); Assert.IsTrue(preview.HasPreview); }
+            void Up() => window.MouseUp(At(2.5, 1.5), MouseButton.Left, RawInputModifiers.None);
+            void Check() { Assert.IsFalse(preview.HasPreview); CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!)); Assert.IsFalse(editor.IsDirty); Assert.IsTrue(editor.RedoCommand.CanExecute(null)); }
+            Down(); filled.IsChecked = false; Up(); Check(); filled.IsChecked = true;
+            Down();
+            surface.RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent, surface, pointer!, window,
+                new Point(double.NaN, 0), 0, new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), KeyModifiers.None));
+            Up(); Check();
+            Down(); window.MouseDown(At(.5, .5), MouseButton.Right, RawInputModifiers.LeftMouseButton);
+            window.MouseUp(At(.5, .5), MouseButton.Right, RawInputModifiers.LeftMouseButton); Up(); Check();
+            Down(); editor.FlipHorizontal(); Assert.IsFalse(preview.HasPreview); Up(); editor.Undo(); Check();
+            Down(); control.DataContext = replacement; Assert.IsFalse(preview.HasPreview); Up(); Check();
+            control.DataContext = editor; Down(); Point release = At(2.5, 1.5);
+            window.Content = null; Assert.IsFalse(preview.HasPreview);
+            window.MouseUp(release, MouseButton.Left, RawInputModifiers.None); Check();
+            window.Content = control; Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            bool reentered = false;
+            editor.ContentChanging += (_, _) =>
+            {
+                if (reentered) return;
+                reentered = true; editor.SelectedTool = ImageEditorTool.Line; editor.SelectedTool = ImageEditorTool.Rectangle;
+            };
+            Down(); Up(); Assert.IsTrue(reentered); Check();
+            var gate = new Queue<Action>(); editor.ScheduleFill = gate.Enqueue;
+            editor.SelectedTool = ImageEditorTool.Fill;
+            editor.FloodFill(editor.ActiveDocument!, editor.SampledColor!.Value, 2, 0, (_, _) => { });
+            Assert.IsTrue(editor.IsFillInProgress);
+            editor.SelectedTool = ImageEditorTool.Rectangle;
+            Assert.IsFalse(editor.IsFillInProgress);
+            while (gate.Count != 0) gate.Dequeue()();
+            Check();
+            Down(); editor.LoadDocument(MakeDocument()); Assert.IsFalse(preview.HasPreview); Up();
+            CollectionAssert.AreEqual(Pixels, ReadPixels(editor.ActiveDocument!)); Assert.IsFalse(editor.IsDirty);
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task RectangleCancelsAndStandaloneZoomScrollDpi() =>
+        await _session.Dispatch(() =>
+    {
+        var host = new MainWindowViewModel();
+        var bitmap = new WriteableBitmap(new PixelSize(2000, 2000), new Vector(192, 192), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        host.Editor.LoadDocument(new ImageEditorDocument("large.png", bitmap));
+        host.Editor.ManualColorHex = "#80FF0000"; host.Editor.ApplyManualColor();
+        var window = new MainWindow { DataContext = host, Width = 1000, Height = 800 };
+        try
+        {
+            window.Show(); window.SetRenderScaling(1.25); host.Editor.ZoomPercentage = 50;
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var scroll = window.GetVisualDescendants().OfType<ScrollViewer>().Single(c => c.Name == "ImageScrollViewer");
+            var preview = window.GetVisualDescendants().OfType<LinePreviewOverlay>().Single();
+            var filled = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "FilledRectangleMode");
+            filled.IsChecked = true;
+            scroll.Offset = new Vector(100, 100); Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
+            IPointer? pointer = null;
+            surface.AddHandler(InputElement.PointerPressedEvent, (_, e) => pointer = e.Pointer, RoutingStrategies.Bubble, handledEventsToo: true);
+            void Down() { host.Editor.SelectedTool = ImageEditorTool.Rectangle; window.MouseDown(At(500.5, 500.5), MouseButton.Left, RawInputModifiers.None); Assert.IsTrue(preview.HasPreview); }
+            void Up() => window.MouseUp(At(510.5, 510.5), MouseButton.Left, RawInputModifiers.None);
+            var state = host.Editor.CaptureDocumentState();
+            Down(); window.MouseMove(At(1000000.5, 1000000.5), RawInputModifiers.LeftMouseButton);
+            Assert.IsTrue(preview.HasPreview && preview.IsRectangle);
+            Assert.AreEqual(0.5, preview.Zoom);
+            Assert.AreEqual(surface.TranslatePoint(preview.Start, window), preview.TranslatePoint(preview.Start, window));
+            Assert.IsTrue(host.Editor.IsCurrentDocumentState(state));
+            window.KeyPress(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null); Assert.IsFalse(preview.HasPreview); Up();
+            Down(); pointer!.Capture(null); Assert.IsFalse(preview.HasPreview); Up();
+            Down(); host.Editor.BrushSizeText = "2"; Assert.IsFalse(preview.HasPreview); Up();
+            Down(); host.Editor.ManualColorHex = "#FF00FF00"; host.Editor.ApplyManualColor(); Assert.IsFalse(preview.HasPreview); Up();
+            Down(); host.Editor.SelectedTool = ImageEditorTool.Fill; Assert.IsFalse(preview.HasPreview); Up();
+            Down(); host.Editor.IsCropSelectionInProgress = true; Assert.IsFalse(preview.HasPreview); host.Editor.IsCropSelectionInProgress = false; Up();
+            Assert.IsTrue(host.Editor.IsCurrentDocumentState(state)); Assert.IsFalse(host.Editor.IsDirty);
+            Down(); Up(); Assert.IsTrue(host.Editor.IsDirty);
+            byte[] result = ReadPixels(host.Editor.ActiveDocument!);
+            Assert.AreEqual((byte)255, result[(500 * 2000 + 500) * 4 + 3]);
+            Assert.AreEqual((byte)255, result[(505 * 2000 + 505) * 4 + 3]);
+            host.Editor.Undo(); Assert.IsTrue(host.Editor.IsCurrentDocumentState(state));
+            host.Editor.Redo(); CollectionAssert.AreEqual(result, ReadPixels(host.Editor.ActiveDocument!));
+        }
+        finally { host.Editor.Dispose(); window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
     public async Task LineGestureEndpointsSizesAndHistory() =>
         await _session.Dispatch(() =>
     {
