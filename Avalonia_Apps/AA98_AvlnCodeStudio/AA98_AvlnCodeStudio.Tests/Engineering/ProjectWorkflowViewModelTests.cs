@@ -386,6 +386,7 @@ public sealed class ProjectWorkflowViewModelTests
         Assert.IsFalse(vm.RunWorkspaceTestsCommand.CanExecute(null));
         Assert.IsFalse(vm.StartDebugSessionCommand.CanExecute(null));
         vm.SelectedWorkflowProject = vm.Workspace.Projects[1];
+        Assert.IsFalse(vm.AdapterDiscoveryCancellationPending);
         completed.SetResult(fixture.SuccessfulBuild(fixture.FirstProject, "Debug"));
         await operation;
 
@@ -415,6 +416,7 @@ public sealed class ProjectWorkflowViewModelTests
         Task operation = vm.DebugSelectedProjectCommand.ExecuteAsync(null);
         await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
         vm.CancelProjectWorkflowCommand.Execute(null);
+        Assert.IsFalse(vm.AdapterDiscoveryCancellationPending);
         completed.SetResult(fixture.SuccessfulBuild(fixture.FirstProject, "Debug"));
         await operation;
 
@@ -625,6 +627,8 @@ public sealed class ProjectWorkflowViewModelTests
         await vm.DiscoverAdapterTestsCommand.ExecuteAsync(null);
         Assert.IsTrue(vm.ProjectWorkflowBusy);
         Assert.IsTrue(token.IsCancellationRequested);
+        await fixture.RuntimeBuilder.Received(1).BuildAsync(
+            Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>());
         if (scenario == "cancel")
         {
             vm.CancelProjectWorkflowCommand.Execute(null);
@@ -677,6 +681,7 @@ public sealed class ProjectWorkflowViewModelTests
 
         Task operation = vm.DiscoverAdapterTestsCommand.ExecuteAsync(null);
         CancellationToken token = await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.IsFalse(vm.AdapterDiscoveryCancellationPending);
         if (scenario == "cancel")
         {
             vm.CancelProjectWorkflowCommand.Execute(null);
@@ -691,6 +696,8 @@ public sealed class ProjectWorkflowViewModelTests
             }
         }
         Assert.IsTrue(token.IsCancellationRequested);
+        Assert.IsTrue(vm.AdapterDiscoveryCancellationPending);
+        Assert.IsTrue(vm.ProjectWorkflowBusy);
         string status = vm.ProjectWorkflowStatus;
         completed.SetResult(true);
         await operation.WaitAsync(TimeSpan.FromSeconds(10));
@@ -698,6 +705,7 @@ public sealed class ProjectWorkflowViewModelTests
         _ = fixture.Discovery.DidNotReceive().DiscoverAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
         Assert.AreEqual(scenario == "cancel" ? "Project action canceled." : status, vm.ProjectWorkflowStatus);
         Assert.IsFalse(vm.ProjectWorkflowBusy);
+        Assert.IsFalse(vm.AdapterDiscoveryCancellationPending);
     }
 
     [TestMethod]
@@ -707,6 +715,10 @@ public sealed class ProjectWorkflowViewModelTests
     [DataRow("cancel", true)]
     [DataRow("project", false)]
     [DataRow("project", true)]
+    [DataRow("project-return", false)]
+    [DataRow("project-return", true)]
+    [DataRow("empty", false)]
+    [DataRow("empty", true)]
     [DataRow("workspace", false)]
     [DataRow("workspace", true)]
     public async Task DiscoverAdapterTests_LateCompletionRespectsWorkbenchContext(string scenario, bool error)
@@ -737,6 +749,15 @@ public sealed class ProjectWorkflowViewModelTests
         {
             vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
         }
+        else if (scenario == "project-return")
+        {
+            vm.SelectedWorkflowProject = vm.Workspace!.Projects[0];
+            vm.SelectedWorkflowProject = originalProject;
+        }
+        else if (scenario == "empty")
+        {
+            vm.SelectedWorkflowProject = null;
+        }
         else if (scenario == "workspace")
         {
             string otherSolution = Path.Combine(fixture.Root, "Other.slnx");
@@ -746,6 +767,12 @@ public sealed class ProjectWorkflowViewModelTests
         }
 
         Assert.AreEqual(scenario != "unchanged", token.IsCancellationRequested);
+        Assert.AreEqual(scenario != "unchanged", vm.AdapterDiscoveryCancellationPending);
+        Assert.IsTrue(vm.ProjectWorkflowBusy);
+        Assert.IsFalse(vm.InspectSelectedProjectCommand.CanExecute(null));
+        Assert.IsFalse(vm.DiscoverAdapterTestsCommand.CanExecute(null));
+        Assert.IsFalse(vm.BuildWorkspaceCommand.CanExecute(null));
+        Assert.IsFalse(vm.RunWorkspaceTestsCommand.CanExecute(null));
         DiscoveredTestCase current = new("current", "executor", "source", "Example.Current", "Current case", null, null);
         if (scenario != "unchanged")
         {
@@ -761,7 +788,9 @@ public sealed class ProjectWorkflowViewModelTests
 
         if (error)
         {
-            completed.SetException(new InvalidOperationException("late discovery error"));
+            completed.SetException(scenario == "unchanged"
+                ? new InvalidOperationException("late discovery error")
+                : new Exception("late discovery error"));
         }
         else
         {
@@ -772,6 +801,12 @@ public sealed class ProjectWorkflowViewModelTests
         await operation.WaitAsync(TimeSpan.FromSeconds(10));
 
         Assert.IsFalse(vm.ProjectWorkflowBusy);
+        Assert.IsFalse(vm.AdapterDiscoveryCancellationPending);
+        if (scenario == "empty")
+        {
+            Assert.IsNull(vm.SelectedWorkflowProject);
+            Assert.IsFalse(vm.InspectSelectedProjectCommand.CanExecute(null));
+        }
         if (scenario == "cancel")
         {
             Assert.AreSame(originalWorkspace, vm.Workspace);
@@ -802,6 +837,67 @@ public sealed class ProjectWorkflowViewModelTests
             Assert.AreEqual("Current editor status", vm.Editor.StatusText);
             Assert.AreEqual("Current notification", vm.Editor.NotificationText);
         }
+    }
+
+    [TestMethod]
+    public async Task DiscoverAdapterTests_ProjectChangeRemainsBusyUntilOldDiscoveryCompletes()
+    {
+        using Fixture fixture = await Fixture.CreateAsync(useOutputDirectory: true);
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        TaskCompletionSource<CancellationToken> entered = NewCompletion<CancellationToken>();
+        TaskCompletionSource<TestDiscoveryResult> completed = NewCompletion<TestDiscoveryResult>();
+        fixture.Discovery.DiscoverAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                entered.TrySetResult(call.Arg<CancellationToken>());
+                return completed.Task;
+            });
+
+        Task oldOperation = vm.DiscoverAdapterTestsCommand.ExecuteAsync(null);
+        CancellationToken token = await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        vm.SelectedWorkflowProject = vm.Workspace.Projects[0];
+        Assert.IsTrue(token.IsCancellationRequested);
+        Assert.IsTrue(vm.ProjectWorkflowBusy);
+        Assert.IsFalse(vm.InspectSelectedProjectCommand.CanExecute(null));
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        Assert.IsNull(vm.ProjectInspection);
+        Assert.IsFalse(vm.DiscoverAdapterTestsCommand.CanExecute(null));
+        Assert.IsFalse(vm.BuildWorkspaceCommand.CanExecute(null));
+        Assert.IsFalse(vm.RunWorkspaceTestsCommand.CanExecute(null));
+        await vm.BuildWorkspaceAsync();
+        await fixture.Builder.DidNotReceive().BuildProjectAsync(
+            Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>());
+        await vm.DiscoverAdapterTestsCommand.ExecuteAsync(null);
+        _ = fixture.Discovery.Received(1).DiscoverAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await fixture.RuntimeBuilder.Received(1).BuildAsync(
+            Arg.Any<BuilderBuildRequest>(), Arg.Any<CancellationToken>());
+
+        completed.SetResult(new TestDiscoveryResult(
+            [new DiscoveredTestCase("old", "executor", "source", "Old", "Old", null, null)], []));
+        await oldOperation.WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.AreEqual(0, vm.DiscoveredTestCases.Count);
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
+        Assert.IsTrue(vm.InspectSelectedProjectCommand.CanExecute(null));
+    }
+
+    [TestMethod]
+    public async Task DiscoverAdapterTests_EmptyDiscoveryShowsEmptyResult()
+    {
+        using Fixture fixture = await Fixture.CreateAsync(useOutputDirectory: true);
+        MainWindowViewModel vm = fixture.ViewModel;
+        vm.SelectedWorkflowProject = vm.Workspace!.Projects[1];
+        await vm.InspectSelectedProjectCommand.ExecuteAsync(null);
+        fixture.Discovery.DiscoverAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(new TestDiscoveryResult([], [])));
+
+        await vm.DiscoverAdapterTestsCommand.ExecuteAsync(null);
+
+        Assert.AreEqual(0, vm.DiscoveredTestCases.Count);
+        Assert.IsNull(vm.SelectedDiscoveredTestCase);
+        Assert.AreEqual("VSTest discovered 0 cases.", vm.ProjectWorkflowStatus);
+        Assert.IsFalse(vm.ProjectWorkflowBusy);
     }
 
     [TestMethod]
@@ -1387,6 +1483,7 @@ public sealed class ProjectWorkflowViewModelTests
         Task operation = vm.TestSelectedProjectCommand.ExecuteAsync(null);
         await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
         await vm.OpenWorkspaceFileAsync(fixture.SecondProject);
+        Assert.IsFalse(vm.AdapterDiscoveryCancellationPending);
         completed.SetResult(new TestRunSummary
         {
             FailedCount = 1,
@@ -1443,6 +1540,7 @@ public sealed class ProjectWorkflowViewModelTests
         Task operation = vm.BuildWorkspaceCommand.ExecuteAsync(null);
         await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
         await vm.OpenWorkspaceFileAsync(fixture.SecondProject);
+        Assert.IsFalse(vm.AdapterDiscoveryCancellationPending);
         completed.SetResult(new BuilderBuildResult
         {
             ProjectPath = fixture.FirstProject,
