@@ -31,5 +31,8 @@ public enum ImageEditorTool
     Crop,
 
     /// <summary>Draws a straight line using the selected color and brush size.</summary>
-    Line
+    Line,
+
+    /// <summary>Draws an unfilled axis-aligned rectangle using the selected color and brush size.</summary>
+    Rectangle
 }
