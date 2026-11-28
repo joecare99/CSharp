@@ -113,8 +113,37 @@ the service gate independently and checks that saving waits to invalidate the
 cached snapshot, while an unsaved project edit does not invalidate it.
 The service gate serializes compilations: a canceled older compilation is
 released before the newer one starts, not completed out of order. It does not
-simulate an already-computed stale result arriving after the newer result.
-All desktop interaction is synthetic, not physical acceptance.
+itself simulate an already-computed stale result arriving after the newer result.
+
+The reference smoke additionally gates the Workbench refresh **after** the real
+semantic service returns and releases its compilation gate, but before the
+Workbench checks and publishes the result. The hook passes the result unchanged,
+ignores cancellation while holding it, and does not decide whether it is stale.
+The smoke waits for a newer refresh to finish publishing before releasing the
+old one, then awaits the old refresh and checks that no binding-row publication
+occurred. It covers a replacement unsaved C# buffer, an A→B→A buffer transition
+where B and the second A both publish, tab and AXAML-path changes, a workspace
+switch and return, an unsaved C# buffer at a different path, cancellation, and a
+late synthetic exception. Mode and trigger edits survive; the fixture also
+checks the backing files and designer undo/redo. The per-request cancellation
+token is the existing identity guard in these refresh cases; these checks do not
+prove a monotonic revision scheme.
+
+This gate exercises the Workbench refresh-to-designer handoff, not the separate
+missing-member apply/review path or the standalone host refresh. The AXAML path
+case switches tabs; the C# path case explicitly discards the synthetic dirty tab
+and opens another file, not a rename. It does not exercise every tool window.
+The workspace case reopens the original workspace after another project. All
+desktop interaction is synthetic, not physical acceptance.
+
+On 2026-11-28 the expanded `--reference-only` smoke passed on Windows with
+net10.0 from the physical workspace using the isolated artifact root
+`.artifacts-fleet-binding-late-physical-win-eb016278556846e6adada4da404882da`.
+It also passed on Ubuntu 26.04 under WSLg with SDK 10.0.404 and the isolated
+root `.artifacts-fleet-binding-late-linux-1795853573678876402`.
+Three focused binding/project-save tests and targeted whitespace verification
+for the Workbench and smoke files also passed. Existing NU1701, CS8600, CS8603,
+CA1416, AVA2003 and dependency-injection support warnings remained.
 
 For just this fixture, append `-- --reference-only` to either command above.
 

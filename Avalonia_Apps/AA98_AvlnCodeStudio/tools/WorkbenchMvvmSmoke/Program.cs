@@ -438,6 +438,8 @@ internal static class Program
                 "referenced unsaved ViewModel context");
             Check(row.BindingMode == AxamlBindingMode.OneWay && row.UpdateSourceTrigger == AxamlBindingUpdateSourceTrigger.LostFocus,
                 "Referenced context refresh lost pending binding options.");
+            gate.SetValue(semanticService, null);
+            viewModelTab = await VerifyLateBindingResultsAsync(workbench, viewModelTab, overlay, axamlPath, projectPath, libraryPath);
             TaskCompletionSource abaStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
             TaskCompletionSource abaCanceled = new(TaskCreationOptions.RunContinuationsAsynchronously);
             TaskCompletionSource abaRelease = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -634,6 +636,175 @@ internal static class Program
             release.TrySetResult();
             gate.SetValue(semanticService, null);
         }
+    }
+
+    private static async Task<EditorTabViewModel> VerifyLateBindingResultsAsync(
+        MainWindowViewModel workbench,
+        EditorTabViewModel viewModelTab,
+        string overlay,
+        string axamlPath,
+        string projectPath,
+        string libraryPath)
+    {
+        PropertyInfo awaiterProperty = typeof(MainWindowViewModel).GetProperty(
+            "BindingContextResultAwaiter", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("The result handoff hook is unavailable.");
+        PropertyInfo startedProperty = typeof(MainWindowViewModel).GetProperty(
+            "BindingContextRefreshStarted", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("The refresh observation hook is unavailable.");
+        var designer = workbench.AxamlDesigner;
+        var row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+        string otherAxamlPath = Path.Combine(Path.GetDirectoryName(axamlPath)!, "OtherReferenceView.axaml");
+        File.WriteAllText(otherAxamlPath, File.ReadAllText(axamlPath));
+        string originalSourcePath = viewModelTab.FilePath!;
+        string otherSourcePath = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(axamlPath)!)!, "OtherSource.cs");
+        File.WriteAllText(otherSourcePath, "// unrelated source\n");
+        Task? latestRefresh = null;
+        startedProperty.SetValue(workbench, (Action<Task>)(task => latestRefresh = task));
+        try
+        {
+            foreach (string scenario in new[] { "replacement", "aba", "exception", "tab-aba", "path-aba", "workspace-aba", "source-path" })
+            {
+                TaskCompletionSource held = new(TaskCreationOptions.RunContinuationsAsynchronously);
+                TaskCompletionSource release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+                int calls = 0;
+                CancellationToken oldToken = default;
+                awaiterProperty.SetValue(workbench, (Func<AxamlMvvmSemanticResolution, CancellationToken, Task<AxamlMvvmSemanticResolution>>)(async (result, token) =>
+                {
+                    if (Interlocked.Increment(ref calls) == 1)
+                    {
+                        oldToken = token;
+                        Check(result.IsSuccessful && result.ViewModelMembers.Any(member => member.Name == "OverlayCaption"),
+                            "The held result was not the computed A context.");
+                        held.TrySetResult();
+                        await release.Task;
+                        if (scenario == "exception")
+                        {
+                            throw new InvalidOperationException("late synthetic failure");
+                        }
+                    }
+
+                    return result;
+                }));
+                Task? oldRefresh = null;
+                EditorTabViewModel? otherSourceTab = null;
+                try
+                {
+                    viewModelTab.Editor.Text = overlay + "\n";
+                    oldRefresh = latestRefresh ?? throw new InvalidOperationException("A refresh was not queued.");
+                    await held.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                    if (scenario == "tab-aba")
+                    {
+                        await workbench.EditorWorkspace.OpenOrActivateAsync(viewModelTab.FilePath!);
+                        await workbench.EditorWorkspace.OpenOrActivateAsync(axamlPath);
+                        designer.SelectedNode = designer.PreviewRoot!.Children.Single(node => node.StableName == "CaptionBox");
+                        row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+                    }
+                    else if (scenario == "path-aba")
+                    {
+                        await workbench.EditorWorkspace.OpenOrActivateAsync(otherAxamlPath);
+                        var otherDesigner = workbench.AxamlDesigner;
+                        otherDesigner.SelectedNode = otherDesigner.PreviewRoot!.Children.Single(node => node.StableName == "CaptionBox");
+                        await (latestRefresh ?? throw new InvalidOperationException("The other path refresh was not queued."))
+                            .WaitAsync(TimeSpan.FromMinutes(2));
+                        Check(otherDesigner.BindingRows.Any(binding => binding.AvailableMembers.Contains("OverlayCaption")),
+                            "The other AXAML path context was not published.");
+                        await workbench.EditorWorkspace.OpenOrActivateAsync(axamlPath);
+                        designer.SelectedNode = designer.PreviewRoot!.Children.Single(node => node.StableName == "CaptionBox");
+                        row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+                    }
+                    else if (scenario == "workspace-aba")
+                    {
+                        CSharpWorkspace originalWorkspace = workbench.Workspace!;
+                        await workbench.OpenWorkspaceFileAsync(libraryPath);
+                        Check(!ReferenceEquals(originalWorkspace, workbench.Workspace), "The workspace did not change.");
+                        await (latestRefresh ?? throw new InvalidOperationException("The other workspace refresh was not queued."))
+                            .WaitAsync(TimeSpan.FromMinutes(2));
+                        await workbench.OpenWorkspaceFileAsync(projectPath);
+                    }
+                    else if (scenario == "source-path")
+                    {
+                        Check(workbench.EditorWorkspace.TryClose(viewModelTab, discardProtected: true),
+                            "Could not discard and close the fixture source tab.");
+                        await workbench.EditorWorkspace.OpenOrActivateAsync(otherSourcePath);
+                        otherSourceTab = workbench.EditorWorkspace.ActiveTab;
+                        otherSourceTab.Editor.Text = overlay + "\n";
+                        await workbench.EditorWorkspace.OpenOrActivateAsync(axamlPath);
+                        designer.SelectedNode = designer.PreviewRoot!.Children.Single(node => node.StableName == "CaptionBox");
+                        row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+                    }
+                    else
+                    {
+                        viewModelTab.Editor.Text = overlay.Replace("OverlayCaption", "OtherCaption", StringComparison.Ordinal);
+                        if (scenario == "aba")
+                        {
+                            await (latestRefresh ?? throw new InvalidOperationException("The intermediate refresh was not queued."))
+                                .WaitAsync(TimeSpan.FromMinutes(2));
+                            Check(row.AvailableMembers.Contains("OtherCaption"), "The intermediate ABA context was not published.");
+                            viewModelTab.Editor.Text = overlay + "\n";
+                        }
+                    }
+                    Check(oldToken.IsCancellationRequested, $"The held {scenario} analysis was not cancelled.");
+                    row.BindingMode = AxamlBindingMode.TwoWay;
+                    row.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.PropertyChanged;
+                    Task newRefresh = latestRefresh ?? throw new InvalidOperationException("B refresh was not queued.");
+                    Check(!ReferenceEquals(oldRefresh, newRefresh), "The newer refresh was not started.");
+                    await newRefresh.WaitAsync(TimeSpan.FromMinutes(2));
+                    string expected = scenario == "source-path" ? "DiskCaption"
+                        : scenario is "aba" or "tab-aba" or "path-aba" or "workspace-aba" ? "OverlayCaption" : "OtherCaption";
+                    Check(row.AvailableMembers.Contains(expected), $"The newer {scenario} context was not published.");
+                    int publications = 0;
+                    NotifyCollectionChangedEventHandler changed = (_, _) => publications++;
+                    designer.BindingRows.CollectionChanged += changed;
+                    try
+                    {
+                        release.TrySetResult();
+                        await oldRefresh.WaitAsync(TimeSpan.FromMinutes(2));
+                    }
+                    finally
+                    {
+                        designer.BindingRows.CollectionChanged -= changed;
+                    }
+                    Check(publications == 0 && row.AvailableMembers.Contains(expected)
+                        && row.BindingMode == AxamlBindingMode.TwoWay
+                        && row.UpdateSourceTrigger == AxamlBindingUpdateSourceTrigger.PropertyChanged,
+                        $"The late {scenario} result or exception replaced the newer context or draft.");
+                }
+                finally
+                {
+                    release.TrySetResult();
+                    awaiterProperty.SetValue(workbench, null);
+                    if (oldRefresh is not null)
+                    {
+                        await oldRefresh.WaitAsync(TimeSpan.FromMinutes(2));
+                    }
+                }
+                if (otherSourceTab is not null)
+                {
+                    Check(workbench.EditorWorkspace.TryClose(otherSourceTab, discardProtected: true),
+                        "Could not discard the alternate fixture source tab.");
+                    await workbench.EditorWorkspace.OpenOrActivateAsync(originalSourcePath);
+                    viewModelTab = workbench.EditorWorkspace.ActiveTab;
+                    viewModelTab.Editor.Text = overlay;
+                    await workbench.EditorWorkspace.OpenOrActivateAsync(axamlPath);
+                    designer.SelectedNode = designer.PreviewRoot!.Children.Single(node => node.StableName == "CaptionBox");
+                    row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+                }
+                viewModelTab.Editor.Text = overlay;
+                await (latestRefresh ?? throw new InvalidOperationException("The restored refresh was not queued."))
+                    .WaitAsync(TimeSpan.FromMinutes(2));
+                await WaitUntilAsync(() => row.AvailableMembers.Contains("OverlayCaption"), "restored late-result context");
+            }
+            row.BindingMode = AxamlBindingMode.OneWay;
+            row.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.LostFocus;
+        }
+        finally
+        {
+            awaiterProperty.SetValue(workbench, null);
+            startedProperty.SetValue(workbench, null);
+        }
+        Console.WriteLine("Post-computation Workbench result handoff: replacement, ABA, tab/path/workspace ABA, source path, cancellation and stale exception verified.");
+        return viewModelTab;
     }
 
     private static async Task VerifyUnsavedViewModelContextAsync(
