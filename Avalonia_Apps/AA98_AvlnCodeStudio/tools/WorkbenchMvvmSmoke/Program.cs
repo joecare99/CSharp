@@ -77,9 +77,6 @@ internal static class Program
                 Path.Combine(fixtureDirectory, "LoginView.axaml.cs"),
                 "using Avalonia.Controls; namespace Sample; public partial class LoginView : Window { }");
             File.WriteAllText(
-                Path.Combine(fixtureDirectory, "LoginViewViewModel.Overlay.cs"),
-                "namespace Sample; public partial class LoginViewViewModel { }");
-            File.WriteAllText(
                 Path.Combine(fixtureDirectory, "ExistingView.axaml.cs"),
                 "using Avalonia.Controls; namespace Sample; public partial class ExistingView : Window { public ExistingView() { DataContext = new ExistingViewModel(); } }");
             File.WriteAllText(
@@ -282,7 +279,7 @@ internal static class Program
             Check(!unsafeContext.IsSuccessful, "Semantic analysis accepted a mismatched root DataContext.");
 
             await VerifyUnsavedViewModelContextAsync(workbench, semanticService, axamlPath, generatedViewModelPath);
-            await ReproduceMissingBindingOverlayAsync(workbench, desktop, axamlPath);
+            await ReproduceMissingBindingOverlayAsync(workbench, desktop, semanticService, projectPath, axamlPath);
 
             string visualMarkup = generatedMarkup
                 .Replace("{Binding UserName,", "{CompiledBinding UserName,", StringComparison.Ordinal)
@@ -1116,10 +1113,14 @@ internal static class Program
     private static async Task ReproduceMissingBindingOverlayAsync(
         MainWindowViewModel workbench,
         IClassicDesktopStyleApplicationLifetime desktop,
+        CSharpSyntaxDiagnosticService semanticService,
+        string projectPath,
         string axamlPath)
     {
         string path = Path.Combine(Path.GetDirectoryName(axamlPath)!, "LoginViewViewModel.Overlay.cs");
-        string original = await File.ReadAllTextAsync(path);
+        string original = "namespace Sample; public partial class LoginViewViewModel { }";
+        await File.WriteAllTextAsync(path, original);
+        await semanticService.RefreshProjectContextAsync(projectPath);
         await workbench.EditorWorkspace.OpenOrActivateAsync(path);
         EditorTabViewModel overlay = workbench.EditorWorkspace.ActiveTab;
         overlay.Editor.Text = original.Replace("{ }", "{ public string LateOverlayMember { get; set; } = \"\"; }", StringComparison.Ordinal);
