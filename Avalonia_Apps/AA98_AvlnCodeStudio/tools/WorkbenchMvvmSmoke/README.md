@@ -104,7 +104,13 @@ Workbench cancels the active binding analysis, invalidates affected semantic
 snapshots (including consumers), then queues the active designer again.
 Unsaved project buffers are not evaluated; Roslyn loads the saved project
 file. External edits, imports and changes performed outside that editor save
-event are not watched and have no automatic refresh guarantee. The service's
+event are not watched and have no automatic refresh guarantee. Use **Edit →
+Refresh binding context from saved projects** after externally editing a saved
+workspace project's `ProjectReference`. It invalidates workspace project
+snapshots and queues the active Workbench designer without saving or reloading
+editor buffers. Unsaved `.csproj` XML is not evaluated; unsaved C# buffers
+remain overlaid. This is not a general watcher, workspace project-list reload,
+import-change guarantee, or standalone-host refresh. The service's
 explicit `RefreshProjectContextAsync` is a separate host API: it invalidates
 snapshots but does not itself notify the designer. No standalone-host project
 file watcher is implied. The focused
@@ -114,6 +120,28 @@ cached snapshot, while an unsaved project edit does not invalidate it.
 The service gate serializes compilations: a canceled older compilation is
 released before the newer one starts, not completed out of order. It does not
 itself simulate an already-computed stale result arriving after the newer result.
+
+The external-reference scenario writes the consumer project on disk while the
+workspace remains open. An ordinary C#-buffer refresh still sees the cached
+reference until the Workbench refresh command is invoked. It then verifies
+external removal, re-addition and a false condition, with a dirty project
+editor and dirty library C# editor left untouched. A computed old result is
+held until after the new result is published; mode/trigger, designer
+apply/undo/redo, and switching workspaces while invalidation waits are checked.
+The menu command is invoked programmatically, not by physical input.
+
+On 2026-11-28 this external-reference scenario passed on Windows net10.0 with
+`.artifacts-external-ref-win-final-41308b85cceb40b3b325552a868fe0d7` and on
+Ubuntu 26.04 WSLg net10.0 with
+`.artifacts-external-ref-linux-final-1795866033020689144`. Builds retained the
+existing NU1701, CS8600, CS8603, CA1416, AVA2003 and dependency-injection
+target-framework support warnings. The two focused binding-context tests passed
+on net10.0 on both hosts. An earlier multi-framework invocation
+returned failure despite its net10.0 tests passing: the Windows net8 test host
+hit a System.Text.Json `MissingMethodException`, and WSL lacked the net8/9
+runtimes. A separately quoted WSL `--reference-only` invocation above passed;
+an earlier incorrectly quoted invocation entered the full smoke and failed
+building its unrelated Avalonia fixture with a resource-file lock.
 
 The reference smoke additionally gates the Workbench refresh **after** the real
 semantic service returns and releases its compilation gate, but before the

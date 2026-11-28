@@ -77,6 +77,9 @@ internal static class Program
                 Path.Combine(fixtureDirectory, "LoginView.axaml.cs"),
                 "using Avalonia.Controls; namespace Sample; public partial class LoginView : Window { }");
             File.WriteAllText(
+                Path.Combine(fixtureDirectory, "LoginViewViewModel.Overlay.cs"),
+                "namespace Sample; public partial class LoginViewViewModel { }");
+            File.WriteAllText(
                 Path.Combine(fixtureDirectory, "ExistingView.axaml.cs"),
                 "using Avalonia.Controls; namespace Sample; public partial class ExistingView : Window { public ExistingView() { DataContext = new ExistingViewModel(); } }");
             File.WriteAllText(
@@ -279,6 +282,7 @@ internal static class Program
             Check(!unsafeContext.IsSuccessful, "Semantic analysis accepted a mismatched root DataContext.");
 
             await VerifyUnsavedViewModelContextAsync(workbench, semanticService, axamlPath, generatedViewModelPath);
+            await ReproduceMissingBindingOverlayAsync(workbench, desktop, axamlPath);
 
             string visualMarkup = generatedMarkup
                 .Replace("{Binding UserName,", "{CompiledBinding UserName,", StringComparison.Ordinal)
@@ -629,6 +633,9 @@ internal static class Program
                 && markupBytes.SequenceEqual(currentMarkupBytes)
                 && viewModelBytes.SequenceEqual(currentViewModelBytes),
                 "Removing the reference changed the reopened overlay or backing files.");
+            await VerifyExternalReferenceRefreshAsync(
+                workbench, semanticService, projectPath, libraryPath, projectText, projectTab,
+                viewModelTab, overlay, axamlPath, markupBytes, viewModelBytes);
             Console.WriteLine("Referenced ViewModel overlay, cancellation, unsaved project buffer and saved reference removal/addition/condition verified.");
         }
         finally
@@ -638,6 +645,150 @@ internal static class Program
         }
     }
 
+    private static async Task VerifyExternalReferenceRefreshAsync(
+        MainWindowViewModel workbench,
+        CSharpSyntaxDiagnosticService semanticService,
+        string projectPath,
+        string libraryPath,
+        string projectText,
+        EditorTabViewModel projectTab,
+        EditorTabViewModel viewModelTab,
+        string overlay,
+        string axamlPath,
+        byte[] markupBytes,
+        byte[] viewModelBytes)
+    {
+        PropertyInfo awaiterProperty = typeof(MainWindowViewModel).GetProperty(
+            "BindingContextResultAwaiter", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        PropertyInfo startedProperty = typeof(MainWindowViewModel).GetProperty(
+            "BindingContextRefreshStarted", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        Task? latest = null;
+        startedProperty.SetValue(workbench, (Action<Task>)(task => latest = task));
+        projectTab.Editor.Text += "\n<!-- unsaved project draft -->";
+        string editorProjectText = projectTab.Editor.Text;
+        string reference = "<ProjectReference Include=\"../Library/Library.csproj\" />";
+        string removed = projectText.Replace(reference, "", StringComparison.Ordinal);
+        string conditional = projectText.Replace(reference,
+            "<ProjectReference Include=\"../Library/Library.csproj\" Condition=\"'false' == 'true'\" />",
+            StringComparison.Ordinal);
+        var designer = workbench.AxamlDesigner;
+        var row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+        async Task RefreshAsync()
+        {
+            latest = null;
+            await workbench.RefreshSavedProjectBindingContextCommand.ExecuteAsync(null);
+            await (latest ?? throw new InvalidOperationException("Explicit refresh did not queue the designer."))
+                .WaitAsync(TimeSpan.FromMinutes(2));
+        }
+
+        TaskCompletionSource held = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        Task? oldRefresh = null;
+        try
+        {
+            await File.WriteAllTextAsync(projectPath, projectText);
+            await RefreshAsync();
+            Check(row.AvailableMembers.Contains("OverlayCaption"), "External reference addition was not refreshed.");
+            row.BindingMode = AxamlBindingMode.TwoWay;
+            row.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.PropertyChanged;
+            int calls = 0;
+            awaiterProperty.SetValue(workbench, (Func<AxamlMvvmSemanticResolution, CancellationToken, Task<AxamlMvvmSemanticResolution>>)(async (result, token) =>
+            {
+                if (Interlocked.Increment(ref calls) == 1)
+                {
+                    Check(result.ViewModelMembers.Any(member => member.Name == "OverlayCaption"),
+                        "The old external-reference result was not computed.");
+                    held.TrySetResult();
+                    await release.Task;
+                }
+                return result;
+            }));
+            viewModelTab.Editor.Text = overlay + "\n";
+            oldRefresh = latest ?? throw new InvalidOperationException("The old analysis was not queued.");
+            await held.Task.WaitAsync(TimeSpan.FromMinutes(2));
+            await File.WriteAllTextAsync(projectPath, removed);
+            viewModelTab.Editor.Text = overlay + "\n\n";
+            await (latest ?? throw new InvalidOperationException("The ordinary analysis was not queued."))
+                .WaitAsync(TimeSpan.FromMinutes(2));
+            Check(row.AvailableMembers.Contains("OverlayCaption"),
+                "The external edit unexpectedly replaced the cached context without an explicit refresh.");
+            await RefreshAsync();
+            Check(!row.AvailableMembers.Contains("OverlayCaption"), "External removal was not refreshed.");
+            int publications = 0;
+            NotifyCollectionChangedEventHandler changed = (_, _) => publications++;
+            designer.BindingRows.CollectionChanged += changed;
+            try
+            {
+                release.TrySetResult();
+                await oldRefresh.WaitAsync(TimeSpan.FromMinutes(2));
+            }
+            finally
+            {
+                designer.BindingRows.CollectionChanged -= changed;
+            }
+            Check(publications == 0 && !row.AvailableMembers.Contains("OverlayCaption"),
+                "The old reference result overwrote the new context.");
+            awaiterProperty.SetValue(workbench, null);
+            await File.WriteAllTextAsync(projectPath, projectText);
+            await RefreshAsync();
+            Check(row.AvailableMembers.Contains("OverlayCaption"), "External reference re-addition was not refreshed.");
+            await File.WriteAllTextAsync(projectPath, conditional);
+            await RefreshAsync();
+            Check(!row.AvailableMembers.Contains("OverlayCaption"), "External reference condition was not refreshed.");
+            await File.WriteAllTextAsync(projectPath, projectText);
+            await RefreshAsync();
+            Check(row.AvailableMembers.Contains("OverlayCaption")
+                && row.BindingMode == AxamlBindingMode.TwoWay
+                && row.UpdateSourceTrigger == AxamlBindingUpdateSourceTrigger.PropertyChanged,
+                "External refresh lost the unsaved source or pending binding options.");
+            string beforeApply = workbench.Editor.Text;
+            designer.ApplyBindingRow(row);
+            string applied = workbench.Editor.Text;
+            designer.UndoCommand.Execute(null);
+            Check(workbench.Editor.Text == beforeApply, "Designer undo failed after external refresh.");
+            designer.RedoCommand.Execute(null);
+            Check(applied != beforeApply && applied.Contains("Mode=TwoWay", StringComparison.Ordinal)
+                && applied.Contains("UpdateSourceTrigger=PropertyChanged", StringComparison.Ordinal)
+                && workbench.Editor.Text == applied, "Designer redo failed after external refresh.");
+            byte[] currentMarkup = await File.ReadAllBytesAsync(axamlPath);
+            byte[] currentViewModel = await File.ReadAllBytesAsync(viewModelTab.FilePath!);
+            Check(projectTab.Editor.Text == editorProjectText && viewModelTab.Editor.Text == overlay + "\n\n"
+                && markupBytes.SequenceEqual(currentMarkup)
+                && viewModelBytes.SequenceEqual(currentViewModel),
+                "External refresh overwrote an editor buffer or backing file.");
+
+            SemaphoreSlim serviceGate = (SemaphoreSlim)typeof(CSharpSyntaxDiagnosticService)
+                .GetField("_workspaceGate", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(semanticService)!;
+            await serviceGate.WaitAsync();
+            Task refresh;
+            try
+            {
+                refresh = workbench.RefreshSavedProjectBindingContextCommand.ExecuteAsync(null);
+                await workbench.OpenWorkspaceFileAsync(libraryPath);
+                latest = null;
+            }
+            finally
+            {
+                serviceGate.Release();
+            }
+            await refresh.WaitAsync(TimeSpan.FromMinutes(2));
+            Check(latest is null, "A refresh from the previous workspace queued a designer analysis in the new workspace.");
+            await workbench.OpenWorkspaceFileAsync(projectPath);
+            await RefreshAsync();
+            Check(row.AvailableMembers.Contains("OverlayCaption"), "Refresh after workspace switch did not use the current workspace.");
+            Console.WriteLine("External ProjectReference edits and explicit Workbench refresh, stale result, buffers, options, undo/redo and workspace switch verified.");
+        }
+        finally
+        {
+            release.TrySetResult();
+            awaiterProperty.SetValue(workbench, null);
+            startedProperty.SetValue(workbench, null);
+            if (oldRefresh is not null)
+            {
+                await oldRefresh.WaitAsync(TimeSpan.FromMinutes(2));
+            }
+        }
+    }
     private static async Task<EditorTabViewModel> VerifyLateBindingResultsAsync(
         MainWindowViewModel workbench,
         EditorTabViewModel viewModelTab,
@@ -960,6 +1111,34 @@ internal static class Program
             window.DataContext = null;
             window.Close();
         }
+    }
+
+    private static async Task ReproduceMissingBindingOverlayAsync(
+        MainWindowViewModel workbench,
+        IClassicDesktopStyleApplicationLifetime desktop,
+        string axamlPath)
+    {
+        string path = Path.Combine(Path.GetDirectoryName(axamlPath)!, "LoginViewViewModel.Overlay.cs");
+        string original = await File.ReadAllTextAsync(path);
+        await workbench.EditorWorkspace.OpenOrActivateAsync(path);
+        EditorTabViewModel overlay = workbench.EditorWorkspace.ActiveTab;
+        overlay.Editor.Text = original.Replace("{ }", "{ public string LateOverlayMember { get; set; } = \"\"; }", StringComparison.Ordinal);
+        await workbench.EditorWorkspace.OpenOrActivateAsync(axamlPath);
+        var designer = workbench.AxamlDesigner;
+        designer.SelectedNode = designer.PreviewRoot!.Children.Single(node => node.StableName == "UserNameTextBox");
+        designer.SetBindingContext([]);
+        var row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+        row.NewMemberName = "LateOverlayMember";
+        Task applying = designer.ApplyBindingRowAsync(row);
+        WorkspaceFileChangeReviewDialog review = await WaitForReviewAsync(desktop, applying, workbench);
+        Click(review, "Cancel");
+        await applying.WaitAsync(TimeSpan.FromMinutes(2));
+        Check(overlay.Editor.Text.Contains("LateOverlayMember", StringComparison.Ordinal)
+            && await File.ReadAllTextAsync(path) == original,
+            "The reproduction did not retain the unsaved overlay.");
+        Console.WriteLine("REPRODUCED: missing-member review offered creation despite an existing member in a different unsaved C# partial buffer.");
+        overlay.Editor.Text = original;
+        workbench.EditorWorkspace.TryClose(overlay);
     }
 
     private static async Task VerifyVisualBindingAsync(
