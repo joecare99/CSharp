@@ -626,6 +626,68 @@ internal static partial class Program
                 editor.Redo();
                 Check(editor.CapturePngSnapshot().Bytes.SequenceEqual(linePaint), "Redo did not restore the line.");
                 editor.Undo();
+                CheckBox rectangleMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "RectangleMode");
+                rectangleMode.IsChecked = true;
+                Check(editor.SelectedTool == ImageEditorTool.Rectangle && lineMode.IsChecked != true,
+                    "The rectangle tool was not selected exclusively.");
+                brushPointer = new Pointer(28, PointerType.Mouse, true);
+                var rectanglePress = new PointerPressedEventArgs(brushTarget, brushPointer, window, start, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                { RoutedEvent = InputElement.PointerPressedEvent };
+                ((Interactive)brushTarget).RaiseEvent(rectanglePress);
+                Point rectangleEnd = surface.TranslatePoint(new Point(8.5, 8.5), window)!.Value;
+                surface.RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent, surface, brushPointer, window, rectangleEnd, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), KeyModifiers.None));
+                Check(rectanglePress.Handled && linePreview.HasPreview && linePreview.IsRectangle &&
+                    !linePreview.IsHitTestVisible && editor.IsCurrentDocumentState(state) && !editor.IsDirty &&
+                    editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "The rectangle preview changed the document or was unavailable.");
+                surface.RaiseEvent(new PointerReleasedEventArgs(surface, brushPointer, window, rectangleEnd, 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased),
+                    KeyModifiers.None, MouseButton.Left)
+                { RoutedEvent = InputElement.PointerReleasedEvent });
+                byte[] rectanglePaint = editor.CapturePngSnapshot().Bytes;
+                Check(!linePreview.HasPreview && editor.IsDirty, "The rectangle did not commit on release.");
+                using (var stream = new MemoryStream(rectanglePaint))
+                using (var decoded = new Bitmap(stream))
+                    Check(SnapshotPixel(decoded, 4, 4).SequenceEqual(new byte[] { 0, 255, 0, 255 }) &&
+                        SnapshotPixel(decoded, 8, 8).SequenceEqual(new byte[] { 0, 255, 0, 255 }) &&
+                        SnapshotPixel(decoded, 6, 6).SequenceEqual(new byte[] { 0, 0, 0, 0 }),
+                        "The sized rectangle border or empty interior was incorrect.");
+                editor.Undo();
+                Check(editor.IsCurrentDocumentState(state), "Undo did not restore the rectangle source.");
+                editor.Redo();
+                Check(editor.CapturePngSnapshot().Bytes.SequenceEqual(rectanglePaint), "Redo did not restore the rectangle.");
+                editor.Undo();
+                CheckBox filledRectangle = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "FilledRectangleMode");
+                Check(filledRectangle.IsChecked != true, "Filled rectangle was not initially off.");
+                filledRectangle.IsChecked = true;
+                brushPointer = new Pointer(29, PointerType.Mouse, true);
+                var filledPress = new PointerPressedEventArgs(brushTarget, brushPointer, window, start, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                { RoutedEvent = InputElement.PointerPressedEvent };
+                ((Interactive)brushTarget).RaiseEvent(filledPress);
+                Check(filledPress.Handled && linePreview.HasPreview && editor.IsCurrentDocumentState(state),
+                    "Filled rectangle did not start without changing the image.");
+                surface.RaiseEvent(new PointerReleasedEventArgs(surface, brushPointer, window, rectangleEnd, 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased),
+                    KeyModifiers.None, MouseButton.Left)
+                { RoutedEvent = InputElement.PointerReleasedEvent });
+                byte[] filledPaint = editor.CapturePngSnapshot().Bytes;
+                using (var stream = new MemoryStream(filledPaint))
+                using (var decoded = new Bitmap(stream))
+                    Check(SnapshotPixel(decoded, 4, 4).SequenceEqual(new byte[] { 0, 255, 0, 255 }) &&
+                        SnapshotPixel(decoded, 6, 6).SequenceEqual(new byte[] { 0, 255, 0, 255 }) &&
+                        SnapshotPixel(decoded, 3, 3).SequenceEqual(new byte[] { 0, 0, 0, 0 }),
+                        "Filled rectangle geometry or size independence was incorrect.");
+                editor.Undo();
+                Check(editor.IsCurrentDocumentState(state), "Undo did not restore the filled rectangle source.");
+                editor.Redo();
+                Check(editor.CapturePngSnapshot().Bytes.SequenceEqual(filledPaint), "Redo did not restore the filled rectangle.");
+                editor.Undo();
+                filledRectangle.IsChecked = false;
                 sizeInput.SetCurrentValue(TextBox.TextProperty, "1");
 
                 void EnterManualColor(string value)

@@ -121,6 +121,8 @@ internal static partial class Program
                 }
                 else
                 {
+                    File.WriteAllText(Path.Combine(fixture, "Directory.Packages.props"),
+                        "<Project><PropertyGroup><ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally></PropertyGroup></Project>");
                     File.WriteAllText(Path.Combine(fixture, "Sample.csproj"), xunitTestMethodOnly
                         ? "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework>"
                         + "<OutputType>Exe</OutputType><IsTestProject>true</IsTestProject></PropertyGroup><ItemGroup>"
@@ -178,6 +180,13 @@ internal static partial class Program
                 Task<string> error = process.StandardError.ReadToEndAsync();
                 process.WaitForExit();
                 Check(process.ExitCode == 0, $"Quick info fixture restore failed: {output.Result} {error.Result}");
+                if (testMethodOnly && Environment.GetEnvironmentVariable("HostArtifactRoot") is { Length: > 0 } artifactRoot)
+                {
+                    Check(File.Exists(Path.Combine(artifactRoot, "obj", "Sample", "project.assets.json")),
+                        "The test fixture restore did not use the inherited artifact root.");
+                    Check(!Directory.Exists(Path.Combine(fixture, "obj")),
+                        "The test fixture restore wrote to its default obj directory.");
+                }
             }
             File.WriteAllText(Path.Combine(fixture, "First.axaml"),
                 "<StackPanel><TextBlock Text=\"First\" /></StackPanel>");
@@ -1170,6 +1179,15 @@ internal static partial class Program
         projects.SelectedItem = workbench.Workspace.Projects[0];
         await workbench.InspectSelectedProjectCommand.ExecuteAsync(null);
         Check(workbench.ProjectInspection?.TargetFramework == "net10.0", "Test project inspection failed.");
+        string? artifactRoot = Environment.GetEnvironmentVariable("HostArtifactRoot");
+        if (!string.IsNullOrWhiteSpace(artifactRoot))
+        {
+            string expectedTarget = Path.GetFullPath(Path.Combine(artifactRoot, "bin", "Sample", "Debug", "net10.0", "Sample.dll"));
+            string? inspectedTarget = workbench.ProjectInspection?.TargetPath;
+            Check(inspectedTarget is not null && string.Equals(Path.GetFullPath(inspectedTarget), expectedTarget,
+                OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal),
+                "The test fixture inspection did not use the inherited artifact root.");
+        }
         Button discover = FindButton(window, workbench.TestCandidatesCommandText);
         await WaitUntilAsync(() => ReferenceEquals(discover.Command, workbench.FindTestCandidatesCommand) && discover.IsEnabled,
             "bound source test discovery");
@@ -1186,6 +1204,13 @@ internal static partial class Program
         Task adapterTask = workbench.DiscoverAdapterTestsCommand.ExecutionTask
             ?? throw new InvalidOperationException("The adapter discovery command did not start.");
         await adapterTask.WaitAsync(TimeSpan.FromSeconds(90));
+        if (!string.IsNullOrWhiteSpace(artifactRoot))
+        {
+            Check(File.Exists(workbench.ProjectInspection!.TargetPath),
+                "The test fixture build did not produce the inspected assembly.");
+            Check(!Directory.Exists(Path.Combine(fixture, "bin")) && !Directory.Exists(Path.Combine(fixture, "obj")),
+                "The test fixture build wrote to its default bin or obj directory.");
+        }
         Check(workbench.DiscoveredTestCases.Count == 2,
             $"Expected two adapter-discovered cases: {workbench.ProjectWorkflowStatus}");
         ListBox discoveredCases = window.GetVisualDescendants().OfType<ListBox>()
@@ -1271,6 +1296,11 @@ internal static partial class Program
         Task runTask = workbench.TestSelectedMethodCommand.ExecutionTask
             ?? throw new InvalidOperationException("The exact test button did not start its command.");
         await runTask.WaitAsync(TimeSpan.FromSeconds(90));
+        if (!string.IsNullOrWhiteSpace(artifactRoot))
+        {
+            Check(!Directory.Exists(Path.Combine(fixture, "bin")) && !Directory.Exists(Path.Combine(fixture, "obj")),
+                "The exact test run wrote to the fixture's default bin or obj directory.");
+        }
         Check(workbench.ProjectWorkflowStatus.Contains("(1 total)", StringComparison.Ordinal)
             && workbench.Editor.NotificationText.Contains("1 passed", StringComparison.Ordinal),
             $"Expected exactly one successful test: {workbench.ProjectWorkflowStatus} {workbench.Editor.NotificationText}");

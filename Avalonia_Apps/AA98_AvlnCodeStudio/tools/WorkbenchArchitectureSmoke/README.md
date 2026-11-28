@@ -6,6 +6,63 @@ Run in an interactive desktop session:
 dotnet run --project tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj
 ```
 
+For the isolated real `--test-method-only` smoke, run from the physical
+workspace path in an interactive Windows desktop:
+
+```powershell
+$root = Join-Path (Get-Location) ("artifacts\test-method-win-" + [guid]::NewGuid().ToString("N"))
+New-Item -ItemType Directory -Force (Join-Path $root 'temp') | Out-Null
+$env:HostArtifactRoot = $root
+$env:CustomAfterDirectoryBuildProps = Join-Path (Get-Location) 'tools\build\IsolatedArtifacts.props'
+$env:TEMP = Join-Path $root 'temp'; $env:TMP = $env:TEMP
+$env:MSBUILDDISABLENODEREUSE = '1'; $env:DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER = '1'
+Remove-Item Env:\AVLN_NETCOREDBG_PATH -ErrorAction SilentlyContinue
+dotnet build tools\WorkbenchArchitectureSmoke\WorkbenchArchitectureSmoke.csproj --configuration Debug --verbosity quiet '-m:2'
+if ($LASTEXITCODE -eq 0) { dotnet (Join-Path $root 'bin\WorkbenchArchitectureSmoke\Debug\net10.0\WorkbenchArchitectureSmoke.dll') --test-method-only }
+```
+
+In WSLg, from the physical workspace path:
+
+```bash
+export DOTNET_ROOT="$HOME/.dotnet" PATH="$HOME/.dotnet:$PATH"
+export HostArtifactRoot="$PWD/artifacts/test-method-linux-$(date +%s%N)"
+mkdir -p "$HostArtifactRoot/temp"
+export CustomAfterDirectoryBuildProps="$PWD/tools/build/IsolatedArtifacts.props"
+export TMPDIR="$HostArtifactRoot/temp" MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER=1
+unset AVLN_NETCOREDBG_PATH
+dotnet build tools/WorkbenchArchitectureSmoke/WorkbenchArchitectureSmoke.csproj --configuration Debug --verbosity quiet -m:2 &&
+dotnet "$HostArtifactRoot/bin/WorkbenchArchitectureSmoke/Debug/net10.0/WorkbenchArchitectureSmoke.dll" --test-method-only
+```
+
+Use a fresh root per fixture group and platform, but retain that root for the
+entire group. The exported properties, not just command-line MSBuild
+properties, are inherited by the fixture restore, inspection, runtime build
+and exact test. The fixture's own `Directory.Packages.props` prevents the
+repository's central package management from changing its explicit test
+package versions. The smoke checks the assets file, inspected target, built
+assembly and absence of fixture-local default `bin`/`obj`. The temporary
+directory is also scoped to this group; the application and its normal
+build contract are unchanged.
+
+On 2026-11-28 this smoke passed on Windows and WSLg/net10 with separate fresh
+roots. A preceding recursive MSBuild `ProjectReference` property evaluation,
+including individual target frameworks and external references, verified the
+base output, base intermediate, project extensions, output and target paths under isolated
+roots (181 Windows and 171 Linux project/framework evaluations; an outer
+multitarget evaluation may have no `TargetPath`). Each fresh build reported
+31 existing warnings, including NU1701, CS8600/CS8603, CA1416 and AVA2003;
+none were introduced by the fixture changes. Initial attempts exposed NU1008
+from inherited central package management and were rerun with the
+fixture-local props. The smoke invokes bound UI commands programmatically,
+not physical input; debug was disabled and no cancellation/process-exit or
+B-before-A race was tested.
+
+The UI discovery error-handling file passed a targeted
+`dotnet format whitespace ... --verify-no-changes --no-restore` check against
+`AA98_AvlnCodeStudio.UI.csproj` with a separate isolated Windows root.
+The same check on the whole smoke `Program.cs` reported pre-existing
+whitespace issues outside the changed fixture and test-method sections.
+
 For the focused standalone binding smoke, run from a physical workspace path:
 
 ```powershell
