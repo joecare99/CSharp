@@ -314,6 +314,22 @@ public sealed class WorkspaceFileChangeService
                 }
             }
 
+            if (_openDocumentProvider is IWorkspaceOpenDocumentChangeProvider rollbackProvider)
+            {
+                foreach (WorkspaceFileChange change in synchronizedDocuments)
+                {
+                    try
+                    {
+                        if (!rollbackProvider.CanApplyChange(change.TargetPath, change.DocumentOriginalContent!, change.OriginalContent!))
+                            throw new IOException($"The open document '{change.RelativePath}' changed during rollback.");
+                    }
+                    catch (Exception rollbackException)
+                    {
+                        rollbackErrors.Add(new IOException($"Could not verify the restored open document '{change.RelativePath}' after applying the change proposal.", rollbackException));
+                    }
+                }
+            }
+
             if (rollbackErrors.Count > 0)
             {
                 rollbackErrors.Insert(0, applyException);
@@ -552,6 +568,21 @@ public sealed class WorkspaceFileChangeService
             }
 
             foreach (string temporaryPath in stagedFiles.Values) File.Delete(temporaryPath);
+            if (_openDocumentProvider is IWorkspaceOpenDocumentChangeProvider rollbackProvider)
+            {
+                foreach (WorkspaceFileChange change in synchronized)
+                {
+                    try
+                    {
+                        string expectedContent = undo ? change.ProposedContent : change.DocumentOriginalContent!;
+                        string expectedSavedContent = undo ? change.ProposedContent : change.OriginalContent!;
+                        if (!rollbackProvider.CanApplyChange(change.TargetPath, expectedContent, expectedSavedContent))
+                            throw new IOException($"The open document '{change.RelativePath}' changed during undo/redo rollback.");
+                    }
+                    catch (Exception rollbackException) { rollbackErrors.Add(rollbackException); }
+                }
+            }
+
             if (rollbackErrors.Count > 0)
             {
                 rollbackErrors.Insert(0, exception);

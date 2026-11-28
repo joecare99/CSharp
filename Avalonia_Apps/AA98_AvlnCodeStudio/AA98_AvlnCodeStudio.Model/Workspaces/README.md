@@ -198,6 +198,17 @@ If undo/redo fails after changing files, rollback preserves a target that was
 externally removed or replaced in the meantime and reports incomplete recovery;
 the failed history action remains available for review.
 
+When a later editor rollback step is interrupted, a previously restored editor
+can be edited again. Previously this left the user's text intact but returned
+only the original failure, without reporting the incomplete rollback. Apply,
+undo and redo now recheck synchronized editor snapshots after rollback and
+report an incomplete rollback if an editor changed, closed or no longer has
+the expected unique snapshot. The final check does not write to the editor.
+Rollback remains best effort: checks and file/editor operations are not atomic,
+and changes after a check can still race. The provider compares snapshots and
+uniqueness, not document identity, so a replacement editor with an identical
+snapshot cannot be distinguished.
+
 An opt-in desktop regression exercises the Workbench project-settings dialog,
 both review modes, cancellation, conflicts, context changes and undo/redo:
 
