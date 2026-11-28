@@ -29,6 +29,8 @@ public partial class ImageEditorControl : UserControl
     private ImageEditorDocument? _brushDocument;
     private Color _brushColor;
     private bool _erasing;
+    private bool _lining;
+    private long _lineVersion;
     private int _brushSize;
     private BitArray? _brushCenters;
     private Point _brushLast;
@@ -56,6 +58,7 @@ public partial class ImageEditorControl : UserControl
                 SampleColorMode.IsChecked = false;
                 BrushMode.IsChecked = false;
                 EraserMode.IsChecked = false;
+                LineMode.IsChecked = false;
                 FillMode.IsChecked = false;
             }
             else CancelDrag(restore: true);
@@ -67,6 +70,7 @@ public partial class ImageEditorControl : UserControl
                 DragCropMode.IsChecked = false;
                 BrushMode.IsChecked = false;
                 EraserMode.IsChecked = false;
+                LineMode.IsChecked = false;
                 FillMode.IsChecked = false;
             }
         };
@@ -78,6 +82,7 @@ public partial class ImageEditorControl : UserControl
                 DragCropMode.IsChecked = false;
                 SampleColorMode.IsChecked = false;
                 EraserMode.IsChecked = false;
+                LineMode.IsChecked = false;
                 FillMode.IsChecked = false;
                 if (_editor is not null) _editor.SelectedTool = ImageEditorTool.Brush;
             }
@@ -95,6 +100,7 @@ public partial class ImageEditorControl : UserControl
                 DragCropMode.IsChecked = false;
                 SampleColorMode.IsChecked = false;
                 BrushMode.IsChecked = false;
+                LineMode.IsChecked = false;
                 FillMode.IsChecked = false;
                 if (_editor is not null) _editor.SelectedTool = ImageEditorTool.Eraser;
             }
@@ -102,6 +108,24 @@ public partial class ImageEditorControl : UserControl
             {
                 CancelBrush();
                 if (_editor?.SelectedTool == ImageEditorTool.Eraser) _editor.SelectedTool = ImageEditorTool.Select;
+            }
+        };
+        LineMode.PropertyChanged += (_, e) =>
+        {
+            if (e.Property != CheckBox.IsCheckedProperty) return;
+            if (LineMode.IsChecked == true)
+            {
+                DragCropMode.IsChecked = false;
+                SampleColorMode.IsChecked = false;
+                BrushMode.IsChecked = false;
+                EraserMode.IsChecked = false;
+                FillMode.IsChecked = false;
+                if (_editor is not null) _editor.SelectedTool = ImageEditorTool.Line;
+            }
+            else
+            {
+                CancelBrush();
+                if (_editor?.SelectedTool == ImageEditorTool.Line) _editor.SelectedTool = ImageEditorTool.Select;
             }
         };
         FillMode.PropertyChanged += (_, e) =>
@@ -113,6 +137,7 @@ public partial class ImageEditorControl : UserControl
                 SampleColorMode.IsChecked = false;
                 BrushMode.IsChecked = false;
                 EraserMode.IsChecked = false;
+                LineMode.IsChecked = false;
                 if (_editor is not null) _editor.SelectedTool = ImageEditorTool.Fill;
             }
             else
@@ -147,6 +172,7 @@ public partial class ImageEditorControl : UserControl
     private void ObserveEditor(ImageEditorViewModel? editor)
     {
         if (ReferenceEquals(_editor, editor)) return;
+        _lineVersion++;
         CancelDrag(restore: true);
         CancelBrush();
         CancelFill();
@@ -168,12 +194,14 @@ public partial class ImageEditorControl : UserControl
         SampleColorMode.IsChecked = false;
         BrushMode.IsChecked = false;
         EraserMode.IsChecked = false;
+        LineMode.IsChecked = false;
         FillMode.IsChecked = false;
-        if (_editor?.SelectedTool is ImageEditorTool.Brush or ImageEditorTool.Eraser or ImageEditorTool.Fill) _editor.SelectedTool = ImageEditorTool.Select;
+        if (_editor?.SelectedTool is ImageEditorTool.Brush or ImageEditorTool.Eraser or ImageEditorTool.Line or ImageEditorTool.Fill) _editor.SelectedTool = ImageEditorTool.Select;
     }
 
     private void EditorContentChanging(object? sender, EventArgs e)
     {
+        _lineVersion++;
         CancelDrag(restore: true);
         CancelBrush();
         CancelFill();
@@ -181,6 +209,10 @@ public partial class ImageEditorControl : UserControl
 
     private void EditorPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName is nameof(ImageEditorViewModel.ActiveDocument) or nameof(ImageEditorViewModel.SelectedTool)
+            or nameof(ImageEditorViewModel.SampledColor) or nameof(ImageEditorViewModel.BrushSizeText)
+            or nameof(ImageEditorViewModel.IsCropSelectionInProgress))
+            _lineVersion++;
         if (e.PropertyName == nameof(ImageEditorViewModel.ActiveDocument))
         {
             CancelDrag(restore: false);
@@ -192,6 +224,7 @@ public partial class ImageEditorControl : UserControl
                 SampleColorMode.IsChecked = false;
                 BrushMode.IsChecked = false;
                 EraserMode.IsChecked = false;
+                LineMode.IsChecked = false;
                 FillMode.IsChecked = false;
             }
         }
@@ -199,6 +232,7 @@ public partial class ImageEditorControl : UserControl
         {
             BrushMode.IsChecked = _editor?.SelectedTool == ImageEditorTool.Brush;
             EraserMode.IsChecked = _editor?.SelectedTool == ImageEditorTool.Eraser;
+            LineMode.IsChecked = _editor?.SelectedTool == ImageEditorTool.Line;
             FillMode.IsChecked = _editor?.SelectedTool == ImageEditorTool.Fill;
         }
         else if (e.PropertyName == nameof(ImageEditorViewModel.SampledColor))
@@ -207,6 +241,11 @@ public partial class ImageEditorControl : UserControl
             CancelFill();
         }
         else if (e.PropertyName == nameof(ImageEditorViewModel.BrushSizeText))
+        {
+            CancelBrush();
+        }
+        else if (e.PropertyName == nameof(ImageEditorViewModel.IsCropSelectionInProgress) &&
+                 _lining && _editor?.IsCropSelectionInProgress == true)
         {
             CancelBrush();
         }
@@ -252,19 +291,20 @@ public partial class ImageEditorControl : UserControl
             e.Handled = true;
             return;
         }
-        if (_erasing && ReferenceEquals(e.Pointer, _brushPointer))
+        if ((_lining && _brushPointer is not null) || (_erasing && ReferenceEquals(e.Pointer, _brushPointer)))
         {
             CancelBrush();
             e.Handled = true;
             return;
         }
-        if ((BrushMode.IsChecked == true || EraserMode.IsChecked == true) && _brushPointer is null &&
+        if ((BrushMode.IsChecked == true || EraserMode.IsChecked == true || LineMode.IsChecked == true) && _brushPointer is null &&
             e.Pointer.Type == PointerType.Mouse &&
             e.GetCurrentPoint(ImageSurface).Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed &&
-            (EraserMode.IsChecked != true ||
+            (EraserMode.IsChecked != true && LineMode.IsChecked != true ||
              (!e.GetCurrentPoint(ImageSurface).Properties.IsRightButtonPressed &&
               !e.GetCurrentPoint(ImageSurface).Properties.IsMiddleButtonPressed)) &&
             _editor?.ActiveDocument is { } brushDocument &&
+            (LineMode.IsChecked != true || !_editor.IsCropSelectionInProgress) &&
             _editor.TryGetBrushSize(out int brushSize) &&
             (EraserMode.IsChecked == true || _editor.SampledColor is not null))
         {
@@ -273,14 +313,15 @@ public partial class ImageEditorControl : UserControl
                 brushStart.X >= brushDocument.PixelSize.Width || brushStart.Y >= brushDocument.PixelSize.Height) return;
             _brushDocument = brushDocument;
             _erasing = EraserMode.IsChecked == true;
+            _lining = LineMode.IsChecked == true;
             _brushSize = brushSize;
             _brushCenters = new BitArray(checked((brushDocument.PixelSize.Width + brushSize - 1) *
                 (brushDocument.PixelSize.Height + brushSize - 1)));
             _brushColor = _editor.SampledColor.GetValueOrDefault();
-            _brushLast = brushStart;
+            _brushLast = _lining ? new Point(Math.Floor(brushStart.X), Math.Floor(brushStart.Y)) : brushStart;
             _brushPointer = e.Pointer;
             _brushPixels = new BitArray(checked(brushDocument.PixelSize.Width * brushDocument.PixelSize.Height));
-            AddBrushSegment(brushStart, brushStart);
+            if (!_lining) AddBrushSegment(brushStart, brushStart);
             ImageSurface.Focus();
             e.Pointer.Capture(ImageSurface);
             if (!ReferenceEquals(e.Pointer.Captured, ImageSurface)) { CancelBrush(); return; }
@@ -344,9 +385,13 @@ public partial class ImageEditorControl : UserControl
         if (ReferenceEquals(e.Pointer, _brushPointer))
         {
             var properties = e.GetCurrentPoint(ImageSurface).Properties;
-            if (!properties.IsLeftButtonPressed || (_erasing &&
+            if (!properties.IsLeftButtonPressed || ((_erasing || _lining) &&
                 (properties.IsRightButtonPressed || properties.IsMiddleButtonPressed ||
                  properties.PointerUpdateKind != PointerUpdateKind.Other))) CancelBrush();
+            else if (_lining)
+            {
+                if (!ValidBrushPoint(e.GetPosition(ImageSurface))) CancelBrush();
+            }
             else ContinueBrush(e.GetPosition(ImageSurface));
             e.Handled = true;
             return;
@@ -395,22 +440,34 @@ public partial class ImageEditorControl : UserControl
         }
         if (ReferenceEquals(e.Pointer, _brushPointer) && e.InitialPressMouseButton == MouseButton.Left &&
             e.GetCurrentPoint(ImageSurface).Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased &&
-            (!_erasing || (!e.GetCurrentPoint(ImageSurface).Properties.IsRightButtonPressed &&
+            (!(_erasing || _lining) || ((!_lining || !e.GetCurrentPoint(ImageSurface).Properties.IsLeftButtonPressed) &&
+                           !e.GetCurrentPoint(ImageSurface).Properties.IsRightButtonPressed &&
                            !e.GetCurrentPoint(ImageSurface).Properties.IsMiddleButtonPressed)))
         {
-            ContinueBrush(e.GetPosition(ImageSurface));
+            if (_lining)
+            {
+                Point end = e.GetPosition(ImageSurface);
+                if (!ValidBrushPoint(end) || !ReferenceEquals(_editor?.ActiveDocument, _brushDocument)) CancelBrush();
+                else AddBrushSegment(_brushLast, new Point(Math.Floor(end.X), Math.Floor(end.Y)));
+            }
+            else ContinueBrush(e.GetPosition(ImageSurface));
             if (_brushPointer is not null && _editor is { } editor && _brushDocument is { } document &&
                 _brushPixels is { } pixels)
             {
                 var color = _brushColor;
                 bool erasing = _erasing;
+                bool lining = _lining;
                 CancelBrush();
-                editor.PaintStroke(document, color, pixels, erasing);
+                long version = _lineVersion;
+                editor.PaintStroke(document, color, pixels, erasing, lining
+                    ? () => _lineVersion == version + 1 && ReferenceEquals(_editor, editor) &&
+                        ReferenceEquals(editor.ActiveDocument, document) && editor.SelectedTool == ImageEditorTool.Line
+                    : null);
             }
             e.Handled = true;
             return;
         }
-        if (ReferenceEquals(e.Pointer, _brushPointer) && _erasing)
+        if (ReferenceEquals(e.Pointer, _brushPointer) && (_erasing || _lining))
         {
             CancelBrush();
             e.Handled = true;
@@ -545,6 +602,7 @@ public partial class ImageEditorControl : UserControl
         _brushDocument = null;
         _brushCenters = null;
         _brushPixels = null;
+        _lining = false;
         if (pointer?.Captured == ImageSurface) pointer.Capture(null);
     }
 

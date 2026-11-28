@@ -28,5 +28,8 @@ public enum ImageEditorTool
     /// <summary>
     /// Represents a crop operation for future editing operations.
     /// </summary>
-    Crop
+    Crop,
+
+    /// <summary>Draws a straight line using the selected color and brush size.</summary>
+    Line
 }

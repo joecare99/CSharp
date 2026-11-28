@@ -710,7 +710,7 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
             FailFill(fill, ex);
         }
     }
-    internal void PaintStroke(ImageEditorDocument source, Color color, BitArray indices, bool erase = false)
+    internal void PaintStroke(ImageEditorDocument source, Color color, BitArray indices, bool erase = false, Func<bool>? stillValid = null)
     {
         if (!ReferenceEquals(source, ActiveDocument) || (!erase && color.A == 0)) return;
         int width = source.PixelSize.Width, height = source.PixelSize.Height;
@@ -745,7 +745,8 @@ public sealed partial class ImageEditorViewModel : ViewModelBase, IDisposable
             if (!changed) { result.Dispose(); return; }
         }
         catch { result.Dispose(); throw; }
-        CommitPixels(source, result, isBrush: true);
+        if (stillValid is not null) CancelPendingFill();
+        CommitPixels(source, result, isBrush: true, stillValid: stillValid);
     }
 
     private bool CanTransform() => HasDocument;

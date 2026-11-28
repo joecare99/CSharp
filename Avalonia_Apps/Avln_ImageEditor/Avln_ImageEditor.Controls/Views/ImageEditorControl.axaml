@@ -27,9 +27,11 @@
 					IsEnabled="{Binding HasDocument}" />
 		  <CheckBox x:Name="EraserMode" VerticalAlignment="Center" Content="Eraser"
 					IsEnabled="{Binding HasDocument}" />
+		  <CheckBox x:Name="LineMode" VerticalAlignment="Center" Content="Line"
+					IsEnabled="{Binding HasDocument}" />
 		  <StackPanel>
-			<TextBlock Foreground="#F2F2F2" Text="Brush / eraser size (1–16 px)" />
-			<TextBox x:Name="BrushSizeInput" Width="90" AutomationProperties.Name="Brush and eraser size in pixels"
+			<TextBlock Foreground="#F2F2F2" Text="Brush / eraser / line size (1–16 px)" />
+			<TextBox x:Name="BrushSizeInput" Width="90" AutomationProperties.Name="Brush, eraser and line size in pixels"
 					 AutomationProperties.HelpText="{Binding BrushSizeError}"
 					 Text="{Binding BrushSizeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 			<TextBlock Foreground="#FFB4AB" Text="{Binding BrushSizeError}" />
