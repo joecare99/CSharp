@@ -1,5 +1,121 @@
 # Test discovery
 
+## Workbench discovery context
+
+The current Workbench exposes discovery through `DiscoverAdapterTestsCommand`
+and `DiscoveredTestCases`; there is no separate Test Explorer state component.
+`ProjectWorkflowViewModelTests` uses controlled discovery tasks to exercise late
+success and failure after cancel, project or workspace changes, including
+returning to the original project. It checks the current result selection,
+status, editor messages, diagnostics and busy state. Windows and Linux net10
+runs of the context, forced-overlap and interrupted-build cases passed 15/15
+on each platform.
+
+The Workbench currently keeps its shared `ProjectWorkflowBusy` flag set until
+the old discovery actually returns. Consequently, if an adapter ignores
+cancellation, inspection and discovery for the newly selected project cannot
+start; the requested scenario in which B publishes before A returns is not
+reachable through these commands. This is a responsiveness limitation, not
+evidence that a B result survives a late A completion. Addressing it requires
+coordinating the shared project-action lifecycle; initially no product behavior
+was changed in this investigation. Empty discovery and the blocked new-project
+action have separate controlled tests. These tests are not a physical UI
+smoke, real adapter test, or a full no-test-project acceptance. The blocked
+action and empty-result tests also passed 2/2 each on Windows and Linux net10. The isolated
+builds reported existing NU1701, target-framework support, CS8600/CS8603 and
+CA1416 warnings in dependencies; no warnings were emitted in the changed test.
+The targeted Windows whitespace format check passed. The existing
+`--test-method-only` UI smoke was not run in that initial investigation; see
+the later isolated smoke results below.
+
+The Workbench now shows a separate localized wait notice beside adapter
+discovery when cancellation is requested during that discovery action,
+including its preparatory build. It remains visible across project or workspace
+changes while the action is still outstanding, and disappears when that action
+returns. The existing context-specific status is not replaced on a stale
+completion, and ordinary build, test and debug actions do not display this
+notice. Busy guards are unchanged: no new discovery is queued or started.
+Return from the action does not establish runner or testhost exit; the notice
+explicitly says so. A synchronous cancellation callback can delay UI repaint.
+
+The focused net10 ViewModel tests passed 25/25 on both Windows and Linux with
+fresh separate graph-wide artifact roots. Controlled gates cover explicit
+cancel, project/workspace changes, returning to the first project, empty
+selection, old successful or exceptional completion, an uninterrupted
+discovery, cancellation during its preparatory build, and the existing
+build/test/debug guards. Windows targeted whitespace checks passed for the
+changed ViewModel, resource accessor and test file. Existing NU1701, target
+framework support, CS8600/CS8603 and CA1416 dependency warnings remained;
+no new compiler warnings were reported in the changed files. These are
+fake-service lifecycle checks, not a physical UI interaction or proof of
+process exit.
+
+The lifecycle was revisited with permission to change the Workbench. Releasing
+its busy guard when cancellation is requested would permit a new discovery to
+build while the old discovery is still running, including a refresh of the
+same project. `PrepareTestAssemblyAsync` builds into the project's normal
+output; `ITestDiscoveryService` receives that live assembly and project
+directory and has no contract indicating that its adapter or runner has
+stopped accessing them. The real VSTest implementation requests
+`CancelDiscovery`, but cancellation itself does not provide a separate,
+guaranteed process termination acknowledgement; an injected service can
+ignore cancellation entirely. Adapter code may also have
+side effects outside the output directory. A generation check would suppress
+stale UI updates, not prevent those concurrent side effects. Releasing the
+guard would also expose workspace build and test commands while that old
+operation is alive. The controlled blocked-action test explicitly exercises
+these command guards and verifies that no second project or workspace build
+starts. The requested B-before-A and same-project refresh behavior therefore
+remains blocked rather than weakening the existing safety guard. A safe
+solution needs an explicit isolation/termination contract for discovery and
+its adapter processes (including shared output and external effects), not
+just a ViewModel change. No process-wide or name-based termination is used.
+The revisited focused run passed 20/20 on each of Windows and Linux net10 with
+fresh, separate artifact roots. It includes empty selection and an interrupted
+build as well as late discovery completion. Windows whitespace verification
+passed. The initial Windows test invocation failed because PowerShell split an
+unquoted `-m:2`; the quoted retry passed. The builds retained the dependency
+warnings listed above, with no warnings in the changed test. The tests do not
+demonstrate a B publication while A remains active.
+
+The 18.12.0 TranslationLayer
+[source](https://github.com/microsoft/vstest/blob/v18.12.0/src/Microsoft.TestPlatform.VsTestConsole.TranslationLayer/VsTestConsoleProcessManager.cs)
+shows that `ShutdownProcess` waits up to one second for the runner, but its
+fallback calls `Process.Kill()` and disposes the handle without awaiting exit
+or confirming descendant testhost exit. The ordinary discovery path has no
+owned testhost handles. Thus return from `EndSession` or the service task is
+not proof that all discovery processes and side effects have stopped. The
+existing Workbench releases its busy guard at task completion; that fact is not
+a process-exit guarantee. An experimental queue waiting only for that task was
+discarded rather than automatically building against potentially active
+outputs. A safe automatic queue needs an owned process-tree or equivalent
+quiescence contract, plus output and external-side-effect isolation; no such
+guarantee was established here.
+
+The retained narrow change suppresses unexpected late discovery exceptions
+only when canceled or stale, preserving cancellation/current-selection status;
+unexpected errors from the current uncanceled operation still propagate.
+Controlled tests cover these exceptions and the existing busy/build guard.
+The final focused `DiscoverAdapterTests` net10 run passed 21/21 on Windows
+and 21/21 on Linux with separate fresh graph-wide artifact roots; targeted
+Windows whitespace verification passed. Existing NU1701, target-framework
+support, CS8600/CS8603 and CA1416 dependency warnings remained, with no new
+compiler warnings in the changed files. These are fake-service tests, not
+proof of real process exit or acceptance of a real no-test project.
+
+The `--test-method-only` fixture and its child processes can use a single
+exclusive, platform-specific artifact root: restore and the runtime builder's
+`--no-restore` build must share it. The launcher must export both
+`HostArtifactRoot` and `CustomAfterDirectoryBuildProps`; passing them only as
+properties to the initial `dotnet` command does not export them to children.
+The fixture now uses its own package-management props, and checks its restored
+assets, inspected assembly, and absence of default fixture `bin`/`obj` during
+discovery and the subsequent exact test run. The real interactive Windows and
+WSLg net10 smokes passed source and adapter discovery and single-case
+execution; see `tools/WorkbenchArchitectureSmoke/README.md` for reproduction,
+graph checks and limitations. They do not test B-before-A or prove runner or
+testhost exit after cancellation.
+
 The test-discovery service automatically uses `*TestAdapter.dll` files beside the built test assembly. To use adapters stored elsewhere inside the project directory, add a `vstest-adapters.json` file beside the project file:
 
 ```json
