@@ -204,6 +204,11 @@ only the original failure, without reporting the incomplete rollback. Apply,
 undo and redo now recheck synchronized editor snapshots after rollback and
 report an incomplete rollback if an editor changed, closed or no longer has
 the expected unique snapshot. The final check does not write to the editor.
+Files changed by a failed apply, undo or redo are also checked after rollback
+against their pre-action existence and exact bytes, including BOM. A changed,
+removed or recreated target is reported as incomplete recovery without another
+write or deletion. A byte-identical replacement cannot be distinguished from
+the restored file by this check.
 Rollback remains best effort: checks and file/editor operations are not atomic,
 and changes after a check can still race. The provider compares snapshots and
 uniqueness, not document identity, so a replacement editor with an identical

@@ -20,6 +20,8 @@ namespace AA98_AvlnCodeStudio.Model.Workspaces;
 /// Rollback is best effort and preserves externally changed content rather than overwriting it.
 /// Open editors are rechecked during synchronization; a later edit may prevent rollback and is reported
 /// as incomplete, leaving files and buffers potentially at different snapshots.
+/// After rollback, changed file targets are rechecked for their expected existence and bytes without
+/// writing them again. This cannot identify an identical replacement or prevent subsequent changes.
 /// </remarks>
 public sealed class WorkspaceFileChangeService
 {
@@ -330,6 +332,15 @@ public sealed class WorkspaceFileChangeService
                 }
             }
 
+            foreach (WorkspaceFileChange change in appliedChanges)
+            {
+                try { VerifyRestoredFile(proposal.WorkspaceRoot, change, !change.IsNewFile, change.OriginalBytes); }
+                catch (Exception rollbackException)
+                {
+                    rollbackErrors.Add(new IOException($"Could not verify the restored file '{change.RelativePath}' after applying the change proposal.", rollbackException));
+                }
+            }
+
             if (rollbackErrors.Count > 0)
             {
                 rollbackErrors.Insert(0, applyException);
@@ -583,6 +594,15 @@ public sealed class WorkspaceFileChangeService
                 }
             }
 
+            foreach (HistoryFileTransition transition in applied)
+            {
+                try { VerifyRestoredFile(entry.WorkspaceRoot, transition.Change, transition.ExpectedExists, transition.ExpectedBytes); }
+                catch (Exception rollbackException)
+                {
+                    rollbackErrors.Add(new IOException($"Could not verify the restored file '{transition.Change.RelativePath}' after undo/redo failed.", rollbackException));
+                }
+            }
+
             if (rollbackErrors.Count > 0)
             {
                 rollbackErrors.Insert(0, exception);
@@ -594,6 +614,21 @@ public sealed class WorkspaceFileChangeService
         finally
         {
             foreach (string temporaryPath in stagedFiles.Values) File.Delete(temporaryPath);
+        }
+    }
+
+    private static void VerifyRestoredFile(string root, WorkspaceFileChange change, bool expectedExists, byte[]? expectedBytes)
+    {
+        EnsureNoReparsePoints(root, change.TargetPath);
+        EnsureParentDirectoriesAreSafe(root, change.TargetPath, createMissing: false, null);
+        if (expectedExists)
+        {
+            if (!File.Exists(change.TargetPath) || !File.ReadAllBytes(change.TargetPath).AsSpan().SequenceEqual(expectedBytes))
+                throw new IOException($"The file '{change.RelativePath}' changed during rollback.");
+        }
+        else if (File.Exists(change.TargetPath) || Directory.Exists(change.TargetPath))
+        {
+            throw new IOException($"The target '{change.RelativePath}' was recreated during rollback.");
         }
     }
 
