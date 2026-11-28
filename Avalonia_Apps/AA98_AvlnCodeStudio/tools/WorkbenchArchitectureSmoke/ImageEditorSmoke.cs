@@ -590,6 +590,33 @@ internal static partial class Program
                 editor.Redo();
                 Check(editor.CapturePngSnapshot().Bytes.SequenceEqual(sizedPaint), "Redo did not restore the sized brush stroke.");
                 editor.Undo();
+                CheckBox lineMode = view.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "LineMode");
+                lineMode.IsChecked = true;
+                Check(editor.SelectedTool == ImageEditorTool.Line && brushMode.IsChecked != true,
+                    "The line tool was not selected exclusively.");
+                brushPointer = new Pointer(27, PointerType.Mouse, true);
+                var linePress = new PointerPressedEventArgs(brushTarget, brushPointer, window, start, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                { RoutedEvent = InputElement.PointerPressedEvent };
+                ((Interactive)brushTarget).RaiseEvent(linePress);
+                Check(linePress.Handled && ReferenceEquals(brushPointer.Captured, surface),
+                    "The line did not capture its press.");
+                Point offLine = surface.TranslatePoint(new Point(6.5, 10.5), window)!.Value;
+                surface.RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent, surface, brushPointer, window, offLine, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), KeyModifiers.None));
+                Check(editor.IsCurrentDocumentState(state), "The pending line changed the image.");
+                surface.RaiseEvent(new PointerReleasedEventArgs(surface, brushPointer, window, end, 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased),
+                    KeyModifiers.None, MouseButton.Left)
+                { RoutedEvent = InputElement.PointerReleasedEvent });
+                byte[] linePaint = editor.CapturePngSnapshot().Bytes;
+                Check(linePaint.SequenceEqual(sizedPaint), "The line did not use only its endpoints and selected size.");
+                editor.Undo();
+                Check(editor.IsCurrentDocumentState(state), "Undo did not restore the line source.");
+                editor.Redo();
+                Check(editor.CapturePngSnapshot().Bytes.SequenceEqual(linePaint), "Redo did not restore the line.");
+                editor.Undo();
                 sizeInput.SetCurrentValue(TextBox.TextProperty, "1");
 
                 void EnterManualColor(string value)
