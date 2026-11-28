@@ -818,6 +818,127 @@ public sealed class WorkspaceFileChangeServiceTests
     }
 
     [TestMethod]
+    [DataRow("apply", false, "edit")]
+    [DataRow("apply", false, "delete")]
+    [DataRow("apply", true, "recreate")]
+    [DataRow("undo", false, "edit")]
+    [DataRow("undo", true, "delete")]
+    [DataRow("redo", false, "delete")]
+    [DataRow("redo", true, "recreate")]
+    [DataRow("apply", false, "none")]
+    [DataRow("apply", true, "none")]
+    [DataRow("undo", false, "none")]
+    [DataRow("undo", true, "none")]
+    [DataRow("redo", false, "none")]
+    [DataRow("redo", true, "none")]
+    [DataRow("apply", false, "identical")]
+    [DataRow("redo", true, "directory")]
+    public void Rollback_RechecksFilesAfterLaterRollbackStep(string operation, bool newFile, string mutation)
+    {
+        WithTemporaryDirectory(root =>
+        {
+            string path = Path.Combine(root, "Target.txt");
+            string openPath = Path.Combine(root, "Open.txt");
+            UnicodeEncoding encoding = new(false, true, true);
+            byte[] original = [.. encoding.GetPreamble(), .. encoding.GetBytes("before-λ")];
+            if (!newFile) File.WriteAllBytes(path, original);
+            File.WriteAllText(openPath, "before");
+            InterleavingDocuments documents = new();
+            documents.Open(openPath, "before", "before");
+            WorkspaceFileChangeService service = new(documents);
+            WorkspaceFileChangeProposal proposal = service.Prepare(root,
+            [
+                newFile
+                    ? WorkspaceFileChangeRequest.CreateNew("Target.txt", "generated-😀")
+                    : WorkspaceFileChangeRequest.ReplaceExisting("Target.txt", "before-λ", "generated-😀"),
+                WorkspaceFileChangeRequest.ReplaceExisting("Open.txt", "before", "after"),
+            ]);
+            if (operation != "apply") service.Apply(proposal, true);
+            byte[]? undoBytes = operation == "undo" ? File.ReadAllBytes(path) : null;
+            if (operation == "redo") Assert.IsTrue(service.Undo());
+
+            bool expectedExists = operation == "undo" || !newFile;
+            byte[]? expectedBytes = operation == "undo" ? undoBytes : newFile ? null : original;
+            using ManualResetEventSlim gate = new();
+            using ManualResetEventSlim resume = new();
+            bool failing = false;
+            bool gated = false;
+            documents.OnApplied = _ =>
+            {
+                if (!failing)
+                {
+                    failing = true;
+                    throw new IOException("Synchronization event failed.");
+                }
+            };
+            documents.OnCanApply = _ =>
+            {
+                if (failing && !gated && File.Exists(path) == expectedExists
+                    && (!expectedExists || File.ReadAllBytes(path).AsSpan().SequenceEqual(expectedBytes)))
+                {
+                    gated = true;
+                    gate.Set();
+                    if (!resume.Wait(TimeSpan.FromSeconds(30)))
+                        throw new TimeoutException("Timed out waiting to continue rollback.");
+                }
+            };
+
+            Task<Exception?> execution = Task.Run(() =>
+            {
+                try
+                {
+                    if (operation == "apply") service.Apply(proposal, true);
+                    else if (operation == "undo") service.Undo();
+                    else service.Redo();
+                    return null;
+                }
+                catch (Exception exception) { return exception; }
+            });
+            try
+            {
+                Assert.IsTrue(gate.Wait(TimeSpan.FromSeconds(30)), "Rollback did not reach the gate.");
+                if (mutation == "edit" || mutation == "recreate") File.WriteAllText(path, "external-Ω");
+                else if (mutation == "delete") File.Delete(path);
+                else if (mutation == "identical")
+                {
+                    File.Delete(path);
+                    File.WriteAllBytes(path, expectedBytes!);
+                }
+                else if (mutation == "directory") Directory.CreateDirectory(path);
+            }
+            finally
+            {
+                resume.Set();
+                execution.GetAwaiter().GetResult();
+            }
+
+            Exception? result = execution.GetAwaiter().GetResult();
+            if (mutation is "none" or "identical")
+            {
+                Assert.IsInstanceOfType<IOException>(result);
+                Assert.AreEqual("Synchronization event failed.", result.Message);
+            }
+            else
+            {
+                Assert.IsInstanceOfType<AggregateException>(result);
+                StringAssert.Contains(result.Message, "rollback was incomplete");
+                StringAssert.Contains(result.ToString(), "Target.txt");
+                StringAssert.Contains(result.ToString(), "Synchronization event failed.");
+            }
+
+            if (mutation is "edit" or "recreate") Assert.AreEqual("external-Ω", File.ReadAllText(path));
+            else if (mutation == "delete") Assert.IsFalse(File.Exists(path));
+            else if (mutation == "directory") Assert.IsTrue(Directory.Exists(path));
+            else if (expectedExists) CollectionAssert.AreEqual(expectedBytes, File.ReadAllBytes(path));
+            else Assert.IsFalse(File.Exists(path));
+            Assert.AreEqual(operation == "undo" ? "after" : "before", File.ReadAllText(openPath));
+            Assert.AreEqual(operation == "undo" ? "after" : "before", documents.Get(openPath).Content);
+            Assert.AreEqual(operation == "undo", service.CanUndo);
+            Assert.AreEqual(operation == "redo", service.CanRedo);
+        });
+    }
+
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public void UndoRedo_RollbackPreservesExternalDeletion(bool undo)
@@ -1280,6 +1401,7 @@ public sealed class WorkspaceFileChangeServiceTests
         private int _trigger;
         private Action? _onCheck;
         public Action<string>? OnApplied { get; set; }
+        public Action<string>? OnCanApply { get; set; }
 
         public sealed class Document(string content, string saved)
         {
@@ -1298,9 +1420,12 @@ public sealed class WorkspaceFileChangeServiceTests
             return _documents.TryGetValue(fullPath, out Document? document) && document.Open;
         }
 
-        public bool CanApplyChange(string fullPath, string expectedContent, string expectedSavedContent) =>
-            _documents.TryGetValue(fullPath, out Document? document) && document.Open
-            && document.Content == expectedContent && document.Saved == expectedSavedContent;
+        public bool CanApplyChange(string fullPath, string expectedContent, string expectedSavedContent)
+        {
+            OnCanApply?.Invoke(fullPath);
+            return _documents.TryGetValue(fullPath, out Document? document) && document.Open
+                && document.Content == expectedContent && document.Saved == expectedSavedContent;
+        }
 
         public void ApplyChange(string fullPath, string expectedContent, string expectedSavedContent, string proposedContent, string proposedSavedContent)
         {
