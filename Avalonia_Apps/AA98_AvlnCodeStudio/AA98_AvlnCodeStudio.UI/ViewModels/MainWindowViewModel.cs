@@ -191,6 +191,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             _editorWorkspace.NavigationRequested += OnEditorNavigationRequested;
             _observedEditor = _editorWorkspace.ActiveTab.Editor;
             _observedEditor.PropertyChanged += OnActiveEditorPropertyChanged;
+            _observedEditor.FileSaved += OnEditorFileSaved;
             ObserveActiveTab();
             ObserveActiveEditorControl();
             ObserveBackgroundLanguageDocuments();
@@ -3706,10 +3707,12 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             if (_observedEditor is not null)
             {
                 _observedEditor.PropertyChanged -= OnActiveEditorPropertyChanged;
+                _observedEditor.FileSaved -= OnEditorFileSaved;
             }
 
             _observedEditor = _editorWorkspace.ActiveTab.Editor;
             _observedEditor.PropertyChanged += OnActiveEditorPropertyChanged;
+            _observedEditor.FileSaved += OnEditorFileSaved;
             ObserveBackgroundLanguageDocuments();
             if (_selectedPropertyTab is not null && !ReferenceEquals(_selectedPropertyTab, _editorWorkspace.ActiveTab))
             {
@@ -3751,6 +3754,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             foreach (EditorViewModel editor in _observedBackgroundEditors.Keys.ToArray())
             {
                 editor.PropertyChanged -= OnBackgroundEditorPropertyChanged;
+                editor.FileSaved -= OnEditorFileSaved;
             }
             _observedBackgroundEditors.Clear();
 
@@ -3763,6 +3767,34 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
                 _observedBackgroundEditors.Add(tab.Editor, tab);
                 tab.Editor.PropertyChanged += OnBackgroundEditorPropertyChanged;
+                tab.Editor.FileSaved += OnEditorFileSaved;
+            }
+        }
+
+        private async void OnEditorFileSaved(object? sender, string filePath)
+        {
+            if (!string.Equals(Path.GetExtension(filePath), ".csproj", StringComparison.OrdinalIgnoreCase)
+                || Workspace is not { } workspace)
+            {
+                return;
+            }
+
+            _axamlBindingAnalysisCancellation?.Cancel();
+            try
+            {
+                await _csharpSyntaxDiagnosticService.RefreshProjectContextAsync(filePath);
+                if (ReferenceEquals(workspace, Workspace))
+                {
+                    QueueLanguageAnalysis();
+                    QueueAxamlMvvmBindingContext(Editor.Text, Editor.CurrentFilePath);
+                }
+            }
+            catch (Exception exception) when (exception is IOException or InvalidOperationException)
+            {
+                if (ReferenceEquals(workspace, Workspace))
+                {
+                    Editor.NotificationText = $"Could not refresh project analysis: {exception.Message}";
+                }
             }
         }
 
@@ -3882,6 +3914,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             if (_observedBackgroundEditors.Remove(tab.Editor))
             {
                 tab.Editor.PropertyChanged -= OnBackgroundEditorPropertyChanged;
+                tab.Editor.FileSaved -= OnEditorFileSaved;
                 CloseQuickInfo();
                 QueueLanguageAnalysis();
                 if (string.Equals(Path.GetExtension(tab.FilePath), ".cs", StringComparison.OrdinalIgnoreCase)

@@ -72,6 +72,7 @@ public partial class EditorViewModel : CodeStudioViewModelBase
     public string WindowTitle => $"{UiStrings.ApplicationTitle} - {DocumentName ?? _workflow.Document.DisplayName}{(IsDirty ? UiStrings.WindowTitleDirtySuffix : string.Empty)}";
 
     public event EventHandler? ContentChanging;
+    public event EventHandler<string>? FileSaved;
 
     partial void OnTextChanging(string value)
     {
@@ -191,6 +192,10 @@ public partial class EditorViewModel : CodeStudioViewModelBase
             var result = await _workflow.SaveAsync();
             SynchronizeFromDocument();
             ApplyResult(result, string.Format(UiStrings.SavedDocumentStatusFormat, _workflow.Document.DisplayName), string.Format(UiStrings.SavedDocumentNotificationFormat, _workflow.Document.DisplayName), UiStrings.SaveCanceledStatusText, UiStrings.SaveCanceledNotificationText);
+            if (result.IsCompleted && _workflow.Document.FilePath is { } path)
+            {
+                FileSaved?.Invoke(this, path);
+            }
         }
         catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
         {
@@ -211,6 +216,10 @@ public partial class EditorViewModel : CodeStudioViewModelBase
             var result = await _workflow.SaveAsAsync();
             SynchronizeFromDocument();
             ApplyResult(result, string.Format(UiStrings.SavedDocumentStatusFormat, _workflow.Document.DisplayName), string.Format(UiStrings.SavedDocumentNotificationFormat, _workflow.Document.DisplayName), UiStrings.SaveAsCanceledStatusText, UiStrings.SaveAsCanceledNotificationText);
+            if (result.IsCompleted && _workflow.Document.FilePath is { } path)
+            {
+                FileSaved?.Invoke(this, path);
+            }
         }
         catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException)
         {
