@@ -542,44 +542,92 @@ internal static class Program
             await workbench.EditorWorkspace.OpenOrActivateAsync(axamlPath);
             await WaitUntilAsync(() => designer.BindingRows.Any(binding => binding.PropertyName == "Text"
                 && binding.AvailableMembers.Contains("OverlayCaption")), "reopened referenced overlay");
-            File.WriteAllText(projectPath, projectText.Replace(
-                "<ProjectReference Include=\"../Library/Library.csproj\" />", "", StringComparison.Ordinal));
-            Check(!File.ReadAllText(projectPath).Contains("ProjectReference", StringComparison.Ordinal),
-                "Could not remove the fixture project reference.");
-            await semanticService.RefreshProjectContextAsync(projectPath);
-            TaskCompletionSource removedStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
-            TaskCompletionSource removedRelease = new(TaskCreationOptions.RunContinuationsAsynchronously);
-            TaskCompletionSource removedRefreshed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            await workbench.EditorWorkspace.OpenOrActivateAsync(projectPath);
+            EditorTabViewModel projectTab = workbench.EditorWorkspace.ActiveTab;
+            projectTab.Editor.Text = projectText.Replace(
+                "<ProjectReference Include=\"../Library/Library.csproj\" />", "", StringComparison.Ordinal);
+            await workbench.EditorWorkspace.OpenOrActivateAsync(axamlPath);
+            row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+            row.BindingMode = AxamlBindingMode.TwoWay;
+            row.UpdateSourceTrigger = AxamlBindingUpdateSourceTrigger.PropertyChanged;
+            TaskCompletionSource draftStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource draftRelease = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource draftRefreshed = new(TaskCreationOptions.RunContinuationsAsynchronously);
             gate.SetValue(semanticService, (Func<CancellationToken, Task>)(async token =>
             {
-                removedStarted.TrySetResult();
-                await removedRelease.Task.WaitAsync(token);
+                draftStarted.TrySetResult();
+                await draftRelease.Task.WaitAsync(token);
             }));
-            NotifyCollectionChangedEventHandler removedRefresh = (_, _) => removedRefreshed.TrySetResult();
+            NotifyCollectionChangedEventHandler draftRefresh = (_, _) => draftRefreshed.TrySetResult();
             try
             {
-                await workbench.OpenWorkspaceFileAsync(projectPath);
+                viewModelTab.Editor.Text = overlay + "\n";
+                await draftStarted.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                designer.BindingRows.CollectionChanged += draftRefresh;
+                draftRelease.TrySetResult();
+                await draftRefreshed.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                Check(designer.BindingRows.Any(binding => binding.AvailableMembers.Contains("OverlayCaption"))
+                    && File.ReadAllText(projectPath).Contains("ProjectReference", StringComparison.Ordinal),
+                    "An unsaved project buffer changed the saved reference context.");
+            }
+            finally
+            {
+                draftRelease.TrySetResult();
+                designer.BindingRows.CollectionChanged -= draftRefresh;
+                gate.SetValue(semanticService, null);
+            }
+            TaskCompletionSource removedStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource removedCanceled = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            TaskCompletionSource removedRelease = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            gate.SetValue(semanticService, (Func<CancellationToken, Task>)(async token =>
+            {
+                using CancellationTokenRegistration registration = token.Register(() => removedCanceled.TrySetResult());
+                removedStarted.TrySetResult();
+                await removedRelease.Task;
+            }));
+            try
+            {
+                viewModelTab.Editor.Text = overlay + "\n\n";
                 await removedStarted.Task.WaitAsync(TimeSpan.FromMinutes(2));
-                designer.BindingRows.CollectionChanged += removedRefresh;
+                await projectTab.SaveCommand.ExecuteAsync(null);
+                Check(!File.ReadAllText(projectPath).Contains("ProjectReference", StringComparison.Ordinal),
+                    "Could not remove the fixture project reference.");
+                await removedCanceled.Task.WaitAsync(TimeSpan.FromMinutes(2));
+                gate.SetValue(semanticService, null);
                 removedRelease.TrySetResult();
-                await removedRefreshed.Task.WaitAsync(TimeSpan.FromMinutes(2));
-                Check(designer.BindingRows.Any(binding => binding.PropertyName == "Text")
+                await WaitUntilAsync(() => designer.BindingRows.Any(binding => binding.PropertyName == "Text")
                     && designer.BindingRows.All(binding => !binding.AvailableMembers.Contains("DiskCaption")
-                        && !binding.AvailableMembers.Contains("OverlayCaption")), "Removed project reference remained in the binding context.");
+                        && !binding.AvailableMembers.Contains("OverlayCaption")), "removed reference context");
             }
             finally
             {
                 removedRelease.TrySetResult();
-                designer.BindingRows.CollectionChanged -= removedRefresh;
                 gate.SetValue(semanticService, null);
             }
+            overlay += "\n\n";
+            projectTab.Editor.Text = projectText;
+            await projectTab.SaveCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => designer.BindingRows.Any(binding => binding.PropertyName == "Text"
+                && binding.AvailableMembers.Contains("OverlayCaption")), "added reference context");
+            row = designer.BindingRows.Single(binding => binding.PropertyName == "Text");
+            Check(row.BindingMode == AxamlBindingMode.TwoWay
+                && row.UpdateSourceTrigger == AxamlBindingUpdateSourceTrigger.PropertyChanged,
+                "Reference refresh lost pending binding options.");
+            projectTab.Editor.Text = projectText.Replace(
+                "<ProjectReference Include=\"../Library/Library.csproj\" />",
+                "<ProjectReference Include=\"../Library/Library.csproj\" Condition=\"'false' == 'true'\" />",
+                StringComparison.Ordinal);
+            await projectTab.SaveCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => designer.BindingRows.Any(binding => binding.PropertyName == "Text")
+                && designer.BindingRows.All(binding => !binding.AvailableMembers.Contains("OverlayCaption")),
+                "changed reference condition context");
             currentMarkupBytes = await File.ReadAllBytesAsync(axamlPath);
             currentViewModelBytes = await File.ReadAllBytesAsync(viewModelPath);
             Check(viewModelTab.Editor.Text == overlay
                 && markupBytes.SequenceEqual(currentMarkupBytes)
                 && viewModelBytes.SequenceEqual(currentViewModelBytes),
                 "Removing the reference changed the reopened overlay or backing files.");
-            Console.WriteLine("Referenced ViewModel overlay, cancellation, close and removed reference verified.");
+            Console.WriteLine("Referenced ViewModel overlay, cancellation, unsaved project buffer and saved reference removal/addition/condition verified.");
         }
         finally
         {

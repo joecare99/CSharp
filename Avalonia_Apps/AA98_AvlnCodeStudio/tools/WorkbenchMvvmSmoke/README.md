@@ -91,12 +91,40 @@ an unsaved replacement member. A controlled compilation gate holds the context
 while mode and trigger are edited, then the smoke checks selection, AXAML
 apply/undo/redo, and byte-identical backing files. It also checks A→B→A buffer
 changes, cancellation, explicit discard/close and reopening the dirty library
-tab. After removing the reference, it explicitly invalidates the semantic
-project cache and reopens the workspace, then checks the open buffer is ignored
-and preserved. This does not test automatic project-file change detection.
+tab. In the still-open workspace it edits the consumer project in its normal
+text editor, confirms an unsaved project buffer does not alter the saved
+reference context, then saves removal, re-addition and a false reference
+condition. No test-side cache invalidation or workspace reopening is used.
+The save occurs while the designer is active and a synthetic gate holds an
+older compilation; cancellation, pending mode/trigger, the unsaved library
+buffer and byte-identical ViewModel/AXAML files are checked.
+
+Successful AA98 text-editor saves of `.csproj` files raise a save event. The
+Workbench cancels the active binding analysis, invalidates affected semantic
+snapshots (including consumers), then queues the active designer again.
+Unsaved project buffers are not evaluated; Roslyn loads the saved project
+file. External edits, imports and changes performed outside that editor save
+event are not watched and have no automatic refresh guarantee. The service's
+explicit `RefreshProjectContextAsync` is a separate host API: it invalidates
+snapshots but does not itself notify the designer. No standalone-host project
+file watcher is implied. The focused
+`ProjectSave_QueuesReferenceSnapshotRefreshBehindRunningAnalysis` test holds
+the service gate independently and checks that saving waits to invalidate the
+cached snapshot, while an unsaved project edit does not invalidate it.
 The service gate serializes compilations: a canceled older compilation is
 released before the newer one starts, not completed out of order. It does not
 simulate an already-computed stale result arriving after the newer result.
 All desktop interaction is synthetic, not physical acceptance.
 
 For just this fixture, append `-- --reference-only` to either command above.
+
+On 2026-11-28, the `--reference-only` run completed with exit code 0 on
+Ubuntu 26.04 under WSLg (`DISPLAY=:0`, .NET SDK 10.0.404), using the fresh
+Linux artifact root
+`.artifacts-workbench-reference-wslg-500753e86b464f5383b2f54b89921074`.
+It reported successful referenced-overlay, cancellation, unsaved-project and
+saved reference removal/addition/condition checks. No SVN client was on this
+run's Linux `PATH`; it did not block this fixture. The build emitted existing
+NU1701, CS8600, CS8603, CA1416 and AVA2003 warnings, plus dependency-injection
+net8/net9 support warnings. This programmatic run is not physical desktop
+acceptance and does not change the external-edit limitations above.
