@@ -29,6 +29,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private long _projectWorkflowRevision;
         private bool _updatingProjectInspection;
         private bool _projectActionInProgress;
+        private bool _adapterDiscoveryActive;
         private string? _debuggedTestSessionId;
 
         public ObservableCollection<string> WorkflowFrameworks { get; } = [];
@@ -49,6 +50,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         public string TestCandidatesCommandText => UiStrings.TestCandidatesCommandText;
         public string TestCandidatesLabelText => UiStrings.TestCandidatesLabelText;
         public string DiscoverAdapterTestsCommandText => UiStrings.DiscoverAdapterTestsCommandText;
+        public string AdapterDiscoveryCancellationPendingText => UiStrings.AdapterDiscoveryCancellationPendingText;
         public string DiscoveredTestCasesLabelText => UiStrings.DiscoveredTestCasesLabelText;
         public string RunDiscoveredTestCaseCommandText => UiStrings.RunDiscoveredTestCaseCommandText;
         public string DebugDiscoveredTestCaseCommandText => UiStrings.DebugDiscoveredTestCaseCommandText;
@@ -90,6 +92,9 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         [ObservableProperty]
         private string _projectWorkflowStatus = "Select a project and inspect it before running project actions.";
+
+        [ObservableProperty]
+        private bool _adapterDiscoveryCancellationPending;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(InspectSelectedProjectCommand))]
@@ -184,7 +189,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             TestSelectedProjectCommand.Cancel();
             TestSelectedMethodCommand.Cancel();
             FindTestCandidatesCommand.Cancel();
-            DiscoverAdapterTestsCommand.Cancel();
+            CancelAdapterDiscovery();
             RunDiscoveredTestCaseCommand.Cancel();
             DebugDiscoveredTestCaseCommand.Cancel();
             DebugSelectedProjectCommand.Cancel();
@@ -358,6 +363,7 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             ProjectTargetInspection approved = ProjectInspection!;
             CSharpWorkspace workspace = Workspace!;
             long revision = Interlocked.Read(ref _projectWorkflowRevision);
+            _adapterDiscoveryActive = true;
             SetProjectActionBusy(true);
             try
             {
@@ -381,7 +387,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             {
                 ReportProjectCancellation(workspace, revision);
             }
-            catch (Exception exception) when (IsProjectWorkflowException(exception))
+            catch (Exception exception) when (IsProjectWorkflowException(exception)
+                || cancellationToken.IsCancellationRequested || !IsProjectSelectionCurrent(workspace, revision))
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -394,6 +401,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             }
             finally
             {
+                _adapterDiscoveryActive = false;
+                AdapterDiscoveryCancellationPending = false;
                 SetProjectActionBusy(false);
             }
         }
@@ -712,11 +721,21 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             TestSelectedProjectCommand.Cancel();
             TestSelectedMethodCommand.Cancel();
             FindTestCandidatesCommand.Cancel();
-            DiscoverAdapterTestsCommand.Cancel();
+            CancelAdapterDiscovery();
             RunDiscoveredTestCaseCommand.Cancel();
             DebugDiscoveredTestCaseCommand.Cancel();
             DebugSelectedProjectCommand.Cancel();
             ProjectWorkflowStatus = "Cancellation requested. An in-progress builder may need to finish first.";
+        }
+
+        private void CancelAdapterDiscovery()
+        {
+            if (_adapterDiscoveryActive)
+            {
+                AdapterDiscoveryCancellationPending = true;
+            }
+
+            DiscoverAdapterTestsCommand.Cancel();
         }
 
         private bool CanInspectSelectedProject()

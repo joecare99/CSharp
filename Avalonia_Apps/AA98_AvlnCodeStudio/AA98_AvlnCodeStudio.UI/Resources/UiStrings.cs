@@ -138,6 +138,8 @@ public static class UiStrings
 
     public static string DiscoverAdapterTestsCommandText => GetString(nameof(DiscoverAdapterTestsCommandText));
 
+    public static string AdapterDiscoveryCancellationPendingText => GetString(nameof(AdapterDiscoveryCancellationPendingText));
+
     public static string DiscoveredTestCasesLabelText => GetString(nameof(DiscoveredTestCasesLabelText));
 
     public static string RunDiscoveredTestCaseCommandText => GetString(nameof(RunDiscoveredTestCaseCommandText));

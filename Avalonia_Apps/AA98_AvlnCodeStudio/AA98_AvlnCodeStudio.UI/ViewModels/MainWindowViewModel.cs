@@ -997,6 +997,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
 
         public string GenerateAxamlMvvmCommandText => "Generate MVVM from AXAML";
 
+        public string RefreshSavedProjectBindingContextCommandText => "Refresh binding context from saved projects";
+
         public string CreateSelectedProjectCommandText => "Create Selected Project";
 
         public string ReloadProjectTemplatesCommandText => "Reload Templates";
@@ -3789,6 +3791,39 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                 {
                     QueueLanguageAnalysis();
                     QueueAxamlMvvmBindingContext(Editor.Text, Editor.CurrentFilePath);
+                }
+            }
+            catch (Exception exception) when (exception is IOException or InvalidOperationException)
+            {
+                if (ReferenceEquals(workspace, Workspace))
+                {
+                    Editor.NotificationText = $"Could not refresh project analysis: {exception.Message}";
+                }
+            }
+        }
+
+        [RelayCommand]
+        private async Task RefreshSavedProjectBindingContextAsync()
+        {
+            if (Workspace is not { Projects.Count: > 0 } workspace)
+            {
+                Editor.NotificationText = "Open a C# workspace before refreshing the binding context.";
+                return;
+            }
+
+            _axamlBindingAnalysisCancellation?.Cancel();
+            try
+            {
+                foreach (CSharpWorkspaceProject project in workspace.Projects)
+                {
+                    await _csharpSyntaxDiagnosticService.RefreshProjectContextAsync(project.ProjectPath);
+                }
+
+                if (ReferenceEquals(workspace, Workspace))
+                {
+                    QueueLanguageAnalysis();
+                    QueueAxamlMvvmBindingContext(Editor.Text, Editor.CurrentFilePath);
+                    Editor.StatusText = "Binding context refresh requested from saved projects.";
                 }
             }
             catch (Exception exception) when (exception is IOException or InvalidOperationException)

@@ -119,6 +119,7 @@
                         <MenuItem Header="{Binding SignatureHelpCommandText}" Command="{Binding RequestSignatureHelpCommand}" />
                         <Separator />
                         <MenuItem Header="{Binding GenerateAxamlMvvmCommandText}" Command="{Binding GenerateAxamlMvvmCommand}" />
+                        <MenuItem Header="{Binding RefreshSavedProjectBindingContextCommandText}" Command="{Binding RefreshSavedProjectBindingContextCommand}" />
                     </MenuItem>
                     <MenuItem Header="_Build">
                         <MenuItem Header="{Binding BuildWorkspaceCommandText}" Command="{Binding BuildWorkspaceCommand}" />
@@ -243,6 +244,9 @@
                                 </ListBox.ItemTemplate>
                             </ListBox>
                             <Button Content="{Binding DiscoverAdapterTestsCommandText}" Command="{Binding DiscoverAdapterTestsCommand}" />
+                            <TextBlock Text="{Binding AdapterDiscoveryCancellationPendingText}"
+                                       IsVisible="{Binding AdapterDiscoveryCancellationPending}"
+                                       TextWrapping="Wrap" />
                             <TextBlock Text="{Binding DiscoveredTestCasesLabelText}" TextWrapping="Wrap" />
                             <ListBox ItemsSource="{Binding DiscoveredTestCases}"
                                      SelectedItem="{Binding SelectedDiscoveredTestCase, Mode=TwoWay}"

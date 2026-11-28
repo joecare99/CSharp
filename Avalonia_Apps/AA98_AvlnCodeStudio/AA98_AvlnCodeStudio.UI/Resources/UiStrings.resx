@@ -178,6 +178,9 @@
   <data name="DiscoverAdapterTestsCommandText" xml:space="preserve">
     <value>Build and Discover VSTest Cases</value>
   </data>
+  <data name="AdapterDiscoveryCancellationPendingText" xml:space="preserve">
+    <value>Cancellation requested for test discovery. Project actions remain unavailable until the discovery action returns. This does not confirm that all runner or testhost processes have exited.</value>
+  </data>
   <data name="DiscoveredTestCasesLabelText" xml:space="preserve">
     <value>Adapter-discovered cases</value>
   </data>

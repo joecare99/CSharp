@@ -32,4 +32,5 @@
   <data name="ImageSaveUnavailableText" xml:space="preserve"><value>Speichern ist ohne geöffnetes Fenster nicht verfügbar.</value></data>
   <data name="ImageSaveLocalOnlyText" xml:space="preserve"><value>Wählen Sie ein lokales PNG-Ziel aus.</value></data>
   <data name="ImageSaveExistingText" xml:space="preserve"><value>Wählen Sie eine neue PNG-Datei; vorhandene Dateien werden nicht überschrieben.</value></data>
+  <data name="AdapterDiscoveryCancellationPendingText" xml:space="preserve"><value>Der Abbruch der Testentdeckung wurde angefordert. Projektaktionen bleiben gesperrt, bis der Entdeckungsauftrag zurückkehrt. Das bestätigt nicht, dass alle Runner- oder Testhost-Prozesse beendet sind.</value></data>
 </root>
