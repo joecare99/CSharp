@@ -81,6 +81,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
         private List<Diagnostic> _languageDiagnostics = [];
         private CancellationTokenSource? _languageAnalysisCancellation;
         private CancellationTokenSource? _axamlBindingAnalysisCancellation;
+        internal Func<AxamlMvvmSemanticResolution, CancellationToken, Task<AxamlMvvmSemanticResolution>>? BindingContextResultAwaiter { get; set; }
+        internal Action<Task>? BindingContextRefreshStarted { get; set; }
         private EditorViewModel? _observedEditor;
         private EditorTabViewModel? _observedTab;
         private EditorTabViewModel? _selectedPropertyTab;
@@ -4138,7 +4140,8 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
             if (tab.Designer is { } designer)
             {
                 IReadOnlyDictionary<string, string> openDocuments = CaptureOpenCSharpDocuments();
-                _ = RefreshAxamlMvvmBindingContextAsync(tab, designer, markup, filePath, openDocuments, cancellation.Token);
+                Task refresh = RefreshAxamlMvvmBindingContextAsync(tab, designer, markup, filePath, openDocuments, cancellation.Token);
+                BindingContextRefreshStarted?.Invoke(refresh);
             }
         }
 
@@ -4171,6 +4174,10 @@ namespace AA98_AvlnCodeStudio.UI.ViewModels
                         cancellationToken,
                         allowExistingRuntimeDataContext: true,
                         openDocumentTexts: openDocuments);
+                if (BindingContextResultAwaiter is { } awaiter)
+                {
+                    resolution = await awaiter(resolution, cancellationToken);
+                }
                 if (cancellationToken.IsCancellationRequested
                     || !AreOpenCSharpDocumentSnapshotsEqual(openDocuments, CaptureOpenCSharpDocuments())
                     || !ReferenceEquals(workspace, Workspace)
