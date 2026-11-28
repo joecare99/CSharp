@@ -1039,6 +1039,151 @@ public sealed class ImageEditingTests
     }, CancellationToken.None);
 
     [TestMethod]
+    public async Task SizedBrushAndEraserClipOverlapAndPreserveHistory() =>
+        await _session.Dispatch(() =>
+    {
+        const int width = 12, height = 10;
+        using var editor = new ImageEditorViewModel();
+        var bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(192, 192), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        using (var buffer = bitmap.Lock())
+        {
+            var zero = new byte[width * 4];
+            for (int y = 0; y < height; y++) Marshal.Copy(zero, 0, IntPtr.Add(buffer.Address, y * buffer.RowBytes), zero.Length);
+        }
+        editor.LoadDocument(new ImageEditorDocument("sizes.png", bitmap));
+        editor.ManualColorHex = "#80FF0000"; editor.ApplyManualColor();
+        var window = new Window { Width = 1000, Height = 800, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show(); window.SetRenderScaling(1.25); editor.ZoomPercentage = 800;
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var brush = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "BrushMode");
+            var eraser = window.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "EraserMode");
+            var input = window.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "BrushSizeInput");
+            Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
+            void Down(double x, double y) => window.MouseDown(At(x, y), MouseButton.Left, RawInputModifiers.None);
+            void Move(double x, double y) => window.MouseMove(At(x, y), RawInputModifiers.LeftMouseButton);
+            void Up(double x, double y) => window.MouseUp(At(x, y), MouseButton.Left, RawInputModifiers.None);
+            Assert.AreEqual("1", input.Text);
+            Assert.IsTrue(input.Focus());
+            input.SelectAll();
+            input.RaiseEvent(new TextInputEventArgs { RoutedEvent = InputElement.TextInputEvent, Text = "2" });
+            Assert.AreEqual("2", editor.BrushSizeText);
+            foreach (int size in new[] { 1, 2, 3, 16 })
+                foreach (var point in new[] { (0, 0), (11, 0), (0, 9), (11, 9), (5, 5) })
+                {
+                    input.Text = size.ToString();
+                    brush.IsChecked = true;
+                    Down(point.Item1 + .5, point.Item2 + .5);
+                    Move(point.Item1 + .5, point.Item2 + .5);
+                    Up(point.Item1 + .5, point.Item2 + .5);
+                    byte[] actual = ReadPixels(editor.ActiveDocument!);
+                    int low = -(size / 2), high = low + size - 1;
+                    for (int y = 0; y < height; y++)
+                        for (int x = 0; x < width; x++)
+                        {
+                            bool covered = x >= point.Item1 + low && x <= point.Item1 + high &&
+                                           y >= point.Item2 + low && y <= point.Item2 + high;
+                            Assert.AreEqual(covered ? (byte)128 : (byte)0, actual[(y * width + x) * 4 + 3], $"{size}: {point}, {x},{y}");
+                        }
+                    editor.Undo();
+                }
+            input.Text = "3"; brush.IsChecked = true;
+            Down(2.5, 5.5); Move(8.5, 5.5); Move(2.5, 5.5); Up(8.5, 5.5);
+            byte[] painted = ReadPixels(editor.ActiveDocument!);
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                    Assert.AreEqual(y is >= 4 and <= 6 && x is >= 1 and <= 9 ? (byte)128 : (byte)0,
+                        painted[(y * width + x) * 4 + 3], $"{x},{y}");
+            editor.Undo(); Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            editor.Redo(); CollectionAssert.AreEqual(painted, ReadPixels(editor.ActiveDocument!));
+            eraser.IsChecked = true;
+            Down(2.5, 5.5); Move(8.5, 5.5); Up(8.5, 5.5);
+            Assert.IsTrue(ReadPixels(editor.ActiveDocument!).All(b => b == 0));
+            editor.Undo(); CollectionAssert.AreEqual(painted, ReadPixels(editor.ActiveDocument!));
+            editor.Redo(); Assert.IsTrue(ReadPixels(editor.ActiveDocument!).All(b => b == 0));
+            editor.Undo(); editor.Undo();
+            Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            eraser.IsChecked = true;
+            Down(5.5, 5.5); Up(5.5, 5.5);
+            Assert.IsFalse(editor.IsDirty); Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            brush.IsChecked = true;
+            Down(2.5, .5); Move(2.5, -.5); Move(8.5, -.5); Up(8.5, -.5);
+            byte[] outside = ReadPixels(editor.ActiveDocument!);
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                    Assert.AreEqual(y == 0 && x is >= 1 and <= 9 || y == 1 && x is >= 1 and <= 3 ? (byte)128 : (byte)0,
+                        outside[(y * width + x) * 4 + 3], $"outside {x},{y}");
+            editor.Undo();
+            Assert.IsFalse(editor.IsDirty); Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            brush.IsChecked = true;
+            Down(5.5, 5.5); input.Text = "4"; Up(5.5, 5.5);
+            Assert.IsFalse(editor.IsDirty); Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            Down(5.5, 5.5); window.KeyPress(Key.Escape, RawInputModifiers.None, PhysicalKey.Escape, null); Up(5.5, 5.5);
+            Assert.IsFalse(editor.IsDirty); Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            foreach (string invalid in new[] { "", "0", "17", "-1", "1.5", " 2", "１２" })
+            {
+                input.Text = invalid;
+                Assert.AreNotEqual("", editor.BrushSizeError);
+                Assert.AreEqual(editor.BrushSizeError, AutomationProperties.GetHelpText(input));
+                Down(5.5, 5.5); Up(5.5, 5.5);
+                Assert.IsFalse(editor.IsDirty); Assert.IsTrue(editor.RedoCommand.CanExecute(null));
+            }
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
+    public async Task SizedLongStrokeAtImageLimitHandlesZoomScrollAndFill() =>
+        await _session.Dispatch(() =>
+    {
+        const int dimension = 2048;
+        using var editor = new ImageEditorViewModel();
+        var bitmap = new WriteableBitmap(new PixelSize(dimension, dimension), new Vector(192, 192), PixelFormats.Bgra8888, AlphaFormat.Premul);
+        using (var buffer = bitmap.Lock())
+        {
+            byte[] zero = new byte[dimension * 4];
+            for (int y = 0; y < dimension; y++) Marshal.Copy(zero, 0, IntPtr.Add(buffer.Address, y * buffer.RowBytes), zero.Length);
+        }
+        editor.LoadDocument(new ImageEditorDocument("limit.png", bitmap));
+        editor.ManualColorHex = "#80FF0000"; editor.ApplyManualColor();
+        var gate = new Queue<Action>(); editor.ScheduleFill = gate.Enqueue;
+        var window = new Window { Width = 900, Height = 750, Content = new ImageEditorControl { DataContext = editor } };
+        try
+        {
+            window.Show(); window.SetRenderScaling(1.25); editor.ZoomPercentage = 50;
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            var surface = window.GetVisualDescendants().OfType<Grid>().Single(c => c.Name == "ImageSurface");
+            var scroll = window.GetVisualDescendants().OfType<ScrollViewer>().Single(c => c.Name == "ImageScrollViewer");
+            scroll.Offset = new Vector(200, 200);
+            Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+            Point At(double x, double y) => surface.TranslatePoint(new Point(x, y), window)!.Value;
+            editor.SelectedTool = ImageEditorTool.Fill;
+            editor.FloodFill(editor.ActiveDocument!, editor.SampledColor!.Value, 0, 0, (_, _) => { });
+            Assert.IsTrue(editor.IsFillInProgress);
+            editor.BrushSizeText = "16";
+            Assert.IsTrue(editor.IsFillInProgress);
+            editor.CancelPendingFill(); while (gate.Count != 0) gate.Dequeue()();
+            editor.SelectedTool = ImageEditorTool.Brush;
+            window.MouseDown(At(500.5, 600.5), MouseButton.Left, RawInputModifiers.None);
+            window.MouseMove(At(1500.5, 600.5), RawInputModifiers.LeftMouseButton);
+            window.MouseMove(At(500.5, 600.5), RawInputModifiers.LeftMouseButton);
+            window.MouseUp(At(1500.5, 600.5), MouseButton.Left, RawInputModifiers.None);
+            byte[] actual = ReadPixels(editor.ActiveDocument!);
+            for (int y = 591; y <= 608; y++)
+                for (int x = 491; x <= 1508; x++)
+                {
+                    bool covered = x is >= 492 and <= 1507 && y is >= 592 and <= 607;
+                    Assert.AreEqual(covered ? (byte)128 : (byte)0, actual[(y * dimension + x) * 4 + 3], $"{x},{y}");
+                }
+            editor.Undo(); Assert.IsFalse(editor.IsDirty);
+            editor.Redo(); CollectionAssert.AreEqual(actual, ReadPixels(editor.ActiveDocument!));
+        }
+        finally { window.Close(); }
+    }, CancellationToken.None);
+
+    [TestMethod]
     public async Task BrushGestureCompositesOnceAndCommitsOneHistoryState() =>
         await _session.Dispatch(() =>
     {

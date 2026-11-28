@@ -17,6 +17,125 @@ namespace Config.UI.ConfigService.Tests;
 public sealed class ConfigServiceUiSectionTests
 {
     [TestMethod]
+    [DataRow("success")]
+    [DataRow("failure")]
+    [DataRow("cancel")]
+    public async Task LayeredUiSection_OverlappingLoadsKeepLatestPropertiesAndState(string oldResult)
+    {
+        ConfigSectionRegistry registry = new();
+        LayeredSectionProvider provider = new();
+        registry.AddSection(provider);
+        IConfigLayerStore user = Substitute.For<IConfigLayerStore>();
+        IConfigLayerStore system = Substitute.For<IConfigLayerStore>();
+        user.Layer.Returns(ConfigLayer.User);
+        system.Layer.Returns(ConfigLayer.System);
+        user.LoadAsync(Arg.Any<CancellationToken>()).Returns(new ConfigLayerSnapshot(ConfigLayer.User, []));
+        TaskCompletionSource<ConfigLayerSnapshot> gate = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int loads = 0;
+        system.LoadAsync(Arg.Any<CancellationToken>()).Returns(_ =>
+            Interlocked.Increment(ref loads) == 1
+                ? gate.Task
+                : Task.FromResult(new ConfigLayerSnapshot(ConfigLayer.System, [])));
+        ConfigLayeredUiSection section = new(new ConfigLayeredSettingsResolver(registry, [system, user]), provider, user, ConfigLayer.User);
+        Task older = section.LoadAsync();
+        await section.LoadAsync();
+        IPropertyItem current = section.Properties.Single();
+        Assert.IsTrue(current.TrySetValue("Draft"));
+
+        if (oldResult == "success")
+        {
+            gate.SetResult(new ConfigLayerSnapshot(ConfigLayer.System, []));
+        }
+        else if (oldResult == "failure")
+        {
+            gate.SetException(new InvalidOperationException("Old failure"));
+        }
+        else
+        {
+            gate.SetCanceled();
+        }
+        if (oldResult == "cancel")
+        {
+            await Assert.ThrowsExactlyAsync<TaskCanceledException>(() => older);
+        }
+        else
+        {
+            await older;
+        }
+
+        Assert.AreSame(current, section.Properties.Single());
+        Assert.AreEqual("Draft", current.Value);
+        Assert.IsTrue(current.ValidationResult.IsValid);
+        Assert.AreEqual(ConfigUiSectionState.Ready, section.State);
+        Assert.IsNull(section.ErrorMessage);
+        Assert.IsTrue(current.TrySetValue("Edited again"));
+    }
+
+    [TestMethod]
+    public async Task LayeredUiSection_OlderCompletionDoesNotReleaseNewerLoadState()
+    {
+        ConfigSectionRegistry registry = new();
+        LayeredSectionProvider provider = new();
+        registry.AddSection(provider);
+        IConfigLayerStore user = Substitute.For<IConfigLayerStore>();
+        IConfigLayerStore system = Substitute.For<IConfigLayerStore>();
+        user.Layer.Returns(ConfigLayer.User);
+        system.Layer.Returns(ConfigLayer.System);
+        user.LoadAsync(Arg.Any<CancellationToken>()).Returns(new ConfigLayerSnapshot(ConfigLayer.User, []));
+        TaskCompletionSource<ConfigLayerSnapshot> first = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource<ConfigLayerSnapshot> second = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int loads = 0;
+        system.LoadAsync(Arg.Any<CancellationToken>()).Returns(_ =>
+            Interlocked.Increment(ref loads) == 1 ? first.Task : second.Task);
+        ConfigLayeredUiSection section = new(new ConfigLayeredSettingsResolver(registry, [system, user]), provider, user, ConfigLayer.User);
+        Task older = section.LoadAsync();
+        Task newer = section.LoadAsync();
+        first.SetResult(new ConfigLayerSnapshot(ConfigLayer.System, []));
+        await older;
+        Assert.AreEqual(ConfigUiSectionState.Loading, section.State);
+        Assert.AreEqual(0, section.Properties.Count);
+        second.SetResult(new ConfigLayerSnapshot(ConfigLayer.System, []));
+        await newer;
+        Assert.AreEqual(ConfigUiSectionState.Ready, section.State);
+        Assert.AreEqual(1, section.Properties.Count);
+    }
+
+    [TestMethod]
+    public async Task LayeredUiSection_ResolvesAgainWhenSharedDraftReloadsDuringLoad()
+    {
+        ConfigSectionRegistry registry = new();
+        registry.AddSection(new LayeredSectionProvider("First", 0));
+        registry.AddSection(new LayeredSectionProvider("Second", 1));
+        IConfigLayerStore user = Substitute.For<IConfigLayerStore>();
+        IConfigLayerStore system = Substitute.For<IConfigLayerStore>();
+        user.Layer.Returns(ConfigLayer.User);
+        system.Layer.Returns(ConfigLayer.System);
+        ConfigPropertyKey key = new("Second", nameof(LayeredSettings.Name));
+        ConfigLayerSnapshot persisted = new ConfigLayerSnapshot(ConfigLayer.User, [])
+            .WithValue(key, new ConfigLayerValue("Old"));
+        user.LoadAsync(Arg.Any<CancellationToken>()).Returns(_ => Task.FromResult(persisted));
+        TaskCompletionSource<ConfigLayerSnapshot> gate = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int loads = 0;
+        system.LoadAsync(Arg.Any<CancellationToken>()).Returns(_ =>
+            Interlocked.Increment(ref loads) == 1
+                ? gate.Task
+                : Task.FromResult(new ConfigLayerSnapshot(ConfigLayer.System, [])));
+        ConfigLayeredSettingsResolver resolver = new(registry, [system, user]);
+        var sections = new ConfigLayeredUiSectionRegistry(registry, resolver, user, ConfigLayer.User).Sections;
+        Task loading = sections[1].LoadAsync();
+        persisted = new ConfigLayerSnapshot(ConfigLayer.User, []).WithValue(key, new ConfigLayerValue("New"));
+        await ((IConfigUiDraftDiscard)sections[0]).DiscardDraftAsync();
+        gate.SetResult(new ConfigLayerSnapshot(ConfigLayer.System, []));
+        await loading;
+
+        Assert.AreEqual(ConfigUiSectionState.Ready, sections[1].State, sections[1].ErrorMessage);
+        IPropertyItem property = sections[1].Properties.Single();
+        Assert.AreEqual("New", property.Value);
+        Assert.IsTrue(property.TrySetValue("Draft"));
+        Assert.AreEqual(ConfigUiSectionState.Ready, sections[1].State);
+    }
+
+    [TestMethod]
     public async Task PropertyProviderAdapter_UsesSharedApplyAndDraftResetContracts()
     {
         IPropertyProvider provider = Substitute.For<IPropertyProvider>();

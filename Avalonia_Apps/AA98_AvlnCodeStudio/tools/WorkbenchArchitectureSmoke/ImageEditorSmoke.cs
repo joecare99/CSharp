@@ -553,6 +553,45 @@ internal static partial class Program
                     "Undo did not restore the clean image after brush redo.");
                 editor.ContentChanging -= brushChanging;
 
+                TextBox sizeInput = view.GetVisualDescendants().OfType<TextBox>().Single(c => c.Name == "BrushSizeInput");
+                Check(sizeInput.Focus(), "The brush size input did not receive focus.");
+                sizeInput.SelectAll();
+                sizeInput.RaiseEvent(new TextInputEventArgs { RoutedEvent = InputElement.TextInputEvent, Text = "3" });
+                Check(editor.BrushSizeText == "3" && string.IsNullOrEmpty(editor.BrushSizeError),
+                    "The brush size input did not update its binding.");
+                brushMode.IsChecked = true;
+                window.UpdateLayout();
+                start = BrushPoint(4.5); end = BrushPoint(8.5);
+                brushTarget = window.InputHitTest(start)!;
+                brushPointer = new Pointer(22, PointerType.Mouse, true);
+                var sizedPress = new PointerPressedEventArgs(brushTarget, brushPointer, window, start, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.LeftButtonPressed),
+                    KeyModifiers.None, 1)
+                { RoutedEvent = InputElement.PointerPressedEvent };
+                ((Interactive)brushTarget).RaiseEvent(sizedPress);
+                Check(sizedPress.Handled && ReferenceEquals(brushPointer.Captured, surface),
+                    "The sized brush did not capture its press.");
+                surface.RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent, surface, brushPointer, window, end, 0,
+                    new PointerPointProperties(RawInputModifiers.LeftMouseButton, PointerUpdateKind.Other), KeyModifiers.None));
+                surface.RaiseEvent(new PointerReleasedEventArgs(surface, brushPointer, window, end, 0,
+                    new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonReleased),
+                    KeyModifiers.None, MouseButton.Left)
+                { RoutedEvent = InputElement.PointerReleasedEvent });
+                byte[] sizedPaint = editor.CapturePngSnapshot().Bytes;
+                using (var stream = new MemoryStream(sizedPaint))
+                using (var decoded = new Bitmap(stream))
+                    for (int y = 3; y <= 5; y++)
+                        for (int x = 3; x <= 9; x++)
+                            Check(SnapshotPixel(decoded, x, y).SequenceEqual(new byte[] { 0, 255, 0, 255 }),
+                                $"The sized brush missed pixel {x},{y}.");
+                editor.Undo();
+                Check(editor.IsCurrentDocumentState(state) && editor.CapturePngSnapshot().Bytes.SequenceEqual(beforeSampling),
+                    "Undo did not restore the sized brush stroke.");
+                editor.Redo();
+                Check(editor.CapturePngSnapshot().Bytes.SequenceEqual(sizedPaint), "Redo did not restore the sized brush stroke.");
+                editor.Undo();
+                sizeInput.SetCurrentValue(TextBox.TextProperty, "1");
+
                 void EnterManualColor(string value)
                 {
                     Check(colorDraft.Focus(), "The image color field did not receive focus.");

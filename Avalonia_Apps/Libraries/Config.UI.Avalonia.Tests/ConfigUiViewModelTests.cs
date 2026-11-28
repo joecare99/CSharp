@@ -16,6 +16,75 @@ namespace Config.UI.Avalonia.Tests;
 public sealed class ConfigUiViewModelTests
 {
     [TestMethod]
+    public async Task ReselectingLoadingSection_DoesNotStartAnotherProviderLoad()
+    {
+        IConfigUiSection first = CreateSection("First", 0);
+        IConfigUiSection second = CreateSection("Second", 1);
+        TaskCompletionSource gate = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        first.LoadAsync().Returns(_ => gate.Task);
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        TaskCompletionSource idle = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        viewModel.PropertyChanged += (_, _) =>
+        {
+            if (!viewModel.IsBusy)
+            {
+                idle.TrySetResult();
+            }
+        };
+        viewModel.SelectedSection = second;
+        viewModel.SelectedSection = first;
+        _ = first.Received(1).LoadAsync();
+        Assert.IsTrue(viewModel.IsBusy);
+        Assert.AreEqual(0, viewModel.PropertyEditor.Items.Count);
+        gate.SetResult();
+        await idle.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        IPropertyItem property = viewModel.PropertyEditor.Items[0].PropertyItem;
+        Assert.IsTrue(property.TrySetValue("Draft"));
+        viewModel.SelectedSection = second;
+        viewModel.SelectedSection = first;
+        Assert.AreSame(property, viewModel.PropertyEditor.Items[0].PropertyItem);
+        Assert.IsTrue(viewModel.HasUnsavedChanges);
+        _ = first.Received(1).LoadAsync();
+    }
+
+    [TestMethod]
+    public async Task SelectionDuringExplicitReload_WaitsUntilReloadCompletesAndKeepsBusy()
+    {
+        IConfigUiSection first = CreateSection("First", 0);
+        IConfigUiSection second = CreateSection("Second", 1);
+        ConfigUiViewModel viewModel = new(CreateRegistry(first, second), new PropertyEditorViewModel());
+        TaskCompletionSource reload = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        TaskCompletionSource selection = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        first.LoadAsync().Returns(_ => reload.Task);
+        second.LoadAsync().Returns(_ => selection.Task);
+        TaskCompletionSource idle = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        viewModel.PropertyChanged += (_, _) =>
+        {
+            if (!viewModel.IsBusy)
+            {
+                idle.TrySetResult();
+            }
+        };
+
+        Task loading = viewModel.LoadCommand.ExecuteAsync(null);
+        viewModel.SelectedSection = second;
+        await second.DidNotReceive().LoadAsync();
+        Assert.IsTrue(viewModel.IsBusy);
+        Assert.IsFalse(await viewModel.DiscardChangesAsync());
+        Assert.AreEqual(0, viewModel.PropertyEditor.Items.Count);
+
+        reload.SetResult();
+        await loading;
+        _ = second.Received(1).LoadAsync();
+        Assert.IsTrue(viewModel.IsBusy);
+        selection.SetResult();
+        await idle.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.AreSame(second, viewModel.SelectedSection);
+        Assert.IsTrue(viewModel.IsSelectedSectionReady);
+        Assert.AreEqual(1, viewModel.PropertyEditor.Items.Count);
+    }
+
+    [TestMethod]
     public void Constructor_CustomDialogTitle_ExposesProviderSpecificTitle()
     {
         ConfigUiViewModel viewModel = new(

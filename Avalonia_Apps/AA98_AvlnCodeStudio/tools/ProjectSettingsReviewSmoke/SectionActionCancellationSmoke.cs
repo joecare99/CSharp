@@ -49,6 +49,8 @@ internal static partial class Program
         }
 
         await WaitUntilAsync(() => fixture.System.LoadSuspended && fixture.Config.IsBusy, $"{action} in progress");
+        dialog.Close();
+        Check(dialog.IsVisible && fixture.Config.IsBusy, $"{action} allowed the dialog to close while busy.");
         fixture.System.SuspendedLoad.SetException(new OperationCanceledException("Synthetic cancellation"));
         if (direct)
         {

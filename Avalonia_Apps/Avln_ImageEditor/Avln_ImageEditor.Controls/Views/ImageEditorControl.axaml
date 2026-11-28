@@ -23,10 +23,17 @@
 		  <Button Command="{Binding SelectToolCommand}"
 				  CommandParameter="{x:Static models:ImageEditorTool.Select}"
 				  Content="Select" />
-		  <CheckBox x:Name="BrushMode" VerticalAlignment="Center" Content="Brush (1 px)"
+		  <CheckBox x:Name="BrushMode" VerticalAlignment="Center" Content="Brush"
 					IsEnabled="{Binding HasDocument}" />
-		  <CheckBox x:Name="EraserMode" VerticalAlignment="Center" Content="Eraser (1 px)"
+		  <CheckBox x:Name="EraserMode" VerticalAlignment="Center" Content="Eraser"
 					IsEnabled="{Binding HasDocument}" />
+		  <StackPanel>
+			<TextBlock Foreground="#F2F2F2" Text="Brush / eraser size (1–16 px)" />
+			<TextBox x:Name="BrushSizeInput" Width="90" AutomationProperties.Name="Brush and eraser size in pixels"
+					 AutomationProperties.HelpText="{Binding BrushSizeError}"
+					 Text="{Binding BrushSizeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<TextBlock Foreground="#FFB4AB" Text="{Binding BrushSizeError}" />
+		  </StackPanel>
 		  <CheckBox x:Name="FillMode" VerticalAlignment="Center" Content="Fill"
 					IsEnabled="{Binding HasDocument}" />
 		  <TextBlock x:Name="FillStatusText" VerticalAlignment="Center" Foreground="#F2F2F2" />
