@@ -8,6 +8,7 @@ using NSubstitute;
 using Property.Editor;
 using Property.Editor.Avalonia;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -18,6 +19,111 @@ namespace AA98_AvlnCodeStudio.Tests.Startup;
 [TestClass]
 public sealed class SharedConfigDraftIntegrationTests
 {
+    [TestMethod]
+    public async Task SelectionLoad_OlderCompletionCannotReplaceNewerDraft()
+    {
+        var (config, sections, gate) = CreateGatedConfig();
+        config.SelectedSection = sections[1];
+        await WaitForConfigAsync(config, () => config.IsSelectedSectionReady);
+        config.SelectedSection = sections[0];
+        Assert.IsTrue(config.IsBusy);
+        Assert.AreEqual(0, config.PropertyEditor.Items.Count);
+        Assert.IsFalse(await config.DiscardChangesAsync());
+        await config.LoadCommand.ExecuteAsync(null);
+
+        gate.SetResult(new ConfigLayerSnapshot(ConfigLayer.System, []));
+        await WaitForConfigAsync(config, () => !config.IsBusy);
+
+        IPropertyItem current = config.PropertyEditor.Items.Single().PropertyItem;
+        Assert.IsTrue(current.TrySetValue("Draft"));
+        config.SelectedSection = sections[1];
+        config.SelectedSection = sections[0];
+        Assert.AreSame(current, config.PropertyEditor.Items.Single().PropertyItem);
+        Assert.AreSame(current, sections[0].Properties.Single());
+        Assert.AreEqual("Draft", current.Value);
+        Assert.IsTrue(current.ValidationResult.IsValid);
+        Assert.IsTrue(config.HasUnsavedChanges);
+        Assert.IsTrue(config.CanApplyChanges);
+        Assert.IsTrue(current.TrySetValue("Edited again"));
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task SelectionLoad_LateFailureOrCancellationDoesNotPublishToOtherSection(bool cancel)
+    {
+        var (config, sections, gate) = CreateGatedConfig();
+        config.SelectedSection = sections[1];
+        await WaitForConfigAsync(config, () => config.IsSelectedSectionReady);
+        IPropertyItem current = config.PropertyEditor.Items.Single().PropertyItem;
+        Assert.IsTrue(current.TrySetValue("Independent draft"));
+        Assert.IsTrue(config.IsBusy);
+
+        if (cancel)
+        {
+            gate.SetCanceled();
+        }
+        else
+        {
+            gate.SetException(new InvalidOperationException("First unavailable"));
+        }
+        await WaitForConfigAsync(config, () => !config.IsBusy);
+
+        Assert.AreSame(sections[1], config.SelectedSection);
+        Assert.AreSame(current, config.PropertyEditor.Items.Single().PropertyItem);
+        Assert.AreEqual("Independent draft", current.Value);
+        Assert.AreEqual(string.Empty, config.ErrorMessage);
+        Assert.AreEqual(string.Empty, config.OperationMessage);
+        Assert.IsTrue(config.HasUnsavedChanges);
+        Assert.IsTrue(config.NeedsReloadRecovery);
+    }
+
+    private static (ConfigUiViewModel Config, System.Collections.Generic.IReadOnlyList<IConfigUiSection> Sections, TaskCompletionSource<ConfigLayerSnapshot> Gate) CreateGatedConfig()
+    {
+        ConfigSectionRegistry registry = new();
+        registry.AddSection(CreateProvider("First", 0));
+        registry.AddSection(CreateProvider("Second", 1));
+        IConfigLayerStore user = Substitute.For<IConfigLayerStore>();
+        IConfigLayerStore system = Substitute.For<IConfigLayerStore>();
+        user.Layer.Returns(ConfigLayer.User);
+        system.Layer.Returns(ConfigLayer.System);
+        user.LoadAsync(Arg.Any<CancellationToken>()).Returns(new ConfigLayerSnapshot(ConfigLayer.User, []));
+        TaskCompletionSource<ConfigLayerSnapshot> gate = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int systemLoads = 0;
+        system.LoadAsync(Arg.Any<CancellationToken>()).Returns(_ =>
+            Interlocked.Increment(ref systemLoads) == 1
+                ? gate.Task
+                : Task.FromResult(new ConfigLayerSnapshot(ConfigLayer.System, [])));
+        ConfigLayeredSettingsResolver resolver = new(registry, [system, user]);
+        ConfigLayeredUiSectionRegistry sections = new(registry, resolver, user, ConfigLayer.User);
+        return (new ConfigUiViewModel(sections, new PropertyEditorViewModel()), sections.Sections, gate);
+    }
+
+    private static async Task WaitForConfigAsync(ConfigUiViewModel config, Func<bool> predicate)
+    {
+        TaskCompletionSource ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        void Changed(object? sender, PropertyChangedEventArgs args)
+        {
+            if (predicate())
+            {
+                ready.TrySetResult();
+            }
+        }
+        config.PropertyChanged += Changed;
+        try
+        {
+            if (predicate())
+            {
+                return;
+            }
+            await ready.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        }
+        finally
+        {
+            config.PropertyChanged -= Changed;
+        }
+    }
+
     [TestMethod]
     public async Task LegacyReloadFailureAfterModelReplacement_BlocksStaleDraftUntilRetry()
     {
